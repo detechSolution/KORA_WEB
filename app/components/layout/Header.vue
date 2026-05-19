@@ -59,7 +59,8 @@ const toggleColorMode = () => {
 
       <!-- Right: Action items -->
       <div class="flex-1 flex items-center justify-end gap-3 md:gap-4">
-        <!-- Dark Mode Toggle Button -->
+        <!-- Wifi Status Button (Replacer of theme toggle) -->
+         <!-- Dark Mode Toggle Button -->
         <button
           @click="toggleColorMode"
           class="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center border border-primary-500/40 dark:border-primary/40 text-primary hover:bg-primary-50 dark:hover:bg-stone-850/60 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
@@ -73,10 +74,10 @@ const toggleColorMode = () => {
 
         <!-- Cart Button -->
         <button
-          class="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center border border-primary-500/40 dark:border-primary/40 text-primary hover:bg-primary-50 dark:hover:bg-stone-850/60 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
+          class="hidden sm:inline-flex w-9 h-9 md:w-10 md:h-10 items-center justify-center border border-primary-500/40 dark:border-primary/40 text-primary hover:bg-primary-50 dark:hover:bg-stone-850/60 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
           title="Cart"
         >
-          <UIcon :name="ICONS.HANDBAG" class="w-4 h-4 md:w-5 md:h-5" />
+          <UIcon :name="ICONS.HANDBAG" class="w-4 h-4 md:w-5 md:h-5 text-primary" />
         </button>
 
         <!-- Membership CTA Button -->
@@ -89,10 +90,10 @@ const toggleColorMode = () => {
           Membership
         </base-button>
 
-        <!-- Profile Avatar -->
+        <!-- Profile Avatar with premium gold border -->
         <NuxtLink
           to="/profile"
-          class="w-9 h-9 md:w-10 md:h-10 rounded-full border border-stone-200/80 dark:border-stone-800 overflow-hidden cursor-pointer active:scale-95 transition-transform duration-200 shadow-sm"
+          class="w-9 h-9 md:w-10 md:h-10 rounded-full border border-primary-500/40 dark:border-primary/40 overflow-hidden cursor-pointer active:scale-95 transition-transform duration-200 shadow-sm"
         >
           <img
             src="/avatar.png"

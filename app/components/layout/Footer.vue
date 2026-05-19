@@ -5,7 +5,7 @@
     class="bg-[#0D0D0E] text-stone-300 border-t border-stone-900 transition-colors duration-300"
   >
     <!-- Top Part: Grid Links -->
-    <div class="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-20 py-16">
+    <div class="max-w-full mx-auto px-6 md:px-12 lg:px-20 py-16">
       <div
         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-12 gap-10 lg:gap-8"
       >
