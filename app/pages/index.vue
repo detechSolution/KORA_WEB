@@ -5,7 +5,7 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#0D0D0E] text-foreground font-sans select-none">
+  <div class="min-h-screen bg-background text-foreground font-sans select-none">
     <!-- Modular Hero Section (100vh fold) -->
     <HomeHero />
 

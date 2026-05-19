@@ -4,7 +4,7 @@
     <LayoutHeader />
 
     <!-- Main Content Area -->
-    <main class="flex-grow">
+    <main class="flex-grow pt-[100px]">
       <slot />
     </main>
 

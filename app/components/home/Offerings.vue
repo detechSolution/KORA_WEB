@@ -1,5 +1,7 @@
 <template>
-  <div class="bg-secondary-900 text-stone-100 font-sans select-none">
+  <div
+    class="bg-background dark:bg-secondary-900 text-foreground font-sans select-none"
+  >
     <!-- Block 01: Metamorphosis Crafted For You -->
     <section
       class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden"
@@ -12,7 +14,7 @@
           class="w-full h-full object-cover transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
         />
         <div
-          class="absolute inset-0 ring-1 ring-inset ring-white/5 pointer-events-none"
+          class="absolute inset-0 ring-1 ring-inset ring-black/5 dark:ring-white/5 pointer-events-none"
         ></div>
       </div>
 
@@ -21,16 +23,16 @@
         class="w-full h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 lg:py-0"
       >
         <span
-          class="font-serif text-stone-850 text-7xl md:text-8xl select-none leading-none mb-2"
+          class="font-serif text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
           >01</span
         >
         <h3
-          class="font-serif text-3xl md:text-4xl text-stone-100 font-normal leading-tight tracking-wide mb-6"
+          class="font-serif text-3xl md:text-4xl text-foreground font-normal leading-tight tracking-wide mb-6"
         >
           Metamorphosis Crafted For You
         </h3>
         <p
-          class="text-stone-400 font-light text-sm md:text-base leading-relaxed mb-8"
+          class="text-muted-foreground font-light text-sm md:text-base leading-relaxed mb-8"
         >
           Each membership at Kora is thoughtfully designed to support your
           ongoing wellness journey. Whether you're building consistency,
@@ -54,16 +56,16 @@
         class="w-full h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 lg:py-0 order-2 lg:order-1"
       >
         <span
-          class="font-serif text-stone-850 text-7xl md:text-8xl select-none leading-none mb-2"
+          class="font-serif text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
           >02</span
         >
         <h3
-          class="font-serif text-3xl md:text-4xl text-stone-100 font-normal leading-tight tracking-wide mb-6"
+          class="font-serif text-3xl md:text-4xl text-foreground font-normal leading-tight tracking-wide mb-6"
         >
           Sessions Designed For You
         </h3>
         <p
-          class="text-stone-400 font-light text-sm md:text-base leading-relaxed mb-8"
+          class="text-muted-foreground font-light text-sm md:text-base leading-relaxed mb-8"
         >
           Each session at Kora is thoughtfully crafted to support your
           individual journey. Whether you're seeking movement, recovery, or
@@ -87,14 +89,14 @@
           class="w-full h-full object-cover transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
         />
         <div
-          class="absolute inset-0 ring-1 ring-inset ring-white/5 pointer-events-none"
+          class="absolute inset-0 ring-1 ring-inset ring-black/5 dark:ring-white/5 pointer-events-none"
         ></div>
       </div>
     </section>
 
     <!-- Centered CTA: Access a Different Way of Living, Rooted in Clarity -->
     <section
-      class="relative py-28 md:py-36 px-6 overflow-hidden bg-secondary-900 text-center flex flex-col items-center justify-center"
+      class="relative py-28 md:py-36 px-6 overflow-hidden bg-background dark:bg-secondary-900 text-center flex flex-col items-center justify-center"
     >
       <!-- Top-Right Foliage Decal -->
       <div
@@ -123,14 +125,14 @@
       >
         <div class="relative z-20 mx-auto flex flex-col items-center">
           <h2
-            class="font-serif text-3xl md:text-5xl text-stone-100 font-normal leading-tight tracking-wide mb-6"
+            class="font-serif text-3xl md:text-5xl text-foreground font-normal leading-tight tracking-wide mb-6"
           >
             Access a Different Way of Living,<br />
             <span class="text-primary italic">Rooted in Clarity</span>
           </h2>
 
           <p
-            class="text-stone-400 font-light text-sm md:text-base leading-relaxed mb-10"
+            class="text-muted-foreground font-light text-sm md:text-base leading-relaxed mb-10"
           >
             Step beyond routine and enter a space designed for deep alignment.
             Every session and retreat is a step toward clarity, presence, and

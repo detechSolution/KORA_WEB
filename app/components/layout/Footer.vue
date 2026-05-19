@@ -1,8 +1,13 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { computed } from "vue";
+
+const colorMode = useColorMode();
+const isDark = computed(() => colorMode.value === "dark");
+</script>
 
 <template>
   <footer
-    class="bg-[#0D0D0E] text-stone-300 border-t border-stone-900 transition-colors duration-300"
+    class="bg-background text-foreground border-t border-border transition-colors duration-300"
   >
     <!-- Top Part: Grid Links -->
     <div class="max-w-full mx-auto px-6 md:px-12 lg:px-20 py-16">
@@ -17,13 +22,13 @@
             class="flex items-center gap-3 w-fit focus:outline-none"
           >
             <img
-              :src="'/logo/kora_white_logo.svg'"
+              :src="isDark ? '/logo/kora_white_logo.svg' : '/logo/kora_black_logo.svg'"
               alt="KORA Logo"
               class="w-12 h-12 md:w-32 md:h-8 object-contain group-hover:scale-105 transition-transform duration-200"
             />
           </NuxtLink>
           <p
-            class="text-stone-400 text-sm leading-relaxed max-w-[280px] font-sans"
+            class="text-muted-foreground text-sm leading-relaxed max-w-[280px] font-sans"
           >
             The bridge between the chaos of the city and the clarity of the
             self.
@@ -33,11 +38,11 @@
         <!-- Column 1: Spaces (2 columns) -->
         <div class="lg:col-span-2 flex flex-col gap-4">
           <h4
-            class="text-white text-xs md:text-sm font-semibold tracking-widest uppercase"
+            class="text-foreground text-xs md:text-sm font-semibold tracking-widest uppercase"
           >
             Spaces
           </h4>
-          <ul class="flex flex-col gap-3 text-xs md:text-sm text-stone-400">
+          <ul class="flex flex-col gap-3 text-xs md:text-sm text-muted-foreground">
             <li>
               <NuxtLink
                 to="/spaces/class"
@@ -72,11 +77,11 @@
         <!-- Column 2: Navigate (2 columns) -->
         <div class="lg:col-span-2 flex flex-col gap-4">
           <h4
-            class="text-white text-xs md:text-sm font-semibold tracking-widest uppercase"
+            class="text-foreground text-xs md:text-sm font-semibold tracking-widest uppercase"
           >
             Navigate
           </h4>
-          <ul class="flex flex-col gap-3 text-xs md:text-sm text-stone-400">
+          <ul class="flex flex-col gap-3 text-xs md:text-sm text-muted-foreground">
             <li>
               <NuxtLink
                 to="/sessions"
@@ -111,11 +116,11 @@
         <!-- Column 3: Company (2 columns) -->
         <div class="lg:col-span-2 flex flex-col gap-4">
           <h4
-            class="text-white text-xs md:text-sm font-semibold tracking-widest uppercase"
+            class="text-foreground text-xs md:text-sm font-semibold tracking-widest uppercase"
           >
             Company
           </h4>
-          <ul class="flex flex-col gap-3 text-xs md:text-sm text-stone-400">
+          <ul class="flex flex-col gap-3 text-xs md:text-sm text-muted-foreground">
             <li>
               <NuxtLink
                 to="/careers"
@@ -157,7 +162,7 @@
         <!-- Column 4: Contacts (2 columns) -->
         <div class="lg:col-span-2 flex flex-col gap-5">
           <h4
-            class="text-white text-xs md:text-sm font-semibold tracking-widest uppercase"
+            class="text-foreground text-xs md:text-sm font-semibold tracking-widest uppercase"
           >
             Contacts
           </h4>
@@ -165,30 +170,30 @@
             <!-- Email -->
             <div class="flex flex-col gap-1">
               <span
-                class="text-stone-500 font-bold uppercase tracking-wider text-[10px]"
+                class="text-muted-foreground font-bold uppercase tracking-wider text-[10px]"
                 >Email</span
               >
               <a
                 href="mailto:kora@gmail.com"
-                class="text-stone-300 hover:text-primary transition-colors duration-200"
+                class="text-foreground hover:text-primary transition-colors duration-200"
                 >kora@gmail.com</a
               >
             </div>
             <!-- Phone -->
             <div class="flex flex-col gap-1">
               <span
-                class="text-stone-500 font-bold uppercase tracking-wider text-[10px]"
+                class="text-muted-foreground font-bold uppercase tracking-wider text-[10px]"
                 >Phone</span
               >
-              <span class="text-stone-300">01-4785467, 9845787654</span>
+              <span class="text-foreground">01-4785467, 9845787654</span>
             </div>
             <!-- Address -->
             <div class="flex flex-col gap-1">
               <span
-                class="text-stone-500 font-bold uppercase tracking-wider text-[10px]"
+                class="text-muted-foreground font-bold uppercase tracking-wider text-[10px]"
                 >Address</span
               >
-              <p class="text-stone-300 leading-relaxed">
+              <p class="text-foreground leading-relaxed">
                 Golfutar, Budhanilkantha-08,<br />Kathmandu 44600
               </p>
             </div>
@@ -198,12 +203,12 @@
     </div>
 
     <!-- Bottom Part: Divider & Copyright & Socials -->
-    <div class="border-t border-stone-900/60 py-6">
+    <div class="border-t border-border/60 py-6">
       <div
         class="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-20 flex flex-col sm:flex-row items-center justify-between gap-4"
       >
         <!-- Copyright -->
-        <p class="text-stone-500 text-xs text-center sm:text-left">
+        <p class="text-muted-foreground text-xs text-center sm:text-left">
           Kora &copy; 2026 All Rights Reserved
         </p>
         <!-- Social Icons -->
@@ -212,7 +217,7 @@
             href="https://instagram.com"
             target="_blank"
             rel="noopener noreferrer"
-            class="w-9 h-9 flex items-center justify-center rounded-lg bg-stone-900/80 border border-stone-800 text-stone-300 hover:text-white hover:border-stone-700 hover:bg-stone-850 active:scale-95 transition-all duration-200"
+            class="w-9 h-9 flex items-center justify-center rounded-lg bg-muted border border-border text-muted-foreground hover:text-foreground hover:border-primary/50 hover:bg-background active:scale-95 transition-all duration-200 cursor-pointer"
             title="Instagram"
           >
             <UIcon name="i-lucide-instagram" class="w-4 h-4" />
@@ -221,7 +226,7 @@
             href="https://facebook.com"
             target="_blank"
             rel="noopener noreferrer"
-            class="w-9 h-9 flex items-center justify-center rounded-lg bg-stone-900/80 border border-stone-800 text-stone-300 hover:text-white hover:border-stone-700 hover:bg-stone-850 active:scale-95 transition-all duration-200"
+            class="w-9 h-9 flex items-center justify-center rounded-lg bg-muted border border-border text-muted-foreground hover:text-foreground hover:border-primary/50 hover:bg-background active:scale-95 transition-all duration-200 cursor-pointer"
             title="Facebook"
           >
             <UIcon name="i-lucide-facebook" class="w-4 h-4" />
