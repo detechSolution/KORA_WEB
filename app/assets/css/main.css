@@ -12,3 +12,18 @@ body {
   color: var(--color-foreground);
   background-color: var(--color-background);
 }
+
+::selection {
+  color: white;
+  background: var(--primary-900);
+}
+
+/* Firefox compatibility */
+::-moz-selection {
+  color: white;
+  background: var(--primary-900);
+}
+
+@keyframes beat{
+	to { transform: scale(1.4); }
+}

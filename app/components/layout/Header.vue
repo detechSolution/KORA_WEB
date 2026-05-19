@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { ICONS } from "~/config/icons";
 
 // Nuxt Color Mode
 const colorMode = useColorMode();
@@ -18,9 +19,7 @@ const toggleColorMode = () => {
 </script>
 
 <template>
-  <header
-    class="w-full bg-transparent transition-colors duration-300"
-  >
+  <header class="w-full bg-transparent transition-colors duration-300">
     <div
       class="max-w-400 h-25 mx-auto px-4 md:px-8 lg:px-12 flex items-center justify-between"
     >
@@ -67,7 +66,7 @@ const toggleColorMode = () => {
           title="Toggle Theme"
         >
           <UIcon
-            :name="isDark ? 'i-lucide-sun' : 'i-lucide-moon'"
+            :name="isDark ? ICONS.MOON : ICONS.SUN"
             class="w-4 h-4 md:w-5 md:h-5"
           />
         </button>
@@ -77,16 +76,18 @@ const toggleColorMode = () => {
           class="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center border border-primary-500/40 dark:border-primary/40 text-primary hover:bg-primary-50 dark:hover:bg-stone-850/60 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
           title="Cart"
         >
-          <UIcon name="i-lucide-shopping-bag" class="w-4 h-4 md:w-5 md:h-5" />
+          <UIcon :name="ICONS.HANDBAG" class="w-4 h-4 md:w-5 md:h-5" />
         </button>
 
         <!-- Membership CTA Button -->
-        <NuxtLink
+        <base-button
           to="/membership"
-          class="hidden sm:inline-flex items-center justify-center bg-primary hover:bg-primary-800 text-white font-semibold tracking-widest text-[10px] md:text-xs px-4 md:px-6 py-2 md:py-2.5 uppercase transition-all duration-200 focus:outline-none shadow-sm active:scale-95"
+          variant="solid"
+          color="primary"
+          class="hidden sm:inline-flex px-4 md:px-6 py-2 md:py-2.5 text-[10px] md:text-xs uppercase tracking-widest transition-all duration-200 focus:outline-none shadow-sm active:scale-95"
         >
           Membership
-        </NuxtLink>
+        </base-button>
 
         <!-- Profile Avatar -->
         <NuxtLink
