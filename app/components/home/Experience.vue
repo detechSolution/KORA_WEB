@@ -1,11 +1,9 @@
 <template>
   <!-- The Kora Experience Section -->
-  <section class="relative bg-[#0D0D0E] py-24 md:py-32 px-6 md:px-12 lg:px-20 overflow-hidden select-none">
+  <section class="relative bg-secondary-900 py-24 md:py-32 px-6 md:px-12 lg:px-20 overflow-hidden select-none">
     <!-- Ambient background element: subtle leaf shape at top right, as seen in mockup! -->
-    <div class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 opacity-15 pointer-events-none translate-x-12 -translate-y-12 select-none z-10">
-      <svg viewBox="0 0 100 100" class="w-full h-full fill-none stroke-stone-700 stroke-[0.4]">
-        <path d="M10,90 Q40,40 90,10 M30,70 Q50,45 80,30 M50,50 Q65,30 85,20 M20,80 Q45,60 70,50 M60,40 Q75,25 90,15" />
-      </svg>
+    <div class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 pointer-events-none translate-x-12 -translate-y-12 select-none z-10">
+      <img :src="IMAGES.LEAF" alt="The Kora Experience" class="w-full h-full object-cover" />
     </div>
 
     <div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">

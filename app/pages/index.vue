@@ -14,5 +14,8 @@ definePageMeta({
 
     <!-- Modular Kora Manifesto Section (Floating staggered cards, quote) -->
     <HomeManifesto />
+
+    <!-- Modular Kora Offerings Section (Alternating showcases, clarity CTA fold) -->
+    <HomeOfferings />
   </div>
 </template>

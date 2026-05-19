@@ -17,4 +17,8 @@ export const IMAGES = {
   MANIFESTO_STEAM: "/images/hero/manifesto_steam.png",
   MANIFESTO_SINGING: "/images/hero/manifesto_singing.png",
   MANIFESTO_BACKGROUND: "/images/hero/manifesto_background.png",
+
+  // OFFERINGS SECTION
+  OFFERINGS_MEMBERSHIP: "/images/hero/offerings_memberships.png",
+  OFFERINGS_SESSIONS: "/images/hero/offerings_sessions.png",
 };
