@@ -3,4 +3,6 @@ export const ICONS = {
   HANDBAG: "i-lucide-handbag",
   MOON: "i-lucide-moon",
   SUN: "i-lucide-sun",
+  EYE: "i-lucide-eye",
+  EYE_OFF: "i-lucide-eye-off",
 };

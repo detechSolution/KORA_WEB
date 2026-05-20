@@ -1,6 +1,6 @@
 <template>
   <section
-    class="w-full bg-muted/50 dark:bg-stone-950/20 relative py-4 md:py-4 px-6 md:px-6 lg:px-6 border-t border-border"
+    class="w-full bg-[#EDEAE7] dark:bg-[#212121] relative py-4 md:py-4 px-6 md:px-6 lg:px-6"
   >
     <div
       class="mx-auto relative z-20 flex flex-col lg:flex-row gap-6 lg:gap-12 items-center justify-between"
@@ -19,24 +19,22 @@
         @submit.prevent
         class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto items-stretch sm:items-center"
       >
-        <input
+        <base-input
           type="text"
+          name="name"
           placeholder="Enter your name"
-          class="bg-background border border-border focus:border-primary/45 text-foreground text-xs md:text-sm px-5 py-3 rounded-lg focus:outline-none w-full sm:w-[220px] md:w-[260px] transition-all duration-300 placeholder-muted-foreground font-light"
+          class="w-full sm:w-[220px] md:w-[260px] bg-white dark:bg-transparent"
+          required
         />
 
-        <input
+        <base-input
           type="email"
+          name="email"
           placeholder="Enter your email"
-          class="bg-background border border-border focus:border-primary/45 text-foreground text-xs md:text-sm px-5 py-3 rounded-lg focus:outline-none w-full sm:w-[220px] md:w-[260px] transition-all duration-300 placeholder-muted-foreground font-light"
+          class="w-full sm:w-[220px] md:w-[260px] bg-white dark:bg-transparent"
         />
 
-        <button
-          type="submit"
-          class="bg-primary hover:bg-primary/85 text-stone-950 font-sans tracking-widest text-[11px] md:text-xs font-semibold px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 uppercase shrink-0 cursor-pointer"
-        >
-          SUBSCRIBE
-        </button>
+        <base-button type="submit"> SUBSCRIBE </base-button>
       </form>
     </div>
   </section>
