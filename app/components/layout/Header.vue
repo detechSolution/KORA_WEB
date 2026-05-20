@@ -17,6 +17,10 @@ const toggleColorMode = () => {
   isDark.value = !isDark.value;
 };
 
+// Sidebar visibility state
+const isSidebarOpen = ref(false);
+
+
 // Scroll listener to toggle header background color on scroll
 const isScrolled = ref(false);
 const handleScroll = () => {
@@ -57,6 +61,7 @@ onUnmounted(() => {
         "
       >
         <button
+          @click="isSidebarOpen = true"
           class="group flex items-center gap-2.5 hover:text-primary transition-colors duration-200 cursor-pointer py-1.5 focus:outline-none"
         >
           <span class="flex flex-col gap-1 w-5">
@@ -141,5 +146,6 @@ onUnmounted(() => {
         </NuxtLink>
       </div>
     </div>
+    <LayoutSidebar :is-open="isSidebarOpen" @close="isSidebarOpen = false" />
   </header>
 </template>
