@@ -2,6 +2,17 @@
 import { computed, ref, onMounted, onUnmounted } from "vue";
 import { ICONS } from "~/config/icons";
 
+const props = defineProps({
+  isHome: {
+    type: Boolean,
+    default: false,
+  },
+  class: {
+    type: String,
+    default: "",
+  },
+});
+
 // Nuxt Color Mode
 const colorMode = useColorMode();
 const isDark = computed({
@@ -20,12 +31,46 @@ const toggleColorMode = () => {
 // Sidebar visibility state
 const isSidebarOpen = ref(false);
 
-
 // Scroll listener to toggle header background color on scroll
 const isScrolled = ref(false);
 const handleScroll = () => {
   isScrolled.value = window.scrollY > 20;
 };
+
+const getColorClass = computed(() => {
+  if (props.isHome) {
+    if (isScrolled.value) {
+      if (isDark.value) {
+        return {
+          text: "text-white",
+          image: "/logo/kora_white_logo.svg",
+        };
+      } else {
+        return {
+          text: "text-dark",
+          image: "/logo/kora_black_logo.svg",
+        };
+      }
+    } else {
+      return {
+        text: "text-white",
+        image: "/logo/kora_white_logo.svg",
+      };
+    }
+  } else {
+    if (isDark.value) {
+      return {
+        text: "text-white",
+        image: "/logo/kora_white_logo.svg",
+      };
+    } else {
+      return {
+        text: "text-dark",
+        image: "/logo/kora_black_logo.svg",
+      };
+    }
+  }
+});
 
 onMounted(() => {
   window.addEventListener("scroll", handleScroll);
@@ -40,26 +85,26 @@ onUnmounted(() => {
 <template>
   <header
     :class="[
-      'fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300',
+      'w-full transition-all duration-300',
       isScrolled
-        ? 'bg-background/90 backdrop-blur-md border-b border-border/80 shadow-sm py-1'
-        : 'bg-transparent border-b border-transparent py-3',
+        ? 'border-b border-border/80 shadow-sm py-1'
+        : 'border-b border-transparent py-3',
+
+      // ✅ Background logic
+      props.isHome && !isScrolled
+        ? 'bg-transparent'
+        : !props.isHome && !isScrolled && isDark
+          ? 'bg-secondary-900'
+          : 'bg-background/90 backdrop-blur-md',
+
+      props.class,
     ]"
   >
     <div
       class="max-w-400 h-25 mx-auto px-4 md:px-8 lg:px-12 flex items-center justify-between"
     >
       <!-- Left: Menu Trigger -->
-      <div
-        class="flex-1 flex items-center"
-        :class="
-          isDark
-            ? 'text-white'
-            : !isDark && !isScrolled
-              ? 'text-white'
-              : 'text-black'
-        "
-      >
+      <div class="flex-1 flex items-center" :class="getColorClass?.text">
         <button
           @click="isSidebarOpen = true"
           class="group flex items-center gap-2.5 hover:text-primary transition-colors duration-200 cursor-pointer py-1.5 focus:outline-none"
@@ -85,13 +130,7 @@ onUnmounted(() => {
       <!-- Center: Logo -->
       <NuxtLink to="/" class="flex items-center gap-3 focus:outline-none group">
         <img
-          :src="
-            isDark
-              ? '/logo/kora_white_logo.svg'
-              : !isDark && !isScrolled
-                ? '/logo/kora_white_logo.svg'
-                : '/logo/kora_black_logo.svg'
-          "
+          :src="getColorClass?.image"
           alt="KORA Logo"
           class="w-12 h-12 md:w-32 md:h-8 object-contain group-hover:scale-105 transition-transform duration-200"
         />

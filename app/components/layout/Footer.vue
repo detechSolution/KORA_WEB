@@ -7,7 +7,7 @@ const isDark = computed(() => colorMode.value === "dark");
 
 <template>
   <footer
-    class="bg-background text-foreground border-t border-border transition-colors duration-300"
+    class="dark text-foreground border-t border-border transition-colors duration-300"
   >
     <!-- Top Part: Grid Links -->
     <div class="max-w-full mx-auto px-6 md:px-12 lg:px-20 py-16">
