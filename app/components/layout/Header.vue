@@ -109,7 +109,7 @@ onUnmounted(() => {
 
         <!-- Cart Button -->
         <button
-          class="hidden sm:inline-flex w-9 h-9 md:w-10 md:h-10 items-center justify-center border border-primary/40 text-primary hover:bg-primary/10 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
+          class="flex w-9 h-9 md:w-10 md:h-10 items-center justify-center border border-primary/40 text-primary hover:bg-primary/10 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
           title="Cart"
         >
           <UIcon
@@ -131,7 +131,7 @@ onUnmounted(() => {
         <!-- Profile Avatar with premium gold border -->
         <NuxtLink
           to="/profile"
-          class="w-9 h-9 md:w-10 md:h-10 rounded-full border border-primary/40 overflow-hidden cursor-pointer active:scale-95 transition-transform duration-200 shadow-sm"
+          class="hidden sm:inline-flex w-9 h-9 md:w-10 md:h-10 rounded-full border border-primary/40 overflow-hidden cursor-pointer active:scale-95 transition-transform duration-200 shadow-sm"
         >
           <img
             src="/avatar.png"

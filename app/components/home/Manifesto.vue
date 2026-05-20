@@ -1,6 +1,6 @@
 <template>
   <section
-    class="relative bg-[#0D0D0E] py-28 md:py-36 px-6 md:px-12 lg:px-20 overflow-hidden flex items-center justify-center min-h-[850px] lg:min-h-[900px] select-none"
+    class="relative bg-[#0D0D0E] py-28 md:py-36 px-6 md:px-12 lg:px-20 overflow-hidden flex flex-col lg:flex-row items-center justify-center min-h-[850px] lg:min-h-[900px] select-none"
   >
     <!-- Curated background tropical foliage layer -->
     <img
@@ -19,62 +19,64 @@
 
     <!-- Core Layout Container (Handles staggered absolute positions on desktop and grid on mobile) -->
     <div
-      class="w-full max-w-[1450px] mx-auto relative min-h-[600px] md:min-h-[700px] flex items-start justify-center z-20"
+      class="w-full max-w-[1450px] mx-auto relative lg:min-h-[700px] flex items-start justify-center z-20"
     >
-      <!-- Card 1: Meditation (Top Left) -->
-      <div
-        class="hidden lg:block absolute left-[3%] xl:left-[5%] top-[5%] w-[210px] xl:w-[300px] aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl z-20 transition-all duration-700 hover:-translate-y-2 hover:scale-[1.03] hover:border-primary-500/20 group"
-      >
-        <img
-          :src="IMAGES.MANIFESTO_MEDITATION"
-          alt="Meditation sanctuary"
-          class="w-full h-full object-cover transition-transform duration-[4000ms] group-hover:scale-105"
-        />
+      <div>
+        <!-- Card 1: Meditation (Top Left) -->
         <div
-          class="absolute ring-1 ring-inset ring-white/10 rounded-2xl pointer-events-none"
-        ></div>
-      </div>
+          class="hidden xl:block absolute left-[3%] xl:left-[5%] top-[5%] w-[210px] xl:w-[300px] aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl z-20 transition-all duration-700 hover:-translate-y-2 hover:scale-[1.03] hover:border-primary-500/20 group"
+        >
+          <img
+            :src="IMAGES.MANIFESTO_MEDITATION"
+            alt="Meditation sanctuary"
+            class="w-full h-full object-cover transition-transform duration-[4000ms] group-hover:scale-105"
+          />
+          <div
+            class="absolute ring-1 ring-inset ring-white/10 rounded-2xl pointer-events-none"
+          ></div>
+        </div>
 
-      <!-- Card 2: Crystals (Bottom Left) -->
-      <div
-        class="hidden lg:block absolute left-[12%] xl:left-[15%] bottom-[-1%] w-[210px] xl:w-[240px] aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl z-20 transition-all duration-700 hover:-translate-y-2 hover:scale-[1.03] hover:border-primary-500/20 group"
-      >
-        <img
-          :src="IMAGES.MANIFESTO_CRYSTALS"
-          alt="Holistic crystals"
-          class="w-full h-full object-cover transition-transform duration-[4000ms] group-hover:scale-105"
-        />
+        <!-- Card 2: Crystals (Bottom Left) -->
         <div
-          class="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-2xl pointer-events-none"
-        ></div>
-      </div>
+          class="hidden xl:block absolute left-[12%] xl:left-[15%] bottom-[-1%] w-[210px] xl:w-[240px] aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl z-20 transition-all duration-700 hover:-translate-y-2 hover:scale-[1.03] hover:border-primary-500/20 group"
+        >
+          <img
+            :src="IMAGES.MANIFESTO_CRYSTALS"
+            alt="Holistic crystals"
+            class="w-full h-full object-cover transition-transform duration-[4000ms] group-hover:scale-105"
+          />
+          <div
+            class="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-2xl pointer-events-none"
+          ></div>
+        </div>
 
-      <!-- Card 3: Wet Stone Spa Mist (Top Right) -->
-      <div
-        class="hidden lg:block absolute right-[3%] xl:right-[5%] top-[5%] w-[210px] xl:w-[300px] aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl z-20 transition-all duration-700 hover:-translate-y-2 hover:scale-[1.03] hover:border-primary-500/20 group"
-      >
-        <img
-          :src="IMAGES.MANIFESTO_STEAM"
-          alt="Volcanic stone steam"
-          class="w-full h-full object-cover transition-transform duration-[4000ms] group-hover:scale-105"
-        />
+        <!-- Card 3: Wet Stone Spa Mist (Top Right) -->
         <div
-          class="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-2xl pointer-events-none"
-        ></div>
-      </div>
+          class="hidden xl:block absolute right-[3%] xl:right-[5%] top-[5%] w-[210px] xl:w-[300px] aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl z-20 transition-all duration-700 hover:-translate-y-2 hover:scale-[1.03] hover:border-primary-500/20 group"
+        >
+          <img
+            :src="IMAGES.MANIFESTO_STEAM"
+            alt="Volcanic stone steam"
+            class="w-full h-full object-cover transition-transform duration-[4000ms] group-hover:scale-105"
+          />
+          <div
+            class="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-2xl pointer-events-none"
+          ></div>
+        </div>
 
-      <!-- Card 4: Singing Bowls (Bottom Right) -->
-      <div
-        class="hidden lg:block absolute right-[12%] xl:right-[15%] bottom-[-1%] w-[210px] xl:w-[240px] aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl z-20 transition-all duration-700 hover:-translate-y-2 hover:scale-[1.03] hover:border-primary-500/20 group"
-      >
-        <img
-          :src="IMAGES.MANIFESTO_SINGING"
-          alt="Tibetan singing bowls meditation"
-          class="w-full h-full object-cover transition-transform duration-[4000ms] group-hover:scale-105"
-        />
+        <!-- Card 4: Singing Bowls (Bottom Right) -->
         <div
-          class="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-2xl pointer-events-none"
-        ></div>
+          class="hidden xl:block absolute right-[12%] xl:right-[15%] bottom-[-1%] w-[210px] xl:w-[240px] aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl z-20 transition-all duration-700 hover:-translate-y-2 hover:scale-[1.03] hover:border-primary-500/20 group"
+        >
+          <img
+            :src="IMAGES.MANIFESTO_SINGING"
+            alt="Tibetan singing bowls meditation"
+            class="w-full h-full object-cover transition-transform duration-[4000ms] group-hover:scale-105"
+          />
+          <div
+            class="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-2xl pointer-events-none"
+          ></div>
+        </div>
       </div>
 
       <!-- Centered Manifesto Quote Block -->
@@ -115,7 +117,7 @@
 
     <!-- Mobile View Grid: Floating cards are laid out in a responsive grid below/above context -->
     <div
-      class="w-full max-w-[650px] mx-auto grid grid-cols-2 gap-4 mt-8 lg:hidden px-6 relative z-20"
+      class="w-full max-w-[650px] mx-auto grid grid-cols-2 gap-4 mt-8 xl:hidden px-6 relative z-20"
     >
       <div
         class="aspect-[3/4] rounded-2xl overflow-hidden border border-stone-900 manifesto-card"
