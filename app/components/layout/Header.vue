@@ -101,7 +101,7 @@ onUnmounted(() => {
     ]"
   >
     <div
-      class="max-w-400 h-25 mx-auto px-4 md:px-8 lg:px-12 flex items-center justify-between"
+      class="max-w-400 h-25 mx-auto flex items-center justify-between"
     >
       <!-- Left: Menu Trigger -->
       <div class="flex-1 flex items-center" :class="getColorClass?.text">

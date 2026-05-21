@@ -22,8 +22,8 @@ const selectFilter = (val: string) => {
 </script>
 
 <template>
-  <div class="bg-background dark:bg-secondary-900 w-full px-4 md:px-8 lg:px-12 py-4 select-none z-10 relative">
-    <div class="max-w-400 mx-auto flex items-center justify-start gap-3 md:gap-4 overflow-x-auto no-scrollbar scroll-smooth py-1">
+  <div class="bg-background dark:bg-secondary-900 w-full py-4 select-none z-10 relative">
+    <div class="max-w-400 mx-auto px-4 md:px-8 lg:px-12 flex items-center justify-start gap-3 md:gap-4 overflow-x-auto no-scrollbar scroll-smooth py-1">
       <button
         v-for="filter in filters"
         :key="filter.value"

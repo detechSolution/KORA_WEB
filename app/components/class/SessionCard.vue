@@ -1,7 +1,10 @@
 <script setup lang="ts">
-const props = defineProps({
+import type { PropType } from "vue";
+import type { SessionDetail } from "~/data/sessions";
+
+defineProps({
   session: {
-    type: Object,
+    type: Object as PropType<SessionDetail>,
     required: true,
   },
 });
@@ -9,7 +12,7 @@ const props = defineProps({
 
 <template>
   <div
-    class="bg-transparent group flex md:flex-row items-start md:items-center justify-between gap-6 md:gap-10 py-10 border-b border-primary last:border-b-0 w-full"
+    class="bg-transparent group flex md:flex-row items-start md:items-center justify-between gap-6 md:gap-10 py-10 border-b border-border last:border-b-0 w-full"
   >
     <div
       class="relative w-full md:w-[260px] lg:w-[300px] shrink-0 aspect-[1.15] overflow-hidden border-primary bg-muted select-none z-10 shadow-lg"
@@ -63,7 +66,7 @@ const props = defineProps({
     </div>
 
     <div
-      class="flex flex-col justify-center items-start md:items-end gap-1.5 min-w-[160px] pt-4 md:pt-0 border-t border-border/10 md:border-none select-none shrink-0"
+      class="flex flex-col justify-center items-start md:items-end gap-3 min-w-[160px] pt-4 md:pt-0 border-t border-border/10 md:border-none select-none shrink-0"
     >
       <span
         class="font-sans text-[8px] md:text-[9px] text-primary/70 tracking-[0.2em] uppercase font-bold"
@@ -76,15 +79,17 @@ const props = defineProps({
         {{ session.price }}
       </span>
 
-      <button
-        class="mt-4 group/btn flex items-center justify-center gap-2 px-5 py-2 text-[9px] md:text-[10px] border border-primary/30 hover:border-primary text-primary hover:bg-primary/5 active:scale-95 transition-all duration-300 font-sans tracking-[0.2em] font-bold uppercase cursor-pointer focus:outline-none"
+      <base-button
+        variant="outline"
+        color="primary"
+        :to="`/class/${session.slug}`"
       >
-        VIEW DETAIL
+        View Detail
         <UIcon
-          name="i-lucide-chevron-right"
-          class="w-3.5 h-3.5 transition-transform duration-300 group-hover/btn:translate-x-1"
+          name="i-lucide-arrow-up-right"
+          class="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1"
         />
-      </button>
+      </base-button>
     </div>
   </div>
 </template>

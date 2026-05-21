@@ -1,17 +1,20 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { computed, watch } from "vue";
+import type { PropType } from "vue";
 import { usePagination } from "~/composables/use-pagination";
+import type { SessionDetail } from "~/data/sessions";
 
 const props = defineProps({
   sessions: {
-    type: { data: [], meta: {} } as any,
+    type: Object as PropType<{
+      data: SessionDetail[];
+      meta: {
+        total: number;
+      };
+    }>,
     required: true,
   },
 });
-
-// Mock pagination pages
-const pages = [1, 2, 3, 4];
-const activePage = ref(1);
 
 const { pagination, resetPagination } = usePagination(2);
 
@@ -36,9 +39,9 @@ const emit = defineEmits(["loadSessionList"]);
 
 <template>
   <div
-    class="bg-background dark:bg-secondary-900 w-full px-4 md:px-8 lg:px-12 py-6 select-none relative z-10"
+    class="max-w-400 mx-auto bg-background dark:bg-secondary-900 w-full px-4 md:px-8 lg:px-12 py-6 select-none relative z-10"
   >
-    <div class="max-w-400 mx-auto flex flex-col gap-2">
+    <div class="mx-auto flex flex-col gap-2">
       <!-- Session Cards List -->
       <div v-if="sessions.data.length !== 0" class="flex flex-col gap-6">
         <ClassSessionCard

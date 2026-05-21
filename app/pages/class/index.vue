@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
+import { IMAGES } from "~/utils/images";
+import { sessionCollection } from "~/data/sessions";
 
 definePageMeta({
   layout: "default",
@@ -20,66 +22,7 @@ onMounted(() => {
 });
 
 const activeFilter = ref("all");
-
-const sessions = {
-  data: [
-    {
-      id: 1,
-      title: "Afternoon Stretch",
-      category: "classes",
-      tagLabel: "CLASS",
-      date: "MAY 22, 2026",
-      image: "/images/session/afternoon_stretch.png",
-      description:
-        "A guided gentle flow session suitable for all levels, focusing on flexibility, core stability, and deep breathwork for physical relaxation.",
-      time: "12:00 PM - 01:00 PM",
-      spots: "12 seats left",
-      price: "Rs. 1,900",
-    },
-    {
-      id: 2,
-      title: "Meditation 101",
-      category: "classes",
-      tagLabel: "CLASS",
-      date: "MAY 23, 2026",
-      image: "/images/session/meditation.png",
-      description:
-        "Beginner-friendly mindfulness meditation session focusing on breathwork, concentration, and cultivating inner peace through guided visual and silent meditation.",
-      time: "08:00 AM - 09:00 AM",
-      spots: "15 seats left",
-      price: "Rs. 1,900",
-    },
-    {
-      id: 3,
-      title: "Sound Healing",
-      category: "events",
-      tagLabel: "WORKSHOP",
-      date: "MAY 25, 2026",
-      image: "/images/session/sound_healing.png",
-      description:
-        "Immersive acoustic sound bath session incorporating brass singing bowls, crystal chimes, and gongs to induce deep state of meditation and physical restoration.",
-      time: "05:00 PM - 06:00 PM",
-      spots: "8 seats left",
-      price: "Rs. 1,900",
-    },
-    {
-      id: 4,
-      title: "Stone Healing",
-      category: "workshops",
-      tagLabel: "CLASS",
-      date: "MAY 28, 2026",
-      image: "/images/session/stone_healing.png",
-      description:
-        "A premium heated basalt stone massage and therapeutic bodywork session designed to melt away muscle tension, improve circulation, and soothe nervous system.",
-      time: "03:00 PM - 04:30 PM",
-      spots: "5 seats left",
-      price: "Rs. 1,910",
-    },
-  ],
-  meta: {
-    total: 4,
-  },
-};
+const sessions = sessionCollection;
 
 const filteredSessions = computed(() => {
   if (activeFilter.value === "all") {
@@ -116,7 +59,7 @@ const filteredSessions = computed(() => {
       />
     </div>
 
-    <ClassHeader />
+    <ClassHeader label="Upcoming Sessions" title="Session Details"/>
 
     <ClassFilter v-model="activeFilter" />
 
