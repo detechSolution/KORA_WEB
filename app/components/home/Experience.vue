@@ -2,7 +2,7 @@
   <!-- The Kora Experience Section -->
   <section class="relative bg-background py-24 md:py-32 px-6 md:px-12 lg:px-20 overflow-hidden select-none">
     <!-- Ambient background element: subtle leaf shape at top right, as seen in mockup! -->
-    <div class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 pointer-events-none translate-x-12 -translate-y-12 select-none z-10">
+    <div class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 pointer-events-none translate-x-6 -translate-y-30 select-none z-10 rotate-[1deg]">
       <img :src="IMAGES.LEAF" alt="The Kora Experience" class="w-full h-full object-cover" />
     </div>
 

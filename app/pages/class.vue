@@ -107,7 +107,7 @@ const filteredSessions = computed(() => {
   >
     <!-- Premium absolute-positioned foliage watermark overlay -->
     <div
-      class="absolute -top-[100px] right-0 w-[320px] md:w-[550px] lg:w-[850px] xl:w-[950px] aspect-square pointer-events-none select-none z-0 translate-x-[15%] opacity-20 lg:opacity-25 pointer-events-none"
+      class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 xl:w-90 aspect-square pointer-events-none select-none z-10000 translate-x-25 -translate-y-12 rotate-[20deg]"
     >
       <img
         :src="IMAGES.LEAF"

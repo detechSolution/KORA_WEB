@@ -27,7 +27,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const colorClasses = computed(() => {
   const colorMap: Record<Color, string> = {
-    primary: "bg-primary/10 text-primary border border-primary",
+    primary: "bg-transparent text-primary border border-primary",
     emerald: "bg-emerald-500/10 text-emerald-600 border border-emerald-500",
     red: "bg-red-500/10 text-red-500 border border-red-500",
     amber: "bg-amber-500/10 text-amber-600 border border-amber-500",
