@@ -7,7 +7,8 @@ definePageMeta({
 
 useSeoMeta({
   title: "Kora | Session Offerings",
-  description: "Explore curated restorative wellness sessions, mindfulness group classes, sound baths, and therapeutic bodywork offerings.",
+  description:
+    "Explore curated restorative wellness sessions, mindfulness group classes, sound baths, and therapeutic bodywork offerings.",
 });
 
 const colorMode = useColorMode();
@@ -20,69 +21,94 @@ onMounted(() => {
 
 const activeFilter = ref("all");
 
-const sessions = [
-  {
-    id: 1,
-    title: "Afternoon Stretch",
-    category: "classes",
-    tagLabel: "CLASS",
-    date: "MAY 22, 2026",
-    image: "/images/session/afternoon_stretch.png",
-    description: "A guided gentle flow session suitable for all levels, focusing on flexibility, core stability, and deep breathwork for physical relaxation.",
-    time: "12:00 PM - 01:00 PM",
-    spots: "12 seats left",
-    price: "Rs. 1,900",
+const sessions = {
+  data: [
+    {
+      id: 1,
+      title: "Afternoon Stretch",
+      category: "classes",
+      tagLabel: "CLASS",
+      date: "MAY 22, 2026",
+      image: "/images/session/afternoon_stretch.png",
+      description:
+        "A guided gentle flow session suitable for all levels, focusing on flexibility, core stability, and deep breathwork for physical relaxation.",
+      time: "12:00 PM - 01:00 PM",
+      spots: "12 seats left",
+      price: "Rs. 1,900",
+    },
+    {
+      id: 2,
+      title: "Meditation 101",
+      category: "classes",
+      tagLabel: "CLASS",
+      date: "MAY 23, 2026",
+      image: "/images/session/meditation.png",
+      description:
+        "Beginner-friendly mindfulness meditation session focusing on breathwork, concentration, and cultivating inner peace through guided visual and silent meditation.",
+      time: "08:00 AM - 09:00 AM",
+      spots: "15 seats left",
+      price: "Rs. 1,900",
+    },
+    {
+      id: 3,
+      title: "Sound Healing",
+      category: "events",
+      tagLabel: "WORKSHOP",
+      date: "MAY 25, 2026",
+      image: "/images/session/sound_healing.png",
+      description:
+        "Immersive acoustic sound bath session incorporating brass singing bowls, crystal chimes, and gongs to induce deep state of meditation and physical restoration.",
+      time: "05:00 PM - 06:00 PM",
+      spots: "8 seats left",
+      price: "Rs. 1,900",
+    },
+    {
+      id: 4,
+      title: "Stone Healing",
+      category: "workshops",
+      tagLabel: "CLASS",
+      date: "MAY 28, 2026",
+      image: "/images/session/stone_healing.png",
+      description:
+        "A premium heated basalt stone massage and therapeutic bodywork session designed to melt away muscle tension, improve circulation, and soothe nervous system.",
+      time: "03:00 PM - 04:30 PM",
+      spots: "5 seats left",
+      price: "Rs. 1,910",
+    },
+  ],
+  meta: {
+    total: 4,
   },
-  {
-    id: 2,
-    title: "Meditation 101",
-    category: "classes",
-    tagLabel: "CLASS",
-    date: "MAY 23, 2026",
-    image: "/images/session/meditation.png",
-    description: "Beginner-friendly mindfulness meditation session focusing on breathwork, concentration, and cultivating inner peace through guided visual and silent meditation.",
-    time: "08:00 AM - 09:00 AM",
-    spots: "15 seats left",
-    price: "Rs. 1,900",
-  },
-  {
-    id: 3,
-    title: "Sound Healing",
-    category: "events",
-    tagLabel: "WORKSHOP",
-    date: "MAY 25, 2026",
-    image: "/images/session/sound_healing.png",
-    description: "Immersive acoustic sound bath session incorporating brass singing bowls, crystal chimes, and gongs to induce deep state of meditation and physical restoration.",
-    time: "05:00 PM - 06:00 PM",
-    spots: "8 seats left",
-    price: "Rs. 1,900",
-  },
-  {
-    id: 4,
-    title: "Stone Healing",
-    category: "workshops",
-    tagLabel: "CLASS",
-    date: "MAY 28, 2026",
-    image: "/images/session/stone_healing.png",
-    description: "A premium heated basalt stone massage and therapeutic bodywork session designed to melt away muscle tension, improve circulation, and soothe nervous system.",
-    time: "03:00 PM - 04:30 PM",
-    spots: "5 seats left",
-    price: "Rs. 1,910",
-  },
-];
+};
 
 const filteredSessions = computed(() => {
   if (activeFilter.value === "all") {
     return sessions;
   }
-  return sessions.filter((s) => s.category === activeFilter.value);
+
+  const filteredData = sessions.data.filter(
+    (s) => s.category === activeFilter.value,
+  );
+
+  return {
+    ...sessions,
+    data: filteredData,
+    meta: {
+      ...sessions.meta,
+      total: filteredData.length,
+    },
+  };
 });
 </script>
 
 <template>
-  <div class="relative w-full bg-background dark:bg-secondary-900 text-[#f4f3f1] min-h-screen pb-16 flex flex-col transition-colors duration-300 overflow-hidden">
+  <div
+    class="relative w-full bg-background dark:bg-secondary-900 text-[#f4f3f1] min-h-screen pb-16 flex flex-col transition-colors duration-300 overflow-hidden"
+  >
     <!-- Premium absolute-positioned foliage watermark overlay -->
-    <div class="absolute -top-[100px] right-0 w-[320px] md:w-[550px] lg:w-[850px] xl:w-[950px] aspect-square pointer-events-none select-none z-0 translate-x-[15%] opacity-20 lg:opacity-25 pointer-events-none">
+    <div
+      class="absolute -top-[100px] right-0 w-[320px] md:w-[550px] lg:w-[850px] xl:w-[950px] aspect-square pointer-events-none select-none z-0 translate-x-[15%] opacity-20 lg:opacity-25 pointer-events-none"
+    >
       <img
         :src="IMAGES.LEAF"
         alt="Kora foliage decoration"
@@ -99,11 +125,16 @@ const filteredSessions = computed(() => {
         <ClassSessionList :sessions="filteredSessions" />
       </div>
 
-      <div v-else class="w-full px-4 md:px-8 lg:px-12 py-6 select-none relative z-10">
+      <div
+        v-else
+        class="w-full px-4 md:px-8 lg:px-12 py-6 select-none relative z-10"
+      >
         <div class="max-w-400 mx-auto">
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-4">
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-4"
+          >
             <div
-              v-for="(session, index) in sessions"
+              v-for="(session, index) in sessions.data"
               :key="session.id"
               class="group relative overflow-hidden aspect-square border border-border/10 shadow-lg cursor-pointer bg-muted hover:border-primary/50 transition-colors duration-300"
               :style="{ animationDelay: `${index * 80}ms` }"
@@ -113,17 +144,27 @@ const filteredSessions = computed(() => {
                 :alt="session.title"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
               />
-              <div class="absolute inset-0 bg-black/70 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-5">
-                <span class="text-primary text-[8px] md:text-[9px] tracking-[0.2em] font-bold uppercase">
+              <div
+                class="absolute inset-0 bg-black/70 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-5"
+              >
+                <span
+                  class="text-primary text-[8px] md:text-[9px] tracking-[0.2em] font-bold uppercase"
+                >
                   {{ session.tagLabel || session.category }}
                 </span>
-                <h4 class="font-serif text-lg text-white font-medium mt-1 leading-snug">
+                <h4
+                  class="font-serif text-lg text-white font-medium mt-1 leading-snug"
+                >
                   {{ session.title }}
                 </h4>
-                <p class="font-sans text-[10px] text-muted-foreground/90 mt-1 line-clamp-2">
+                <p
+                  class="font-sans text-[10px] text-muted-foreground/90 mt-1 line-clamp-2"
+                >
                   {{ session.description }}
                 </p>
-                <div class="flex items-center justify-between text-[9px] tracking-wider text-primary mt-3 border-t border-border/20 pt-2.5 uppercase font-bold">
+                <div
+                  class="flex items-center justify-between text-[9px] tracking-wider text-primary mt-3 border-t border-border/20 pt-2.5 uppercase font-bold"
+                >
                   <span>{{ session.price }}</span>
                   <span>View Details</span>
                 </div>

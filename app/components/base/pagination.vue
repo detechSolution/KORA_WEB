@@ -16,7 +16,8 @@ const emit = defineEmits(["update:page"]);
 const totalPages = computed(() => Math.ceil(props.total / props.itemsPerPage));
 
 const rangeStart = computed(() => {
-  if (props.total === 0) return 0;
+  if (props.total === 0)
+    return 0;
   return (props.page - 1) * props.itemsPerPage + 1;
 });
 
@@ -49,7 +50,7 @@ function onPageChange(value: number): void {
       :disabled="props.disabled"
       variant="outline"
       color="neutral"
-      active-color="secondary"
+      active-color="primary"
       active-variant="solid"
       size="sm"
       :sibling-count="2"

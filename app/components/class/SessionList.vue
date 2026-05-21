@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed, watch } from "vue";
+import { usePagination } from "~/composables/use-pagination";
 
 const props = defineProps({
   sessions: {
-    type: Array as () => any[],
+    type: { data: [], meta: {} } as any,
     required: true,
   },
 });
@@ -11,17 +12,50 @@ const props = defineProps({
 // Mock pagination pages
 const pages = [1, 2, 3, 4];
 const activePage = ref(1);
+
+const { pagination, resetPagination } = usePagination(2);
+
+// Watch for changes in sessions prop (e.g., filter changed) to reset page to 1
+watch(
+  () => props.sessions,
+  () => {
+    resetPagination();
+  },
+  { deep: true }
+);
+
+// Compute the slice of sessions to display based on the active page
+const paginatedSessions = computed(() => {
+  const start = (pagination.value.page - 1) * pagination.value.pageSize;
+  const end = start + pagination.value.pageSize;
+  return props.sessions.data.slice(start, end);
+});
+
+const emit = defineEmits(["loadSessionList"]);
 </script>
 
 <template>
-  <div class="bg-background dark:bg-secondary-900 w-full px-4 md:px-8 lg:px-12 py-6 select-none relative z-10">
+  <div
+    class="bg-background dark:bg-secondary-900 w-full px-4 md:px-8 lg:px-12 py-6 select-none relative z-10"
+  >
     <div class="max-w-400 mx-auto flex flex-col gap-2">
       <!-- Session Cards List -->
-      <div v-if="sessions.length !== 0" class="flex flex-col gap-6">
+      <div v-if="sessions.data.length !== 0" class="flex flex-col gap-6">
         <ClassSessionCard
-          v-for="session in sessions"
+          v-for="session in paginatedSessions"
           :key="session.id"
           :session="session"
+        />
+        <base-pagination
+          :page="pagination.page"
+          :total="sessions?.meta?.total"
+          :items-per-page="pagination.pageSize"
+          @update:page="
+            (v) => {
+              pagination.page = v;
+              emit('loadSessionList');
+            }
+          "
         />
       </div>
 
