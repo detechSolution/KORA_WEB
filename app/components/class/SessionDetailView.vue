@@ -173,9 +173,21 @@ const isPlayingVideo = ref(false);
                 <p class="text-sm text-foreground">{{ session.location }}</p>
               </div>
             </div>
+
+            <div class="mt-8 flex justify-between items-center">
+              <span
+                for="seats-left"
+                class="text-xs uppercase font-semibold block"
+              >
+                Seats Left
+              </span>
+              <span class="text-primary text-xs">12 / 19</span>
+            </div>
+            <UProgress v-model="session.id" class="mt-2" />
           </div>
         </div>
 
+        <!-- Book Your Spot Section -->
         <aside class="sticky lg:top-28 lg:self-start">
           <div class="border border-border bg-card">
             <div class="px-5 py-5 md:px-6">
