@@ -31,7 +31,7 @@ const isPlayingVideo = ref(false);
       <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-12">
         <div>
           <ClassHeader :title="session.title" />
-          <div class="max-w-4xl px-4 md:px-8 lg:px-12 py-10 md:py-7">
+          <div class="max-w-400 px-4 md:px-8 lg:px-12 py-10 md:py-7">
             <div class="space-y-5 text-sm md:text-[15px] leading-7">
               <p v-for="paragraph in session.overview" :key="paragraph">
                 {{ paragraph }}
@@ -70,11 +70,7 @@ const isPlayingVideo = ref(false);
             </div>
 
             <div class="mt-12">
-              <p
-                class="text-[10px] md:text-xs uppercase tracking-[0.32em] text-primary/70 font-semibold mb-4"
-              >
-                Feature Visual
-              </p>
+              <base-section-label label="Feature Video" align="left" class="mb-2" />
               <div
                 v-if="!isPlayingVideo"
                 class="relative overflow-hidden group cursor-pointer"
@@ -188,7 +184,7 @@ const isPlayingVideo = ref(false);
         </div>
 
         <!-- Book Your Spot Section -->
-        <aside class="sticky lg:top-28 lg:self-start">
+        <aside class="sticky lg:top-28 lg:self-start px-4 md:px-8 lg:px-0">
           <div class="border border-border bg-card">
             <div class="px-5 py-5 md:px-6">
               <p
@@ -208,7 +204,7 @@ const isPlayingVideo = ref(false);
 
             <div class="px-5 py-5 md:px-6 space-y-4 flex flex-col items-center">
               <div
-                class="border border-border bg-[#c9a55a]/10 dark:bg-[#2A2722] px-4 py-4 space-y-3"
+                class="w-full border border-border bg-[#c9a55a]/10 dark:bg-[#2A2722] px-4 py-4 space-y-3"
               >
                 <div class="flex gap-3 text-sm">
                   <UIcon
@@ -219,9 +215,8 @@ const isPlayingVideo = ref(false);
                     <p class="text-[10px] text-secondary-400 mb-1">
                       Session Starting Date & Time
                     </p>
-                    <p class="text-foreground">
-                      {{ session.date }} {{ session.time }}
-                      {{ session.location }}
+                    <p class="text-foreground font-medium">
+                      {{ session.date }} • {{ session.time }} • {{ session.location }}
                     </p>
                   </div>
                 </div>
