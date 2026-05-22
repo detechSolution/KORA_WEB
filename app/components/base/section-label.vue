@@ -17,7 +17,7 @@ defineProps<{
     <!-- Left line -->
     <div
       v-if="align !== 'left'"
-      class="flex-1 h-px bg-border"
+      class="flex-1 h-px border border-border"
     />
 
     <!-- Text -->
