@@ -18,7 +18,7 @@ const isPlayingVideo = ref(false);
     class="relative bg-background dark:bg-secondary-900 text-foreground dark:text-white transition-colors duration-300 w-full"
   >
     <div
-      class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 xl:w-90 -translate-y-12"
+      class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 xl:w-50 aspect-square z-10 -translate-y-12 "
     >
       <img
         :src="IMAGES.LEAF"

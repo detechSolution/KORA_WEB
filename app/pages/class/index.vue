@@ -38,16 +38,16 @@ const filteredSessions = computed(() => {
 
 <template>
   <div
-    class="relative w-full bg-background dark:bg-secondary-900 text-[#f4f3f1] min-h-screen pb-16 flex flex-col transition-colors duration-300 overflow-hidden"
+    class="relative w-full bg-background dark:bg-secondary-900 text-[#f4f3f1] min-h-screen pb-16 flex flex-col transition-colors duration-300"
   >
     <!-- Premium absolute-positioned foliage watermark overlay -->
     <div
-      class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 xl:w-90 aspect-square pointer-events-none select-none z-10000 translate-x-25 -translate-y-12 rotate-[20deg]"
+      class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 xl:w-50 aspect-square z-100 -translate-y-12 "
     >
       <img
         :src="IMAGES.LEAF"
         alt="Kora foliage decoration"
-        class="w-full h-full object-contain"
+        class="w-full h-full object-cover"
       />
     </div>
 

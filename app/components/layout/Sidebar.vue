@@ -36,7 +36,7 @@ const menuItems = [
   { name: "Wellness", path: "/wellness", num: "07", sub: "Holistic Health Coaching & Mindfulness" },
   { name: "Schedules", path: "/schedules", num: "08", sub: "Daily Schedules & Dynamic Programs Calendar" },
   { name: "Membership", path: "/membership", num: "09", sub: "Private Club, Amenities & Collective Benefits" },
-  { name: "Spa Sanctuary", path: "/spa-sanctuary", num: "10", sub: "Thermal Hydrotherapy Suites & Treatments" },
+  { name: "Spa Sanctuary", path: "/spa", num: "10", sub: "Thermal Hydrotherapy Suites & Treatments" },
   { name: "Inquire For Residency", path: "/inquire", num: "11", sub: "Bespoke Long-Term Sanctuary Villa Living" },
 ];
 
