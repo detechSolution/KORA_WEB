@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 import { IMAGES } from "~/utils/images";
 import { sessionCollection } from "~/data/sessions";
 
@@ -11,14 +11,6 @@ useSeoMeta({
   title: "Kora | Session Offerings",
   description:
     "Explore curated restorative wellness sessions, mindfulness group classes, sound baths, and therapeutic bodywork offerings.",
-});
-
-const colorMode = useColorMode();
-
-onMounted(() => {
-  if (colorMode.value !== "dark") {
-    colorMode.preference = "dark";
-  }
 });
 
 const activeFilter = ref("all");
