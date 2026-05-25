@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import { useSlots } from "vue";
 type Props = {
   label?: string;
   title: string;
 };
 
 defineProps<Props>();
+
+const slots = useSlots();
 </script>
 <template>
   <div
@@ -28,10 +31,10 @@ defineProps<Props>();
       <div class="h-px w-full border-b border-border mt-8" />
 
       <!-- Description -->
-      <div class="mt-8">
+      <div v-if="slots.default" class="mt-8">
         <slot />
+        <div class="h-px w-full border-b border-border mt-8" />
       </div>
-      <div class="h-px w-full border-b border-border mt-8" />
     </div>
   </div>
 </template>
