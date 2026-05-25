@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { IMAGES } from "~/utils/images";
 import { recoveryOfferings } from "~/data/recovery";
+import { wellnessOfferings } from "~/data/wellness";
+import ClassHeader from "~/components/class/ClassHeader.vue";
 
 definePageMeta({
   layout: "default",
@@ -19,17 +21,17 @@ useSeoMeta({
   >
     <!-- Hero Section -->
     <div class="relative mb-16">
-      <class-header label="" title="Recovery">
+      <class-header label="" title="Wellness">
         <p
           class="text-muted-foreground font-light text-sm md:text-base leading-relaxed text-justify"
         >
-          Kora's recovery spaces are thoughtfully designed environments that
-          support rest, restoration, and mindful well-being. Blending calming
-          aesthetics with evidence-based wellness practices, these spaces offer
-          services such as guided relaxation, therapeutic treatments, and
-          mindful recovery techniques. Each session invites individuals to
-          disconnect from daily stress, recharge physically and mentally, and
-          return to their routines with renewed balance and energy.
+          Kora’s wellness spaces and services are thoughtfully curated to
+          support recovery, balance, and overall well-being. From restorative
+          heat therapies and invigorating cold plunges to calming hydro
+          experiences and mindful relaxation areas, each offering is designed to
+          help the body recover and the mind reset. With a focus on comfort,
+          simplicity, and holistic care, Kora creates an environment where
+          wellness feels natural, accessible, and deeply restorative.
         </p>
       </class-header>
 
@@ -44,9 +46,9 @@ useSeoMeta({
       </div>
     </div>
 
-    <!-- Dynamic Recovery Offerings -->
+    <!-- Dynamic Wellness Offerings -->
     <section
-      v-for="(offering, index) in recoveryOfferings"
+      v-for="(offering, index) in wellnessOfferings"
       :key="offering.id"
       class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden"
     >

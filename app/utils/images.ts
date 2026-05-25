@@ -27,4 +27,14 @@ export const IMAGES = {
   RECOVERY_JACUZZI: "/images/recovery/jacuzzi.png",
   RECOVERY_SAUNA: "/images/recovery/sauna.png",
   RECOVERY_SWIMMING_POOL: "/images/recovery/swimming_pool.png",
+
+  // WELLNESS SECTION
+  WELLNESS_CLASS: "/images/wellness/classes.png",
+  WELLNESS_SPACE: "/images/wellness/space.png",
+
+  // NUTRITION SECTION
+  NUTRITION_FOOD: "/images/nutrition/nutrition.png",
+  NUTRITION_CAFE: "/images/nutrition/cafe.png",
+  NUTRITION_PHILOSOPHY: "/images/nutrition/philosophy.png",
+  NUTRITION_FUNCTIONAL: "/images/nutrition/functional.png",
 };

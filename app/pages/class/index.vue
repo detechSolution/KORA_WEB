@@ -49,6 +49,14 @@ const filteredSessions = computed(() => {
         alt="Kora foliage decoration"
         class="w-full h-full object-cover"
       />
+    </div><div
+      class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 xl:w-50 aspect-square z-100 -translate-y-12 "
+    >
+      <img
+        :src="IMAGES.LEAF"
+        alt="Kora foliage decoration"
+        class="w-full h-full object-cover"
+      />
     </div>
 
     <ClassHeader label="Upcoming Sessions" title="Session Details"/>

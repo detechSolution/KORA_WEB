@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { IMAGES } from "~/utils/images";
 import { recoveryOfferings } from "~/data/recovery";
+import { wellnessOfferings } from "~/data/wellness";
+import { nutritionOfferings } from "~/data/nutrition";
 
 definePageMeta({
   layout: "default",
 });
 
 useSeoMeta({
-  title: "Kora | Recovery",
+  title: "Kora | Nutrition",
   description:
-    "Kora's recovery spaces are thoughtfully designed environments that support rest, restoration, and mindful well-being.",
+    "Kora's nutrition philosophy centers on nourishing the body with wholesome, balanced meals that support overall health and well-being.",
 });
 </script>
 
@@ -19,17 +21,18 @@ useSeoMeta({
   >
     <!-- Hero Section -->
     <div class="relative mb-16">
-      <class-header label="" title="Recovery">
+      <class-header label="" title="Nutrition">
         <p
           class="text-muted-foreground font-light text-sm md:text-base leading-relaxed text-justify"
         >
-          Kora's recovery spaces are thoughtfully designed environments that
-          support rest, restoration, and mindful well-being. Blending calming
-          aesthetics with evidence-based wellness practices, these spaces offer
-          services such as guided relaxation, therapeutic treatments, and
-          mindful recovery techniques. Each session invites individuals to
-          disconnect from daily stress, recharge physically and mentally, and
-          return to their routines with renewed balance and energy.
+          Kora's nutrition philosophy centers on nourishing the body with
+          wholesome, balanced meals that support overall health and well-being.
+          Our culinary offerings are crafted with a focus on fresh, seasonal
+          ingredients, thoughtfully prepared to provide both flavor and
+          nourishment. Whether you're seeking a light, energizing meal or a
+          hearty, restorative dish, Kora's nutrition options are designed to
+          complement your wellness journey and fuel your body for optimal
+          performance and recovery.
         </p>
       </class-header>
 
@@ -44,9 +47,9 @@ useSeoMeta({
       </div>
     </div>
 
-    <!-- Dynamic Recovery Offerings -->
+    <!-- Dynamic Nutrition Offerings -->
     <section
-      v-for="(offering, index) in recoveryOfferings"
+      v-for="(offering, index) in nutritionOfferings"
       :key="offering.id"
       class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden"
     >
