@@ -15,7 +15,7 @@ type Props = {
   to?: string | RouteLocationAsRelativeGeneric | RouteLocationAsPathGeneric;
   type?: "button" | "submit" | "reset";
   size?: "sm" | "md" | "lg" | "xl";
-  color?: "primary";
+  color?: "primary" | "error";
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -37,7 +37,7 @@ const getStyles = computed(() => {
       case "solid":
         return "bg-primary-700 dark:bg-primary-700 hover:bg-primary-700/75 active:bg-primary-700/75 disabled:bg-primary-700 disabled:dark:bg-primary-700 text-white";
       case "outline":
-        return "border border-primary-700 dark:border-primary-700 hover:ring-0 text-primary-700 dark:text-primary-700 bg-primary/15 dark:bg-primary/15 hover:bg-primary/20 dark:hover:text-primary-700 disabled:bg-transparent";
+        return "border border-primary-700 dark:border-primary-700 text-primary-700 dark:text-primary-700 bg-[#C9A55A1A] dark:bg-transparent hover:bg-[#C9A55A1A]/50 dark:hover:text-primary-700 disabled:bg-transparent";
       case "ghost":
         return "bg-transparent hover:bg-primary/10 disabled:bg-transparent";
       case "link":

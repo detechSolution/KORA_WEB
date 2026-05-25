@@ -5,6 +5,7 @@
   --card-foreground: rgb(24, 24, 27);
   --popover: rgb(255, 255, 255);
   --popover-foreground: rgb(24, 24, 27);
+  --nirvana-mist: rgba(244, 241, 237, 1);
 
   --primary-900: rgb(150, 111, 51); /* #966F33 */
   --primary-800: rgb(160, 125, 71); /* #A07D47 */
@@ -168,6 +169,7 @@
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
+  --color-nirvana-mist: var(--nirvana-mist);
 
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
