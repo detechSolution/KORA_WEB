@@ -21,4 +21,10 @@ export const IMAGES = {
   // OFFERINGS SECTION
   OFFERINGS_MEMBERSHIP: "/images/hero/offerings_memberships.png",
   OFFERINGS_SESSIONS: "/images/hero/offerings_sessions.png",
+
+  // RECOVERY SECTION
+  RECOVERY_COLD_PLUNGE: "/images/recovery/cold_plunge.png",
+  RECOVERY_JACUZZI: "/images/recovery/jacuzzi.png",
+  RECOVERY_SAUNA: "/images/recovery/sauna.png",
+  RECOVERY_SWIMMING_POOL: "/images/recovery/swimming_pool.png",
 };
