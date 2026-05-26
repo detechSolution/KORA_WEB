@@ -53,11 +53,23 @@ const close = () => {
 
 const currentStep = ref(0);
 
-const form = ref({
-  fullName: "Shyam Shrestha",
-  phone: "9845738746",
-  email: "shyam@gmail.com",
-});
+const guests = ref([
+  {
+    fullName: "Shyam Shrestha",
+    phone: "9845738746",
+    email: "shyam@gmail.com",
+  },
+]);
+
+const addGuest = () => {
+  guests.value.push({ fullName: "", phone: "", email: "" });
+};
+
+const removeGuest = (index: number) => {
+  if (guests.value.length > 1) {
+    guests.value.splice(index, 1);
+  }
+};
 
 const previousStep = () => {
   currentStep.value = 0;
@@ -83,6 +95,7 @@ const proceedToCheckout = () => {
     :open="isOpen"
     @close="close"
     :modal-width="700"
+    modal-max-height="90vh"
     :dismissible="true"
     class="dark:bg-nirvana-mist"
   >
@@ -109,43 +122,57 @@ const proceedToCheckout = () => {
             </p>
           </div>
 
-          <div class="w-full h-[1px] bg-border/40 mb-8"></div>
+          <div class="w-full h-px bg-border/40 mb-8"></div>
 
-          <div class="flex flex-col gap-6">
-            <base-input
-              v-model="form.fullName"
-              name="fullName"
-              label="FULL NAME *"
-              type="text"
-              class="bg-white dark:bg-transparent"
-            />
+          <div class="flex flex-col gap-6 mb-8">
+            <div v-for="(guest, index) in guests" :key="index" class="flex flex-col gap-6 relative">
+              <div v-if="index > 0" class="w-full h-1px bg-border/40 mt-2 mb-2"></div>
+              
+              <div class="flex items-center justify-between">
+                <h4 v-if="index > 0" class="text-sm font-serif text-[#A08860]">Guest {{ index + 1 }}</h4>
+                <button
+                  v-if="guests.length > 1"
+                  @click="removeGuest(index)"
+                  class="text-xs text-red-800 hover:text-red-600 transition-colors flex items-center gap-1 absolute right-0 top-2"
+                >
+                  <UIcon name="i-lucide-trash-2" class="w-3.5 h-3.5" /> Remove
+                </button>
+              </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <base-input
-                v-model="form.phone"
-                name="phone"
-                label="PHONE NUMBER"
+                v-model="guest.fullName"
+                :name="`fullName_${index}`"
+                label="FULL NAME *"
                 type="text"
                 class="bg-white dark:bg-transparent"
               />
-              <base-input
-                v-model="form.email"
-                name="email"
-                label="EMAIL ADDRESS *"
-                type="email"
-                class="bg-white dark:bg-transparent"
-              />
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <base-input
+                  v-model="guest.phone"
+                  :name="`phone_${index}`"
+                  label="PHONE NUMBER"
+                  type="text"
+                  class="bg-white dark:bg-transparent"
+                />
+                <base-input
+                  v-model="guest.email"
+                  :name="`email_${index}`"
+                  label="EMAIL ADDRESS *"
+                  type="email"
+                  class="bg-white dark:bg-transparent"
+                />
+              </div>
             </div>
 
             <base-button
+              @click="addGuest"
               variant="outline"
-              class="w-full border-[#A08860] text-[#A08860] hover:bg-[#A08860]/10 uppercase text-[11px] tracking-widest font-bold h-12 mt-2"
+              class="w-full border-[#A08860] text-[#A08860] hover:bg-[#A08860]/10 uppercase text-[11px] tracking-widest font-bold h-12 mt-4"
             >
               ADD GUEST +
             </base-button>
           </div>
-
-          <div class="w-full h-[1px] bg-border/40 mt-10 mb-8"></div>
 
           <div class="flex justify-end">
             <base-button
