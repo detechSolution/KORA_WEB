@@ -25,7 +25,7 @@ const emit = defineEmits<{
     dismissible
     @close="emit('close')"
   >
-    <div class="flex flex-col gap-5 p-6">
+    <div class="flex flex-col gap-5">
       <p class="text-sm text-secondary-500">
         You will need to sign in again to access your profile and bookings.
       </p>
@@ -39,7 +39,7 @@ const emit = defineEmits<{
           variant="solid"
           :loading="loading"
           :disabled="loading"
-          class="cursor-pointer font-semibold w-full bg-red-700 dark:bg-red-800 hover:bg-red-700/75 dark:hover:bg-red-800/75 text-white"
+          class="cursor-pointer font-semibold w-full bg-red-900 dark:bg-red-900 hover:bg-red-900/75 dark:hover:bg-red-900/75 text-white"
           @click="emit('confirm')"
         >
           Sign Out

@@ -12,6 +12,27 @@ export default defineAppConfig({
         last: "rounded-xs min-w-9 h-9 bg-transparent hover:bg-primary/10 disabled:bg-transparent ring-secondary-200 dark:ring-secondary-700 flex items-center justify-center",
       },
     },
+    progress: {
+      slots: {
+        base: "bg-secondary-50",
+      },
+      variants: {
+        color: {
+          emerald: {
+            indicator: "bg-emerald-800",
+            steps: "text-emerald-800",
+          },
+          purple: {
+            indicator: "bg-purple-800",
+            steps: "text-purple-800",
+          },
+          blue: {
+            indicator: "bg-blue-800",
+            steps: "text-blue-800",
+          },
+        },
+      },
+    },
   },
   safelist: [
     "min-w-[150px]",

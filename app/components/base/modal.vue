@@ -54,11 +54,12 @@ const ui = computed(() => {
     : "";
   return {
     content: contentBase + contentHeight,
-    header: "flex items-center justify-center p-6 pb-0 shrink-0 border-none",
+    header: "flex items-center justify-center sm:p-8 pb-0 shrink-0 border-none",
     close:
       "hover:bg-muted hover:text-foreground text-muted-foreground cursor-pointer rounded-md p-2",
-    title: "text-3xl text-center flex justify-center text-foreground dark:text-primary",
-    body: "p-0 sm:p-0",
+    title: "font-serif text-3xl text-center flex justify-center text-foreground dark:text-white",
+    body: "sm:p-8 sm:pt-0",
+    overlay: "bg-secondary/60 dark:bg-secondary/60",
   };
 });
 </script>
