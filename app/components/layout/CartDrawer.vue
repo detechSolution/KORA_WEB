@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { ICONS } from "~/config/icons";
+import { cartItems } from "~/data/cart";
 
 const props = defineProps({
   isOpen: {
@@ -15,63 +16,6 @@ const close = () => {
   emit("close");
 };
 
-// Mock cart items based on the provided screenshot
-const cartItems = ref([
-  {
-    id: 1,
-    title: "Hot Flow Yoga",
-    type: "Session",
-    price: 500,
-    date: "April 23, 2026",
-    time: "08:00 AM - 09:00 AM",
-    location: "Club Kora",
-    image: "/images/cart/yoga.png",
-  },
-  {
-    id: 2,
-    title: "Oil Massage - 1 Hours",
-    type: "Spa",
-    price: 1500,
-    date: "April 23, 2026",
-    time: "08:00 AM - 09:00 AM",
-    image: "/images/cart/massage.png",
-  },
-  {
-    id: 3,
-    title: "3-Day Pass",
-    type: "Pass",
-    price: 1000,
-    discountText: "10% discount on various services and spaces",
-  },
-  {
-    id: 4,
-    title: "Kora Premium",
-    type: "Membership",
-    price: 1000,
-    date: "April 23, 2026 - April 24, 2027",
-  },
-  {
-    id: 4,
-    title: "Kora Premium",
-    type: "Membership",
-    price: 1000,
-    date: "April 23, 2026 - April 24, 2027",
-  },
-  {
-    id: 4,
-    title: "Kora Premium",
-    type: "Membership",
-    price: 1000,
-    date: "April 23, 2026 - April 24, 2027",
-  },
-  {
-    id: 4,
-    title: "Kora Premium",
-    type: "Membership",
-    price: 1000,
-    date: "April 23, 2026 - April 24, 2027",
-  },
-]);
 
 const totalPrice = computed(() => {
   return cartItems.value.reduce((total, item) => total + item.price, 0);
@@ -258,7 +202,7 @@ const removeItem = (id: number) => {
             }}</span>
           </div>
 
-          <base-button class="w-full"> Proceed to Checkout </base-button>
+          <base-button to="/checkout" @click="close" class="w-full"> Proceed to Checkout </base-button>
         </div>
       </template>
     </div>
