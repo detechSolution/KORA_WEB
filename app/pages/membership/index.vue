@@ -58,6 +58,16 @@ const openPassModal = (pass: any) => {
   selectedPass.value = pass;
   isPassModalOpen.value = true;
 };
+
+const isMembershipModalOpen = ref(false);
+const selectedMembershipTier = ref<any>(null);
+const selectedMembershipPrice = ref<string>("");
+
+const openMembershipModal = (tier: any) => {
+  selectedMembershipTier.value = tier;
+  selectedMembershipPrice.value = getPrice(tier.id);
+  isMembershipModalOpen.value = true;
+};
 </script>
 
 <template>
@@ -218,10 +228,10 @@ const openPassModal = (pass: any) => {
 
         <!-- Action Button -->
         <div class="mt-6 pt-4">
-          <base-button v-if="tier.isPopular" class="w-full">
+          <base-button v-if="tier.isPopular" @click="openMembershipModal(tier)" class="w-full">
             {{ tier.buttonText }}
           </base-button>
-          <base-button v-else variant="outline" class="w-full">
+          <base-button v-else @click="openMembershipModal(tier)" variant="outline" class="w-full">
             {{ tier.buttonText }}
           </base-button>
         </div>
@@ -293,6 +303,15 @@ const openPassModal = (pass: any) => {
       :is-open="isPassModalOpen"
       :pass="selectedPass"
       @close="isPassModalOpen = false"
+    />
+
+    <MembershipBookingModal
+      v-if="selectedMembershipTier"
+      :is-open="isMembershipModalOpen"
+      :membership="selectedMembershipTier"
+      :period="activePeriod"
+      :price="selectedMembershipPrice"
+      @close="isMembershipModalOpen = false"
     />
   </div>
 </template>
