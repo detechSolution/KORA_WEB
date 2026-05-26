@@ -50,6 +50,14 @@ const getIcon = (tierId: string) => {
   if (tierId === "executive") return "i-lucide-crown";
   return "i-lucide-check";
 };
+
+const isPassModalOpen = ref(false);
+const selectedPass = ref<any>(null);
+
+const openPassModal = (pass: any) => {
+  selectedPass.value = pass;
+  isPassModalOpen.value = true;
+};
 </script>
 
 <template>
@@ -274,11 +282,18 @@ const getIcon = (tierId: string) => {
         </div>
 
         <!-- Button -->
-        <base-button variant="outline">
+        <base-button @click="openPassModal(pass)" variant="outline">
           {{ pass.buttonText }}
         </base-button>
       </div>
     </div>
+    
+    <MembershipPassBookingModal
+      v-if="selectedPass"
+      :is-open="isPassModalOpen"
+      :pass="selectedPass"
+      @close="isPassModalOpen = false"
+    />
   </div>
 </template>
 
