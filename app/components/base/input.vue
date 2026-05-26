@@ -39,6 +39,7 @@ type Props = {
   leadingIcon?: string;
   trailingIcon?: string;
   readonly?: boolean;
+  class?: string;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -49,6 +50,7 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   disabled: false,
   readonly: false,
+  class: "",
 });
 
 const emit = defineEmits(["update:modelValue"]);
@@ -75,6 +77,7 @@ function togglePasswordVisibility() {
     :name="props.name"
     :required="props.required"
     :ui="{
+      label: 'text-secondary-400',
       error: 'mt-1 text-red-500 text-xs',
     }"
   >
@@ -100,7 +103,7 @@ function togglePasswordVisibility() {
       :disabled="props.disabled"
       :readonly="props.readonly"
       variant="outline"
-      class="w-full"
+      :class="['w-full', props.class]"
       size="lg"
       :ui="{
         base: `bg-transparent ring-secondary-50 dark:ring-secondary-800 focus:ring-1 focus:outline-none placeholder:text-secondary-300 rounded-xs h-11`,

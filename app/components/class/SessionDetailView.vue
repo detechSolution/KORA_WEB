@@ -11,6 +11,7 @@ defineProps({
 });
 
 const isPlayingVideo = ref(false);
+const isBookingModalOpen = ref(false);
 </script>
 
 <template>
@@ -18,7 +19,7 @@ const isPlayingVideo = ref(false);
     class="relative bg-background dark:bg-secondary-900 text-foreground dark:text-white transition-colors duration-300 w-full"
   >
     <div
-      class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 xl:w-50 aspect-square z-10 -translate-y-12 "
+      class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 xl:w-50 aspect-square z-10 -translate-y-12"
     >
       <img
         :src="IMAGES.LEAF"
@@ -70,7 +71,11 @@ const isPlayingVideo = ref(false);
             </div>
 
             <div class="mt-12">
-              <base-section-label label="Feature Video" align="left" class="mb-2" />
+              <base-section-label
+                label="Feature Video"
+                align="left"
+                class="mb-2"
+              />
               <div
                 v-if="!isPlayingVideo"
                 class="relative overflow-hidden group cursor-pointer"
@@ -216,14 +221,15 @@ const isPlayingVideo = ref(false);
                       Session Starting Date & Time
                     </p>
                     <p class="text-foreground font-medium">
-                      {{ session.date }} • {{ session.time }} • {{ session.location }}
+                      {{ session.date }} • {{ session.time }} •
+                      {{ session.location }}
                     </p>
                   </div>
                 </div>
               </div>
 
               <base-button
-                to="/membership"
+                @click="isBookingModalOpen = true"
                 variant="solid"
                 color="primary"
                 class="w-full text-sm uppercase"
@@ -231,13 +237,19 @@ const isPlayingVideo = ref(false);
                 Book This Session
               </base-button>
 
-              <span class="text-secondary-400 text-xs"
-                >No instant payment required to reserve</span
-              >
+              <span class="text-secondary-400 text-xs">
+                No instant payment required to reserve
+              </span>
             </div>
           </div>
         </aside>
       </div>
     </div>
+
+    <ClassSessionBookingModal
+      :is-open="isBookingModalOpen"
+      :session="session"
+      @close="isBookingModalOpen = false"
+    />
   </section>
 </template>

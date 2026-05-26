@@ -5,4 +5,5 @@ export const ICONS = {
   SUN: "i-lucide-sun",
   EYE: "i-lucide-eye",
   EYE_OFF: "i-lucide-eye-off",
+  CHECK: "i-lucide-check",
 };
