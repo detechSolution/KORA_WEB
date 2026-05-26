@@ -1,0 +1,266 @@
+<script setup lang="ts">
+import { ref, computed } from "vue";
+import { ICONS } from "~/config/icons";
+
+const props = defineProps({
+  isOpen: {
+    type: Boolean,
+    required: true,
+  },
+});
+
+const emit = defineEmits(["close"]);
+
+const close = () => {
+  emit("close");
+};
+
+// Mock cart items based on the provided screenshot
+const cartItems = ref([
+  {
+    id: 1,
+    title: "Hot Flow Yoga",
+    type: "Session",
+    price: 500,
+    date: "April 23, 2026",
+    time: "08:00 AM - 09:00 AM",
+    location: "Club Kora",
+    image: "/images/cart/yoga.png",
+  },
+  {
+    id: 2,
+    title: "Oil Massage - 1 Hours",
+    type: "Spa",
+    price: 1500,
+    date: "April 23, 2026",
+    time: "08:00 AM - 09:00 AM",
+    image: "/images/cart/massage.png",
+  },
+  {
+    id: 3,
+    title: "3-Day Pass",
+    type: "Pass",
+    price: 1000,
+    discountText: "10% discount on various services and spaces",
+  },
+  {
+    id: 4,
+    title: "Kora Premium",
+    type: "Membership",
+    price: 1000,
+    date: "April 23, 2026 - April 24, 2027",
+  },
+  {
+    id: 4,
+    title: "Kora Premium",
+    type: "Membership",
+    price: 1000,
+    date: "April 23, 2026 - April 24, 2027",
+  },
+  {
+    id: 4,
+    title: "Kora Premium",
+    type: "Membership",
+    price: 1000,
+    date: "April 23, 2026 - April 24, 2027",
+  },
+  {
+    id: 4,
+    title: "Kora Premium",
+    type: "Membership",
+    price: 1000,
+    date: "April 23, 2026 - April 24, 2027",
+  },
+]);
+
+const totalPrice = computed(() => {
+  return cartItems.value.reduce((total, item) => total + item.price, 0);
+});
+
+const formatPrice = (price: number) => {
+  return new Intl.NumberFormat("en-IN").format(price);
+};
+
+const removeItem = (id: number) => {
+  cartItems.value = cartItems.value.filter((item) => item.id !== id);
+};
+</script>
+
+<template>
+  <base-drawer :open="isOpen" @close="close" :drawer-width="480">
+    <template #header>
+      <div
+        class="flex items-start justify-between p-8 pb-6 border-b border-border/20"
+      >
+        <div class="flex flex-col gap-2">
+          <h2 class="text-2xl font-serif text-foreground">Your Cart</h2>
+          <span
+            class="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold"
+          >
+            {{ cartItems.length }} ITEMS ADDED
+          </span>
+        </div>
+
+        <button
+          @click="close"
+          class="w-8 h-8 flex items-center justify-center border border-border/40 text-muted-foreground hover:text-foreground hover:border-border transition-colors duration-200"
+          aria-label="Close cart"
+        >
+          <span class="relative w-3 h-3 flex items-center justify-center">
+            <span
+              class="absolute h-[1px] w-full bg-current transform rotate-45"
+            ></span>
+            <span
+              class="absolute h-[1px] w-full bg-current transform -rotate-45"
+            ></span>
+          </span>
+        </button>
+      </div>
+    </template>
+
+    <div
+      v-if="cartItems.length === 0"
+      class="flex-1 flex flex-col items-center justify-center p-8 text-center gap-6 h-full min-h-[400px]"
+    >
+      <div
+        class="w-16 h-16 border border-border/40 flex items-center justify-center text-primary"
+      >
+        <UIcon name="i-lucide-shopping-bag" class="w-6 h-6" />
+      </div>
+      <div class="flex flex-col gap-3">
+        <h3 class="text-xl font-serif text-foreground">Your Cart is Empty</h3>
+        <p
+          class="text-xs text-muted-foreground max-w-[240px] mx-auto leading-relaxed"
+        >
+          Book sessions & spa or purchase membership & passes to begin your
+          ritual
+        </p>
+      </div>
+    </div>
+
+    <div v-else class="flex flex-col h-full">
+      <div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
+        <!-- Cart Items -->
+        <div
+          v-for="item in cartItems"
+          :key="item.id"
+          class="flex gap-4 pb-6 border-b border-border/10 last:border-0 last:pb-0"
+        >
+          <div
+            v-if="item.type === 'Session' || item.type === 'Spa'"
+            class="w-24 h-24 shrink-0 overflow-hidden relative"
+          >
+            <img
+              v-if="item.image"
+              :src="item.image"
+              :alt="item.title"
+              class="w-full h-full object-cover"
+            />
+          </div>
+          <div
+            v-else-if="item.type === 'Pass'"
+            class="w-24 h-24 border border-border/20 flex items-center justify-center shrink-0 text-primary/60"
+          >
+            <UIcon name="i-lucide-badge" class="w-8 h-8" />
+          </div>
+          <div
+            v-else-if="item.type === 'Membership'"
+            class="w-24 h-24 border border-border/20 flex items-center justify-center shrink-0 text-primary/60"
+          >
+            <UIcon name="i-lucide-star" class="w-8 h-8" />
+          </div>
+
+          <!-- Item Details -->
+          <div class="flex-1 flex flex-col pt-1">
+            <div class="flex justify-between items-start gap-4">
+              <div class="flex items-center gap-2">
+                <h4 class="text-sm font-serif text-foreground">
+                  {{ item.title }}
+                </h4>
+                <span
+                  v-if="item.type === 'Session'"
+                  class="text-[9px] px-1.5 py-0.5 bg-primary/20 text-primary font-medium tracking-wide"
+                  >Session</span
+                >
+                <span
+                  v-if="item.type === 'Spa'"
+                  class="text-[9px] px-1.5 py-0.5 bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
+                  >Spa</span
+                >
+                <span
+                  v-if="item.type === 'Pass'"
+                  class="text-[9px] px-1.5 py-0.5 bg-blue-900/40 text-blue-400 font-medium tracking-wide"
+                  >Pass</span
+                >
+                <span
+                  v-if="item.type === 'Membership'"
+                  class="text-[9px] px-1.5 py-0.5 bg-primary text-primary-foreground font-medium tracking-wide"
+                  >Membership</span
+                >
+              </div>
+              <span class="text-sm font-serif text-primary"
+                >Rs. {{ formatPrice(item.price) }}</span
+              >
+            </div>
+
+            <div class="mt-2 flex flex-col gap-1.5">
+              <div
+                v-if="item.date"
+                class="flex items-center gap-1.5 text-[10px] text-muted-foreground"
+              >
+                <UIcon name="i-lucide-calendar" class="w-3 h-3" />
+                <span>{{ item.date }}</span>
+              </div>
+              <div
+                v-if="item.time"
+                class="flex items-center gap-1.5 text-[10px] text-muted-foreground"
+              >
+                <UIcon name="i-lucide-clock" class="w-3 h-3" />
+                <span>{{ item.time }}</span>
+              </div>
+              <div
+                v-if="item.location"
+                class="flex items-center gap-1.5 text-[10px] text-muted-foreground"
+              >
+                <UIcon name="i-lucide-map-pin" class="w-3 h-3" />
+                <span>{{ item.location }}</span>
+              </div>
+              <div
+                v-if="item.discountText"
+                class="text-[10px] text-muted-foreground mt-1"
+              >
+                {{ item.discountText }}
+              </div>
+            </div>
+
+            <div class="mt-auto pt-3 flex justify-end">
+              <button
+                @click="removeItem(item.id)"
+                class="text-red-800 hover:text-red-700 transition-colors"
+                aria-label="Remove item"
+              >
+                <UIcon name="i-lucide-trash-2" class="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Drawer Footer (Total & Checkout) -->
+      <template v-if="cartItems.length > 0">
+        <div class="p-8 pb-4">
+          <div
+            class="flex items-center justify-between border-t border-border/20 pt-6 mb-8"
+          >
+            <span class="text-xl font-serif text-foreground">Total</span>
+            <span class="text-xl font-serif text-primary">{{
+              formatPrice(totalPrice)
+            }}</span>
+          </div>
+
+          <base-button class="w-full"> Proceed to Checkout </base-button>
+        </div>
+      </template>
+    </div>
+  </base-drawer>
+</template>

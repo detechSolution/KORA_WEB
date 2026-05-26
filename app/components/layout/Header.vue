@@ -28,8 +28,9 @@ const toggleColorMode = () => {
   isDark.value = !isDark.value;
 };
 
-// Sidebar visibility state
+// Sidebar and Cart visibility state
 const isSidebarOpen = ref(false);
+const isCartOpen = ref(false);
 
 // Scroll listener to toggle header background color on scroll
 const isScrolled = ref(false);
@@ -153,6 +154,7 @@ onUnmounted(() => {
 
         <!-- Cart Button -->
         <button
+          @click="isCartOpen = true"
           class="flex w-9 h-9 md:w-10 md:h-10 items-center justify-center border border-primary/40 text-primary hover:bg-primary/10 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
           title="Cart"
         >
@@ -186,5 +188,6 @@ onUnmounted(() => {
       </div>
     </div>
     <LayoutSidebar :is-open="isSidebarOpen" @close="isSidebarOpen = false" />
+    <LayoutCartDrawer :is-open="isCartOpen" @close="isCartOpen = false" />
   </header>
 </template>
