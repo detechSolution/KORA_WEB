@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { membershipTiers, passes, membershipPeriods } from "~/data/membership";
+import { useAuthStore } from "~/stores/auth";
 import { IMAGES } from "~/utils/images";
 
 definePageMeta({
@@ -12,6 +14,9 @@ useSeoMeta({
   description:
     "Choose your ritual and join Kora. Explore our membership tiers and specialized passes.",
 });
+
+const authStore = useAuthStore();
+const router = useRouter();
 
 const activePeriod = ref("MONTHLY");
 
@@ -55,8 +60,12 @@ const isPassModalOpen = ref(false);
 const selectedPass = ref<any>(null);
 
 const openPassModal = (pass: any) => {
-  selectedPass.value = pass;
-  isPassModalOpen.value = true;
+  if (authStore.isAuthenticated) {
+    selectedPass.value = pass;
+    isPassModalOpen.value = true;
+  } else {
+    router.push("/login");
+  }
 };
 
 const isMembershipModalOpen = ref(false);
@@ -64,9 +73,13 @@ const selectedMembershipTier = ref<any>(null);
 const selectedMembershipPrice = ref<string>("");
 
 const openMembershipModal = (tier: any) => {
-  selectedMembershipTier.value = tier;
-  selectedMembershipPrice.value = getPrice(tier.id);
-  isMembershipModalOpen.value = true;
+  if (authStore.isAuthenticated) {
+    selectedMembershipTier.value = tier;
+    selectedMembershipPrice.value = getPrice(tier.id);
+    isMembershipModalOpen.value = true;
+  } else {
+    router.push("/login");
+  }
 };
 </script>
 

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import type { PropType } from "vue";
+import { useRouter } from "vue-router";
 import type { SessionDetail } from "~/data/sessions";
+import { useAuthStore } from "~/stores/auth";
 
 defineProps({
   session: {
@@ -10,8 +12,19 @@ defineProps({
   },
 });
 
+const authStore = useAuthStore();
+const router = useRouter();
+
 const isPlayingVideo = ref(false);
 const isBookingModalOpen = ref(false);
+
+const handleOpenBookingModal = () => {
+  if (authStore.isAuthenticated) {
+    isBookingModalOpen.value = true;
+  } else {
+    router.push("/login");
+  }
+};
 </script>
 
 <template>
@@ -229,7 +242,7 @@ const isBookingModalOpen = ref(false);
               </div>
 
               <base-button
-                @click="isBookingModalOpen = true"
+                @click="handleOpenBookingModal"
                 variant="solid"
                 color="primary"
                 class="w-full text-sm uppercase"
