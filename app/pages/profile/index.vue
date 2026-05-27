@@ -2,6 +2,8 @@
 import { ref, computed } from "vue";
 import { IMAGES } from "~/utils/images";
 import { mockUser, mockBookings } from "~/data/profile";
+import { useAuthStore } from "~/stores/auth";
+import { useRouter } from "vue-router";
 
 definePageMeta({
   auth: true,
@@ -12,6 +14,9 @@ useSeoMeta({
   title: "Kora | Profile",
   description: "View and manage your Kora profile and bookings.",
 });
+
+const authStore = useAuthStore();
+const router = useRouter();
 
 const user = ref(mockUser);
 const bookings = ref(mockBookings);
@@ -41,6 +46,12 @@ const tabs = computed(() => {
     { id: "CANCELED", label: `CANCELED (${canceledCount})` },
   ];
 });
+
+function handleLogout(): void {
+  authStore.logout();
+  isSignOutModalOpen.value = false;
+  router.push({ name: "login" });
+}
 </script>
 
 <template>
@@ -368,7 +379,7 @@ const tabs = computed(() => {
     :open="isSignOutModalOpen"
     :loading="loadingSignOut"
     @close="isSignOutModalOpen = false"
-    @confirm="() => {}"
+    @confirm="handleLogout"
   />
 </template>
 

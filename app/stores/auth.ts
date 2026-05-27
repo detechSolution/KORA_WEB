@@ -185,6 +185,17 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
+  const loginWithGoogle = async () => {
+    const config = useRuntimeConfig();
+    const baseURL = config.public.apiBase;
+    try {
+      window.location.href = `${baseURL}${API_ENDPOINTS.AUTH.GOOGLE_LOGIN}`;
+    }
+    catch (error: unknown) {
+      throw error;
+    }
+  }
+
   const updatePassword = async (payload: { currentPassword: string; newPassword: string }): Promise<void> => {
     try {
       return await http.patch(API_ENDPOINTS.AUTH.UPDATE_PASSWORD, payload) as any;
@@ -248,6 +259,7 @@ export const useAuthStore = defineStore("auth", () => {
     checkAuth,
     checkAuthIfNeeded,
     login,
+    loginWithGoogle,
     logout,
     updatePassword,
     setUnAuthorizedError,

@@ -1,5 +1,6 @@
 export const API_ENDPOINTS = {
   AUTH: {
+    GOOGLE_LOGIN: "/api/v1/auth/member/google/login",
     LOGIN: "/api/v1/auth/admin/login",
     ME: "/api/v1/auth/me",
     REFRESH: "/api/v1/auth/refresh-token",

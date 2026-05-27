@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { IMAGES } from "~/utils/images";
+import { useAuthStore } from "~/stores/auth";
 
 definePageMeta({
   layout: false,
@@ -11,10 +12,24 @@ useSeoMeta({
   description: "Sign in to access your account and continue your experience.",
 });
 
+const authStore = useAuthStore();
+
+const loading = ref(false);
 const loginForm = reactive({
   email: "",
   password: "",
 });
+
+async function handleGoogleLogin(): Promise<void> {
+  try {
+    loading.value = true;
+    await authStore.loginWithGoogle();
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
+}
 </script>
 
 <template>
@@ -50,6 +65,7 @@ const loginForm = reactive({
         </p>
 
         <base-button
+          @click="handleGoogleLogin"
           class="w-full h-11 bg-[#252525] dark:bg-[#252525] border border-white/5 hover:bg-[#2A2A2A] font-medium text-[11px] mb-5"
         >
           <img :src="IMAGES.GOOGLE_LOGO" alt="Google" class="w-4 h-4" />
