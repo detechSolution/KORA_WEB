@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ICONS } from "~/config/icons";
+import { reactive } from "vue";
 import { IMAGES } from "~/utils/images";
 
 definePageMeta({
@@ -9,6 +9,11 @@ definePageMeta({
 useSeoMeta({
   title: "Kora | Login",
   description: "Sign in to access your account and continue your experience.",
+});
+
+const loginForm = reactive({
+  email: "",
+  password: "",
 });
 </script>
 
@@ -55,6 +60,7 @@ useSeoMeta({
 
         <form @submit.prevent class="flex flex-col gap-5">
           <base-input
+            v-model="loginForm.email"
             name="email"
             label="EMAIL ADDRESS"
             placeholder="Your email address"
@@ -63,6 +69,7 @@ useSeoMeta({
             class="bg-transparent"
           />
           <base-input
+            v-model="loginForm.password"
             name="password"
             label="PASSWORD"
             placeholder="Your Password"
