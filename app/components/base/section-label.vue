@@ -17,12 +17,12 @@ defineProps<{
     <!-- Left line -->
     <div
       v-if="align !== 'left'"
-      class="flex-1 h-px border border-border"
+      class="flex-1 h-px border border-border dark:border-secondary-800"
     />
 
     <!-- Text -->
     <span
-      class="md:text-sm uppercase text-primary-700 font-semibold whitespace-nowrap"
+      class="md:text-sm uppercase text-primary-700 dark:text-secondary-800 font-semibold whitespace-nowrap"
     >
       {{ label }}
     </span>
@@ -30,7 +30,7 @@ defineProps<{
     <!-- Right line -->
     <div
       v-if="align !== 'right'"
-      class="flex-1 h-px border border-border"
+      class="flex-1 h-px border border-border dark:border-secondary-800"
     />
   </div>
 </template>

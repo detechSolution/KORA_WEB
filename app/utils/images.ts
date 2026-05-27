@@ -1,4 +1,12 @@
 export const IMAGES = {
+  // LOGO
+  WHITE_LOGO: "/logo/kora_white_logo.svg",
+  BLACK_LOGO: "/logo/kora_black_logo.svg",
+
+  // LOGIN
+  LOGIN: "/images/login.png",
+  GOOGLE_LOGO: "/logo/google.png",
+
   LEAF: "/images/hero/plant_hero.png",
   MANIFESTO_BG: "/images/hero/manifesto_background.png",
 
