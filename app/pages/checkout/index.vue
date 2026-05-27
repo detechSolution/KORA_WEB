@@ -42,17 +42,18 @@ const formatPrice = (price: number) => {
   return new Intl.NumberFormat("en-IN").format(price);
 };
 
-const goToPayment = () => {
-  step.value = 2;
-};
 
 const goBack = () => {
   step.value = 1;
 };
 
-const payNow = () => {
-  console.log("Processing payment via:", paymentMethod.value);
-};
+async function handlePayNowClick() {
+  if(step.value === 1) {
+    step.value = 2;
+  } else {
+    console.log("Payment")
+  }
+}
 </script>
 
 <template>
@@ -64,212 +65,13 @@ const payNow = () => {
       <ClassHeader title="Checkout" label="Complete your booking" />
 
       <div
-        class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 px-4 md:px-8 lg:px-12"
+        class="grid grid-cols-1 lg:grid-cols-5 gap-x-12 gap-y-12 lg:gap-x-16 px-4 md:px-8 lg:px-12"
       >
         <!-- Left Column: Form / Payment -->
-        <div class="col-span-1 lg:col-span-7 flex flex-col">
-          <Transition name="fade" mode="out-in">
-            <!-- Step 1: Form -->
-            <div
-              v-if="step === 1"
-              class="flex flex-col gap-8 w-full"
-              key="step1"
-            >
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Full Name -->
-                <base-input
-                  v-model="form.fullName"
-                  name="fullName"
-                  label="FULL NAME"
-                  type="text"
-                />
-
-                <!-- Phone -->
-                <base-input
-                  v-model="form.phone"
-                  name="phone"
-                  label="PHONE"
-                  type="text"
-                />
-              </div>
-
-              <!-- Email -->
-              <base-input
-                v-model="form.email"
-                name="email"
-                label="EMAIL ADDRESS"
-                type="email"
-              />
-
-              <!-- Promo Code -->
-              <div class="flex flex-col gap-2 w-full">
-                <div class="flex items-end w-full gap-4">
-                  <div class="flex-1">
-                    <base-input
-                      v-model="form.promoCode"
-                      name="promoCode"
-                      label="PROMO CODE"
-                      placeholder="e.g KORA20"
-                      type="text"
-                    />
-                  </div>
-                  <base-button> APPLY </base-button>
-                </div>
-              </div>
-
-              <!-- Continue Button -->
-              <div class="flex justify-end mt-4">
-                <base-button
-                  @click="goToPayment"
-                  trailing-icon="i-lucide-arrow-right"
-                >
-                  CONTINUE TO PAYMENT
-                </base-button>
-              </div>
-            </div>
-
-            <!-- Step 2: Payment Method -->
-            <div v-else class="flex flex-col w-full" key="step2">
-              <div class="dark:bg-[#212121] border border-border p-6 flex items-center gap-3">
-                <UIcon name="i-lucide-wallet" class="w-4 h-4 text-[#B59A6D]" />
-                <span
-                  class="text-[10px] text-[#B59A6D] font-bold tracking-widest uppercase"
-                >
-                  CHOOSE A PAYMENT METHOD
-                </span>
-              </div>
-
-              <!-- Payment Options -->
-              <div class="dark:bg-[#212121] border border-t-0 border-border p-8">
-                <div class="flex flex-col sm:flex-row gap-8 sm:gap-16">
-                  <!-- eSewa -->
-                  <label class="flex items-center gap-3 cursor-pointer group">
-                    <div
-                      class="w-4 h-4 rounded-sm border border-border/40 flex items-center justify-center transition-colors"
-                      :class="
-                        paymentMethod === 'esewa'
-                          ? 'bg-[#B59A6D] border-[#B59A6D]'
-                          : 'group-hover:border-border'
-                      "
-                    >
-                      <UIcon
-                        v-if="paymentMethod === 'esewa'"
-                        name="i-lucide-check"
-                        class="w-3 h-3 text-white"
-                      />
-                    </div>
-                    <input
-                      type="radio"
-                      value="esewa"
-                      v-model="paymentMethod"
-                      class="hidden"
-                    />
-                    <!-- eSewa placeholder logo -->
-                    <div
-                      class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
-                    >
-                      <span
-                        class="text-[#60B54F] font-bold text-lg leading-none"
-                        >eSewa</span
-                      >
-                    </div>
-                  </label>
-
-                  <!-- Fonepay -->
-                  <label class="flex items-center gap-3 cursor-pointer group">
-                    <div
-                      class="w-4 h-4 rounded-sm border border-border/40 flex items-center justify-center transition-colors"
-                      :class="
-                        paymentMethod === 'fonepay'
-                          ? 'bg-[#B59A6D] border-[#B59A6D]'
-                          : 'group-hover:border-border'
-                      "
-                    >
-                      <UIcon
-                        v-if="paymentMethod === 'fonepay'"
-                        name="i-lucide-check"
-                        class="w-3 h-3 text-white"
-                      />
-                    </div>
-                    <input
-                      type="radio"
-                      value="fonepay"
-                      v-model="paymentMethod"
-                      class="hidden"
-                    />
-                    <!-- Fonepay placeholder logo -->
-                    <div
-                      class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
-                    >
-                      <span
-                        class="text-[#E31E24] font-bold text-lg leading-none"
-                        >fonepay</span
-                      >
-                    </div>
-                  </label>
-
-                  <!-- Stripe -->
-                  <label class="flex items-center gap-3 cursor-pointer group">
-                    <div
-                      class="w-4 h-4 rounded-sm border border-border/40 flex items-center justify-center transition-colors"
-                      :class="
-                        paymentMethod === 'stripe'
-                          ? 'bg-[#B59A6D] border-[#B59A6D]'
-                          : 'group-hover:border-border'
-                      "
-                    >
-                      <UIcon
-                        v-if="paymentMethod === 'stripe'"
-                        name="i-lucide-check"
-                        class="w-3 h-3 text-white"
-                      />
-                    </div>
-                    <input
-                      type="radio"
-                      value="stripe"
-                      v-model="paymentMethod"
-                      class="hidden"
-                    />
-                    <!-- Stripe placeholder logo -->
-                    <div
-                      class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
-                    >
-                      <span
-                        class="text-[#635BFF] font-bold text-lg leading-none"
-                        >stripe</span
-                      >
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              <!-- Action Buttons -->
-              <div class="flex justify-between mt-8">
-                <base-button
-                  @click="goBack"
-                  variant="outline"
-                  leading-icon="i-lucide-arrow-left"
-                  class="uppercase text-[11px] tracking-widest font-bold px-8 rounded-none border-border hover:border-primary-700"
-                >
-                  GO BACK
-                </base-button>
-
-                <base-button
-                  @click="payNow"
-                  trailing-icon="i-lucide-arrow-right"
-                  class="uppercase text-[11px] tracking-widest font-bold px-8 rounded-none"
-                >
-                  PAY NOW
-                </base-button>
-              </div>
-            </div>
-          </Transition>
-        </div>
-
-        <!-- Right Column: Order Summary -->
-        <div class="col-span-1 lg:col-span-5">
+         <div class="col-span-5 lg:col-span-3 flex flex-col gap-8">
           <div
-            class="border border-border rounded-xs bg-[#111111] dark:bg-[#1A1A1B] p-6 lg:p-8"
+            v-if="step === 1"
+            class="border border-border rounded-xs bg-card p-6 lg:p-8"
           >
             <div
               class="flex items-center gap-3 border-b border-border/10 pb-6 mb-6"
@@ -416,6 +218,227 @@ const payNow = () => {
               </div>
             </div>
           </div>
+            <!-- Step 2: Payment Method -->
+            <div v-else class="flex flex-col w-full" key="step2">
+              <div class="dark:bg-[#212121] border border-border p-6 flex items-center gap-3">
+                <UIcon name="i-lucide-wallet" class="w-4 h-4 text-[#B59A6D]" />
+                <span
+                  class="text-[10px] text-[#B59A6D] font-bold tracking-widest uppercase"
+                >
+                  CHOOSE A PAYMENT METHOD
+                </span>
+              </div>
+
+              <!-- Payment Options -->
+              <div class="dark:bg-[#212121] border border-t-0 border-border p-8">
+                <div class="flex flex-col sm:flex-row gap-8 sm:gap-16">
+                  <!-- eSewa -->
+                  <label class="flex items-center gap-3 cursor-pointer group">
+                    <div
+                      class="w-4 h-4 rounded-sm border border-border/40 flex items-center justify-center transition-colors"
+                      :class="
+                        paymentMethod === 'esewa'
+                          ? 'bg-[#B59A6D] border-[#B59A6D]'
+                          : 'group-hover:border-border'
+                      "
+                    >
+                      <UIcon
+                        v-if="paymentMethod === 'esewa'"
+                        name="i-lucide-check"
+                        class="w-3 h-3 text-white"
+                      />
+                    </div>
+                    <input
+                      type="radio"
+                      value="esewa"
+                      v-model="paymentMethod"
+                      class="hidden"
+                    />
+                    <!-- eSewa placeholder logo -->
+                    <div
+                      class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
+                    >
+                      <span
+                        class="text-[#60B54F] font-bold text-lg leading-none"
+                        >eSewa</span
+                      >
+                    </div>
+                  </label>
+
+                  <!-- Fonepay -->
+                  <label class="flex items-center gap-3 cursor-pointer group">
+                    <div
+                      class="w-4 h-4 rounded-sm border border-border/40 flex items-center justify-center transition-colors"
+                      :class="
+                        paymentMethod === 'fonepay'
+                          ? 'bg-[#B59A6D] border-[#B59A6D]'
+                          : 'group-hover:border-border'
+                      "
+                    >
+                      <UIcon
+                        v-if="paymentMethod === 'fonepay'"
+                        name="i-lucide-check"
+                        class="w-3 h-3 text-white"
+                      />
+                    </div>
+                    <input
+                      type="radio"
+                      value="fonepay"
+                      v-model="paymentMethod"
+                      class="hidden"
+                    />
+                    <!-- Fonepay placeholder logo -->
+                    <div
+                      class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
+                    >
+                      <span
+                        class="text-[#E31E24] font-bold text-lg leading-none"
+                        >fonepay</span
+                      >
+                    </div>
+                  </label>
+
+                  <!-- Stripe -->
+                  <label class="flex items-center gap-3 cursor-pointer group">
+                    <div
+                      class="w-4 h-4 rounded-sm border border-border/40 flex items-center justify-center transition-colors"
+                      :class="
+                        paymentMethod === 'stripe'
+                          ? 'bg-[#B59A6D] border-[#B59A6D]'
+                          : 'group-hover:border-border'
+                      "
+                    >
+                      <UIcon
+                        v-if="paymentMethod === 'stripe'"
+                        name="i-lucide-check"
+                        class="w-3 h-3 text-white"
+                      />
+                    </div>
+                    <input
+                      type="radio"
+                      value="stripe"
+                      v-model="paymentMethod"
+                      class="hidden"
+                    />
+                    <!-- Stripe placeholder logo -->
+                    <div
+                      class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
+                    >
+                      <span
+                        class="text-[#635BFF] font-bold text-lg leading-none"
+                        >stripe</span
+                      >
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+              <div class="hidden lg:block col-span-5 lg:col-span-3">
+          <!-- Action Buttons -->
+          <div 
+          class="flex"
+              :class="step === 2 ? 'justify-between' : 'justify-end'"
+              >
+            <base-button
+                v-if="step === 2"
+                  @click="goBack"
+                  variant="outline"
+                  leading-icon="i-lucide-arrow-left"
+                  class="uppercase text-[11px] tracking-widest font-bold px-8 rounded-none border-border hover:border-primary-700"
+                >
+                  GO BACK
+                </base-button>
+
+                <base-button
+                  @click="handlePayNowClick"
+                  trailing-icon="i-lucide-arrow-right"
+                  class="uppercase self-end flex  tracking-widest font-bold px-8 rounded-none"
+                  >
+                  PAY NOW
+                </base-button>
+              </div>
+        </div>
+        </div>
+      
+
+        <!-- Right Column: Order Summary -->
+          <div class="col-span-5 lg:col-span-2 h-fit  flex flex-col gap-9 bg-card p-8 border border-border">
+
+          <p class="text-lg font-semibold  uppercase text-primary-700">
+           PAYMENT OVERVIEW
+          </p>
+          <Transition name="fade" mode="out-in">
+            <!-- Step 1: Form -->
+            <div
+              class="flex flex-col gap-9 w-full"
+              key="step1"
+            >
+
+              <!-- Promo Code -->
+              <div class="flex flex-col gap-2 w-full">
+                <div class="flex items-end w-full gap-4">
+                  <div class="flex-1">
+                    <base-input
+                      v-model="form.promoCode"
+                      name="promoCode"
+                      label="PROMO CODE"
+                      placeholder="e.g KORA20"
+                      type="text"
+                    />
+                  </div>
+                  <base-button > APPLY </base-button>
+                </div>
+              </div>
+
+              <div class="border-y border-border flex flex-col gap-3 p-4">
+                <div class="text-sm text-secondary dark:text-white font-normal flex justify-between">
+                  <h2>Items Count (4 items) </h2>
+                  <p>Rs. 4000</p>
+                </div>
+                <div class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between">
+                  <h2>Membership Discount</h2>
+                  <p>40%</p>
+                </div>
+                <div class="text-sm text-secondary-500 dark:text-secondary-400 font-normal  flex justify-between border-b border-border pb-2">
+                  <h2>Promo Discount</h2>
+                  <p>40%</p>
+                </div>
+
+                <div class="text-sm text-secondary dark:text-white font-normal flex justify-between">
+                  <h2>Total</h2>
+                  <p>Rs. 4000</p>
+                </div>
+
+              </div>
+            </div>
+          </Transition>
+        </div>
+
+        <div class="block lg:hidden col-span-5 lg:col-span-3">
+          <!-- Action Buttons -->
+          <div 
+          class="flex"
+:class="step === 2 ? 'justify-between' : 'justify-end'"
+
+          >
+            <base-button
+                v-if="step === 2"
+                  @click="goBack"
+                  variant="outline"
+                  leading-icon="i-lucide-arrow-left"
+                  class="uppercase text-[11px] tracking-widest font-bold px-8 rounded-none border-border hover:border-primary-700"
+                >
+                  GO BACK
+                </base-button>
+
+                <base-button
+                  @click="handlePayNowClick"
+                  trailing-icon="i-lucide-arrow-right"
+                  class="uppercase self-end flex  tracking-widest font-bold px-8 rounded-none"
+                  >
+                  PAY NOW
+                </base-button>
+              </div>
         </div>
       </div>
     </div>
