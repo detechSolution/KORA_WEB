@@ -13,6 +13,8 @@ const props = defineProps({
   },
 });
 
+const authStore = useAuthStore();
+
 // Nuxt Color Mode
 const colorMode = useColorMode();
 const isDark = computed({
@@ -101,9 +103,7 @@ onUnmounted(() => {
       props.class,
     ]"
   >
-    <div
-      class="max-w-400 h-25 mx-auto flex items-center justify-between"
-    >
+    <div class="max-w-400 h-25 mx-auto flex items-center justify-between">
       <!-- Left: Menu Trigger -->
       <div class="flex-1 flex items-center" :class="getColorClass?.text">
         <button
@@ -154,6 +154,7 @@ onUnmounted(() => {
 
         <!-- Cart Button -->
         <button
+          v-if="authStore.isAuthenticated"
           @click="isCartOpen = true"
           class="flex w-9 h-9 md:w-10 md:h-10 items-center justify-center border border-primary/40 text-primary hover:bg-primary/10 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
           title="Cart"
@@ -176,6 +177,7 @@ onUnmounted(() => {
 
         <!-- Profile Avatar with premium gold border -->
         <NuxtLink
+          v-if="authStore.isAuthenticated"
           to="/profile"
           class="hidden sm:inline-flex w-9 h-9 md:w-10 md:h-10 rounded-full border border-primary/40 overflow-hidden cursor-pointer active:scale-95 transition-transform duration-200 shadow-sm"
         >
@@ -185,6 +187,9 @@ onUnmounted(() => {
             class="w-full h-full object-cover"
           />
         </NuxtLink>
+        <base-button v-else to="/login" variant="ghost" color="primary">
+          Login
+        </base-button>
       </div>
     </div>
     <LayoutSidebar :is-open="isSidebarOpen" @close="isSidebarOpen = false" />

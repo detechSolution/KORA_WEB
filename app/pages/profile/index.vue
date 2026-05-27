@@ -4,6 +4,7 @@ import { IMAGES } from "~/utils/images";
 import { mockUser, mockBookings } from "~/data/profile";
 
 definePageMeta({
+  auth: true,
   layout: "default",
 });
 

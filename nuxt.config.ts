@@ -24,6 +24,13 @@ export default defineNuxtConfig({
     provider: "iconify",
   },
 
+  runtimeConfig: {
+    public: {
+      apiBase: process.env.NUXT_PUBLIC_API_BASE_URL || "",
+      apiTimeout: process.env.NUXT_PUBLIC_API_TIMEOUT || "",
+    },
+  },
+
   experimental: {
     viteEnvironmentApi: true,
   },
