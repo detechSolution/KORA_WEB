@@ -2,6 +2,10 @@
 import { reactive, ref } from "vue";
 import { IMAGES } from "~/utils/images";
 import { useAuthStore } from "~/stores/auth";
+import z from "zod";
+import { getApiErrorMessage } from "~/utils/error";
+import { useRouter } from "vue-router";
+import { useNotification } from "~/composables/use-notification";
 
 definePageMeta({
   layout: false,
@@ -13,12 +17,40 @@ useSeoMeta({
 });
 
 const authStore = useAuthStore();
+const router = useRouter();
+const { error: showError } = useNotification();
 
 const loading = ref(false);
+const apiError = ref<string | null>(null);
+const formRef = ref<InstanceType<typeof UForm> | null>(null);
+
 const loginForm = reactive({
   email: "",
   password: "",
 });
+
+const schema = z
+  .object({
+    email: z.string().min(1, "Email is required").email("Invalid email"),
+    password: z.string().min(1, "Password is required"),
+  })
+  .superRefine((data, ctx) => {
+    if (apiError.value) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["password"],
+        message: apiError.value,
+      });
+    }
+  });
+
+function setApiError(error: string): void {
+  apiError.value = error;
+}
+
+function clearApiError(): void {
+  apiError.value = null;
+}
 
 async function handleGoogleLogin(): Promise<void> {
   try {
@@ -26,6 +58,37 @@ async function handleGoogleLogin(): Promise<void> {
     await authStore.loginWithGoogle();
   } catch (error) {
     console.error(error);
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function handleLogin(): Promise<void> {
+  try {
+    await formRef.value?.validate();
+  } catch {
+    return;
+  }
+  try {
+    loading.value = true;
+    clearApiError();
+    const payload = {
+      email: loginForm.email,
+      password: loginForm.password,
+    };
+    await authStore.login(payload as { email: string; password: string });
+    router.push({ name: "index" });
+  } catch (error: unknown) {
+    const message = getApiErrorMessage(
+      error,
+      "Something went wrong. Please try again.",
+    );
+    if (message !== "Something went wrong. Please try again.") {
+      setApiError(message);
+      formRef.value?.validate();
+      return;
+    }
+    showError({ message });
   } finally {
     loading.value = false;
   }
@@ -74,7 +137,13 @@ async function handleGoogleLogin(): Promise<void> {
 
         <base-section-label label="Or" align="center" class="mb-5" />
 
-        <form @submit.prevent class="flex flex-col gap-5">
+        <UForm
+          ref="formRef"
+          :state="loginForm"
+          :schema="schema"
+          :validate-on="['input', 'change', 'blur']"
+          class="mt-8 w-full space-y-4"
+        >
           <base-input
             v-model="loginForm.email"
             name="email"
@@ -83,6 +152,7 @@ async function handleGoogleLogin(): Promise<void> {
             type="email"
             leading-icon="i-lucide-mail"
             class="bg-transparent"
+            @input="clearApiError"
           />
           <base-input
             v-model="loginForm.password"
@@ -92,6 +162,7 @@ async function handleGoogleLogin(): Promise<void> {
             type="password"
             leading-icon="i-lucide-lock"
             class="bg-transparent"
+            @input="clearApiError"
           />
 
           <div class="flex items-center justify-between mt-1">
@@ -112,8 +183,10 @@ async function handleGoogleLogin(): Promise<void> {
             </NuxtLink>
           </div>
 
-          <base-button class="w-full"> SIGN IN </base-button>
-        </form>
+          <base-button class="w-full" @click="handleLogin" :loading="loading">
+            SIGN IN
+          </base-button>
+        </UForm>
 
         <p class="text-center text-xs text-secondary-400 mt-10">
           Don't have an account?
