@@ -50,13 +50,14 @@ const close = () => {
   emit("close");
 };
 
+const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
 const currentStep = ref(0);
 
 const guests = ref([
   {
-    fullName: "Shyam Shrestha",
-    phone: "9845738746",
-    email: "shyam@gmail.com",
+    fullName: userDetail?.name || "",
+    phone: userDetail?.phone || "",
+    email: userDetail?.email || "",
   },
 ]);
 

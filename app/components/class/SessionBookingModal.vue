@@ -20,8 +20,10 @@ const steps = [
   },
   {
     label: "Overview",
-  }
+  },
 ];
+
+const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
 
 function goToStep(step: number) {
   if (step > currentStep.value) {
@@ -55,9 +57,9 @@ const currentStep = ref(0);
 
 const guests = ref([
   {
-    fullName: "Shyam Shrestha",
-    phone: "9845738746",
-    email: "shyam@gmail.com",
+    fullName: userDetail?.name || "",
+    phone: userDetail?.phone || "",
+    email: userDetail?.email || "",
   },
 ]);
 
@@ -125,11 +127,20 @@ const proceedToCheckout = () => {
           <div class="w-full h-px bg-border/40 mb-8"></div>
 
           <div class="flex flex-col gap-6 mb-8">
-            <div v-for="(guest, index) in guests" :key="index" class="flex flex-col gap-6 relative">
-              <div v-if="index > 0" class="w-full h-1px bg-border/40 mt-2 mb-2"></div>
-              
+            <div
+              v-for="(guest, index) in guests"
+              :key="index"
+              class="flex flex-col gap-6 relative"
+            >
+              <div
+                v-if="index > 0"
+                class="w-full h-1px bg-border/40 mt-2 mb-2"
+              ></div>
+
               <div class="flex items-center justify-between">
-                <h4 v-if="index > 0" class="text-sm font-serif text-[#A08860]">Guest {{ index + 1 }}</h4>
+                <h4 v-if="index > 0" class="text-sm font-serif text-[#A08860]">
+                  Guest {{ index + 1 }}
+                </h4>
                 <button
                   v-if="guests.length > 1"
                   @click="removeGuest(index)"
@@ -210,7 +221,7 @@ const proceedToCheckout = () => {
               <div
                 class="flex justify-between items-center text-sm text-foreground"
               >
-                <span>{{ session.title }} X 2</span>
+                <span>{{ session.name }} X {{ guests.length }}</span>
                 <span>Rs. 2,000</span>
               </div>
               <div
