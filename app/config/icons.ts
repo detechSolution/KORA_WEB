@@ -6,4 +6,5 @@ export const ICONS = {
   EYE: "i-lucide-eye",
   EYE_OFF: "i-lucide-eye-off",
   CHECK: "i-lucide-check",
+  EMAIL: "i-lucide-mail",
 };
