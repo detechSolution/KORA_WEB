@@ -28,7 +28,7 @@ defineProps({
     </div>
 
     <div class="grow flex flex-col items-start gap-1 py-1">
-      <base-badge color="primary" class="rounded-xs text-stone-900 dark:text-white">{{
+      <base-badge color="primary" class="rounded-xs text-stone-900 dark:text-white uppercase">{{
         session.type
       }}</base-badge>
 
@@ -36,7 +36,7 @@ defineProps({
         class="flex items-center gap-1.5 text-[10px] md:text-xs font-sans tracking-wide text-primary mt-2 select-none"
       >
         <UIcon name="i-lucide-calendar" class="w-3.5 h-3.5 text-primary" />
-        {{ session.startsAt }}
+        {{ formatDate(session.startsAt) }}
       </span>
 
       <h3
@@ -46,17 +46,16 @@ defineProps({
       </h3>
 
       <p
+        v-html="session.description"
         class="font-sans text-xs md:text-sm text-secondary-400 leading-relaxed max-w-2xl mb-3"
-      >
-        {{ session.description }}
-      </p>
+      />
 
       <div
         class="flex items-center gap-5 text-[10px] md:text-xs text-secondary-300 dark:text-secondary-400 font-sans mt-1 select-none"
       >
         <span class="flex items-center gap-1.5">
           <UIcon name="i-lucide-clock" class="w-3.5 h-3.5 text-primary/60" />
-          {{ session.startTime }}
+          {{ formatTime(session.startTime) }} - {{ formatTime(session.endTime) }}
         </span>
         <span class="flex items-center gap-1.5">
           <UIcon name="i-lucide-users" class="w-3.5 h-3.5 text-primary/60" />

@@ -4,6 +4,7 @@ import { useSessionStore } from "~/stores/session";
 import type { Session } from "~/types/session";
 
 type Props = {
+  loading: boolean;
   sessions: {
     data: Session[];
     meta: {
@@ -15,6 +16,7 @@ type Props = {
   pagination: Pagination;
 };
 const props = withDefaults(defineProps<Props>(), {
+  loading: false,
   sessions: () => ({
     data: [] as Session[],
     meta: {
@@ -23,14 +25,10 @@ const props = withDefaults(defineProps<Props>(), {
       total: 0,
     },
   }),
-  pagination: () => ({
-    page: 1,
-    pageSize: 10,
-  }),
+  pagination: {} as any,
 });
 
 const sessionStore = useSessionStore();
-// const { pagination } = usePagination(2);
 
 const emit = defineEmits(["loadSessionList"]);
 </script>
@@ -40,9 +38,19 @@ const emit = defineEmits(["loadSessionList"]);
     class="max-w-400 mx-auto bg-background dark:bg-secondary-900 w-full px-4 md:px-8 lg:px-12 py-6 select-none relative z-10"
   >
     <div class="mx-auto flex flex-col gap-2">
-      <!-- Session Cards List -->
+      <!-- Loading -->
       <div v-if="sessions.data.length !== 0" class="flex flex-col gap-6">
+        <div v-if="loading" class="w-full">
+          <div
+            class="max-w-400 mx-auto bg-background dark:bg-secondary-900 w-full"
+          >
+            <class-session-skeleton />
+          </div>
+        </div>
+
+        <!-- Session Cards List -->
         <ClassSessionCard
+          v-else
           v-for="session in sessions.data"
           :key="session.id"
           :session="session"
@@ -54,8 +62,7 @@ const emit = defineEmits(["loadSessionList"]);
           :disabled="sessionStore.loading"
           @update:page="
             (v) => {
-              pagination.page = v;
-              emit('loadSessionList');
+              emit('loadSessionList', v);
             }
           "
         />
