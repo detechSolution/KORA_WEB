@@ -2,6 +2,9 @@
 import { ref } from "vue";
 import type { PropType } from "vue";
 import type { Session } from "~/types/session";
+import { useCartStore } from "~/stores/cart";
+import { formatTime } from "~/utils/format";
+import { useRouter } from "vue-router";
 
 const props = defineProps({
   isOpen: {
@@ -55,6 +58,9 @@ const close = () => {
 
 const currentStep = ref(0);
 
+const cartStore = useCartStore();
+const router = useRouter();
+
 const guests = ref([
   {
     fullName: userDetail?.name || "",
@@ -81,13 +87,24 @@ const nextStep = () => {
 };
 
 const addToCart = () => {
+  const item = {
+    id: props.session.id,
+    title: props.session.name,
+    type: props.session.type,
+    price: props.session.price,
+    date: props.session.sessionDate,
+    time: `${formatTime(props.session.startTime)} - ${formatTime(props.session.endTime)}`,
+    location: props.session.venue,
+    image: props.session.bannerUrl,
+    guests: guests.value
+  };
+  cartStore.addToCart(item);
   close();
-  // logic to add to cart
 };
 
 const proceedToCheckout = () => {
-  close();
-  navigateTo("/checkout");
+  addToCart();
+  router.push("/checkout");
 };
 </script>
 

@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { ICONS } from "~/config/icons";
-import { cartItems } from "~/data/cart";
+import { computed } from "vue";
+import { useCartStore } from "~/stores/cart";
 
 const props = defineProps({
   isOpen: {
@@ -16,17 +15,19 @@ const close = () => {
   emit("close");
 };
 
+const cartStore = useCartStore();
+const cartItems = computed(() => cartStore.cartItems);
 
 const totalPrice = computed(() => {
-  return cartItems.value.reduce((total, item) => total + item.price, 0);
+  return cartItems.value.reduce((total, item) => total + (item.price * item.guests.length || 0), 0);
 });
 
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat("en-IN").format(price);
 };
 
-const removeItem = (id: number) => {
-  cartItems.value = cartItems.value.filter((item) => item.id !== id);
+const removeItem = (id: string | number) => {
+  cartStore.removeItem(id);
 };
 </script>
 
@@ -91,7 +92,12 @@ const removeItem = (id: number) => {
           class="flex gap-4 pb-6 border-b border-border/10 last:border-0 last:pb-0"
         >
           <div
-            v-if="item.type === 'Session' || item.type === 'Spa'"
+            v-if="
+              item.type === 'class' ||
+              item.type === 'event' ||
+              item.type === 'workshop' ||
+              item.type === 'spa'
+            "
             class="w-24 h-24 shrink-0 overflow-hidden relative"
           >
             <img
@@ -119,7 +125,7 @@ const removeItem = (id: number) => {
             <div class="flex justify-between items-start gap-4">
               <div class="flex items-center gap-2">
                 <h4 class="text-sm font-serif text-foreground">
-                  {{ item.title }}
+                  {{ item.title }} x <span class="text-xl">{{ item.guests.length }}</span>
                 </h4>
                 <span
                   v-if="item.type === 'Session'"
@@ -143,7 +149,7 @@ const removeItem = (id: number) => {
                 >
               </div>
               <span class="text-sm font-serif text-primary"
-                >Rs. {{ formatPrice(item.price) }}</span
+                >Rs. {{ formatPrice(item.price * item.guests.length) }}</span
               >
             </div>
 
@@ -202,7 +208,9 @@ const removeItem = (id: number) => {
             }}</span>
           </div>
 
-          <base-button to="/checkout" @click="close" class="w-full"> Proceed to Checkout </base-button>
+          <base-button to="/checkout" @click="close" class="w-full">
+            Proceed to Checkout
+          </base-button>
         </div>
       </template>
     </div>
