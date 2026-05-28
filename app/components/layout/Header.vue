@@ -88,7 +88,7 @@ onUnmounted(() => {
 <template>
   <header
     :class="[
-      'w-full transition-all duration-300',
+      'w-full transition-all duration-300 px-4 md:px-8 lg:px-12',
       isScrolled
         ? 'border-b border-border/80 shadow-sm py-1'
         : 'border-b border-transparent py-3',

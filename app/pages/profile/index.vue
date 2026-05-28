@@ -69,7 +69,7 @@ function handleLogout(): void {
       />
     </div>
 
-    <div class="relative z-10 max-w-400 mx-auto mb-20">
+    <div class="relative z-10 max-w-400 mx-auto mb-20 px-4 md:px-8 lg:px-12">
       <!-- Top Header / User Info -->
       <div
         class="flex flex-col md:flex-row items-start md:items-center gap-6 mb-12"

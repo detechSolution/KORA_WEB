@@ -10,7 +10,7 @@ const isDark = computed(() => colorMode.value === "dark");
     class="dark text-foreground border-t border-border transition-colors duration-300"
   >
     <!-- Top Part: Grid Links -->
-    <div class="max-w-full mx-auto px-6 md:px-12 lg:px-20 py-16">
+    <div class="max-w-full mx-auto px-4 md:px-8 lg:px-12 py-16">
       <div
         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-12 gap-10 lg:gap-8"
       >
