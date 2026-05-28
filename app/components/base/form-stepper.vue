@@ -12,9 +12,10 @@ type Props = {
   currentStep: number;
   ariaLabel?: string;
   orientation?: "horizontal" | "vertical";
+  class?: string;
 };
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   ariaLabel: "Progress",
   orientation: "vertical",
 });
@@ -75,9 +76,10 @@ function getStepLabel(step: Step) {
     <!-- Main Stepper View -->
     <nav
       :class="[
+        props.class,
         orientation === 'vertical'
           ? 'hidden lg:flex lg:flex-col'
-          : 'flex flex-row items-center justify-between w-full max-w-sm mx-auto',
+          : 'flex flex-row items-center justify-between w-full',
       ]"
       :aria-label="ariaLabel"
     >

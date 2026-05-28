@@ -105,7 +105,7 @@ const proceedToCheckout = () => {
         :steps="steps"
         :current-step="currentStep"
         orientation="horizontal"
-        class="mb-8"
+        class="mb-8 max-w-sm mx-auto"
         @select="goToStep"
       />
 

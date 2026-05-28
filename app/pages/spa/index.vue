@@ -14,6 +14,7 @@ useSeoMeta({
 });
 
 const isPlayingVideo = ref(false);
+const isBookingModalOpen = ref(false);
 
 const accordionItems = offerings.map((o) => ({
   id: o.id,
@@ -284,10 +285,10 @@ const accordionItems = offerings.map((o) => ({
             </div>
 
             <base-button
-              to="/membership"
               variant="solid"
               color="primary"
               class="w-full text-sm uppercase mt-6"
+              @click="isBookingModalOpen = true"
             >
               Book This Service
             </base-button>
@@ -301,6 +302,12 @@ const accordionItems = offerings.map((o) => ({
         </aside>
       </div>
     </div>
+
+
+    <SpaBookingModal
+      :is-open="isBookingModalOpen"
+      @close="isBookingModalOpen = false"
+    />
   </section>
 </template>
 
