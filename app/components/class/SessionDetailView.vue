@@ -2,12 +2,12 @@
 import { ref } from "vue";
 import type { PropType } from "vue";
 import { useRouter } from "vue-router";
-import type { SessionDetail } from "~/data/sessions";
+import type { Session } from "~/types/session";
 import { useAuthStore } from "~/stores/auth";
 
 defineProps({
   session: {
-    type: Object as PropType<SessionDetail>,
+    type: Object as PropType<Session>,
     required: true,
   },
 });
@@ -44,15 +44,13 @@ const handleOpenBookingModal = () => {
     <div class="relative z-10 max-w-400 mx-auto">
       <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-12">
         <div>
-          <ClassHeader :title="session.title" />
+          <ClassHeader :title="session.name" />
           <div class="max-w-400 px-4 md:px-8 lg:px-12 py-10 md:py-7">
             <div class="space-y-5 text-sm md:text-[15px] leading-7">
-              <p v-for="paragraph in session.overview" :key="paragraph">
-                {{ paragraph }}
-              </p>
+              <p v-html="session.description" />
             </div>
 
-            <div class="mt-10">
+            <!-- <div class="mt-10">
               <h2
                 class="font-sans font-bold text-sm uppercase tracking-[0.2em] mb-4"
               >
@@ -60,7 +58,7 @@ const handleOpenBookingModal = () => {
               </h2>
               <ul class="space-y-2 text-sm md:text-[15px] leading-7">
                 <li
-                  v-for="expectation in session.expectations"
+                  v-for="expectation in session.expectations || []"
                   :key="expectation"
                   class="flex gap-3"
                 >
@@ -70,7 +68,7 @@ const handleOpenBookingModal = () => {
                   <span>{{ expectation }}</span>
                 </li>
               </ul>
-            </div>
+            </div> -->
 
             <div class="mt-10">
               <h2
@@ -78,9 +76,10 @@ const handleOpenBookingModal = () => {
               >
                 Know Your Instructor
               </h2>
-              <p class="text-sm md:text-[15px] leading-7">
-                {{ session.facilitatorBio }}
-              </p>
+              <p
+                v-html="session.instructor.bio"
+                class="text-sm md:text-[15px] leading-7"
+              />
             </div>
 
             <div class="mt-12">
@@ -96,8 +95,8 @@ const handleOpenBookingModal = () => {
               >
                 <!-- Image -->
                 <img
-                  :src="session.supportImage || session.image"
-                  :alt="session.title"
+                  :src="session.bannerUrl"
+                  :alt="session.name"
                   class="w-full h-[300px] md:h-[460px] object-cover transition-transform duration-700 group-hover:scale-105"
                 />
 
@@ -136,14 +135,14 @@ const handleOpenBookingModal = () => {
                 </div>
               </div>
               <div v-else class="w-full h-[300px] md:h-[460px] bg-black">
-                <iframe
-                  class="w-full h-full"
-                  src="https://www.youtube.com/embed/unCya_-8ECs?autoplay=1"
-                  title="YouTube video player"
-                  frameborder="0"
-                  allow="autoplay; encrypted-media"
-                  allowfullscreen
-                ></iframe>
+                <video
+                  class="w-full h-full object-cover"
+                  :src="session.videoUrl"
+                  controls
+                  autoplay
+                  preload="metadata"
+                  playsinline
+                />
               </div>
             </div>
 
@@ -154,7 +153,9 @@ const handleOpenBookingModal = () => {
                   class="mt-0.5 h-3.5 w-3.5 text-primary"
                 />
                 <p class="text-xs uppercase text-secondary-500 mb-2">Date</p>
-                <p class="text-sm text-foreground">{{ session.date }}</p>
+                <p class="text-sm text-foreground">
+                  {{ formatDate(session.sessionDate) }}
+                </p>
               </div>
               <div class="border border-border/60 bg-card/40 px-4 py-4">
                 <UIcon
@@ -164,7 +165,9 @@ const handleOpenBookingModal = () => {
                 <p class="text-xs uppercase text-secondary-500 mb-2">
                   Session Time
                 </p>
-                <p class="text-sm text-foreground">{{ session.time }}</p>
+                <p class="text-sm text-foreground">
+                  {{ formatTime(session.startTime) }} - {{ formatTime(session.endTime) }}
+                </p>
               </div>
               <div class="border border-border/60 bg-card/40 px-4 py-4">
                 <UIcon
@@ -174,7 +177,9 @@ const handleOpenBookingModal = () => {
                 <p class="text-xs uppercase text-secondary-500 mb-2">
                   Facilitator
                 </p>
-                <p class="text-sm text-foreground">{{ session.facilitator }}</p>
+                <p class="text-sm text-foreground">
+                  {{ session.instructorName }}
+                </p>
               </div>
               <div class="border border-border/60 bg-card/40 px-4 py-4">
                 <UIcon
@@ -184,7 +189,7 @@ const handleOpenBookingModal = () => {
                 <p class="text-xs uppercase text-secondary-500 mb-2">
                   Location
                 </p>
-                <p class="text-sm text-foreground">{{ session.location }}</p>
+                <p class="text-sm text-foreground">{{ session.venue }}</p>
               </div>
             </div>
 
@@ -195,9 +200,11 @@ const handleOpenBookingModal = () => {
               >
                 Seats Left
               </span>
-              <span class="text-primary text-xs">12 / 19</span>
+              <span class="text-primary text-xs"
+                >{{ session.remainingSpots }} / {{ session.capacity }}</span
+              >
             </div>
-            <UProgress v-model="session.id" class="mt-2" />
+            <UProgress v-model="session.bookedCount" class="mt-2" />
           </div>
         </div>
 
@@ -213,10 +220,10 @@ const handleOpenBookingModal = () => {
               <p
                 class="font-serif text-3xl md:text-4xl text-foreground leading-none"
               >
-                {{ session.price }}
+                Rs. {{ session.price }}
               </p>
               <p class="mt-2 text-xs text-secondary-400">
-                {{ session.duration }} session with free tea service
+                {{ formatTime(session.startTime) }} - {{ formatTime(session.endTime) }} session with {{ session.instructorName }}
               </p>
             </div>
 
@@ -234,8 +241,7 @@ const handleOpenBookingModal = () => {
                       Session Starting Date & Time
                     </p>
                     <p class="text-foreground font-medium">
-                      {{ session.date }} • {{ session.time }} •
-                      {{ session.location }}
+                      {{ formatDate(session.startsAt) }} • {{ formatTime(session.startTime) }} • {{ session.venue }}
                     </p>
                   </div>
                 </div>

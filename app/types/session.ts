@@ -7,6 +7,7 @@ export interface Session {
   bookedCount: number;
   description: string;
   bannerUrl: string;
+  videoUrl: string;
   sessionDate: Date;
   startTime: string;
   endTime: string;
@@ -32,4 +33,5 @@ export interface CreatedBy {
   fullName: string;
   email: string;
   phoneNumber: string;
+  bio?: string;
 }

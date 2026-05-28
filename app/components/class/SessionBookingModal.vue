@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import type { PropType } from "vue";
-import type { SessionDetail } from "~/data/sessions";
+import type { Session } from "~/types/session";
 
 const props = defineProps({
   isOpen: {
@@ -9,7 +9,7 @@ const props = defineProps({
     required: true,
   },
   session: {
-    type: Object as PropType<SessionDetail>,
+    type: Object as PropType<Session>,
     required: true,
   },
 });

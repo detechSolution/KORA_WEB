@@ -36,9 +36,28 @@ export const useSessionStore = defineStore("session", () => {
     }
   };
 
+  const getSessionById = (id: string): Session | undefined => {
+    return sessions.value.data.find((session) => session.id === Number(id));
+  }
+
+  const getSessionDetail = async (id: string): Promise<Session> => {
+    loading.value = true;
+    try {
+      const response = await http.get(`${API_ENDPOINTS.SESSION.GET}/${id}`) as Session;
+      return response;
+    } catch (error) {
+      console.error(`Failed to fetch session detail for ${id}:`, error);
+      throw error;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   return {
     sessions,
     loading,
     getSessions,
+    getSessionById,
+    getSessionDetail
   };
 });
