@@ -24,11 +24,6 @@ const loading = ref(false);
 const apiError = ref<string | null>(null);
 const formRef = ref<InstanceType<typeof UForm> | null>(null);
 
-const loginForm = reactive({
-  email: "",
-  password: "",
-});
-
 const schema = z
   .object({
     email: z.string().min(1, "Email is required").email("Invalid email"),
@@ -43,6 +38,13 @@ const schema = z
       });
     }
   });
+
+type Schema = z.output<typeof schema>;
+
+const loginFormState = reactive<Partial<Schema>>({
+  email: "",
+  password: "",
+});
 
 function setApiError(error: string): void {
   apiError.value = error;
@@ -73,8 +75,8 @@ async function handleLogin(): Promise<void> {
     loading.value = true;
     clearApiError();
     const payload = {
-      email: loginForm.email,
-      password: loginForm.password,
+      email: loginFormState.email,
+      password: loginFormState.password,
     };
     await authStore.login(payload as { email: string; password: string });
     router.push({ name: "index" });
@@ -139,13 +141,13 @@ async function handleLogin(): Promise<void> {
 
         <UForm
           ref="formRef"
-          :state="loginForm"
+          :state="loginFormState"
           :schema="schema"
           :validate-on="['input', 'change', 'blur']"
           class="mt-8 w-full space-y-4"
         >
           <base-input
-            v-model="loginForm.email"
+            v-model="loginFormState.email"
             name="email"
             label="EMAIL ADDRESS"
             placeholder="Your email address"
@@ -155,7 +157,7 @@ async function handleLogin(): Promise<void> {
             @input="clearApiError"
           />
           <base-input
-            v-model="loginForm.password"
+            v-model="loginFormState.password"
             name="password"
             label="PASSWORD"
             placeholder="Your Password"

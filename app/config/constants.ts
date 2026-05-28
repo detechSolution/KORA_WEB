@@ -1,9 +1,11 @@
 export const API_ENDPOINTS = {
   AUTH: {
     GOOGLE_LOGIN: "/api/v1/auth/member/google/login",
-    LOGIN: "/api/v1/auth/admin/login",
+    LOGIN: "/api/v1/auth/member/login",
+    LOGOUT: "/api/v1/auth/member/logout",
+    REGISTER: "/api/v1/auth/member/register",
     ME: "/api/v1/auth/me",
-    REFRESH: "/api/v1/auth/refresh-token",
+    REFRESH: "/api/v1/auth/member/refresh",
     UPDATE_PASSWORD: "/api/v1/auth/update-password",
     UPDATE_PROFILE: "/api/v1/auth/update-profile",
     FORGOT_PASSWORD: "/api/v1/password-reset/forgot-password",

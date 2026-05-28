@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { IMAGES } from "~/utils/images";
 import { useAuthStore } from "~/stores/auth";
-import { ref } from "vue";
+import { reactive, ref } from "vue";
+import z from "zod";
+import { getApiErrorMessage, isApiError } from "~/utils/error";
+import { useNotification } from "~/composables/use-notification";
+import { useRouter } from "vue-router";
 
 definePageMeta({
   layout: false,
@@ -13,8 +17,58 @@ useSeoMeta({
 });
 
 const authStore = useAuthStore();
+const router = useRouter();
+const { error: showError } = useNotification();
 
 const loading = ref(false);
+const apiError = reactive({
+  email: null as string | null,
+  phone: null as string | null,
+});
+const formRef = ref<InstanceType<typeof UForm> | null>(null);
+
+const schema = z
+  .object({
+    fullName: z.string().min(1, "Full name is required"),
+    email: z.string().min(1, "Email is required").email("Invalid email"),
+    phone: z.string().optional(),
+    password: z.string().min(1, "Password is required"),
+  })
+  .superRefine((data, ctx) => {
+    if (apiError.email) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["email"],
+        message: apiError.email,
+      });
+    }
+
+    if (apiError.phone) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["phone"],
+        message: apiError.phone,
+      });
+    }
+  });
+
+type Schema = z.output<typeof schema>;
+
+const registerFormState = reactive<Partial<Schema>>({
+  fullName: "",
+  email: "",
+  phone: "",
+  password: "",
+});
+
+function setApiError(field: "email" | "phone", message: string): void {
+  apiError[field] = message;
+}
+
+function clearApiError(): void {
+  apiError.email = null;
+  apiError.phone = null;
+}
 
 async function handleGoogleLogin(): Promise<void> {
   try {
@@ -22,6 +76,51 @@ async function handleGoogleLogin(): Promise<void> {
     await authStore.loginWithGoogle();
   } catch (error) {
     console.error(error);
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function handleRegister(): Promise<void> {
+  try {
+    await formRef.value?.validate();
+  } catch {
+    return;
+  }
+  try {
+    loading.value = true;
+    clearApiError();
+    const payload = {
+      fullName: registerFormState.fullName,
+      email: registerFormState.email,
+      phoneNumber: registerFormState.phone,
+      password: registerFormState.password,
+    };
+    await authStore.register(
+      payload as {
+        fullName: string;
+        email: string;
+        phoneNumber?: string;
+        password: string;
+      },
+    );
+    router.push({ name: "index" });
+  } catch (error: unknown) {
+    const message = getApiErrorMessage(
+      error,
+      "Something went wrong. Please try again.",
+    );
+    if (message !== "Something went wrong. Please try again.") {
+      if (isApiError(error) && error.data.code == "conflict.this_phone_number_is_already_linked_to_another_user") {
+        setApiError("phone", message);
+      }
+      if (isApiError(error) && error.data.code == "conflict.this_email_is_already_linked_to_another_phone_number") {
+        setApiError("email", message);
+      }
+      formRef.value?.validate();
+      return;
+    }
+    showError({ message });
   } finally {
     loading.value = false;
   }
@@ -72,46 +171,56 @@ async function handleGoogleLogin(): Promise<void> {
 
         <base-section-label label="Or" align="center" class="mb-5" />
 
-        <form @submit.prevent class="flex flex-col gap-5">
+        <UForm
+          ref="formRef"
+          :state="registerFormState"
+          :schema="schema"
+          :validate-on="['input', 'change', 'blur']"
+          class="mt-8 w-full space-y-4"
+        >
           <base-input
+            v-model="registerFormState.fullName"
             name="fullName"
             label="FULL NAME *"
             placeholder="Your full name"
             type="text"
             leading-icon="i-lucide-user"
-            class="bg-transparent"
           />
           <base-input
+            v-model="registerFormState.email"
             name="email"
             label="EMAIL ADDRESS *"
             placeholder="Your email address"
             type="email"
             leading-icon="i-lucide-mail"
-            class="bg-transparent"
+            @input="clearApiError"
           />
           <base-input
+            v-model="registerFormState.phone"
             name="phone"
             label="PHONE NUMBER (optional)"
             placeholder="Your phone number"
             type="tel"
             leading-icon="i-lucide-phone"
-            class="bg-transparent"
+            @input="clearApiError"
           />
           <base-input
+            v-model="registerFormState.password"
             name="password"
             label="PASSWORD *"
             placeholder="Create a password"
             type="password"
             leading-icon="i-lucide-lock"
-            class="bg-transparent"
           />
 
           <base-button
             class="w-full"
+            @click="handleRegister"
+            :loading="loading"
           >
             REGISTER
           </base-button>
-        </form>
+        </UForm>
 
         <p class="text-center text-xs text-secondary-400 mt-5">
           Already have an account?

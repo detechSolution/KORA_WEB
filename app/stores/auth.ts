@@ -50,8 +50,7 @@ export const useAuthStore = defineStore("auth", () => {
           isAuthenticated.value = true;
         }
       }
-    }
-    catch {
+    } catch {
       // Ignore errors, just proceed without cached data
     }
   };
@@ -59,18 +58,20 @@ export const useAuthStore = defineStore("auth", () => {
   // Save user data to localStorage (profile only; permissions are not persisted)
   const saveUserToStorage = () => {
     try {
-      localStorage.setItem(USER_DATA_KEY, JSON.stringify({
-        id: user.value.id,
-        email: user.value.email,
-        name: user.value.name,
-        phone: user.value.phone,
-        avatar: user.value.avatar,
-        is_active: user.value.is_active,
-        role_id: user.value.role_id,
-        last_login_at: user.value.last_login_at,
-      }));
-    }
-    catch {
+      localStorage.setItem(
+        USER_DATA_KEY,
+        JSON.stringify({
+          id: user.value.id,
+          email: user.value.email,
+          name: user.value.name,
+          phone: user.value.phone,
+          avatar: user.value.avatar,
+          is_active: user.value.is_active,
+          role_id: user.value.role_id,
+          last_login_at: user.value.last_login_at,
+        }),
+      );
+    } catch {
       // Ignore storage errors
     }
   };
@@ -92,8 +93,7 @@ export const useAuthStore = defineStore("auth", () => {
     permissions.value = [];
     try {
       localStorage.removeItem(USER_DATA_KEY);
-    }
-    catch {
+    } catch {
       // Ignore storage errors
     }
   };
@@ -106,8 +106,7 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       storage.removeTokens();
       clearData();
-    }
-    catch (error: unknown) {
+    } catch (error: unknown) {
       console.error(error, "Logout Error");
     }
   };
@@ -116,7 +115,7 @@ export const useAuthStore = defineStore("auth", () => {
     const now = Date.now();
 
     // Skip if recently checked (unless forced)
-    if (!force && (now - lastAuthCheck.value) < AUTH_CHECK_INTERVAL) {
+    if (!force && now - lastAuthCheck.value < AUTH_CHECK_INTERVAL) {
       return; // Use cached auth state
     }
 
@@ -128,7 +127,11 @@ export const useAuthStore = defineStore("auth", () => {
 
     isCheckingAuth.value = true;
     try {
-      const response = await http.get(API_ENDPOINTS.AUTH.ME) as { success?: boolean; code?: string; data?: { user?: Record<string, unknown>; permissions?: string[] } };
+      const response = (await http.get(API_ENDPOINTS.AUTH.ME)) as {
+        success?: boolean;
+        code?: string;
+        data?: { user?: Record<string, unknown>; permissions?: string[] };
+      };
       const payload = response;
       if (payload) {
         const u = payload as Record<string, unknown>;
@@ -145,13 +148,11 @@ export const useAuthStore = defineStore("auth", () => {
         saveUserToStorage();
         lastAuthCheck.value = now;
       }
-    }
-    catch (error: unknown) {
+    } catch (error: unknown) {
       console.error(error, "Check Auth Error");
       clearAuthData();
       logout();
-    }
-    finally {
+    } finally {
       isCheckingAuth.value = false;
     }
   };
@@ -168,19 +169,46 @@ export const useAuthStore = defineStore("auth", () => {
     await checkAuth(false);
   };
 
-  const login = async (payload: { email: string; password: string }): Promise<void> => {
+  const login = async (payload: {
+    email: string;
+    password: string;
+  }): Promise<void> => {
     try {
       unAuthorizedError.value = false;
-      const { accessToken, refreshToken } = await http.post(API_ENDPOINTS.AUTH.LOGIN, { email: payload.email, password: payload.password }) as any;
+      const { accessToken, refreshToken } = (await http.post(
+        API_ENDPOINTS.AUTH.LOGIN,
+        { email: payload.email, password: payload.password },
+      )) as any;
       if (accessToken && refreshToken) {
         storage.setTokens(accessToken, refreshToken);
         isAuthenticated.value = true;
         // After login, immediately check auth to get user data
         await checkAuth(true);
       }
-    }
-    catch (error: unknown) {
+    } catch (error: unknown) {
       console.error(error, "Login Error");
+      throw error;
+    }
+  };
+
+  const register = async (payload: {
+    fullName: string;
+    email: string;
+    phoneNumber?: string;
+    password: string;
+  }): Promise<void> => {
+    try {
+      const { accessToken, refreshToken } = (await http.post(
+        API_ENDPOINTS.AUTH.REGISTER,
+        payload,
+      )) as any;
+      if (accessToken && refreshToken) {
+        storage.setTokens(accessToken, refreshToken);
+        isAuthenticated.value = true;
+        await checkAuth(true);
+      }
+    } catch (error: unknown) {
+      console.error(error, "Register Error");
       throw error;
     }
   };
@@ -190,17 +218,21 @@ export const useAuthStore = defineStore("auth", () => {
     const baseURL = config.public.apiBase;
     try {
       window.location.href = `${baseURL}${API_ENDPOINTS.AUTH.GOOGLE_LOGIN}`;
-    }
-    catch (error: unknown) {
+    } catch (error: unknown) {
       throw error;
     }
-  }
+  };
 
-  const updatePassword = async (payload: { currentPassword: string; newPassword: string }): Promise<void> => {
+  const updatePassword = async (payload: {
+    currentPassword: string;
+    newPassword: string;
+  }): Promise<void> => {
     try {
-      return await http.patch(API_ENDPOINTS.AUTH.UPDATE_PASSWORD, payload) as any;
-    }
-    catch (error: unknown) {
+      return (await http.patch(
+        API_ENDPOINTS.AUTH.UPDATE_PASSWORD,
+        payload,
+      )) as any;
+    } catch (error: unknown) {
       console.error(error, "Update Password Error");
       throw error;
     }
@@ -210,11 +242,16 @@ export const useAuthStore = defineStore("auth", () => {
     unAuthorizedError.value = value;
   };
 
-  const updateProfile = async (payload: { fullName: string; phone: string }): Promise<void> => {
+  const updateProfile = async (payload: {
+    fullName: string;
+    phone: string;
+  }): Promise<void> => {
     try {
-      return await http.patch(API_ENDPOINTS.AUTH.UPDATE_PROFILE, payload) as any;
-    }
-    catch (error: unknown) {
+      return (await http.patch(
+        API_ENDPOINTS.AUTH.UPDATE_PROFILE,
+        payload,
+      )) as any;
+    } catch (error: unknown) {
       console.error(error, "Update Profile Error");
       throw error;
     }
@@ -222,29 +259,38 @@ export const useAuthStore = defineStore("auth", () => {
 
   const forgotPassword = async (payload: { email: string }): Promise<void> => {
     try {
-      return await http.post(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, payload) as any;
-    }
-    catch (error: unknown) {
+      return (await http.post(
+        API_ENDPOINTS.AUTH.FORGOT_PASSWORD,
+        payload,
+      )) as any;
+    } catch (error: unknown) {
       console.error(error, "Forgot Password Error");
       throw error;
     }
   };
 
-  const verifyResetOtp = async (payload: { email: string; code: string }): Promise<void> => {
+  const verifyResetOtp = async (payload: {
+    email: string;
+    code: string;
+  }): Promise<void> => {
     try {
-      return await http.post(API_ENDPOINTS.AUTH.VERIFY_OTP, payload) as any;
-    }
-    catch (error: unknown) {
+      return (await http.post(API_ENDPOINTS.AUTH.VERIFY_OTP, payload)) as any;
+    } catch (error: unknown) {
       console.error(error, "Verify OTP Error");
       throw error;
     }
   };
 
-  const resetPassword = async (payload: { code: string; newPassword: string }): Promise<void> => {
+  const resetPassword = async (payload: {
+    code: string;
+    newPassword: string;
+  }): Promise<void> => {
     try {
-      return await http.post(API_ENDPOINTS.AUTH.RESET_PASSWORD, payload) as any;
-    }
-    catch (error: unknown) {
+      return (await http.post(
+        API_ENDPOINTS.AUTH.RESET_PASSWORD,
+        payload,
+      )) as any;
+    } catch (error: unknown) {
       console.error(error, "Reset Password Error");
       throw error;
     }
@@ -259,6 +305,7 @@ export const useAuthStore = defineStore("auth", () => {
     checkAuth,
     checkAuthIfNeeded,
     login,
+    register,
     loginWithGoogle,
     logout,
     updatePassword,

@@ -106,7 +106,7 @@ function togglePasswordVisibility() {
       :class="['w-full', props.class]"
       size="lg"
       :ui="{
-        base: `bg-transparent ring-secondary-50 dark:ring-secondary-800 focus:ring-1 focus:outline-none placeholder:text-secondary-300 rounded-xs h-11`,
+        base: `bg-white dark:bg-transparent ring-secondary-50 dark:ring-secondary-800 focus:ring-1 focus:outline-none placeholder:text-secondary-300 rounded-xs h-11`,
       }"
     >
       <template v-if="props.leadingIcon" #leading>
