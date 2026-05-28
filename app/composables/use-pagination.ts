@@ -6,8 +6,14 @@ import { ref } from "vue";
  *
  * @param initialPageSize - Default page size (limit). Defaults to 10.
  */
+
+export type Pagination = {
+  page: number;
+  pageSize: number;
+};
+
 export function usePagination(initialPageSize = 10) {
-  const pagination = ref({
+  const pagination = ref<Pagination>({
     page: 1,
     pageSize: initialPageSize,
   });

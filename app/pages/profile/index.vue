@@ -41,9 +41,9 @@ const tabs = computed(() => {
   ).length;
 
   return [
-    { id: "UPCOMING", label: `UPCOMING (${upcomingCount})` },
-    { id: "PAST", label: `PAST (${pastCount})` },
-    { id: "CANCELED", label: `CANCELED (${canceledCount})` },
+    { value: "UPCOMING", label: `UPCOMING (${upcomingCount})` },
+    { value: "PAST", label: `PAST (${pastCount})` },
+    { value: "CANCELED", label: `CANCELED (${canceledCount})` },
   ];
 });
 
@@ -246,29 +246,8 @@ function handleLogout(): void {
                 BOOKINGS
               </h3>
 
-              <div class="">
-                <div
-                  class="bg-background dark:bg-secondary-900 w-full py-4 select-none z-10 relative"
-                >
-                  <div
-                    class="max-w-400 mx-auto px-4 md:px-8 lg:px-12 flex items-center justify-start gap-3 md:gap-4 overflow-x-auto no-scrollbar scroll-smooth py-1"
-                  >
-                    <button
-                      v-for="tab in tabs"
-                      :key="tab.id"
-                      @click="activeTab = tab.id"
-                      :class="[
-                        'px-4 md:px-5 py-2 text-[9px] md:text-xs font-sans tracking-[0.2em] font-semibold border uppercase transition-all duration-300 cursor-pointer focus:outline-none whitespace-nowrap',
-                        activeTab === tab.id
-                          ? 'bg-primary-700 border-primary-700 text-white shadow-md active:scale-95'
-                          : 'border-stone-300 dark:border-stone-700 text-black dark:text-white/70 hover:border-primary/60 hover:text-primary hover:bg-primary/5 active:scale-95',
-                      ]"
-                    >
-                      {{ tab.label }}
-                    </button>
-                  </div>
-                </div>
-                <!-- <ClassFilter v-model="activeFilter" /> -->
+              <div>
+                <ClassFilter v-model="activeTab" :filters="tabs" />
               </div>
             </div>
 

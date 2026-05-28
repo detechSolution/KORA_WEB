@@ -12,4 +12,8 @@ export const API_ENDPOINTS = {
     VERIFY_OTP: "/api/v1/password-reset/verify-code",
     RESET_PASSWORD: "/api/v1/password-reset/reset-password",
   },
+
+  SESSION: {
+    GET: "/api/v1/sessions/website",
+  }
 };

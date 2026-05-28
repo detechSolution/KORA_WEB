@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { IMAGES } from "~/utils/images";
 import { sessionCollection } from "~/data/sessions";
+import { useSessionStore } from "~/stores/session";
+import { usePagination } from "~/composables/use-pagination";
+import { getApiErrorMessage } from "~/utils/error";
+import { useNotification } from "~/composables/use-notification";
 
 definePageMeta({
   layout: "default",
@@ -13,26 +17,47 @@ useSeoMeta({
     "Explore curated restorative wellness sessions, mindfulness group classes, sound baths, and therapeutic bodywork offerings.",
 });
 
-const activeFilter = ref("all");
-const sessions = sessionCollection;
+const loading = ref(false);
 
-const filteredSessions = computed(() => {
-  if (activeFilter.value === "all") {
-    return sessions;
+const sessionStore = useSessionStore();
+const { pagination } = usePagination(2);
+const { error: showError } = useNotification();
+
+const activeFilter = ref<'' | 'class' | 'workshop' | 'event' | 'photos'>("event");
+const filters = [
+  // { label: "PHOTOS", value: "photos" },
+  { label: "ALL", value: "" },
+  { label: "EVENTS", value: "event" },
+  { label: "CLASSES", value: "class" },
+  { label: "WORKSHOPS", value: "workshop" },
+];
+const sessions = computed(() => sessionStore.sessions);
+
+async function getSessionsList() {
+  try {
+    loading.value = true;
+    const params = {
+      page: pagination.value.page,
+      limit: pagination.value.pageSize,
+      type: activeFilter.value,
+    };
+    console.log("🚀 ~ getSessionsList ~ params:", params);
+    await sessionStore.getSessions(params);
+  } catch (error: unknown) {
+    showError({
+      message: getApiErrorMessage(error, "Failed to load inquiries"),
+    });
+  } finally {
+    loading.value = false;
   }
+}
 
-  const filteredData = sessions.data.filter(
-    (s) => s.category === activeFilter.value,
-  );
+onMounted(() => {
+  getSessionsList();
+});
 
-  return {
-    ...sessions,
-    data: filteredData,
-    meta: {
-      ...sessions.meta,
-      total: filteredData.length,
-    },
-  };
+watch(activeFilter, () => {
+  getSessionsList();
 });
 </script>
 
@@ -42,15 +67,16 @@ const filteredSessions = computed(() => {
   >
     <!-- Premium absolute-positioned foliage watermark overlay -->
     <div
-      class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 xl:w-50 aspect-square z-100 -translate-y-12 "
+      class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 xl:w-50 aspect-square z-100 -translate-y-12"
     >
       <img
         :src="IMAGES.LEAF"
         alt="Kora foliage decoration"
         class="w-full h-full object-cover"
       />
-    </div><div
-      class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 xl:w-50 aspect-square z-100 -translate-y-12 "
+    </div>
+    <div
+      class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 xl:w-50 aspect-square z-100 -translate-y-12"
     >
       <img
         :src="IMAGES.LEAF"
@@ -59,20 +85,20 @@ const filteredSessions = computed(() => {
       />
     </div>
 
-    <ClassHeader label="Upcoming Sessions" title="Session Details"/>
+    <ClassHeader label="Upcoming Sessions" title="Session Details" />
 
-    <ClassFilter v-model="activeFilter" />
+    <ClassFilter v-model="activeFilter" :filters="filters" class="px-4 md:px-8 lg:px-12"/>
 
     <div class="w-full">
       <div v-if="activeFilter !== 'photos'">
-        <ClassSessionList :sessions="filteredSessions" />
+        <ClassSessionList :sessions="sessions" :pagination="pagination" @load-session-list="getSessionsList"/>
       </div>
 
       <div
         v-else
         class="w-full px-4 md:px-8 lg:px-12 py-6 select-none relative z-10"
       >
-        <div class="max-w-400 mx-auto">
+        <div class="max-w-400 session-animation mx-auto">
           <div
             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-4"
           >
@@ -83,8 +109,8 @@ const filteredSessions = computed(() => {
               :style="{ animationDelay: `${index * 80}ms` }"
             >
               <img
-                :src="session.image"
-                :alt="session.title"
+                :src="session.bannerUrl"
+                :alt="session.name"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
               />
               <div
@@ -93,12 +119,12 @@ const filteredSessions = computed(() => {
                 <span
                   class="text-primary text-[8px] md:text-[9px] tracking-[0.2em] font-bold uppercase"
                 >
-                  {{ session.tagLabel || session.category }}
+                  {{ session.type }}
                 </span>
                 <h4
                   class="font-serif text-lg text-white font-medium mt-1 leading-snug"
                 >
-                  {{ session.title }}
+                  {{ session.name }}
                 </h4>
                 <p
                   class="font-sans text-[10px] text-muted-foreground/90 mt-1 line-clamp-2"
@@ -132,7 +158,7 @@ const filteredSessions = computed(() => {
   }
 }
 
-.max-w-400 {
+.session-animation {
   animation: pageSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 </style>

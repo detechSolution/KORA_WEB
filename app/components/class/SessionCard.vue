@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
-import type { SessionDetail } from "~/data/sessions";
+import type { Session } from "~/types/session";
 
 defineProps({
   session: {
-    type: Object as PropType<SessionDetail>,
+    type: Object as PropType<Session>,
     required: true,
   },
 });
@@ -18,8 +18,8 @@ defineProps({
       class="relative w-full md:w-[260px] lg:w-[300px] shrink-0 aspect-[1.15] overflow-hidden border-primary bg-muted select-none z-10 shadow-lg"
     >
       <img
-        :src="session.image"
-        :alt="session.title"
+        :src="session.bannerUrl"
+        :alt="session.name"
         class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
       />
       <div
@@ -29,20 +29,20 @@ defineProps({
 
     <div class="grow flex flex-col items-start gap-1 py-1">
       <base-badge color="primary" class="rounded-xs text-stone-900 dark:text-white">{{
-        session.tagLabel
+        session.type
       }}</base-badge>
 
       <span
         class="flex items-center gap-1.5 text-[10px] md:text-xs font-sans tracking-wide text-primary mt-2 select-none"
       >
         <UIcon name="i-lucide-calendar" class="w-3.5 h-3.5 text-primary" />
-        {{ session.date }}
+        {{ session.startsAt }}
       </span>
 
       <h3
         class="font-serif text-2xl md:text-3xl text-black dark:text-white font-normal tracking-wide mt-2 mb-2 select-none transition-colors duration-300"
       >
-        {{ session.title }}
+        {{ session.name }}
       </h3>
 
       <p
@@ -56,11 +56,11 @@ defineProps({
       >
         <span class="flex items-center gap-1.5">
           <UIcon name="i-lucide-clock" class="w-3.5 h-3.5 text-primary/60" />
-          {{ session.time }}
+          {{ session.startTime }}
         </span>
         <span class="flex items-center gap-1.5">
           <UIcon name="i-lucide-users" class="w-3.5 h-3.5 text-primary/60" />
-          {{ session.spots }}
+          {{ session.remainingSpots }}
         </span>
       </div>
     </div>
@@ -82,7 +82,7 @@ defineProps({
       <base-button
         variant="outline"
         color="primary"
-        :to="`/class/${session.slug}`"
+        :to="`/class/${session.id}`"
       >
         View Detail
         <UIcon

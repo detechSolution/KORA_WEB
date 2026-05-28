@@ -1,38 +1,36 @@
 <script setup lang="ts">
-import { computed, watch } from "vue";
-import type { PropType } from "vue";
-import { usePagination } from "~/composables/use-pagination";
-import type { SessionDetail } from "~/data/sessions";
+import { usePagination, type Pagination } from "~/composables/use-pagination";
+import { useSessionStore } from "~/stores/session";
+import type { Session } from "~/types/session";
 
-const props = defineProps({
+type Props = {
   sessions: {
-    type: Object as PropType<{
-      data: SessionDetail[];
-      meta: {
-        total: number;
-      };
-    }>,
-    required: true,
-  },
+    data: Session[];
+    meta: {
+      page: number;
+      limit: number;
+      total: number;
+    };
+  };
+  pagination: Pagination;
+};
+const props = withDefaults(defineProps<Props>(), {
+  sessions: () => ({
+    data: [] as Session[],
+    meta: {
+      page: 1,
+      limit: 10,
+      total: 0,
+    },
+  }),
+  pagination: () => ({
+    page: 1,
+    pageSize: 10,
+  }),
 });
 
-const { pagination, resetPagination } = usePagination(2);
-
-// Watch for changes in sessions prop (e.g., filter changed) to reset page to 1
-watch(
-  () => props.sessions,
-  () => {
-    resetPagination();
-  },
-  { deep: true }
-);
-
-// Compute the slice of sessions to display based on the active page
-const paginatedSessions = computed(() => {
-  const start = (pagination.value.page - 1) * pagination.value.pageSize;
-  const end = start + pagination.value.pageSize;
-  return props.sessions.data.slice(start, end);
-});
+const sessionStore = useSessionStore();
+// const { pagination } = usePagination(2);
 
 const emit = defineEmits(["loadSessionList"]);
 </script>
@@ -45,7 +43,7 @@ const emit = defineEmits(["loadSessionList"]);
       <!-- Session Cards List -->
       <div v-if="sessions.data.length !== 0" class="flex flex-col gap-6">
         <ClassSessionCard
-          v-for="session in paginatedSessions"
+          v-for="session in sessions.data"
           :key="session.id"
           :session="session"
         />
@@ -53,6 +51,7 @@ const emit = defineEmits(["loadSessionList"]);
           :page="pagination.page"
           :total="sessions?.meta?.total"
           :items-per-page="pagination.pageSize"
+          :disabled="sessionStore.loading"
           @update:page="
             (v) => {
               pagination.page = v;
