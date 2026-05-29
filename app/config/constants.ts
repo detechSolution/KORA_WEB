@@ -19,5 +19,13 @@ export const API_ENDPOINTS = {
 
   INQUIRE: {
     CREATE: "/api/v1/mails/inquiries",
-  }
+  },
+
+  MEMBERSHIP: {
+    GET: "/api/v1/membership-plans/website",
+  },
+
+  PASS: {
+    GET: "/api/v1/passes/website",
+  },
 };
