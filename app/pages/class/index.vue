@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue";
 import { IMAGES } from "~/utils/images";
-import { sessionCollection } from "~/data/sessions";
 import { useSessionStore } from "~/stores/session";
 import { usePagination } from "~/composables/use-pagination";
 import { getApiErrorMessage } from "~/utils/error";
 import { useNotification } from "~/composables/use-notification";
+import { useRoute, useRouter } from "vue-router";
 
 definePageMeta({
   layout: "default",
@@ -23,9 +23,17 @@ const sessionStore = useSessionStore();
 const { pagination } = usePagination(2);
 const { error: showError } = useNotification();
 
-const activeFilter = ref<"" | "class" | "workshop" | "event" | "photos">(
-  "event",
-);
+const route = useRoute();
+const router = useRouter();
+
+type Tab = "" | "class" | "workshop" | "event" | "photos";
+const activeFilter = ref<Tab>((route.query.tab as Tab) ?? "event");
+
+function updateQuery(tab: string) {
+  const query = { ...route.query, tab };
+  router.push({ query });
+}
+
 const filters = [
   // { label: "PHOTOS", value: "photos" },
   { label: "ALL", value: "" },
@@ -62,9 +70,17 @@ onMounted(() => {
   getSessionsList();
 });
 
-watch(activeFilter, () => {
+watch(activeFilter, (tab) => {
+  if (route.path !== "/class") return;
+  router.replace({ query: { ...route.query, tab } });
   pagination.value.page = 1;
   getSessionsList();
+}, { immediate: true });
+
+watch(() => route.query.tab, (tab) => {
+  if (route.path !== "/class") return;
+  const next = (tab as Tab) ?? "event";
+  if (next !== activeFilter.value) activeFilter.value = next;
 });
 </script>
 

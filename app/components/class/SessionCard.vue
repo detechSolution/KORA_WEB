@@ -28,9 +28,11 @@ defineProps({
     </div>
 
     <div class="grow flex flex-col items-start gap-1 py-1">
-      <base-badge color="primary" class="rounded-xs text-stone-900 dark:text-white uppercase">{{
-        session.type
-      }}</base-badge>
+      <base-badge
+        color="primary"
+        class="rounded-xs text-stone-900 dark:text-white uppercase"
+        >{{ session.type }}</base-badge
+      >
 
       <span
         class="flex items-center gap-1.5 text-[10px] md:text-xs font-sans tracking-wide text-primary mt-2 select-none"
@@ -55,7 +57,8 @@ defineProps({
       >
         <span class="flex items-center gap-1.5">
           <UIcon name="i-lucide-clock" class="w-3.5 h-3.5 text-primary/60" />
-          {{ formatTime(session.startTime) }} - {{ formatTime(session.endTime) }}
+          {{ formatTime(session.startTime) }} -
+          {{ formatTime(session.endTime) }}
         </span>
         <span class="flex items-center gap-1.5">
           <UIcon name="i-lucide-users" class="w-3.5 h-3.5 text-primary/60" />
@@ -81,7 +84,7 @@ defineProps({
       <base-button
         variant="outline"
         color="primary"
-        :to="`/class/${session.id}`"
+        :to="{ path: `/class/${session.id}`, query: {} }"
       >
         View Detail
         <UIcon
