@@ -28,12 +28,7 @@ const router = useRouter();
 
 type Tab = "" | "class" | "workshop" | "event" | "photos";
 const activeFilter = ref<Tab>((route.query.tab as Tab) ?? "event");
-
-function updateQuery(tab: string) {
-  const query = { ...route.query, tab };
-  router.push({ query });
-}
-
+  
 const filters = [
   // { label: "PHOTOS", value: "photos" },
   { label: "ALL", value: "" },
