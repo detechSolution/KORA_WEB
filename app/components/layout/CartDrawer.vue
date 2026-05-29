@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useCartStore } from "~/stores/cart";
 
 const props = defineProps({
@@ -15,19 +15,34 @@ const close = () => {
   emit("close");
 };
 
+const isRemoveItemModalOpen = ref(false);
+const selectedItemId = ref<string | "">("");
+
 const cartStore = useCartStore();
 const cartItems = computed(() => cartStore.cartItems);
-
 const totalPrice = computed(() => {
-  return cartItems.value.reduce((total, item) => total + (item.price * item.guests.length || 0), 0);
+  return cartItems.value.reduce(
+    (total, item) => total + (item.price * item.guests.length || 0),
+    0,
+  );
 });
 
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat("en-IN").format(price);
 };
 
-const removeItem = (id: string | number) => {
-  cartStore.removeItem(id);
+const openRemoveModal = (id: string) => {
+  selectedItemId.value = id;
+  isRemoveItemModalOpen.value = true;
+};
+
+const handleRemoveItem = () => {
+  if (selectedItemId.value !== "") {
+    cartStore.removeItem(selectedItemId.value);
+  }
+
+  isRemoveItemModalOpen.value = false;
+  selectedItemId.value = "";
 };
 </script>
 
@@ -125,7 +140,8 @@ const removeItem = (id: string | number) => {
             <div class="flex justify-between items-start gap-4">
               <div class="flex items-center gap-2">
                 <h4 class="text-sm font-serif text-foreground">
-                  {{ item.title }} x <span class="text-xl">{{ item.guests.length }}</span>
+                  {{ item.title }} x
+                  <span class="text-xl">{{ item.guests.length }}</span>
                 </h4>
                 <span
                   v-if="item.type === 'Session'"
@@ -185,7 +201,7 @@ const removeItem = (id: string | number) => {
 
             <div class="mt-auto flex justify-end">
               <button
-                @click="removeItem(item.cartId)"
+                @click="openRemoveModal(item.cartId)"
                 class="text-red-800 hover:text-red-700 transition-colors hover:cursor-pointer"
                 aria-label="Remove item"
               >
@@ -215,4 +231,10 @@ const removeItem = (id: string | number) => {
       </template>
     </div>
   </base-drawer>
+
+  <cart-delete-modal
+    :open="isRemoveItemModalOpen"
+    @close="isRemoveItemModalOpen = false"
+    @confirm="handleRemoveItem"
+  />
 </template>

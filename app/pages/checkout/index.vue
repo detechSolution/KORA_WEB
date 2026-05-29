@@ -3,6 +3,7 @@ import { ref, computed } from "vue";
 import { ICONS } from "~/config/icons";
 // import { cartItems } from "~/data/cart";
 import { useCartStore } from "~/stores/cart";
+import { calculatePrice } from "~/utils/helper";
 
 definePageMeta({
   layout: "default",
@@ -22,19 +23,38 @@ const form = ref({
 });
 
 const paymentMethod = ref("esewa");
+const isRemoveItemModalOpen = ref(false);
+const selectedItemId = ref<string | "">("");
 
 const cartStore = useCartStore();
 const cartItems = computed(() => cartStore.cartItems);
 const subtotal = computed(() => {
-  return cartItems.value.reduce(
-    (total, item) => total + item.price * item.guests.length,
-    0,
-  );
+  return cartItems.value.reduce((total, item) => total + item.finalPrice, 0);
 });
 
 const totalPrice = computed(() => {
   return subtotal.value;
 });
+
+const totalItems = computed(() => {
+  return cartItems.value.reduce((total, item) => total + item.guests.length, 0);
+});
+
+const openRemoveModal = (id: string) => {
+  selectedItemId.value = id;
+  isRemoveItemModalOpen.value = true;
+};
+
+const handleRemoveItem = () => {
+  if (selectedItemId.value !== "") {
+    cartStore.removeItem(selectedItemId.value);
+  }
+
+  isRemoveItemModalOpen.value = false;
+  selectedItemId.value = "";
+};
+
+const PROMO_DISCOUNT = 0;
 
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat("en-IN").format(price);
@@ -150,10 +170,11 @@ async function handlePayNowClick() {
                         >Membership</span
                       >
                     </div>
-                    <span class="text-sm font-serif text-[#B59A6D]"
-                      >Rs.
-                      {{ formatPrice(item.price * item.guests.length) }}</span
-                    >
+                    <div>
+                      <span class="text-sm font-serif text-[#B59A6D]"
+                        >Rs. {{ formatPrice(item.finalPrice) }}</span
+                      >
+                    </div>
                   </div>
 
                   <div class="flex flex-col gap-1.5 mt-auto">
@@ -178,17 +199,12 @@ async function handlePayNowClick() {
                       <UIcon name="i-lucide-map-pin" class="w-3 h-3" />
                       <span>{{ item.location }}</span>
                     </div>
-                    <div
-                      v-if="item.discountText"
-                      class="text-[9px] text-muted-foreground"
-                    >
-                      {{ item.discountText }}
-                    </div>
                   </div>
 
                   <div class="flex justify-end mt-2">
                     <button
                       class="text-destructive/80 hover:text-destructive transition-colors"
+                      @click="openRemoveModal(item.cartId)"
                     >
                       <UIcon
                         name="i-lucide-trash-2"
@@ -385,20 +401,20 @@ async function handlePayNowClick() {
                 <div
                   class="text-sm text-secondary dark:text-white font-normal flex justify-between"
                 >
-                  <h2>Items Count ({{ cartItems.length }} items)</h2>
+                  <h2>Items Count ({{ totalItems }} items)</h2>
                   <p>Rs. {{ formatPrice(totalPrice) }}</p>
                 </div>
-                <div
+                <!-- <div
                   class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between"
                 >
-                  <h2>Membership Discount</h2>
-                  <p>0%</p>
-                </div>
+                  <h2>Membership Discount ({{ MEMBERSHIP_DISCOUNT }}%)</h2>
+                  <p>- Rs. {{ formatPrice(pricing.discountAmount) }}</p>
+                </div> -->
                 <div
                   class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between border-b border-border pb-2"
                 >
-                  <h2>Promo Discount</h2>
-                  <p>0%</p>
+                  <h2>Promo Discount (0%)</h2>
+                  <p>- Rs. 0</p>
                 </div>
 
                 <div
@@ -440,6 +456,12 @@ async function handlePayNowClick() {
       </div>
     </div>
   </div>
+
+  <cart-delete-modal
+    :open="isRemoveItemModalOpen"
+    @close="isRemoveItemModalOpen = false"
+    @confirm="handleRemoveItem"
+  />
 </template>
 
 <style scoped>
