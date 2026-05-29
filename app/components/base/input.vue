@@ -91,7 +91,7 @@ function togglePasswordVisibility() {
       class="w-full"
       size="lg"
       :ui="{
-        base: 'bg-transparent ring-secondary-50 dark:ring-secondary-800 focus:ring-1 focus:outline-none placeholder:text-secondary-300 rounded-xs',
+        base: 'bg-white dark:bg-transparent ring-secondary-50 dark:ring-secondary-800 focus:ring-1 focus:outline-none placeholder:text-secondary-300 rounded-xs',
       }"
     />
     <UInput

@@ -15,5 +15,9 @@ export const API_ENDPOINTS = {
 
   SESSION: {
     GET: "/api/v1/sessions/website",
+  },
+
+  INQUIRE: {
+    CREATE: "/api/v1/mails/inquiries",
   }
 };
