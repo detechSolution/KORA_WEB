@@ -238,6 +238,7 @@ async function handleInquireSubmit() {
 
             <base-button
               type="submit"
+              :loading="loading"
               class="w-full justify-center text-xs uppercase tracking-[0.18em]"
             >
               Submit Inquiry
