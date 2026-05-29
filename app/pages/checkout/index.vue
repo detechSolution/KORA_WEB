@@ -82,6 +82,7 @@ async function handlePayNowClick() {
       <ClassHeader title="Checkout" label="Complete your booking" />
 
       <div
+        v-if="cartItems.length > 0"
         class="grid grid-cols-1 lg:grid-cols-5 gap-x-12 gap-y-12 lg:gap-x-16 px-4 md:px-8 lg:px-12"
       >
         <!-- Left Column: Form / Payment -->
@@ -453,6 +454,13 @@ async function handlePayNowClick() {
             </base-button>
           </div>
         </div>
+      </div>
+      <div v-else class="text-center py-20 flex flex-col items-center gap-6">
+        <UIcon
+          name="i-lucide-shopping-cart"
+          class="w-12 h-12 text-muted-foreground"
+        />
+        <h2 class="text-lg text-muted-foreground">There are no items in this cart</h2>
       </div>
     </div>
   </div>
