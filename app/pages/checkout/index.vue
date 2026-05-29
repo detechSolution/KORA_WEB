@@ -25,8 +25,10 @@ const form = ref({
 const paymentMethod = ref("esewa");
 const isRemoveItemModalOpen = ref(false);
 const selectedItemId = ref<string | "">("");
+const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
 
 const cartStore = useCartStore();
+
 const cartItems = computed(() => cartStore.cartItems);
 const subtotal = computed(() => {
   return cartItems.value.reduce((total, item) => {
@@ -49,6 +51,16 @@ const totalItems = computed(() => {
   );
 });
 
+const pricing = computed(() =>
+  calculatePrice({
+    price: totalPrice.value,
+    guests: 1,
+    membershipDiscount: MEMBERSHIP_DISCOUNT,
+    discount: PROMO_DISCOUNT,
+  }),
+);
+
+
 const openRemoveModal = (id: string) => {
   selectedItemId.value = id;
   isRemoveItemModalOpen.value = true;
@@ -63,6 +75,7 @@ const handleRemoveItem = () => {
   selectedItemId.value = "";
 };
 
+const MEMBERSHIP_DISCOUNT = userDetail?.membership?.option?.memberBenefit || 0;
 const PROMO_DISCOUNT = 0;
 
 const goBack = () => {
@@ -413,12 +426,12 @@ async function handlePayNowClick() {
                   <h2>Items Count ({{ totalItems }} items)</h2>
                   <p>Rs. {{ formatPrice(totalPrice) }}</p>
                 </div>
-                <!-- <div
+                <div
                   class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between"
                 >
                   <h2>Membership Discount ({{ MEMBERSHIP_DISCOUNT }}%)</h2>
                   <p>- Rs. {{ formatPrice(pricing.discountAmount) }}</p>
-                </div> -->
+                </div>
                 <div
                   class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between border-b border-border pb-2"
                 >

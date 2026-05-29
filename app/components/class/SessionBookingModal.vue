@@ -82,8 +82,7 @@ const pricing = computed(() =>
   calculatePrice({
     price: props.session.price,
     guests: guests.value.length,
-    membershipDiscount: MEMBERSHIP_DISCOUNT,
-    promoDiscount: PROMO_DISCOUNT,
+    discount: MEMBERSHIP_DISCOUNT,
   }),
 );
 
