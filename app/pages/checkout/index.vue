@@ -105,7 +105,7 @@ async function handlePayNowClick() {
                     v-if="item.image"
                     :src="item.image"
                     :alt="item.title"
-                    class="w-full h-full object-cover grayscale opacity-80"
+                    class="w-full h-full object-cover"
                   />
                 </div>
                 <div

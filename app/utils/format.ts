@@ -23,3 +23,8 @@ export const formatDate = (date: string | Date): string => {
     day: "numeric",
   });
 };
+
+// Price Formatter
+export const formatPrice = (price: number) => {
+  return new Intl.NumberFormat("en-NP").format(price);
+};

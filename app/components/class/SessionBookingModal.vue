@@ -1,10 +1,21 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import type { PropType } from "vue";
-import type { Session } from "~/types/session";
-import { useCartStore } from "~/stores/cart";
-import { formatTime } from "~/utils/format";
 import { useRouter } from "vue-router";
+
+import type { Session } from "~/types/session";
+
+import { useCartStore } from "~/stores/cart";
+
+import { formatTime } from "~/utils/format";
+import { calculatePrice } from "~/utils/helper";
+import { useNotification } from "~/composables/use-notification";
+
+type Guest = {
+  fullName: string;
+  phone: string;
+  email: string;
+};
 
 const props = defineProps({
   isOpen: {
@@ -17,16 +28,72 @@ const props = defineProps({
   },
 });
 
-const steps = [
-  {
-    label: "Attendees",
-  },
-  {
-    label: "Overview",
-  },
-];
+const emit = defineEmits<{
+  close: [];
+}>();
+
+const router = useRouter();
+const cartStore = useCartStore();
+const { success } = useNotification();
+
+const currentStep = ref(0);
+
+const steps = [{ label: "Attendees" }, { label: "Overview" }];
 
 const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
+
+const createGuest = (): Guest => ({
+  fullName: "",
+  phone: "",
+  email: "",
+});
+
+const guests = ref<Guest[]>([
+  {
+    fullName: userDetail?.name || "",
+    phone: userDetail?.phone || "",
+    email: userDetail?.email || "",
+  },
+]);
+
+const resetGuests = () => {
+  guests.value = [
+    {
+      fullName: userDetail?.name || "",
+      phone: userDetail?.phone || "",
+      email: userDetail?.email || "",
+    },
+  ];
+};
+const addGuest = () => {
+  guests.value.push(createGuest());
+};
+
+const removeGuest = (index: number) => {
+  if (guests.value.length <= 1) return;
+
+  guests.value.splice(index, 1);
+};
+
+const MEMBERSHIP_DISCOUNT = 20;
+const PROMO_DISCOUNT = 0;
+
+const pricing = computed(() =>
+  calculatePrice({
+    price: props.session.price,
+    guests: guests.value.length,
+    membershipDiscount: MEMBERSHIP_DISCOUNT,
+    promoDiscount: PROMO_DISCOUNT,
+  }),
+);
+
+const formatPrice = (price: number) => {
+  return new Intl.NumberFormat("en-NP", {
+    style: "currency",
+    currency: "NPR",
+    maximumFractionDigits: 0,
+  }).format(price);
+};
 
 function goToStep(step: number) {
   if (step > currentStep.value) {
@@ -35,76 +102,57 @@ function goToStep(step: number) {
         currentStep.value = step;
       }
     });
+
     return;
   }
 
   currentStep.value = step;
 }
 
-async function validateCurrentStep(): Promise<boolean> {
-  try {
-    // await formRef.value?.validate();
-    return true;
-  } catch {
-    return false;
-  }
+async function validateCurrentStep() {
+  return true;
 }
 
-const emit = defineEmits(["close"]);
-
-const close = () => {
-  emit("close");
-};
-
-const currentStep = ref(0);
-
-const cartStore = useCartStore();
-const router = useRouter();
-
-const guests = ref([
-  {
-    fullName: userDetail?.name || "",
-    phone: userDetail?.phone || "",
-    email: userDetail?.email || "",
-  },
-]);
-
-const addGuest = () => {
-  guests.value.push({ fullName: "", phone: "", email: "" });
-};
-
-const removeGuest = (index: number) => {
-  if (guests.value.length > 1) {
-    guests.value.splice(index, 1);
-  }
+const nextStep = () => {
+  currentStep.value = 1;
 };
 
 const previousStep = () => {
   currentStep.value = 0;
 };
-const nextStep = () => {
-  currentStep.value = 1;
-};
+
+const bookingItem = computed(() => ({
+  id: props.session.id,
+  title: props.session.name,
+  type: props.session.type,
+  price: props.session.price,
+  date: props.session.sessionDate,
+  time: `${formatTime(props.session.startTime)} - ${formatTime(props.session.endTime)}`,
+  location: props.session.venue,
+  image: props.session.bannerUrl,
+  guests: guests.value,
+  subtotal: pricing.value.subtotal,
+  membershipDiscount: MEMBERSHIP_DISCOUNT,
+  promoDiscount: PROMO_DISCOUNT,
+  discountAmount: pricing.value.discountAmount,
+  finalPrice: pricing.value.finalPrice,
+}));
 
 const addToCart = () => {
-  const item = {
-    id: props.session.id,
-    title: props.session.name,
-    type: props.session.type,
-    price: props.session.price,
-    date: props.session.sessionDate,
-    time: `${formatTime(props.session.startTime)} - ${formatTime(props.session.endTime)}`,
-    location: props.session.venue,
-    image: props.session.bannerUrl,
-    guests: guests.value
-  };
-  cartStore.addToCart(item);
-  close();
+  cartStore.addToCart(bookingItem.value);
+  success({ message: "Item added to cart successfully!" });
 };
 
 const proceedToCheckout = () => {
-  addToCart();
+  cartStore.addToCart(bookingItem.value);
   router.push("/checkout");
+  close();
+};
+
+const close = () => {
+  currentStep.value = 0;
+  resetGuests();
+  emit("close");
 };
 </script>
 
@@ -119,7 +167,7 @@ const proceedToCheckout = () => {
     class="dark:bg-nirvana-mist"
   >
     <div class="p-4 md:p-6">
-      <!-- Step Indicators -->
+      <!-- Stepper -->
       <base-form-stepper
         :steps="steps"
         :current-step="currentStep"
@@ -129,12 +177,17 @@ const proceedToCheckout = () => {
       />
 
       <Transition name="fade" mode="out-in">
-        <!-- Step 1: Attendees -->
-        <div v-if="currentStep === 0" key="step1" class="flex flex-col">
+        <!-- STEP 1 -->
+        <div
+          v-if="currentStep === 0"
+          key="step-attendees"
+          class="flex flex-col"
+        >
           <div class="mb-8">
             <h2 class="text-3xl font-serif text-foreground mb-3">
               Who's Joining?
             </h2>
+
             <p class="text-xs text-[#A08860]">
               Add any additional guests joining the session, or simply click
               next to continue.
@@ -147,23 +200,23 @@ const proceedToCheckout = () => {
             <div
               v-for="(guest, index) in guests"
               :key="index"
-              class="flex flex-col gap-6 relative"
+              class="relative flex flex-col gap-6"
             >
-              <div
-                v-if="index > 0"
-                class="w-full h-1px bg-border/40 mt-2 mb-2"
-              ></div>
+              <div v-if="index > 0" class="w-full h-px bg-border/40"></div>
 
               <div class="flex items-center justify-between">
                 <h4 v-if="index > 0" class="text-sm font-serif text-[#A08860]">
                   Guest {{ index + 1 }}
                 </h4>
+
                 <button
                   v-if="guests.length > 1"
                   @click="removeGuest(index)"
-                  class="text-xs text-red-800 hover:text-red-600 transition-colors flex items-center gap-1 absolute right-0 top-2"
+                  class="absolute top-0 right-0 flex items-center gap-1 text-xs text-red-800 hover:text-red-600 transition-colors hover:cursor-pointer"
                 >
-                  <UIcon name="i-lucide-trash-2" class="w-3.5 h-3.5" /> Remove
+                  <UIcon name="i-lucide-trash-2" class="w-3.5 h-3.5" />
+
+                  Remove
                 </button>
               </div>
 
@@ -183,6 +236,7 @@ const proceedToCheckout = () => {
                   type="text"
                   class="bg-white dark:bg-transparent"
                 />
+
                 <base-input
                   v-model="guest.email"
                   :name="`email_${index}`"
@@ -212,12 +266,13 @@ const proceedToCheckout = () => {
           </div>
         </div>
 
-        <!-- Step 2: Overview -->
-        <div v-else key="step2" class="flex flex-col">
+        <!-- STEP 2 -->
+        <div v-else key="step-overview" class="flex flex-col">
           <div class="mb-8">
             <h2 class="text-3xl font-serif text-foreground mb-3">
               Review Your Booking
             </h2>
+
             <p class="text-xs text-[#A08860]">
               Please check your session booking details before confirming
             </p>
@@ -238,30 +293,40 @@ const proceedToCheckout = () => {
               <div
                 class="flex justify-between items-center text-sm text-foreground"
               >
-                <span>{{ session.name }} X {{ guests.length }}</span>
-                <span>Rs. 2,000</span>
+                <span> {{ session.name }} × {{ guests.length }} </span>
+
+                <span>
+                  {{ formatPrice(pricing.subtotal) }}
+                </span>
               </div>
+
               <div
                 class="flex justify-between items-center text-sm text-muted-foreground"
               >
                 <span>Membership Discount</span>
-                <span>20%</span>
+
+                <span> {{ MEMBERSHIP_DISCOUNT }}% </span>
               </div>
             </div>
 
             <div
               class="flex justify-between items-center border-t border-border/40 pt-4 text-foreground"
             >
-              <span class="font-serif font-bold">Total</span>
-              <span class="font-serif font-bold">Rs. 1,800</span>
+              <span class="font-serif font-bold"> Total </span>
+
+              <span class="font-serif font-bold">
+                {{ formatPrice(pricing.finalPrice) }}
+              </span>
             </div>
+
             <div class="border-b border-border/40 pb-6 mb-8"></div>
           </div>
 
           <div class="flex flex-col sm:flex-row justify-between gap-4 mt-auto">
-            <base-button class="" @click="previousStep" variant="outline">
+            <base-button @click="previousStep" variant="outline">
               Back
             </base-button>
+
             <div class="flex flex-col sm:flex-row gap-2">
               <base-button
                 @click="addToCart"
@@ -289,6 +354,7 @@ const proceedToCheckout = () => {
 .fade-leave-active {
   transition: opacity 0.3s ease;
 }
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;

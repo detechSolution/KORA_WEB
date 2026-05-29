@@ -35,7 +35,7 @@ const removeItem = (id: string | number) => {
   <base-drawer :open="isOpen" @close="close" :drawer-width="480">
     <template #header>
       <div
-        class="flex items-start justify-between p-8 pb-6 border-b border-border/20"
+        class="flex items-start justify-between p-8 pb-6 border-b border-border"
       >
         <div class="flex flex-col gap-2">
           <h2 class="text-2xl font-serif text-foreground">Your Cart</h2>
@@ -89,7 +89,7 @@ const removeItem = (id: string | number) => {
         <div
           v-for="item in cartItems"
           :key="item.id"
-          class="flex gap-4 pb-6 border-b border-border/10 last:border-0 last:pb-0"
+          class="flex gap-4 pb-6 border-b border-border"
         >
           <div
             v-if="
@@ -183,10 +183,10 @@ const removeItem = (id: string | number) => {
               </div>
             </div>
 
-            <div class="mt-auto pt-3 flex justify-end">
+            <div class="mt-auto flex justify-end">
               <button
-                @click="removeItem(item.id)"
-                class="text-red-800 hover:text-red-700 transition-colors"
+                @click="removeItem(item.cartId)"
+                class="text-red-800 hover:text-red-700 transition-colors hover:cursor-pointer"
                 aria-label="Remove item"
               >
                 <UIcon name="i-lucide-trash-2" class="w-3.5 h-3.5" />
