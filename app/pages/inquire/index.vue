@@ -1,6 +1,12 @@
 <script setup lang="ts">
+import { ref } from "vue";
+import { useNotification } from "~/composables/use-notification";
 import { reactive } from "vue";
 import { IMAGES } from "~/utils/images";
+import z from "zod";
+import { useInquireStore } from "~/stores/inquire";
+import type { Inquire } from "~/types/inquire";
+import { getApiErrorMessage } from "~/utils/error";
 
 definePageMeta({
   layout: "default",
@@ -12,12 +18,40 @@ useSeoMeta({
     "Connect with Kora to begin your residency inquiry and explore a more intentional way of living.",
 });
 
-const inquiryForm = reactive({
+const inquireStore = useInquireStore();
+const { error: showError, success: showSuccess } = useNotification();
+
+const loading = ref(false);
+const apiError = ref<string | null>(null);
+const formRef = ref<InstanceType<typeof UForm> | null>(null);
+
+const schema = z.object({
+  fullName: z.string().min(1, "Full name is required"),
+  phone: z.string().min(1, "Phone number is required"),
+  email: z
+    .string()
+    .min(1, "Email address is required")
+    .email("Invalid email address"),
+  inquiry: z.string().min(1, "Inquiry is required"),
+});
+
+type Schema = z.output<typeof schema>;
+
+const inquiryFormState = reactive<Partial<Schema>>({
   fullName: "",
   phone: "",
   email: "",
   inquiry: "",
 });
+
+function setApiError(error: string): void {
+  apiError.value = error;
+}
+
+function clearApiError(): void {
+  apiError.value = null;
+}
+
 
 const contactItems = [
   {
@@ -47,10 +81,47 @@ const contactItems = [
     external: true,
   },
 ];
+function resetForm() {
+  inquiryFormState.fullName = "";
+  inquiryFormState.phone = "";
+  inquiryFormState.email = "";
+  inquiryFormState.inquiry = "";
+}
 
-const submitInquiry = () => {
-  console.log("Residency inquiry submitted", { ...inquiryForm });
-};
+async function handleInquireSubmit() {
+  try {
+    await formRef.value?.validate();
+  } catch {
+    return;
+  }
+  try {
+    loading.value = true;
+    clearApiError();
+
+    const payload = {
+      fullName: inquiryFormState.fullName,
+      phone: inquiryFormState.phone,
+      email: inquiryFormState.email,
+      inquiry: inquiryFormState.inquiry,
+    };
+    await inquireStore.createInquire(payload as Inquire);
+    showSuccess({ message: "Inquiry submitted successfully" });
+    resetForm();
+  } catch (error) {
+    const message = getApiErrorMessage(
+      error,
+      "Something went wrong. Please try again.",
+    );
+    if (message !== "Something went wrong. Please try again.") {
+      setApiError(message);
+      formRef.value?.validate();
+      return;
+    }
+    showError({ message });
+  } finally {
+    loading.value = false;
+  }
+}
 </script>
 
 <template>
@@ -125,17 +196,23 @@ const submitInquiry = () => {
             Inquiry Application
           </p>
 
-          <form class="mt-6 space-y-5" @submit.prevent="submitInquiry">
+          <UForm
+            ref="formRef"
+            :state="inquiryFormState"
+            :schema="schema"
+            class="mt-6 space-y-5"
+            @submit.prevent="handleInquireSubmit"
+          >
             <div class="grid gap-5 md:grid-cols-2">
               <base-input
-                v-model="inquiryForm.fullName"
+                v-model="inquiryFormState.fullName"
                 name="fullName"
                 label="Full Name"
                 placeholder="Your Name"
               />
 
               <base-input
-                v-model="inquiryForm.phone"
+                v-model="inquiryFormState.phone"
                 name="phone"
                 type="tel"
                 label="Phone"
@@ -144,7 +221,7 @@ const submitInquiry = () => {
             </div>
 
             <base-input
-              v-model="inquiryForm.email"
+              v-model="inquiryFormState.email"
               name="email"
               type="email"
               label="Email Address"
@@ -152,7 +229,7 @@ const submitInquiry = () => {
             />
 
             <base-input
-              v-model="inquiryForm.inquiry"
+              v-model="inquiryFormState.inquiry"
               name="inquiry"
               type="textarea"
               label="Your Inquiry For Kora"
@@ -165,7 +242,7 @@ const submitInquiry = () => {
             >
               Submit Inquiry
             </base-button>
-          </form>
+          </UForm>
         </div>
       </div>
     </div>
