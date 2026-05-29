@@ -29,7 +29,13 @@ const selectedItemId = ref<string | "">("");
 const cartStore = useCartStore();
 const cartItems = computed(() => cartStore.cartItems);
 const subtotal = computed(() => {
-  return cartItems.value.reduce((total, item) => total + item.finalPrice, 0);
+  return cartItems.value.reduce((total, item) => {
+    if (item.itemType === "session") {
+      return total + (item.price || 0) * (item.guests?.length || 0);
+    } else {
+      return total + (item.price || 0);
+    }
+  }, 0);
 });
 
 const totalPrice = computed(() => {
@@ -37,7 +43,10 @@ const totalPrice = computed(() => {
 });
 
 const totalItems = computed(() => {
-  return cartItems.value.reduce((total, item) => total + item.guests.length, 0);
+  return cartItems.value.reduce(
+    (total, item) => total + (item.guests?.length || 0),
+    0,
+  );
 });
 
 const openRemoveModal = (id: string) => {
@@ -55,10 +64,6 @@ const handleRemoveItem = () => {
 };
 
 const PROMO_DISCOUNT = 0;
-
-const formatPrice = (price: number) => {
-  return new Intl.NumberFormat("en-IN").format(price);
-};
 
 const goBack = () => {
   step.value = 1;
@@ -130,13 +135,13 @@ async function handlePayNowClick() {
                   />
                 </div>
                 <div
-                  v-else-if="item.type === 'Pass'"
+                  v-else-if="item.itemType === 'pass'"
                   class="w-20 h-20 border border-border flex items-center justify-center shrink-0 text-primary/60"
                 >
                   <UIcon name="i-lucide-badge" class="w-6 h-6" />
                 </div>
                 <div
-                  v-else-if="item.type === 'Membership'"
+                  v-else-if="item.itemType === 'membership'"
                   class="w-20 h-20 border border-border flex items-center justify-center shrink-0 text-primary/60"
                 >
                   <UIcon name="i-lucide-star" class="w-6 h-6" />
@@ -147,33 +152,36 @@ async function handlePayNowClick() {
                   <div class="flex justify-between items-start gap-4 mb-2">
                     <div class="flex flex-wrap items-center gap-2">
                       <h4 class="text-sm font-serif text-foreground">
-                        {{ item.title }} x
-                        <span class="text-xl">{{ item.guests.length }}</span>
+                        {{ item.title }}
+                        <span v-if="item.itemType == 'session'">
+                          x
+                          <span class="text-xl">{{ item.guests.length }}</span>
+                        </span>
                       </h4>
                       <span
-                        v-if="item.type === 'Session'"
+                        v-if="item.itemType === 'session'"
                         class="text-[8px] px-1.5 py-0.5 bg-purple-900/40 text-purple-300 font-medium tracking-wide"
                         >Session</span
                       >
                       <span
-                        v-if="item.type === 'Spa'"
+                        v-if="item.itemType === 'spa'"
                         class="text-[8px] px-1.5 py-0.5 bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
                         >Spa</span
                       >
                       <span
-                        v-if="item.type === 'Pass'"
+                        v-if="item.itemType === 'pass'"
                         class="text-[8px] px-1.5 py-0.5 bg-blue-900/40 text-blue-400 font-medium tracking-wide"
                         >Pass</span
                       >
                       <span
-                        v-if="item.type === 'Membership'"
+                        v-if="item.itemType === 'membership'"
                         class="text-[8px] px-1.5 py-0.5 bg-[#B59A6D] text-white font-medium tracking-wide"
                         >Membership</span
                       >
                     </div>
                     <div>
                       <span class="text-sm font-serif text-[#B59A6D]"
-                        >Rs. {{ formatPrice(item.finalPrice) }}</span
+                        >Rs. {{ formatPrice(item.price) }}</span
                       >
                     </div>
                   </div>
@@ -460,7 +468,9 @@ async function handlePayNowClick() {
           name="i-lucide-shopping-cart"
           class="w-12 h-12 text-muted-foreground"
         />
-        <h2 class="text-lg text-muted-foreground">There are no items in this cart</h2>
+        <h2 class="text-lg text-muted-foreground">
+          There are no items in this cart
+        </h2>
       </div>
     </div>
   </div>

@@ -20,11 +20,15 @@ const selectedItemId = ref<string | "">("");
 
 const cartStore = useCartStore();
 const cartItems = computed(() => cartStore.cartItems);
+
 const totalPrice = computed(() => {
-  return cartItems.value.reduce(
-    (total, item) => total + (item.price * item.guests.length || 0),
-    0,
-  );
+  return cartItems.value.reduce((total, item) => {
+    if (item.itemType === "session") {
+      return total + (item.price || 0) * (item.guests?.length || 0);
+    } else {
+      return total + (item.price || 0);
+    }
+  }, 0);
 });
 
 const formatPrice = (price: number) => {
@@ -123,13 +127,13 @@ const handleRemoveItem = () => {
             />
           </div>
           <div
-            v-else-if="item.type === 'Pass'"
+            v-else-if="item.itemType === 'pass'"
             class="w-24 h-24 border border-border/20 flex items-center justify-center shrink-0 text-primary/60"
           >
             <UIcon name="i-lucide-badge" class="w-8 h-8" />
           </div>
           <div
-            v-else-if="item.type === 'Membership'"
+            v-else-if="item.itemType === 'membership'"
             class="w-24 h-24 border border-border/20 flex items-center justify-center shrink-0 text-primary/60"
           >
             <UIcon name="i-lucide-star" class="w-8 h-8" />
@@ -140,33 +144,44 @@ const handleRemoveItem = () => {
             <div class="flex justify-between items-start gap-4">
               <div class="flex items-center gap-2">
                 <h4 class="text-sm font-serif text-foreground">
-                  {{ item.title }} x
-                  <span class="text-xl">{{ item.guests.length }}</span>
+                  {{ item.title }}
+                  <span v-if="item.itemType == 'session'">
+                    x <span class="text-xl">{{ item.guests.length }}</span>
+                  </span>
                 </h4>
                 <span
-                  v-if="item.type === 'Session'"
-                  class="text-[9px] px-1.5 py-0.5 bg-primary/20 text-primary font-medium tracking-wide"
+                  v-if="item.itemType === 'session'"
+                  class="text-[9px] px-1.5 py-0.5 bg-purple-900/40 text-purple-300 font-medium tracking-wide"
                   >Session</span
                 >
                 <span
-                  v-if="item.type === 'Spa'"
+                  v-if="item.itemType === 'spa'"
                   class="text-[9px] px-1.5 py-0.5 bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
                   >Spa</span
                 >
                 <span
-                  v-if="item.type === 'Pass'"
+                  v-if="item.itemType === 'pass'"
                   class="text-[9px] px-1.5 py-0.5 bg-blue-900/40 text-blue-400 font-medium tracking-wide"
                   >Pass</span
                 >
                 <span
-                  v-if="item.type === 'Membership'"
+                  v-if="item.itemType === 'membership'"
                   class="text-[9px] px-1.5 py-0.5 bg-primary text-primary-foreground font-medium tracking-wide"
                   >Membership</span
                 >
               </div>
-              <span class="text-sm font-serif text-primary"
-                >Rs. {{ formatPrice(item.price * item.guests.length) }}</span
+              <span
+                v-if="item.itemType == 'session'"
+                class="text-sm font-serif text-primary"
               >
+                Rs. {{ formatPrice(item.price * item.guests.length) }}
+              </span>
+              <span
+                v-else
+                class="text-sm font-serif text-primary"
+              >
+                Rs. {{ formatPrice(item.price) }}
+              </span>
             </div>
 
             <div class="mt-2 flex flex-col gap-1.5">

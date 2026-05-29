@@ -128,6 +128,7 @@ const bookingItem = computed(() => ({
   promoDiscount: PROMO_DISCOUNT,
   discountAmount: pricing.value.discountAmount,
   finalPrice: pricing.value.finalPrice,
+  itemType: "session"
 }));
 
 const addToCart = () => {
