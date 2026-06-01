@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import type { PropType } from "vue";
-import type { MembershipTier } from "~/data/membership";
+import { computed, type PropType } from "vue";
+import { useRouter } from "vue-router";
+import { useNotification } from "~/composables/use-notification";
+import { useCartStore } from "~/stores/cart";
 
 const props = defineProps({
   isOpen: {
@@ -8,7 +10,7 @@ const props = defineProps({
     required: true,
   },
   membership: {
-    type: Object as PropType<MembershipTier>,
+    type: Object as PropType<any>,
     required: true,
   },
   period: {
@@ -23,18 +25,33 @@ const props = defineProps({
 
 const emit = defineEmits(["close"]);
 
+const router = useRouter();
+const cartStore = useCartStore();
+const { success } = useNotification();
+
+const membershipItem = computed(() => ({
+  id: props.membership.selectedOption.id,
+  membershipPlanId: props.membership.selectedOption.membershipPlanId,
+  title: props.membership.name,
+  frequency: props.membership.selectedOption.frequency,
+  price: props.membership.selectedOption.price,
+  itemType: "membership",
+  memberBenefit: props.membership.selectedOption.memberBenefit,
+}));
+
 const close = () => {
   emit("close");
 };
 
 const addToCart = () => {
-  close();
-  // logic to add to cart
+  cartStore.addToCart(membershipItem.value);
+  success({ message: "Item added to cart successfully!" });
 };
 
 const proceedToCheckout = () => {
+  cartStore.addToCart(membershipItem.value);
   close();
-  navigateTo("/checkout");
+  router.push("/checkout");
 };
 
 // Assuming 10% discount for Quarterly and 20% for Yearly based on the membership page logic
@@ -61,9 +78,7 @@ const getDiscount = () => {
         <h2 class="text-3xl font-serif text-foreground mb-2">
           Purchase Membership
         </h2>
-        <p class="text-xs text-[#A08860]">
-          Begin your metamorphosis
-        </p>
+        <p class="text-xs text-[#A08860]">Begin your metamorphosis</p>
       </div>
 
       <h3
@@ -78,17 +93,24 @@ const getDiscount = () => {
         </h4>
 
         <div class="flex flex-col gap-4 mb-6">
-          <div class="flex justify-between items-center text-sm text-foreground">
+          <div
+            class="flex justify-between items-center text-sm text-foreground"
+          >
             <span>{{ membership.name }} - {{ period }}</span>
             <span>{{ price }}</span>
           </div>
-          <div v-if="getDiscount()" class="flex justify-between items-center text-sm text-muted-foreground">
+          <div
+            v-if="getDiscount()"
+            class="flex justify-between items-center text-sm text-muted-foreground"
+          >
             <span>Discount</span>
             <span>{{ getDiscount() }}</span>
           </div>
         </div>
 
-        <div class="flex justify-between items-center border-t border-border/40 pt-4 text-foreground">
+        <div
+          class="flex justify-between items-center border-t border-border/40 pt-4 text-foreground"
+        >
           <span class="font-serif font-bold">Total</span>
           <span class="font-serif font-bold">{{ price }}</span>
         </div>

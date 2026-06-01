@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onUnmounted } from "vue";
 import { ICONS } from "~/config/icons";
 // import { cartItems } from "~/data/cart";
 import { useCartStore } from "~/stores/cart";
+import { calculatePrice } from "~/utils/helper";
 
 definePageMeta({
   layout: "default",
@@ -15,29 +16,76 @@ useSeoMeta({
 const step = ref(1);
 
 const form = ref({
-  fullName: "Shyam Shrestha",
-  phone: "9856764536",
-  email: "shyam.shrestha65@gmail.com",
+  fullName: "",
+  phone: "",
+  email: "",
   promoCode: "",
 });
 
+const inputPromoCode = ref("");
 const paymentMethod = ref("esewa");
+const isRemoveItemModalOpen = ref(false);
+const selectedItemId = ref<string | "">("");
+const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
 
 const cartStore = useCartStore();
+
 const cartItems = computed(() => cartStore.cartItems);
 const subtotal = computed(() => {
+  return cartItems.value.reduce((total, item) => {
+    if (item.itemType === "session") {
+      return total + (item.price || 0) * (item.guests?.length || 0);
+    } else {
+      return total + (item.price || 0);
+    }
+  }, 0);
+});
+
+const MEMBERSHIP_DISCOUNT = userDetail?.membership?.option?.memberBenefit || 0;
+
+const pricing = computed(() =>
+  calculatePrice({
+    price: subtotal.value,
+    guests: 1,
+    discount: MEMBERSHIP_DISCOUNT,
+  }),
+);
+
+const totalPrice = computed(() => {
+  return Math.max(0, pricing.value.finalPrice - cartStore.discountAmount);
+});
+
+const totalItems = computed(() => {
   return cartItems.value.reduce(
-    (total, item) => total + item.price * item.guests.length,
+    (total, item) => total + (item.guests?.length || 0),
     0,
   );
 });
 
-const totalPrice = computed(() => {
-  return subtotal.value;
-});
+const handleApplyPromo = async () => {
+  if (inputPromoCode.value.trim()) {
+    await cartStore.applyPromoCode(inputPromoCode.value.trim());
+  }
+};
 
-const formatPrice = (price: number) => {
-  return new Intl.NumberFormat("en-IN").format(price);
+const handleRemovePromo = () => {
+  cartStore.removePromoCode();
+  inputPromoCode.value = "";
+};
+
+
+const openRemoveModal = (id: string) => {
+  selectedItemId.value = id;
+  isRemoveItemModalOpen.value = true;
+};
+
+const handleRemoveItem = () => {
+  if (selectedItemId.value !== "") {
+    cartStore.removeItem(selectedItemId.value);
+  }
+
+  isRemoveItemModalOpen.value = false;
+  selectedItemId.value = "";
 };
 
 const goBack = () => {
@@ -51,6 +99,10 @@ async function handlePayNowClick() {
     console.log("Payment");
   }
 }
+
+onUnmounted(() => {
+  cartStore.removePromoCode();
+})
 </script>
 
 <template>
@@ -62,6 +114,7 @@ async function handlePayNowClick() {
       <ClassHeader title="Checkout" label="Complete your booking" />
 
       <div
+        v-if="cartItems.length > 0"
         class="grid grid-cols-1 lg:grid-cols-5 gap-x-12 gap-y-12 lg:gap-x-16 px-4 md:px-8 lg:px-12"
       >
         <!-- Left Column: Form / Payment -->
@@ -109,13 +162,13 @@ async function handlePayNowClick() {
                   />
                 </div>
                 <div
-                  v-else-if="item.type === 'Pass'"
+                  v-else-if="item.itemType === 'pass'"
                   class="w-20 h-20 border border-border flex items-center justify-center shrink-0 text-primary/60"
                 >
                   <UIcon name="i-lucide-badge" class="w-6 h-6" />
                 </div>
                 <div
-                  v-else-if="item.type === 'Membership'"
+                  v-else-if="item.itemType === 'membership'"
                   class="w-20 h-20 border border-border flex items-center justify-center shrink-0 text-primary/60"
                 >
                   <UIcon name="i-lucide-star" class="w-6 h-6" />
@@ -126,34 +179,38 @@ async function handlePayNowClick() {
                   <div class="flex justify-between items-start gap-4 mb-2">
                     <div class="flex flex-wrap items-center gap-2">
                       <h4 class="text-sm font-serif text-foreground">
-                        {{ item.title }} x
-                        <span class="text-xl">{{ item.guests.length }}</span>
+                        {{ item.title }}
+                        <span v-if="item.itemType == 'session'">
+                          x
+                          <span class="text-xl">{{ item.guests.length }}</span>
+                        </span>
                       </h4>
                       <span
-                        v-if="item.type === 'Session'"
+                        v-if="item.itemType === 'session'"
                         class="text-[8px] px-1.5 py-0.5 bg-purple-900/40 text-purple-300 font-medium tracking-wide"
                         >Session</span
                       >
                       <span
-                        v-if="item.type === 'Spa'"
+                        v-if="item.itemType === 'spa'"
                         class="text-[8px] px-1.5 py-0.5 bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
                         >Spa</span
                       >
                       <span
-                        v-if="item.type === 'Pass'"
+                        v-if="item.itemType === 'pass'"
                         class="text-[8px] px-1.5 py-0.5 bg-blue-900/40 text-blue-400 font-medium tracking-wide"
                         >Pass</span
                       >
                       <span
-                        v-if="item.type === 'Membership'"
+                        v-if="item.itemType === 'membership'"
                         class="text-[8px] px-1.5 py-0.5 bg-[#B59A6D] text-white font-medium tracking-wide"
                         >Membership</span
                       >
                     </div>
-                    <span class="text-sm font-serif text-[#B59A6D]"
-                      >Rs.
-                      {{ formatPrice(item.price * item.guests.length) }}</span
-                    >
+                    <div>
+                      <span class="text-sm font-serif text-[#B59A6D]"
+                        >Rs. {{ formatPrice(item.price) }}</span
+                      >
+                    </div>
                   </div>
 
                   <div class="flex flex-col gap-1.5 mt-auto">
@@ -178,17 +235,12 @@ async function handlePayNowClick() {
                       <UIcon name="i-lucide-map-pin" class="w-3 h-3" />
                       <span>{{ item.location }}</span>
                     </div>
-                    <div
-                      v-if="item.discountText"
-                      class="text-[9px] text-muted-foreground"
-                    >
-                      {{ item.discountText }}
-                    </div>
                   </div>
 
                   <div class="flex justify-end mt-2">
                     <button
-                      class="text-destructive/80 hover:text-destructive transition-colors"
+                      class="text-destructive/80 hover:text-destructive transition-colors hover:cursor-pointer"
+                      @click="openRemoveModal(item.cartId)"
                     >
                       <UIcon
                         name="i-lucide-trash-2"
@@ -209,7 +261,7 @@ async function handlePayNowClick() {
                 >
                 <span
                   class="font-serif text-xl md:text-2xl text-[#B59A6D] font-bold"
-                  >{{ formatPrice(totalPrice) }}</span
+                  >{{ formatPrice(subtotal) }}</span
                 >
               </div>
             </div>
@@ -364,48 +416,83 @@ async function handlePayNowClick() {
           </p>
           <Transition name="fade" mode="out-in">
             <!-- Step 1: Form -->
-            <div class="flex flex-col gap-9 w-full" key="step1">
+            <div class="flex flex-col w-full" key="step1">
               <!-- Promo Code -->
-              <div class="flex flex-col gap-2 w-full">
+              <div class="flex flex-col gap-2 w-full h-30">
                 <div class="flex items-end w-full gap-4">
                   <div class="flex-1">
                     <base-input
-                      v-model="form.promoCode"
+                      v-model="inputPromoCode"
                       name="promoCode"
                       label="PROMO CODE"
                       placeholder="e.g KORA20"
                       type="text"
+                      :disabled="
+                        cartStore.isApplyingPromo ||
+                        cartStore.promoCode !== null
+                      "
+                      @keyup.enter="handleApplyPromo"
                     />
                   </div>
-                  <base-button> APPLY </base-button>
+                  <base-button
+                    v-if="!cartStore.promoCode"
+                    @click="handleApplyPromo"
+                    :disabled="!inputPromoCode || cartStore.isApplyingPromo"
+                  >
+                    <span v-if="cartStore.isApplyingPromo">APPLYING...</span>
+                    <span v-else>APPLY</span>
+                  </base-button>
+                  <base-button
+                    v-else
+                    @click="handleRemovePromo"
+                    variant="outline"
+                    class=""
+                  >
+                    REMOVE
+                  </base-button>
                 </div>
+                <p v-if="cartStore.isPromoValid" class="text-xs text-emerald-500">
+                  Promo code applied successfully!
+                </p>
+                <p v-else class="text-xs text-red-500">
+                  {{ cartStore.promoError }}
+                </p>
               </div>
 
-              <div class="border-y border-border flex flex-col gap-3 p-4">
+              <div class="border-y border-border flex flex-col gap-3 p-4 mt-2">
                 <div
                   class="text-sm text-secondary dark:text-white font-normal flex justify-between"
                 >
-                  <h2>Items Count ({{ cartItems.length }} items)</h2>
-                  <p>Rs. {{ formatPrice(totalPrice) }}</p>
+                  <h2>Items Count ({{ totalItems }} items)</h2>
+                  <p>Rs. {{ formatPrice(subtotal) }}</p>
                 </div>
                 <div
+                  v-if="MEMBERSHIP_DISCOUNT > 0"
                   class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between"
                 >
-                  <h2>Membership Discount</h2>
-                  <p>0%</p>
+                  <h2>Membership Discount ({{ MEMBERSHIP_DISCOUNT }}%)</h2>
+                  <p>- Rs. {{ formatPrice(pricing.discountAmount) }}</p>
                 </div>
                 <div
+                  v-if="cartStore.discountAmount > 0"
                   class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between border-b border-border pb-2"
                 >
-                  <h2>Promo Discount</h2>
-                  <p>0%</p>
+                  <h2>
+                    Promo Discount
+                    <span v-if="cartStore.promoCode"
+                      >({{ cartStore.promoCode }})</span
+                    >
+                  </h2>
+                  <p>- Rs. {{ formatPrice(cartStore.discountAmount) }}</p>
                 </div>
 
                 <div
-                  class="text-sm text-secondary dark:text-white font-normal flex justify-between"
+                  class="text-sm text-secondary dark:text-white font-normal flex justify-between pt-1"
                 >
-                  <h2>Total</h2>
-                  <p>Rs. {{ formatPrice(totalPrice) }}</p>
+                  <h2 class="font-bold">Total</h2>
+                  <p class="font-bold text-primary">
+                    Rs. {{ formatPrice(totalPrice) }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -438,8 +525,23 @@ async function handlePayNowClick() {
           </div>
         </div>
       </div>
+      <div v-else class="text-center py-20 flex flex-col items-center gap-6">
+        <UIcon
+          name="i-lucide-shopping-cart"
+          class="w-12 h-12 text-muted-foreground"
+        />
+        <h2 class="text-lg text-muted-foreground">
+          There are no items in this cart
+        </h2>
+      </div>
     </div>
   </div>
+
+  <cart-delete-modal
+    :open="isRemoveItemModalOpen"
+    @close="isRemoveItemModalOpen = false"
+    @confirm="handleRemoveItem"
+  />
 </template>
 
 <style scoped>

@@ -1,8 +1,15 @@
 import { defineStore } from "pinia";
 import { ref, watch } from "vue";
+import { API_ENDPOINTS } from "~/config/constants";
 
 export const useCartStore = defineStore("cart", () => {
   const cartItems = ref<any[]>([]);
+  const http = getHttp();
+  const promoCode = ref<string | null>(null);
+  const discountAmount = ref<number>(0);
+  const isApplyingPromo = ref<boolean>(false);
+  const promoError = ref<string | null>(null);
+  const isPromoValid = ref<boolean>(false);
 
   if (import.meta.client) {
     const saved = localStorage.getItem("cartItems");
@@ -35,9 +42,43 @@ export const useCartStore = defineStore("cart", () => {
     cartItems.value = cartItems.value.filter((item) => item.cartId !== cartId && item.id !== cartId);
   };
 
+  const applyPromoCode = async (code: string) => {
+    isApplyingPromo.value = true;
+    promoError.value = null;
+    try {
+      const response:any = await http.post(API_ENDPOINTS.PROMO_CODE.VALIDATE, { code });
+      
+      promoCode.value = code;
+      discountAmount.value = response?.discountAmount || response?.discount || response?.amount || 0;
+      isPromoValid.value = response.isValid;
+      promoError.value = response.message;
+    } catch (e: any) {
+      promoCode.value = null;
+      discountAmount.value = 0;
+      isPromoValid.value = false;
+      promoError.value = e?.response?._data?.message || e?.message || 'Failed to apply promo code';
+    } finally {
+      isApplyingPromo.value = false;
+    }
+  };
+
+  const removePromoCode = () => {
+    promoCode.value = null;
+    discountAmount.value = 0;
+    promoError.value = null;
+    isPromoValid.value = false;
+  };
+
   return {
     cartItems,
+    promoCode,
+    discountAmount,
+    isApplyingPromo,
+    isPromoValid,
+    promoError,
     addToCart,
     removeItem,
+    applyPromoCode,
+    removePromoCode,
   };
 });

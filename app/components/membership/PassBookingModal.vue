@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import type { PropType } from "vue";
 import type { Pass } from "~/data/membership";
+import { useRouter } from "vue-router";
+import { useCartStore } from "~/stores/cart";
+import { useNotification } from "~/composables/use-notification";
 
 const props = defineProps({
   isOpen: {
@@ -14,6 +17,18 @@ const props = defineProps({
   },
 });
 
+const router = useRouter();
+const cartStore = useCartStore();
+const { success } = useNotification();
+
+const passItem = computed(() => ({
+  id: props.pass.id,
+  title: props.pass.name,
+  price: props.pass.price,
+  itemType: "pass",
+  memberBenefit: props.pass.discountTag,
+}));
+
 const steps = [
   {
     label: "Attendees",
@@ -22,6 +37,11 @@ const steps = [
     label: "Overview",
   }
 ];
+
+const addToCart = () => {
+  cartStore.addToCart(passItem.value);
+  success({ message: "Item added to cart successfully!" });
+};
 
 function goToStep(step: number) {
   if (step > currentStep.value) {
@@ -78,14 +98,10 @@ const nextStep = () => {
   currentStep.value = 1;
 };
 
-const addToCart = () => {
-  close();
-  // logic to add to cart
-};
-
 const proceedToCheckout = () => {
+  cartStore.addToCart(passItem.value);
   close();
-  navigateTo("/checkout");
+  router.push("/checkout");
 };
 </script>
 

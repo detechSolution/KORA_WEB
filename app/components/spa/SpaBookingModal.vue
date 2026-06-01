@@ -321,12 +321,12 @@ const addToCart = () => {
                 <span>Hello X 2</span>
                 <span>Rs. 2,000</span>
               </div>
-              <div
+              <!-- <div
                 class="flex justify-between items-center text-sm text-muted-foreground"
               >
                 <span>Membership Discount</span>
                 <span>20%</span>
-              </div>
+              </div> -->
             </div>
 
             <div

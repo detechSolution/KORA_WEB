@@ -75,25 +75,15 @@ const removeGuest = (index: number) => {
   guests.value.splice(index, 1);
 };
 
-const MEMBERSHIP_DISCOUNT = 20;
-const PROMO_DISCOUNT = 0;
+// const MEMBERSHIP_DISCOUNT = userDetail?.membership?.option?.memberBenefit || 0;
+// const PROMO_DISCOUNT = 0;
 
 const pricing = computed(() =>
   calculatePrice({
     price: props.session.price,
     guests: guests.value.length,
-    membershipDiscount: MEMBERSHIP_DISCOUNT,
-    promoDiscount: PROMO_DISCOUNT,
   }),
 );
-
-const formatPrice = (price: number) => {
-  return new Intl.NumberFormat("en-NP", {
-    style: "currency",
-    currency: "NPR",
-    maximumFractionDigits: 0,
-  }).format(price);
-};
 
 function goToStep(step: number) {
   if (step > currentStep.value) {
@@ -132,10 +122,11 @@ const bookingItem = computed(() => ({
   image: props.session.bannerUrl,
   guests: guests.value,
   subtotal: pricing.value.subtotal,
-  membershipDiscount: MEMBERSHIP_DISCOUNT,
-  promoDiscount: PROMO_DISCOUNT,
+  // membershipDiscount: MEMBERSHIP_DISCOUNT,
+  // promoDiscount: PROMO_DISCOUNT,
   discountAmount: pricing.value.discountAmount,
   finalPrice: pricing.value.finalPrice,
+  itemType: "session"
 }));
 
 const addToCart = () => {
@@ -293,20 +284,20 @@ const close = () => {
               <div
                 class="flex justify-between items-center text-sm text-foreground"
               >
-                <span> {{ session.name }} × {{ guests.length }} </span>
-
                 <span>
-                  {{ formatPrice(pricing.subtotal) }}
+                  {{ session.name }} (Rs. {{ session.price }} × {{ guests.length }})
                 </span>
+
+                <span> Rs. {{ formatPrice(pricing.subtotal) }} </span>
               </div>
 
-              <div
+              <!-- <div
                 class="flex justify-between items-center text-sm text-muted-foreground"
               >
-                <span>Membership Discount</span>
+                <span>Membership Discount ({{ MEMBERSHIP_DISCOUNT }}%)</span>
 
-                <span> {{ MEMBERSHIP_DISCOUNT }}% </span>
-              </div>
+                <span> - Rs. {{ formatPrice(pricing.discountAmount) }} </span>
+              </div> -->
             </div>
 
             <div
@@ -315,7 +306,7 @@ const close = () => {
               <span class="font-serif font-bold"> Total </span>
 
               <span class="font-serif font-bold">
-                {{ formatPrice(pricing.finalPrice) }}
+                Rs. {{ formatPrice(pricing.finalPrice) }}
               </span>
             </div>
 

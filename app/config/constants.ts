@@ -23,5 +23,17 @@ export const API_ENDPOINTS = {
 
   SPA: {
     GET: "/api/v1/spa/website",
-  }
+  },
+
+  MEMBERSHIP: {
+    GET: "/api/v1/membership-plans/website",
+  },
+
+  PASS: {
+    GET: "/api/v1/passes/website",
+  },
+
+  PROMO_CODE: {
+    VALIDATE: "/api/v1/promo-codes/validate",
+  },
 };
