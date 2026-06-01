@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, onUnmounted } from "vue";
+import { usePayment } from "~/composables/use-payment";
 import { ICONS } from "~/config/icons";
 // import { cartItems } from "~/data/cart";
 import { useCartStore } from "~/stores/cart";
 import { calculatePrice } from "~/utils/helper";
+import type { PaymentProvider } from "~/types/payment";
 
 definePageMeta({
   layout: "default",
@@ -23,22 +25,17 @@ const form = ref({
 });
 
 const inputPromoCode = ref("");
-const paymentMethod = ref("esewa");
+const paymentMethod = ref<PaymentProvider>("stripe");
 const isRemoveItemModalOpen = ref(false);
 const selectedItemId = ref<string | "">("");
 const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
 
 const cartStore = useCartStore();
+const { loading, payNow } = usePayment();
 
 const cartItems = computed(() => cartStore.cartItems);
 const subtotal = computed(() => {
-  return cartItems.value.reduce((total, item) => {
-    if (item.itemType === "session") {
-      return total + (item.price || 0) * (item.guests?.length || 0);
-    } else {
-      return total + (item.price || 0);
-    }
-  }, 0);
+  return cartItems.value.reduce((total, item) => total + item.finalPrice, 0);
 });
 
 const MEMBERSHIP_DISCOUNT = userDetail?.membership?.option?.memberBenefit || 0;
@@ -55,12 +52,13 @@ const totalPrice = computed(() => {
   return Math.max(0, pricing.value.finalPrice - cartStore.discountAmount);
 });
 
-const totalItems = computed(() => {
-  return cartItems.value.reduce(
-    (total, item) => total + (item.guests?.length || 0),
+// If there are session items, count the total guests, otherwise count the items
+const totalItems = computed(() =>
+  cartItems.value.reduce(
+    (total, item) => total + Math.max(item.guests?.length || 0, 1),
     0,
-  );
-});
+  ),
+);
 
 const handleApplyPromo = async () => {
   if (inputPromoCode.value.trim()) {
@@ -72,7 +70,6 @@ const handleRemovePromo = () => {
   cartStore.removePromoCode();
   inputPromoCode.value = "";
 };
-
 
 const openRemoveModal = (id: string) => {
   selectedItemId.value = id;
@@ -98,11 +95,22 @@ async function handlePayNowClick() {
   } else {
     console.log("Payment");
   }
+  const payload = {
+    provider: paymentMethod.value,
+    ...cartItems.value,
+    // ...cartItems.value.map((item) => ({
+    //   id: item.id,
+    //   type: item.type,
+    //   itemType: item.itemType,
+    //   price: item.price,
+    //   guests: item.guests?.length || 1,
+    // })),
+  };
 }
 
 onUnmounted(() => {
   cartStore.removePromoCode();
-})
+});
 </script>
 
 <template>
@@ -111,7 +119,11 @@ onUnmounted(() => {
   >
     <div class="max-w-400 mx-auto">
       <!-- Header Section -->
-      <ClassHeader title="Checkout" label="Complete your booking" class="pt-6" />
+      <ClassHeader
+        title="Checkout"
+        label="Complete your booking"
+        class="pt-6"
+      />
 
       <div
         v-if="cartItems.length > 0"
@@ -177,12 +189,15 @@ onUnmounted(() => {
                 <!-- Item Details -->
                 <div class="flex-1 flex flex-col">
                   <div class="flex justify-between items-start gap-4 mb-2">
-                    <div class="flex flex-wrap items-center gap-2">
+                    <div class="flex flex-wrap items-start gap-2">
                       <h4 class="text-sm font-serif text-foreground">
                         {{ item.title }}
-                        <span v-if="item.itemType == 'session'">
-                          x
-                          <span class="text-xl">{{ item.guests.length }}</span>
+                        <br />
+                        <span v-if="item.itemType !== 'membership'">
+                          (<span class="text-xl"
+                            >{{ item.guests.length }} x
+                            {{ formatPrice(item.price) }}</span
+                          >)
                         </span>
                       </h4>
                       <span
@@ -208,7 +223,7 @@ onUnmounted(() => {
                     </div>
                     <div>
                       <span class="text-sm font-serif text-[#B59A6D]"
-                        >Rs. {{ formatPrice(item.price) }}</span
+                        >Rs. {{ formatPrice(item.finalPrice) }}</span
                       >
                     </div>
                   </div>
@@ -451,7 +466,10 @@ onUnmounted(() => {
                     REMOVE
                   </base-button>
                 </div>
-                <p v-if="cartStore.isPromoValid" class="text-xs text-emerald-500">
+                <p
+                  v-if="cartStore.isPromoValid"
+                  class="text-xs text-emerald-500"
+                >
                   Promo code applied successfully!
                 </p>
                 <p v-else class="text-xs text-red-500">

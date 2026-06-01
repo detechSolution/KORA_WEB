@@ -35,6 +35,7 @@ const membershipItem = computed(() => ({
   title: props.membership.name,
   frequency: props.membership.selectedOption.frequency,
   price: props.membership.selectedOption.price,
+  finalPrice: props.membership.selectedOption.price,
   itemType: "membership",
   memberBenefit: props.membership.selectedOption.memberBenefit,
 }));

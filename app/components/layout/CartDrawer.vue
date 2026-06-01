@@ -22,13 +22,7 @@ const cartStore = useCartStore();
 const cartItems = computed(() => cartStore.cartItems);
 
 const totalPrice = computed(() => {
-  return cartItems.value.reduce((total, item) => {
-    if (item.itemType === "session") {
-      return total + (item.price || 0) * (item.guests?.length || 0);
-    } else {
-      return total + (item.price || 0);
-    }
-  }, 0);
+  return cartItems.value.reduce((total, item) => total + item.finalPrice, 0);
 });
 
 const formatPrice = (price: number) => {
@@ -142,11 +136,15 @@ const handleRemoveItem = () => {
           <!-- Item Details -->
           <div class="flex-1 flex flex-col pt-1">
             <div class="flex justify-between items-start gap-4">
-              <div class="flex items-center gap-2">
+              <div class="flex items-start gap-2">
                 <h4 class="text-sm font-serif text-foreground">
                   {{ item.title }}
-                  <span v-if="item.itemType == 'session'">
-                    x <span class="text-xl">{{ item.guests.length }}</span>
+                  <br />
+                  <span v-if="item.itemType !== 'membership'">
+                    (<span class="text-xl"
+                      >{{ item.guests.length }} x
+                      {{ formatPrice(item.price) }}</span
+                    >)
                   </span>
                 </h4>
                 <span
@@ -170,15 +168,9 @@ const handleRemoveItem = () => {
                   >Membership</span
                 >
               </div>
-              <span
-                v-if="item.itemType == 'session'"
-                class="text-sm font-serif text-primary"
+              <span class="text-sm font-serif text-[#B59A6D]"
+                >Rs. {{ formatPrice(item.finalPrice) }}</span
               >
-                Rs. {{ formatPrice(item.price * item.guests.length) }}
-              </span>
-              <span v-else class="text-sm font-serif text-primary">
-                Rs. {{ formatPrice(item.price) }}
-              </span>
             </div>
 
             <div class="mt-2 flex flex-col gap-1.5">

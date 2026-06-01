@@ -5,6 +5,13 @@ import type { Pass } from "~/data/membership";
 import { useRouter } from "vue-router";
 import { useCartStore } from "~/stores/cart";
 import { useNotification } from "~/composables/use-notification";
+import { calculatePrice } from "~/utils/helper";
+
+type Guest = {
+  fullName: string;
+  phone: string;
+  email: string;
+};
 
 const props = defineProps({
   isOpen: {
@@ -21,11 +28,20 @@ const router = useRouter();
 const cartStore = useCartStore();
 const { success } = useNotification();
 
+const pricing = computed(() =>
+  calculatePrice({
+    price: props.pass.price,
+    guests: guests.value.length,
+  }),
+);
+
 const passItem = computed(() => ({
   id: props.pass.id,
   title: props.pass.name,
   price: props.pass.price,
+  guests: guests.value,
   itemType: "pass",
+  finalPrice: pricing.value.finalPrice,
   memberBenefit: props.pass.discountTag,
 }));
 
@@ -37,11 +53,6 @@ const steps = [
     label: "Overview",
   }
 ];
-
-const addToCart = () => {
-  cartStore.addToCart(passItem.value);
-  success({ message: "Item added to cart successfully!" });
-};
 
 function goToStep(step: number) {
   if (step > currentStep.value) {
@@ -81,8 +92,15 @@ const guests = ref([
   },
 ]);
 
+
+const createGuest = (): Guest => ({
+  fullName: "",
+  phone: "",
+  email: "",
+});
+
 const addGuest = () => {
-  guests.value.push({ fullName: "", phone: "", email: "" });
+  guests.value.push(createGuest());
 };
 
 const removeGuest = (index: number) => {
@@ -96,6 +114,11 @@ const previousStep = () => {
 };
 const nextStep = () => {
   currentStep.value = 1;
+};
+
+const addToCart = () => {
+  cartStore.addToCart(passItem.value);
+  success({ message: "Item added to cart successfully!" });
 };
 
 const proceedToCheckout = () => {
@@ -226,8 +249,8 @@ const proceedToCheckout = () => {
               <div
                 class="flex justify-between items-center text-sm text-foreground"
               >
-                <span>{{ pass.name }} X {{ guests.length }}</span>
-                <span>{{ pass.price }}</span>
+                <span>{{ pass.name }} (Rs. {{ pass.price }} × {{ guests.length }})</span>
+                <span>Rs. {{ formatPrice(pricing.subtotal) }}</span>
               </div>
               <div v-if="pass.discountTag" class="flex justify-between items-center text-sm text-muted-foreground">
                 <span>Discount</span>
@@ -239,7 +262,7 @@ const proceedToCheckout = () => {
               class="flex justify-between items-center border-t border-border/40 pt-4 text-foreground"
             >
               <span class="font-serif font-bold">Total</span>
-              <span class="font-serif font-bold">{{ pass.price }}</span>
+              <span class="font-serif font-bold"> Rs. {{ formatPrice(pricing.finalPrice) }}</span>
             </div>
             <div class="border-b border-border/40 pb-6 mb-8"></div>
           </div>
