@@ -36,4 +36,8 @@ export const API_ENDPOINTS = {
   PROMO_CODE: {
     VALIDATE: "/api/v1/promo-codes/validate",
   },
+
+  PAYMENT: {
+    PAY_NOW: "/api/v1/commerce/checkout/pay-now"
+  }
 };

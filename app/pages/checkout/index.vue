@@ -17,13 +17,6 @@ useSeoMeta({
 
 const step = ref(1);
 
-const form = ref({
-  fullName: "",
-  phone: "",
-  email: "",
-  promoCode: "",
-});
-
 const inputPromoCode = ref("");
 const paymentMethod = ref<PaymentProvider>("stripe");
 const isRemoveItemModalOpen = ref(false);
@@ -93,20 +86,36 @@ async function handlePayNowClick() {
   if (step.value === 1) {
     step.value = 2;
   } else {
-    console.log("Payment");
+    try {
+      const payload = {
+        provider: paymentMethod.value,
+        items: cartItems.value.map((item) => ({
+          itemType: item.itemType,
+
+          referenceId: item.referenceId,
+
+          ...(item.itemType === "spa" && {
+            bookingDate: item.bookingDate,
+            bookingTime: item.bookingTime,
+          }),
+
+          ...(item.visitors?.length && {
+            visitors: item.visitors.map((visitor: any) => ({
+              fullName: visitor.fullName,
+              phoneNumber: visitor.phone || "",
+              email: visitor.email,
+            })),
+          }),
+        })),
+
+        promoCode: cartStore.promoCode,
+      };
+
+      await payNow(payload);
+    } catch (error) {
+      console.error("Payment failed:", error);
+    }
   }
-  const payload = {
-    provider: paymentMethod.value,
-    ...cartItems.value,
-    // ...cartItems.value.map((item) => ({
-    //   id: item.id,
-    //   type: item.type,
-    //   itemType: item.itemType,
-    //   price: item.price,
-    //   guests: item.guests?.length || 1,
-    // })),
-  };
-  console.log("🚀 ~ handlePayNowClick ~ payload:", payload)
 }
 
 onUnmounted(() => {
@@ -416,6 +425,7 @@ onUnmounted(() => {
                 @click="handlePayNowClick"
                 trailing-icon="i-lucide-arrow-right"
                 class="uppercase self-end flex tracking-widest font-bold px-8 rounded-none"
+                :loading="loading"
               >
                 PAY NOW
               </base-button>
