@@ -111,7 +111,7 @@ onUnmounted(() => {
   >
     <div class="max-w-400 mx-auto">
       <!-- Header Section -->
-      <ClassHeader title="Checkout" label="Complete your booking" />
+      <ClassHeader title="Checkout" label="Complete your booking" class="pt-6" />
 
       <div
         v-if="cartItems.length > 0"
