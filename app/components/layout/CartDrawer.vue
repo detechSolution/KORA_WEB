@@ -51,7 +51,7 @@ const handleRemoveItem = () => {
 </script>
 
 <template>
-  <base-drawer :open="isOpen" @close="close" :drawer-width="480">
+  <base-drawer :open="isOpen" @close="close" :drawer-width="520">
     <template #header>
       <div
         class="flex items-start justify-between p-8 pb-6 border-b border-border"
@@ -176,10 +176,7 @@ const handleRemoveItem = () => {
               >
                 Rs. {{ formatPrice(item.price * item.guests.length) }}
               </span>
-              <span
-                v-else
-                class="text-sm font-serif text-primary"
-              >
+              <span v-else class="text-sm font-serif text-primary">
                 Rs. {{ formatPrice(item.price) }}
               </span>
             </div>

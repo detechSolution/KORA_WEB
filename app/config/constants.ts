@@ -28,4 +28,8 @@ export const API_ENDPOINTS = {
   PASS: {
     GET: "/api/v1/passes/website",
   },
+
+  PROMO_CODE: {
+    VALIDATE: "/api/v1/promo-codes/validate",
+  },
 };

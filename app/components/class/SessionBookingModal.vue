@@ -75,17 +75,15 @@ const removeGuest = (index: number) => {
   guests.value.splice(index, 1);
 };
 
-const MEMBERSHIP_DISCOUNT = userDetail?.membership?.option?.memberBenefit || 0;
-const PROMO_DISCOUNT = 0;
+// const MEMBERSHIP_DISCOUNT = userDetail?.membership?.option?.memberBenefit || 0;
+// const PROMO_DISCOUNT = 0;
 
 const pricing = computed(() =>
   calculatePrice({
     price: props.session.price,
     guests: guests.value.length,
-    discount: MEMBERSHIP_DISCOUNT,
   }),
 );
-console.log("🚀 ~ pricing:", pricing.value)
 
 function goToStep(step: number) {
   if (step > currentStep.value) {
@@ -124,8 +122,8 @@ const bookingItem = computed(() => ({
   image: props.session.bannerUrl,
   guests: guests.value,
   subtotal: pricing.value.subtotal,
-  membershipDiscount: MEMBERSHIP_DISCOUNT,
-  promoDiscount: PROMO_DISCOUNT,
+  // membershipDiscount: MEMBERSHIP_DISCOUNT,
+  // promoDiscount: PROMO_DISCOUNT,
   discountAmount: pricing.value.discountAmount,
   finalPrice: pricing.value.finalPrice,
   itemType: "session"
@@ -293,13 +291,13 @@ const close = () => {
                 <span> Rs. {{ formatPrice(pricing.subtotal) }} </span>
               </div>
 
-              <div
+              <!-- <div
                 class="flex justify-between items-center text-sm text-muted-foreground"
               >
                 <span>Membership Discount ({{ MEMBERSHIP_DISCOUNT }}%)</span>
 
                 <span> - Rs. {{ formatPrice(pricing.discountAmount) }} </span>
-              </div>
+              </div> -->
             </div>
 
             <div

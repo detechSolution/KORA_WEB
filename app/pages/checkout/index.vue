@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onUnmounted } from "vue";
 import { ICONS } from "~/config/icons";
 // import { cartItems } from "~/data/cart";
 import { useCartStore } from "~/stores/cart";
@@ -22,6 +22,7 @@ const form = ref({
   promoCode: "",
 });
 
+const inputPromoCode = ref("");
 const paymentMethod = ref("esewa");
 const isRemoveItemModalOpen = ref(false);
 const selectedItemId = ref<string | "">("");
@@ -40,8 +41,18 @@ const subtotal = computed(() => {
   }, 0);
 });
 
+const MEMBERSHIP_DISCOUNT = userDetail?.membership?.option?.memberBenefit || 0;
+
+const pricing = computed(() =>
+  calculatePrice({
+    price: subtotal.value,
+    guests: 1,
+    discount: MEMBERSHIP_DISCOUNT,
+  }),
+);
+
 const totalPrice = computed(() => {
-  return subtotal.value;
+  return Math.max(0, pricing.value.finalPrice - cartStore.discountAmount);
 });
 
 const totalItems = computed(() => {
@@ -50,6 +61,17 @@ const totalItems = computed(() => {
     0,
   );
 });
+
+const handleApplyPromo = async () => {
+  if (inputPromoCode.value.trim()) {
+    await cartStore.applyPromoCode(inputPromoCode.value.trim());
+  }
+};
+
+const handleRemovePromo = () => {
+  cartStore.removePromoCode();
+  inputPromoCode.value = "";
+};
 
 
 const openRemoveModal = (id: string) => {
@@ -66,17 +88,6 @@ const handleRemoveItem = () => {
   selectedItemId.value = "";
 };
 
-const MEMBERSHIP_DISCOUNT = userDetail?.membership?.option?.memberBenefit || 0;
-const PROMO_DISCOUNT = 0;
-
-const pricing = computed(() =>
-  calculatePrice({
-    price: totalPrice.value,
-    guests: 1,
-    discount: MEMBERSHIP_DISCOUNT,
-  }),
-);
-
 const goBack = () => {
   step.value = 1;
 };
@@ -88,6 +99,10 @@ async function handlePayNowClick() {
     console.log("Payment");
   }
 }
+
+onUnmounted(() => {
+  cartStore.removePromoCode();
+})
 </script>
 
 <template>
@@ -246,7 +261,7 @@ async function handlePayNowClick() {
                 >
                 <span
                   class="font-serif text-xl md:text-2xl text-[#B59A6D] font-bold"
-                  >{{ formatPrice(totalPrice) }}</span
+                  >{{ formatPrice(subtotal) }}</span
                 >
               </div>
             </div>
@@ -401,48 +416,83 @@ async function handlePayNowClick() {
           </p>
           <Transition name="fade" mode="out-in">
             <!-- Step 1: Form -->
-            <div class="flex flex-col gap-9 w-full" key="step1">
+            <div class="flex flex-col w-full" key="step1">
               <!-- Promo Code -->
-              <div class="flex flex-col gap-2 w-full">
+              <div class="flex flex-col gap-2 w-full h-30">
                 <div class="flex items-end w-full gap-4">
                   <div class="flex-1">
                     <base-input
-                      v-model="form.promoCode"
+                      v-model="inputPromoCode"
                       name="promoCode"
                       label="PROMO CODE"
                       placeholder="e.g KORA20"
                       type="text"
+                      :disabled="
+                        cartStore.isApplyingPromo ||
+                        cartStore.promoCode !== null
+                      "
+                      @keyup.enter="handleApplyPromo"
                     />
                   </div>
-                  <base-button> APPLY </base-button>
+                  <base-button
+                    v-if="!cartStore.promoCode"
+                    @click="handleApplyPromo"
+                    :disabled="!inputPromoCode || cartStore.isApplyingPromo"
+                  >
+                    <span v-if="cartStore.isApplyingPromo">APPLYING...</span>
+                    <span v-else>APPLY</span>
+                  </base-button>
+                  <base-button
+                    v-else
+                    @click="handleRemovePromo"
+                    variant="outline"
+                    class=""
+                  >
+                    REMOVE
+                  </base-button>
                 </div>
+                <p v-if="cartStore.isPromoValid" class="text-xs text-emerald-500">
+                  Promo code applied successfully!
+                </p>
+                <p v-else class="text-xs text-red-500">
+                  {{ cartStore.promoError }}
+                </p>
               </div>
 
-              <div class="border-y border-border flex flex-col gap-3 p-4">
+              <div class="border-y border-border flex flex-col gap-3 p-4 mt-2">
                 <div
                   class="text-sm text-secondary dark:text-white font-normal flex justify-between"
                 >
                   <h2>Items Count ({{ totalItems }} items)</h2>
-                  <p>Rs. {{ formatPrice(totalPrice) }}</p>
+                  <p>Rs. {{ formatPrice(subtotal) }}</p>
                 </div>
                 <div
+                  v-if="MEMBERSHIP_DISCOUNT > 0"
                   class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between"
                 >
                   <h2>Membership Discount ({{ MEMBERSHIP_DISCOUNT }}%)</h2>
                   <p>- Rs. {{ formatPrice(pricing.discountAmount) }}</p>
                 </div>
                 <div
+                  v-if="cartStore.discountAmount > 0"
                   class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between border-b border-border pb-2"
                 >
-                  <h2>Promo Discount (0%)</h2>
-                  <p>- Rs. 0</p>
+                  <h2>
+                    Promo Discount
+                    <span v-if="cartStore.promoCode"
+                      >({{ cartStore.promoCode }})</span
+                    >
+                  </h2>
+                  <p>- Rs. {{ formatPrice(cartStore.discountAmount) }}</p>
                 </div>
 
                 <div
-                  class="text-sm text-secondary dark:text-white font-normal flex justify-between"
+                  class="text-sm text-secondary dark:text-white font-normal flex justify-between pt-1"
                 >
-                  <h2>Total</h2>
-                  <p>Rs. {{ formatPrice(totalPrice) }}</p>
+                  <h2 class="font-bold">Total</h2>
+                  <p class="font-bold text-primary">
+                    Rs. {{ formatPrice(totalPrice) }}
+                  </p>
                 </div>
               </div>
             </div>
