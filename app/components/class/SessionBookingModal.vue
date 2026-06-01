@@ -112,15 +112,15 @@ const previousStep = () => {
 };
 
 const bookingItem = computed(() => ({
-  id: props.session.id,
+  referenceId: props.session.id,
   title: props.session.name,
   type: props.session.type,
   price: props.session.price,
-  date: props.session.sessionDate,
-  time: `${formatTime(props.session.startTime)} - ${formatTime(props.session.endTime)}`,
+  bookingDate: props.session.sessionDate,
+  bookingTime: props.session.startTime,
   location: props.session.venue,
   image: props.session.bannerUrl,
-  guests: guests.value,
+  visitors: guests.value,
   subtotal: pricing.value.subtotal,
   // membershipDiscount: MEMBERSHIP_DISCOUNT,
   // promoDiscount: PROMO_DISCOUNT,

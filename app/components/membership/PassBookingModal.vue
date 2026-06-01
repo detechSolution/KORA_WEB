@@ -36,10 +36,10 @@ const pricing = computed(() =>
 );
 
 const passItem = computed(() => ({
-  id: props.pass.id,
+  referenceId: props.pass.id,
   title: props.pass.name,
   price: props.pass.price,
-  guests: guests.value,
+  visitors: guests.value,
   itemType: "pass",
   finalPrice: pricing.value.finalPrice,
   memberBenefit: props.pass.discountTag,

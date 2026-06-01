@@ -30,7 +30,7 @@ const cartStore = useCartStore();
 const { success } = useNotification();
 
 const membershipItem = computed(() => ({
-  id: props.membership.selectedOption.id,
+  referenceId: props.membership.selectedOption.id,
   membershipPlanId: props.membership.selectedOption.membershipPlanId,
   title: props.membership.name,
   frequency: props.membership.selectedOption.frequency,

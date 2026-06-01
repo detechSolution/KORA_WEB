@@ -101,7 +101,7 @@ const handleRemoveItem = () => {
         <!-- Cart Items -->
         <div
           v-for="item in cartItems"
-          :key="item.id"
+          :key="item.referenceId"
           class="flex gap-4 pb-6 border-b border-border"
         >
           <div
@@ -142,7 +142,7 @@ const handleRemoveItem = () => {
                   <br />
                   <span v-if="item.itemType !== 'membership'">
                     (<span class="text-xl"
-                      >{{ item.guests.length }} x
+                      >{{ item.visitors.length }} x
                       {{ formatPrice(item.price) }}</span
                     >)
                   </span>
@@ -175,18 +175,18 @@ const handleRemoveItem = () => {
 
             <div class="mt-2 flex flex-col gap-1.5">
               <div
-                v-if="item.date"
+                v-if="item.bookingDate"
                 class="flex items-center gap-1.5 text-[10px] text-muted-foreground"
               >
                 <UIcon name="i-lucide-calendar" class="w-3 h-3" />
-                <span>{{ item.date }}</span>
+                <span>{{ item.bookingDate }}</span>
               </div>
               <div
-                v-if="item.time"
+                v-if="item.bookingTime"
                 class="flex items-center gap-1.5 text-[10px] text-muted-foreground"
               >
                 <UIcon name="i-lucide-clock" class="w-3 h-3" />
-                <span>{{ item.time }}</span>
+                <span>{{ formatTime(item.bookingTime) }}</span>
               </div>
               <div
                 v-if="item.location"

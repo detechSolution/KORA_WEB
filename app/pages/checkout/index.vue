@@ -106,6 +106,7 @@ async function handlePayNowClick() {
     //   guests: item.guests?.length || 1,
     // })),
   };
+  console.log("🚀 ~ handlePayNowClick ~ payload:", payload)
 }
 
 onUnmounted(() => {
@@ -153,7 +154,7 @@ onUnmounted(() => {
             <div class="flex flex-col gap-6">
               <div
                 v-for="item in cartItems"
-                :key="item.id"
+                :key="item.referenceId"
                 class="flex gap-4 pb-6 border-b border-border/10"
               >
                 <!-- Image / Icon -->
@@ -195,7 +196,7 @@ onUnmounted(() => {
                         <br />
                         <span v-if="item.itemType !== 'membership'">
                           (<span class="text-xl"
-                            >{{ item.guests.length }} x
+                            >{{ item.visitors.length }} x
                             {{ formatPrice(item.price) }}</span
                           >)
                         </span>
@@ -230,18 +231,18 @@ onUnmounted(() => {
 
                   <div class="flex flex-col gap-1.5 mt-auto">
                     <div
-                      v-if="item.date"
+                      v-if="item.bookingDate"
                       class="flex items-center gap-1.5 text-[9px] text-muted-foreground"
                     >
                       <UIcon name="i-lucide-calendar" class="w-3 h-3" />
-                      <span>{{ item.date }}</span>
+                      <span>{{ item.bookingDate }}</span>
                     </div>
                     <div
-                      v-if="item.time"
+                      v-if="item.bookingTime"
                       class="flex items-center gap-1.5 text-[9px] text-muted-foreground"
                     >
                       <UIcon name="i-lucide-clock" class="w-3 h-3" />
-                      <span>{{ item.time }}</span>
+                      <span>{{ formatTime(item.bookingTime) }}</span>
                     </div>
                     <div
                       v-if="item.location"
