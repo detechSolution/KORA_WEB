@@ -19,5 +19,9 @@ export const API_ENDPOINTS = {
 
   INQUIRE: {
     CREATE: "/api/v1/mails/inquiries",
+  },
+
+  SPA: {
+    GET: "/api/v1/spa/website",
   }
 };

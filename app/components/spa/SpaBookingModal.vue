@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { availableDays, offerings } from "~/data/spa";
+import { ref, computed } from "vue";
+import { useSpaStore } from "~/stores/spa";
 
 defineProps({
   isOpen: {
     type: Boolean,
     required: true,
   },
+});
+
+const selectedSpa = defineModel<string | number | null>("selectedSpa", {
+  default: null,
 });
 
 const steps = [
@@ -23,12 +27,11 @@ const steps = [
     label: "Overview",
   },
 ];
-const accordionItems = offerings.map((o) => ({
-  id: o.id,
-  label: o.label,
-  description: o.description,
-  prices: o.prices,
-}));
+
+const spaStore = useSpaStore();
+
+const spa = computed(() => spaStore.spa);
+
 function goToStep(step: number) {
   if (step > currentStep.value) {
     void validateCurrentStep().then((isValid) => {
@@ -120,7 +123,7 @@ const addToCart = () => {
           </div>
 
           <UAccordion
-            :items="accordionItems"
+            :items="spa?.subTypes"
             class="mb-6"
             :ui="{
               root: 'w-full flex flex-col gap-4',
@@ -131,7 +134,7 @@ const addToCart = () => {
           >
             <template #default="{ item }">
               <div class="flex flex-col">
-                <span>{{ item.label }}</span>
+                <span>{{ item.name }}</span>
                 <p
                   class="text-sm text-foreground/80 dark:text-secondary-500 mt-4"
                 >
@@ -145,34 +148,29 @@ const addToCart = () => {
                 <div
                   v-for="(duration, index) in item.prices"
                   :key="index"
-                  class="group relative border border-white/10 dark:border-white/10 bg-[#c9a55a]/10 dark:bg-[#2A2722] rounded-xs p-4 flex flex-col justify-between transition-all duration-300"
+                  class="group relative border border-white/10 dark:border-white/10 rounded-xs p-4 flex flex-col justify-between transition-all duration-300 cursor-pointer"
+                  @click="selectedSpa = duration.id"
+                  :class="selectedSpa == duration.id ? 'bg-primary-500 text-white dark:bg-primary' : 'bg-[#c9a55a]/10 dark:bg-[#2A2722]'"
                 >
                   <div>
                     <div
-                      class="flex items-center gap-2 text-xs uppercase text-secondary-500"
+                      class="flex items-center gap-2 text-xs uppercase"
+                      :class="selectedSpa == duration.id ? 'text-white' : 'text-primary-700'"
                     >
                       <UIcon
                         name="i-lucide-clock"
-                        class="h-3.5 w-3.5 text-primary"
+                        class="h-3.5 w-3.5"
                       />
-                      <span class="text-primary text-sm">{{
-                        duration.duration
-                      }}</span>
+                      <span 
+                      class="text-sm"
+                      :class="selectedSpa == duration.id ? 'text-white' : 'text-primary-700'"
+                        >{{ duration.duration }} {{ duration.timeUnit }}</span
+                      >
                     </div>
 
                     <p class="text-3xl font-medium text-foreground mt-3">
                       {{ duration.price }}
                     </p>
-                  </div>
-
-                  <div class="mt-3 flex items-center justify-between">
-                    <base-button variant="link" class="text-primary p-0">
-                      Tap to Book
-                      <UIcon
-                        name="i-lucide-arrow-right"
-                        class="h-4 w-4 transition-transform group-hover:translate-x-1"
-                      />
-                    </base-button>
                   </div>
                 </div>
               </div>
@@ -180,7 +178,11 @@ const addToCart = () => {
           </UAccordion>
         </div>
 
-        <div v-else-if="currentStep === 1" key="step2" class="flex flex-col gap-8">
+        <div
+          v-else-if="currentStep === 1"
+          key="step2"
+          class="flex flex-col gap-8"
+        >
           <div class="">
             <h2 class="text-3xl font-serif text-foreground mb-3">
               Choose Your Date & Time
@@ -198,27 +200,26 @@ const addToCart = () => {
               :ui="{
                 headCell: 'text-xs font-normal',
                 gridBody: 'grid gap-2 sm:gap-4',
-                cellTrigger: 'w-full rounded-none flex flex-col h-8 w-8 p-1 sm:h-12 sm:w-12 sm:p-2 border border-border',
-            }"
-          />
-
-        </div>
-        <div class="flex flex-col gap-4 mb-6">
+                cellTrigger:
+                  'w-full rounded-none flex flex-col h-8 w-8 p-1 sm:h-12 sm:w-12 sm:p-2 border border-border',
+              }"
+            />
+          </div>
+          <div class="flex flex-col gap-4 mb-6">
             <p class="text-primary-700 font-medium text-sm capitalize">
               Select Date
             </p>
 
             <div class="grid grid-cols-3 gap-4">
-            <div 
-            v-for="time in 9"
-            :key="time"
-            >
-                
-                <div class="border border-stone-200 py-4 text-center text-secondary">10:30 AM</div>
-        
+              <div v-for="time in 9" :key="time">
+                <div
+                  class="border border-stone-200 py-4 text-center text-secondary"
+                >
+                  10:30 AM
+                </div>
+              </div>
             </div>
-            </div>
-        </div>
+          </div>
         </div>
 
         <div v-else-if="currentStep === 2" key="step3" class="flex flex-col">
