@@ -99,6 +99,7 @@ const nextStep = () => {
 };
 
 const proceedToCheckout = () => {
+  cartStore.addToCart(passItem.value);
   close();
   router.push("/checkout");
 };

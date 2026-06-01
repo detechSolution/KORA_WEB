@@ -85,6 +85,7 @@ const pricing = computed(() =>
     discount: MEMBERSHIP_DISCOUNT,
   }),
 );
+console.log("🚀 ~ pricing:", pricing.value)
 
 function goToStep(step: number) {
   if (step > currentStep.value) {

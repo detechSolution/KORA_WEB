@@ -16,9 +16,9 @@ useSeoMeta({
 const step = ref(1);
 
 const form = ref({
-  fullName: "Shyam Shrestha",
-  phone: "9856764536",
-  email: "shyam.shrestha65@gmail.com",
+  fullName: "",
+  phone: "",
+  email: "",
   promoCode: "",
 });
 
@@ -51,15 +51,6 @@ const totalItems = computed(() => {
   );
 });
 
-const pricing = computed(() =>
-  calculatePrice({
-    price: totalPrice.value,
-    guests: 1,
-    membershipDiscount: MEMBERSHIP_DISCOUNT,
-    discount: PROMO_DISCOUNT,
-  }),
-);
-
 
 const openRemoveModal = (id: string) => {
   selectedItemId.value = id;
@@ -77,6 +68,14 @@ const handleRemoveItem = () => {
 
 const MEMBERSHIP_DISCOUNT = userDetail?.membership?.option?.memberBenefit || 0;
 const PROMO_DISCOUNT = 0;
+
+const pricing = computed(() =>
+  calculatePrice({
+    price: totalPrice.value,
+    guests: 1,
+    discount: MEMBERSHIP_DISCOUNT,
+  }),
+);
 
 const goBack = () => {
   step.value = 1;
@@ -225,7 +224,7 @@ async function handlePayNowClick() {
 
                   <div class="flex justify-end mt-2">
                     <button
-                      class="text-destructive/80 hover:text-destructive transition-colors"
+                      class="text-destructive/80 hover:text-destructive transition-colors hover:cursor-pointer"
                       @click="openRemoveModal(item.cartId)"
                     >
                       <UIcon

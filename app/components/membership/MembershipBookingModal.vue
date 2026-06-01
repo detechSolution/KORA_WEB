@@ -49,6 +49,7 @@ const addToCart = () => {
 };
 
 const proceedToCheckout = () => {
+  cartStore.addToCart(membershipItem.value);
   close();
   router.push("/checkout");
 };
