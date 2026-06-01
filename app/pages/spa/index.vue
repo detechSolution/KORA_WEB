@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { availableDays, offerings } from "~/data/spa";
+import { computed, ref, onMounted, watch } from "vue";
 import { IMAGES } from "~/utils/images";
+import { useSpaStore } from "~/stores/spa";
+import { getApiErrorMessage } from "~/utils/error";
+import { useNotification } from "~/composables/use-notification";
 
 definePageMeta({
   layout: "default",
@@ -15,13 +17,32 @@ useSeoMeta({
 
 const isPlayingVideo = ref(false);
 const isBookingModalOpen = ref(false);
+const loading = ref(false);
 
-const accordionItems = offerings.map((o) => ({
-  id: o.id,
-  label: o.label,
-  description: o.description,
-  prices: o.prices,
-}));
+const spa = computed(() =>  spaStore.spa);
+
+const spaStore = useSpaStore();
+const { error: showError } = useNotification();
+const selectedSpa = ref<string| null> (null);
+
+async function getSpaLists() {
+  try {
+    loading.value = true;
+    await spaStore.getSpas();
+  } catch (error: unknown) {
+    showError({
+      message: getApiErrorMessage(error, "Failed to fetch spa lists")
+    });
+  } finally {
+    loading.value = false;
+  }
+}
+
+
+onMounted(() => {
+  getSpaLists();
+});
+
 </script>
 
 <template>
@@ -39,7 +60,7 @@ const accordionItems = offerings.map((o) => ({
       />
     </div>
 
-    <div class="relative z-10 max-w-400 mx-auto">
+    <div class="relative z-10 max-w-400 mx-auto py-12">
       <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-12">
         <!-- Left Column -->
         <div>
@@ -160,16 +181,16 @@ const accordionItems = offerings.map((o) => ({
             </div>
           </div>
 
-          <div class="max-w-400 px-4 md:px-8 lg:px-12 py-10 md:py-7">
+          <div class="max-w-400 px-4 md:px-8 lg:px-12 py-10 mb-5 md:py-7">
             <base-section-label
               label="Available Offerings"
               align="left"
               class="mb-4"
             />
             <UAccordion
-              :items="accordionItems"
+              :items="spa?.subTypes"
               :ui="{
-                root: 'w-full flex flex-col gap-4',
+                root: 'w-full flex flex-col gap-4 mb-6',
                 item: 'border border-border dark:bg-[#212121] p-6 dark:text-white font-serif rounded-xs',
                 label: 'text-xl',
                 body: 'mt-4',
@@ -177,22 +198,21 @@ const accordionItems = offerings.map((o) => ({
             >
               <template #default="{ item }">
                 <div class="flex flex-col">
-                  <span>{{ item.label }}</span>
+                  <span>{{ item.name }}</span>
                   <p class="text-sm text-foreground/80 dark:text-secondary-500 mt-4">
                     {{ item.description }}
                   </p>
                 </div>
               </template>
               <template #content="{ item }">
-                
-
+              
                 <!-- Pricing Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                   <div
-                    v-for="(duration, index) in item.prices"
+                    v-for="(price, index) in item.prices"
                     :key="index"
                     class="group relative border border-white/10 dark:border-white/10 bg-[#c9a55a]/10 dark:bg-[#2A2722] rounded-xs p-4 flex flex-col justify-between transition-all duration-300"
-                  >
+                    >
                     <div>
                       <div
                         class="flex items-center gap-2 text-xs uppercase text-secondary-500"
@@ -202,17 +222,21 @@ const accordionItems = offerings.map((o) => ({
                           class="h-3.5 w-3.5 text-primary"
                         />
                         <span class="text-primary text-sm">{{
-                          duration.duration
+                          price.duration + " " + price.timeUnit
                         }}</span>
                       </div>
 
                       <p class="text-3xl font-medium text-foreground mt-3">
-                        {{ duration.price }}
+                        {{ price.price }}
                       </p>
                     </div>
 
                     <div class="mt-3 flex items-center justify-between">
-                      <base-button variant="link" class="text-primary p-0">
+                      <base-button
+                      @click="selectedSpa = price.id, isBookingModalOpen = true" 
+                      variant="link"
+                        class="text-primary p-0"
+                        >
                         Tap to Book
                         <UIcon
                           name="i-lucide-arrow-right"
@@ -231,26 +255,28 @@ const accordionItems = offerings.map((o) => ({
         <aside class="sticky lg:top-28 lg:self-start px-4 md:px-8 lg:px-0">
           <div class="border border-border bg-card px-5 py-5 md:px-6">
             <p class="text-[10px] uppercase text-primary mb-3">
-              Book Your Spot
+              SPA MENU
             </p>
             <h3
               class="font-serif text-3xl text-foreground dark:text-white mb-8"
             >
-              5 Offerings Available
+            {{ spa?.subTypes.length || 0 }} Offerings Available
             </h3>
 
-            <div class="space-y-6">
-              <div v-for="offering in offerings" :key="offering.id">
-                <div class="flex justify-between items-start gap-4">
+            <div 
+            v-if="spa?.subTypes.length"
+            class="space-y-6">
+              <div v-for="subType in spa.subTypes" :key="subType.id">
+                <div class="flex justify-between items-center gap-4">
                   <span
                     class="font-serif text-foreground dark:text-white text-base"
-                    >{{ offering.label }}</span
+                    >{{ subType.name }}</span
                   >
                   <div
-                    class="text-right text-[10px] text-foreground/70 dark:text-white/70 space-y-1 mt-1"
+                    class="text-right text-[10px] text-secondary-500 font-normal dark:text-white/70 space-y-1 mt-1"
                   >
-                    <div v-for="price in offering.prices" :key="price.duration">
-                      {{ price.duration }} - {{ price.price }}
+                    <div v-for="price in subType.prices" :key="price.duration">
+                      {{ price.duration }} {{ price.timeUnit }} - {{ price.price }}
                     </div>
                   </div>
                 </div>
@@ -258,15 +284,15 @@ const accordionItems = offerings.map((o) => ({
               </div>
             </div>
 
-            <div class="mt-">
+            <div class="mt-6">
               <p class="text-[10px] uppercase text-primary mb-3">
                 Available Days
               </p>
               <div class="flex flex-wrap gap-2">
                 <span
-                  v-for="day in availableDays"
+                  v-for="day in spa?.availableDays"
                   :key="day"
-                  class="border border-primary px-2.5 py-1 text-[10px] text-foreground dark:text-white font-semibold"
+                  class="border border-primary uppercase px-2.5 py-1 text-[10px] text-foreground dark:text-white font-semibold"
                 >
                   {{ day }}
                 </span>
@@ -277,7 +303,7 @@ const accordionItems = offerings.map((o) => ({
               class="mt-6 w-full border border-border bg-[#c9a55a]/10 dark:bg-[#2A2722] px-4 py-4 space-y-3 text-center"
             >
               <p
-                class="text-xs text-foreground/80 dark:text-white/80 leading-relaxed"
+                class="text-xs text-start text-secondary-500 dark:text-white/80 leading-relaxed"
               >
                 Experience any treatment on the left to view details and select
                 your preferred duration.
@@ -287,7 +313,7 @@ const accordionItems = offerings.map((o) => ({
             <base-button
               variant="solid"
               color="primary"
-              class="w-full text-sm uppercase mt-6"
+              class="w-full text-sm font-semibold uppercase mt-6"
               @click="isBookingModalOpen = true"
             >
               Book This Service
@@ -307,6 +333,7 @@ const accordionItems = offerings.map((o) => ({
     <SpaBookingModal
       :is-open="isBookingModalOpen"
       @close="isBookingModalOpen = false"
+      v-model:selected-spa="selectedSpa"
     />
   </section>
 </template>
