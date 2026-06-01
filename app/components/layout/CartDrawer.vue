@@ -25,6 +25,7 @@ const totalPrice = computed(() => {
   return cartItems.value.reduce((total, item) => total + item.finalPrice, 0);
 });
 
+
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat("en-IN").format(price);
 };
@@ -142,7 +143,7 @@ const handleRemoveItem = () => {
                   <br />
                   <span v-if="item.itemType !== 'membership'">
                     (<span class="text-xl"
-                      >{{ item.visitors.length }} x
+                      >{{ item.visitors.length + 1 }} x
                       {{ formatPrice(item.price) }}</span
                     >)
                   </span>

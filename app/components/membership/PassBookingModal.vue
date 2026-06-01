@@ -31,7 +31,7 @@ const { success } = useNotification();
 const pricing = computed(() =>
   calculatePrice({
     price: props.pass.price,
-    guests: guests.value.length,
+    guests: guests.value.length + 1,
   }),
 );
 
@@ -78,19 +78,21 @@ async function validateCurrentStep(): Promise<boolean> {
 const emit = defineEmits(["close"]);
 
 const close = () => {
+  currentStep.value = 0;
+  resetGuests();
   emit("close");
 };
 
 const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
 const currentStep = ref(0);
 
-const guests = ref([
-  {
-    fullName: userDetail?.name || "",
-    phone: userDetail?.phone || "",
-    email: userDetail?.email || "",
-  },
-]);
+const currentUser = computed(() => ({
+  fullName: userDetail?.fullName || userDetail?.name || "You",
+  phone: userDetail?.phone || "",
+  email: userDetail?.email || "",
+}));
+
+const guests = ref<Guest[]>([]);
 
 
 const createGuest = (): Guest => ({
@@ -99,12 +101,16 @@ const createGuest = (): Guest => ({
   email: "",
 });
 
+const resetGuests = () => {
+  guests.value = [];
+};
+
 const addGuest = () => {
   guests.value.push(createGuest());
 };
 
 const removeGuest = (index: number) => {
-  if (guests.value.length > 1) {
+  if (guests.value.length > 0) {
     guests.value.splice(index, 1);
   }
 };
@@ -164,13 +170,41 @@ const proceedToCheckout = () => {
           <div class="w-full h-px bg-border/40 mb-8"></div>
 
           <div class="flex flex-col gap-6 mb-8">
+            <base-input
+              v-model="currentUser.fullName"
+              :name="`fullName`"
+              label="FULL NAME *"
+              type="text"
+              class="bg-white dark:bg-transparent"
+            />
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <base-input
+                v-model="currentUser.phone"
+                :name="`phone`"
+                label="PHONE NUMBER"
+                type="text"
+                class="bg-white dark:bg-transparent"
+              />
+
+              <base-input
+                v-model="currentUser.email"
+                :name="`email`"
+                label="EMAIL ADDRESS"
+                type="email"
+                class="bg-white dark:bg-transparent"
+              />
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-6 mb-8">
             <div v-for="(guest, index) in guests" :key="index" class="flex flex-col gap-6 relative">
               <div v-if="index > 0" class="w-full h-1px bg-border/40 mt-2 mb-2"></div>
               
               <div class="flex items-center justify-between">
                 <h4 v-if="index > 0" class="text-sm font-serif text-[#A08860]">Guest {{ index + 1 }}</h4>
                 <button
-                  v-if="guests.length > 1"
+                  v-if="guests.length > 0"
                   @click="removeGuest(index)"
                   class="text-xs text-red-800 hover:text-red-600 transition-colors flex items-center gap-1 absolute right-0 top-2"
                 >
@@ -249,7 +283,7 @@ const proceedToCheckout = () => {
               <div
                 class="flex justify-between items-center text-sm text-foreground"
               >
-                <span>{{ pass.name }} (Rs. {{ pass.price }} × {{ guests.length }})</span>
+                <span>{{ pass.name }} (Rs. {{ pass.price }} × {{ guests.length + 1 }})</span>
                 <span>Rs. {{ formatPrice(pricing.subtotal) }}</span>
               </div>
               <div v-if="pass.discountTag" class="flex justify-between items-center text-sm text-muted-foreground">

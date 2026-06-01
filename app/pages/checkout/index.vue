@@ -45,12 +45,13 @@ const totalPrice = computed(() => {
   return Math.max(0, pricing.value.finalPrice - cartStore.discountAmount);
 });
 
-// If there are session items, count the total guests, otherwise count the items
+// Count the total number of items in the cart, including visitors for each item
 const totalItems = computed(() =>
-  cartItems.value.reduce(
-    (total, item) => total + Math.max(item.guests?.length || 0, 1),
-    0,
-  ),
+  cartItems.value.reduce((total, item) => {
+    const visitorsCount = item.visitors?.length ?? 0;
+
+    return total + visitorsCount + 1;
+  }, 0),
 );
 
 const handleApplyPromo = async () => {
@@ -205,7 +206,7 @@ onUnmounted(() => {
                         <br />
                         <span v-if="item.itemType !== 'membership'">
                           (<span class="text-xl"
-                            >{{ item.visitors.length }} x
+                            >{{ item.visitors.length + 1 }} x
                             {{ formatPrice(item.price) }}</span
                           >)
                         </span>

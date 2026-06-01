@@ -42,35 +42,29 @@ const steps = [{ label: "Attendees" }, { label: "Overview" }];
 
 const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
 
+const currentUser = computed(() => ({
+  fullName: userDetail?.fullName || userDetail?.name || "You",
+  phone: userDetail?.phone || "",
+  email: userDetail?.email || "",
+}));
+
 const createGuest = (): Guest => ({
   fullName: "",
   phone: "",
   email: "",
 });
 
-const guests = ref<Guest[]>([
-  {
-    fullName: userDetail?.name || "",
-    phone: userDetail?.phone || "",
-    email: userDetail?.email || "",
-  },
-]);
+const guests = ref<Guest[]>([]);
 
 const resetGuests = () => {
-  guests.value = [
-    {
-      fullName: userDetail?.name || "",
-      phone: userDetail?.phone || "",
-      email: userDetail?.email || "",
-    },
-  ];
+  guests.value = [];
 };
 const addGuest = () => {
   guests.value.push(createGuest());
 };
 
 const removeGuest = (index: number) => {
-  if (guests.value.length <= 1) return;
+  if (guests.value.length <= 0) return;
 
   guests.value.splice(index, 1);
 };
@@ -81,7 +75,7 @@ const removeGuest = (index: number) => {
 const pricing = computed(() =>
   calculatePrice({
     price: props.session.price,
-    guests: guests.value.length,
+    guests: guests.value.length + 1,
   }),
 );
 
@@ -126,7 +120,7 @@ const bookingItem = computed(() => ({
   // promoDiscount: PROMO_DISCOUNT,
   discountAmount: pricing.value.discountAmount,
   finalPrice: pricing.value.finalPrice,
-  itemType: "session"
+  itemType: "session",
 }));
 
 const addToCart = () => {
@@ -188,6 +182,34 @@ const close = () => {
           <div class="w-full h-px bg-border/40 mb-8"></div>
 
           <div class="flex flex-col gap-6 mb-8">
+            <base-input
+              v-model="currentUser.fullName"
+              :name="`fullName`"
+              label="FULL NAME *"
+              type="text"
+              class="bg-white dark:bg-transparent"
+            />
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <base-input
+                v-model="currentUser.phone"
+                :name="`phone`"
+                label="PHONE NUMBER"
+                type="text"
+                class="bg-white dark:bg-transparent"
+              />
+
+              <base-input
+                v-model="currentUser.email"
+                :name="`email`"
+                label="EMAIL ADDRESS"
+                type="email"
+                class="bg-white dark:bg-transparent"
+              />
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-6 mb-8">
             <div
               v-for="(guest, index) in guests"
               :key="index"
@@ -201,7 +223,7 @@ const close = () => {
                 </h4>
 
                 <button
-                  v-if="guests.length > 1"
+                  v-if="guests.length > 0"
                   @click="removeGuest(index)"
                   class="absolute top-0 right-0 flex items-center gap-1 text-xs text-red-800 hover:text-red-600 transition-colors hover:cursor-pointer"
                 >
@@ -285,7 +307,8 @@ const close = () => {
                 class="flex justify-between items-center text-sm text-foreground"
               >
                 <span>
-                  {{ session.name }} (Rs. {{ session.price }} × {{ guests.length }})
+                  {{ session.name }} (Rs. {{ session.price }} ×
+                  {{ guests.length + 1 }})
                 </span>
 
                 <span> Rs. {{ formatPrice(pricing.subtotal) }} </span>
