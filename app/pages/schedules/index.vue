@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useNotification } from "~/composables/use-notification";
 import { usePagination } from "~/composables/use-pagination";
@@ -24,6 +24,40 @@ const { error: showError } = useNotification();
 
 const loading = ref(false);
 const weekOffset = ref(0);
+
+const search = reactive({
+  session: "all",
+  venue: "all",
+});
+
+const venueOptions = [
+  {
+    label: "All Venues",
+    value: "all",
+  },
+  {
+    label: "Kora Studio",
+    value: "kora-studio",
+  },
+];
+const sessionOptions = [
+  {
+    label: "All Sessions",
+    value: "all",
+  },
+  {
+    label: "Class",
+    value: "class",
+  },
+  {
+    label: "Event",
+    value: "event",
+  },
+  {
+    label: "Workshop",
+    value: "workshop",
+  },
+];
 
 const sessions = computed(() => {
   return sessionStore.sessions.data.map((session: any) => ({
@@ -207,8 +241,9 @@ async function getSessionsList() {
       limit: pagination.value.pageSize,
       startDate: currentRange.value.startDate,
       endDate: currentRange.value.endDate,
-      type: "",
+      type: search.session === "all" ? "" : search.session,
     };
+    console.log("🚀 ~ getSessionsList ~ params:", params)
     await sessionStore.getSessions(params);
   } catch (error: unknown) {
     showError({
@@ -229,6 +264,12 @@ onMounted(() => {
 
 watch(
   () => weekOffset.value,
+  () => {
+    getSessionsList();
+  },
+);
+watch(
+  () => search.session,
   () => {
     getSessionsList();
   },
@@ -288,18 +329,20 @@ watch(
           </div>
 
           <div class="flex items-center gap-3">
-            <button
-              class="px-4 py-2 border border-stone-300 dark:border-stone-800 bg-transparent hover:bg-[#212121] transition-colors rounded-xs text-stone-400 flex items-center gap-2"
-            >
-              FILTER BY SESSIONS
-              <UIcon name="i-lucide-chevron-down" class="w-3.5 h-3.5" />
-            </button>
-            <button
-              class="px-4 py-2 border border-stone-300 dark:border-stone-800 bg-transparent hover:bg-[#212121] transition-colors rounded-xs text-stone-400 flex items-center gap-2"
-            >
-              FILTER BY VENUE
-              <UIcon name="i-lucide-chevron-down" class="w-3.5 h-3.5" />
-            </button>
+            <base-select
+              v-model="search.session"
+              name="session"
+              placeholder="Select session"
+              :options="sessionOptions"
+              class="w-52"
+            />
+            <!-- <base-select
+              v-model="search.venue"
+              name="venue"
+              placeholder="Select venue"
+              :options="venueOptions"
+              class="w-52"
+            /> -->
           </div>
         </div>
       </div>
