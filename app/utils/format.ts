@@ -14,14 +14,52 @@ export const formatTime = (time: string): string => {
 };
 
 // Date Formatter
-export const formatDate = (date: string | Date): string => {
+/**
+ * Formats a date.
+ *
+ * @example
+ * formatDate("2026-05-29");
+ * // May 29, 2026
+ *
+ * @example
+ * formatDate("2026-05-29", "YYYY-MM-DD");
+ * // 2026-05-29
+ *
+ * @example
+ * formatDate("2026-05-29", "DD/MM/YYYY");
+ * // 29/05/2026
+ *
+ * @example
+ * formatDate("2026-05-29", "MM-DD-YYYY");
+ * // 05-29-2026
+ */
+export const formatDate = (
+  date: string | Date,
+  format?: string,
+): string => {
   const parsedDate = new Date(date);
 
-  return parsedDate.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  if (Number.isNaN(parsedDate.getTime())) {
+    return "";
+  }
+
+  // Default behavior
+  if (!format) {
+    return parsedDate.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }
+
+  const year = parsedDate.getFullYear();
+  const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
+  const day = String(parsedDate.getDate()).padStart(2, "0");
+
+  return format
+    .replace("YYYY", String(year))
+    .replace("MM", month)
+    .replace("DD", day);
 };
 
 // Price Formatter
