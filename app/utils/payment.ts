@@ -11,6 +11,27 @@ export const redirectToPaymentProvider = (payment: PaymentInfo) => {
 
       break;
 
+    case "redirect_form":
+      if (!payment.url || !payment.fields) {
+        throw new Error("Payment form URL or fields missing");
+      }
+
+      const form = document.createElement("form");
+      form.method = payment.method || "POST";
+      form.action = payment.url;
+
+      for (const [key, value] of Object.entries(payment.fields)) {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = value;
+        form.appendChild(input);
+      }
+
+      document.body.appendChild(form);
+      form.submit();
+      break;
+
     default:
       throw new Error(`Unsupported payment mode: ${payment.mode}`);
   }

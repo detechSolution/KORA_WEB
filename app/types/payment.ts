@@ -7,6 +7,7 @@ export type PaymentProvider =
 export type PaymentMode =
   | "redirect_url"
   | "sdk"
+  | "redirect_form"
   | "embedded";
 
 export interface PaymentInfo {
@@ -14,6 +15,9 @@ export interface PaymentInfo {
   mode: PaymentMode;
   redirectUrl?: string;
   sessionId?: string;
+  url?: string;
+  method?: string;
+  fields?: Record<string, string>;
 }
 
 export interface CheckoutResponse {
