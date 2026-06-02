@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { mockSchedules } from "~/data/schedules";
+import { computed, onMounted, ref, watch } from "vue";
+import { useRouter } from "vue-router";
+import { useNotification } from "~/composables/use-notification";
+import { usePagination } from "~/composables/use-pagination";
 import type { ScheduleEvent } from "~/data/schedules";
+import { useSessionStore } from "~/stores/session";
+import { getApiErrorMessage } from "~/utils/error";
+import { formatDate, normalizeDateTime } from "~/utils/format";
 
 definePageMeta({
   layout: "default",
@@ -12,7 +17,27 @@ useSeoMeta({
   description: "Weekly sessions, classes, and workshops.",
 });
 
+const router = useRouter();
+const sessionStore = useSessionStore();
+const { pagination } = usePagination(100);
+const { error: showError } = useNotification();
+
+const loading = ref(false);
 const weekOffset = ref(0);
+
+const sessions = computed(() => {
+  return sessionStore.sessions.data.map((session: any) => ({
+    id: session.id,
+    title: session.name,
+    type: session.type,
+    start: normalizeDateTime(session.startsAt),
+    end: normalizeDateTime(session.endsAt),
+    location: session.venue,
+    spotsLeft: session.capacity - session.remainingSpots,
+    capacity: session.capacity,
+    price: `Rs. ${session.price}`,
+  }));
+});
 
 const startOfWeek = (date: Date) => {
   const start = new Date(date);
@@ -47,24 +72,37 @@ const currentWeekStart = computed(() =>
 );
 const currentWeekEnd = computed(() => addDays(currentWeekStart.value, 6));
 
-const currentRangeTitle = computed(() => {
+const getCurrentRangeTitle = (format?: string) => {
   const start = currentWeekStart.value;
   const end = currentWeekEnd.value;
+
+  if (format) {
+    return {
+      startDate: formatDate(start, format),
+      endDate: formatDate(end, format),
+    };
+  }
+
   const sameMonth = start.getMonth() === end.getMonth();
 
   const startMonth = start
     .toLocaleDateString("en-US", { month: "short" })
     .toUpperCase();
+
   const endMonth = end
     .toLocaleDateString("en-US", { month: "short" })
     .toUpperCase();
 
-  if (sameMonth) {
-    return `${startMonth} ${start.getDate()} - ${end.getDate()}, ${end.getFullYear()}`;
-  }
+  return sameMonth
+    ? `${startMonth} ${start.getDate()} - ${end.getDate()}, ${end.getFullYear()}`
+    : `${startMonth} ${start.getDate()} - ${endMonth} ${end.getDate()}, ${end.getFullYear()}`;
+};
 
-  return `${startMonth} ${start.getDate()} - ${endMonth} ${end.getDate()}, ${end.getFullYear()}`;
-});
+const currentRange = computed(() => ({
+  title: getCurrentRangeTitle(),
+  startDate: formatDate(currentWeekStart.value, "YYYY-MM-DD"),
+  endDate: formatDate(currentWeekEnd.value, "YYYY-MM-DD"),
+}));
 
 const weekDates = computed(() =>
   Array.from({ length: 7 }, (_, index) =>
@@ -73,7 +111,7 @@ const weekDates = computed(() =>
 );
 
 const weekEvents = computed(() =>
-  mockSchedules.filter((event) => {
+  sessions.value.filter((event) => {
     const start = new Date(event.start);
     return (
       start >= currentWeekStart.value &&
@@ -105,9 +143,9 @@ const scheduleByDayAndTime = computed(() => {
 });
 
 const sessionCounts = computed(() => ({
-  Event: weekEvents.value.filter((event) => event.type === "Event").length,
-  Class: weekEvents.value.filter((event) => event.type === "Class").length,
-  Workshop: weekEvents.value.filter((event) => event.type === "Workshop")
+  Event: weekEvents.value.filter((event) => event.type === "event").length,
+  Class: weekEvents.value.filter((event) => event.type === "class").length,
+  Workshop: weekEvents.value.filter((event) => event.type === "workshop")
     .length,
 }));
 
@@ -123,33 +161,33 @@ const getEventsForCell = (day: Date, timeKey: string) =>
   scheduleByDayAndTime.value.get(`${day.toDateString()}__${timeKey}`) ?? [];
 
 const getBadgeClass = (type: string) => {
-  if (type === "Event")
+  if (type === "event")
     return "bg-emerald-800 dark:bg-[#1B3B36] text-white dark:text-[#6EE7B7]";
-  if (type === "Workshop")
+  if (type === "workshop")
     return "bg-purple-800 dark:bg-[#3D1E62] text-white dark:text-[#D8B4FE]";
-  if (type === "Class")
+  if (type === "class")
     return "bg-blue-800 dark:bg-[#1E3A8A] text-white dark:text-[#93C5FD]";
   return "bg-stone-800 text-white dark:text-stone-300";
 };
 
 const getProgressColor = (type: string) => {
-  if (type === "Event") return "emerald";
-  if (type === "Workshop") return "purple";
-  if (type === "Class") return "blue";
+  if (type === "event") return "emerald";
+  if (type === "workshop") return "purple";
+  if (type === "class") return "blue";
   return "stone";
 };
 
 const getBorderClass = (type: string) => {
-  if (type === "Event") return "border-emerald-800";
-  if (type === "Workshop") return "border-purple-800";
-  if (type === "Class") return "border-blue-800";
+  if (type === "event") return "border-emerald-800";
+  if (type === "workshop") return "border-purple-800";
+  if (type === "class") return "border-blue-800";
   return "border-stone-300 dark:border-stone-800";
 };
 
 const getCardClass = (type: string) => {
-  if (type === "Event") return "bg-[#006045]/15 hover:bg-[#006045]/35";
-  if (type === "Workshop") return "bg-[#6E11B0]/15 hover:bg-[#6E11B0]/35";
-  if (type === "Class") return "bg-[#193CB8]/15 hover:bg-[#193CB8]/35";
+  if (type === "event") return "bg-[#006045]/15 hover:bg-[#006045]/35";
+  if (type === "workshop") return "bg-[#6E11B0]/15 hover:bg-[#6E11B0]/35";
+  if (type === "class") return "bg-[#193CB8]/15 hover:bg-[#193CB8]/35";
   return "bg-[#151515] hover:bg-[#1C1C1C]";
 };
 
@@ -160,6 +198,41 @@ const formatTime = (value: string | Date) => {
     minute: "2-digit",
   });
 };
+
+async function getSessionsList() {
+  try {
+    loading.value = true;
+    const params = {
+      page: pagination.value.page,
+      limit: pagination.value.pageSize,
+      startDate: currentRange.value.startDate,
+      endDate: currentRange.value.endDate,
+      type: "",
+    };
+    await sessionStore.getSessions(params);
+  } catch (error: unknown) {
+    showError({
+      message: getApiErrorMessage(error, "Failed to load inquiries"),
+    });
+  } finally {
+    loading.value = false;
+  }
+}
+
+const handleDetailSessionView = (id: string | number) => {
+  router.push(`/class/${id}`);
+};
+
+onMounted(() => {
+  getSessionsList();
+});
+
+watch(
+  () => weekOffset.value,
+  () => {
+    getSessionsList();
+  },
+);
 </script>
 
 <template>
@@ -242,7 +315,7 @@ const formatTime = (value: string | Date) => {
           <div
             class="px-5 py-2.5 border border-stone-300 dark:border-stone-800 text-[10px] font-bold tracking-widest uppercase text-foreground dark:text-stone-300 rounded-xs"
           >
-            {{ currentRangeTitle }}
+            {{ currentRange.title }}
           </div>
           <button
             @click="nextWeek"
@@ -323,6 +396,7 @@ const formatTime = (value: string | Date) => {
                           getBorderClass(event.type),
                           getCardClass(event.type),
                         ]"
+                        @click="handleDetailSessionView(event.id)"
                       >
                         <UIcon
                           name="i-lucide-arrow-up-right"
@@ -373,7 +447,8 @@ const formatTime = (value: string | Date) => {
                         <div>
                           <UProgress
                             v-model="event.spotsLeft"
-                            class="mb-2 bg-transparent h-0.5"
+                            :max="event.capacity"
+                            class="my-4 bg-transparent h-0.5"
                             :color="getProgressColor(event.type)"
                           />
                           <div

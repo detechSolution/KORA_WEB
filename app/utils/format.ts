@@ -33,10 +33,7 @@ export const formatTime = (time: string): string => {
  * formatDate("2026-05-29", "MM-DD-YYYY");
  * // 05-29-2026
  */
-export const formatDate = (
-  date: string | Date,
-  format?: string,
-): string => {
+export const formatDate = (date: string | Date, format?: string): string => {
   const parsedDate = new Date(date);
 
   if (Number.isNaN(parsedDate.getTime())) {
@@ -60,6 +57,10 @@ export const formatDate = (
     .replace("YYYY", String(year))
     .replace("MM", month)
     .replace("DD", day);
+};
+
+export const normalizeDateTime = (dateString: string): string => {
+  return dateString.replace("Z", "").split(".")[0] ?? "";
 };
 
 // Price Formatter

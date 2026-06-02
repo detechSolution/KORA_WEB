@@ -20,7 +20,7 @@ useSeoMeta({
 const loading = ref(false);
 
 const sessionStore = useSessionStore();
-const { pagination } = usePagination(2);
+const { pagination } = usePagination(10);
 const { error: showError } = useNotification();
 
 const route = useRoute();

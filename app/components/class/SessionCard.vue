@@ -47,9 +47,9 @@ defineProps({
         {{ session.name }}
       </h3>
 
-      <p
+      <div
         v-html="session.description"
-        class="font-sans text-xs md:text-sm text-secondary-400 leading-relaxed max-w-2xl mb-3"
+        class="font-sans text-xs md:text-sm text-secondary-400 leading-relaxed max-w-2xl mb-3 line-clamp-2 overflow-hidden"
       />
 
       <div

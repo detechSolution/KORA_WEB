@@ -46,9 +46,7 @@ const handleOpenBookingModal = () => {
         <div>
           <ClassHeader :title="session.name" />
           <div class="max-w-400 px-4 md:px-8 lg:px-12 py-10 md:py-7">
-            <div class="space-y-5 text-sm md:text-[15px] leading-7">
-              <p v-html="session.description" />
-            </div>
+            <div class="session-description" v-html="session.description" />
 
             <!-- <div class="mt-10">
               <h2
@@ -166,7 +164,8 @@ const handleOpenBookingModal = () => {
                   Session Time
                 </p>
                 <p class="text-sm text-foreground">
-                  {{ formatTime(session.startTime) }} - {{ formatTime(session.endTime) }}
+                  {{ formatTime(session.startTime) }} -
+                  {{ formatTime(session.endTime) }}
                 </p>
               </div>
               <div class="border border-border/60 bg-card/40 px-4 py-4">
@@ -204,7 +203,7 @@ const handleOpenBookingModal = () => {
                 >{{ session.remainingSpots }} / {{ session.capacity }}</span
               >
             </div>
-            <UProgress v-model="session.bookedCount" class="mt-2" />
+            <UProgress v-model="session.bookedCount" :max="session.capacity" class="mt-2" />
           </div>
         </div>
 
@@ -223,7 +222,9 @@ const handleOpenBookingModal = () => {
                 Rs. {{ session.price }}
               </p>
               <p class="mt-2 text-xs text-secondary-400">
-                {{ formatTime(session.startTime) }} - {{ formatTime(session.endTime) }} session with {{ session.instructorName }}
+                {{ formatTime(session.startTime) }} -
+                {{ formatTime(session.endTime) }} session with
+                {{ session.instructorName }}
               </p>
             </div>
 
@@ -241,7 +242,8 @@ const handleOpenBookingModal = () => {
                       Session Starting Date & Time
                     </p>
                     <p class="text-foreground font-medium">
-                      {{ formatDate(session.startsAt) }} • {{ formatTime(session.startTime) }} • {{ session.venue }}
+                      {{ formatDate(session.startsAt) }} •
+                      {{ formatTime(session.startTime) }} • {{ session.venue }}
                     </p>
                   </div>
                 </div>
@@ -272,3 +274,14 @@ const handleOpenBookingModal = () => {
     />
   </section>
 </template>
+<style>
+.session-description ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.session-description li {
+  margin-bottom: 0.5rem;
+}
+</style>
