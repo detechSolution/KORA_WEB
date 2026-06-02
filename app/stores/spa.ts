@@ -7,7 +7,7 @@ import type { ApiResponse } from "~/types/api";
 import type { Spa } from "~/types/spa";
 
 export const useSpaStore = defineStore("spa", () => {
-    const http = getHttp();
+  const http = getHttp();
 
   const spa = ref<Spa>();
 
@@ -21,8 +21,20 @@ export const useSpaStore = defineStore("spa", () => {
     }
   };
 
+  const getAvailableTimes = async (params : Record<string, any>) => {
+    try {
+       const qs = buildQueryString(params);
+      const response = await http.get(`${API_ENDPOINTS.SPA.TIME_AVAILABILITY}?${qs}` );
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch available times:", error);
+      throw error;
+    }
+  };
+
   return {
     spa,
-    getSpas
+    getSpas,
+    getAvailableTimes
   };
 });
