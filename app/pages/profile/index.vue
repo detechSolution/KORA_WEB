@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { IMAGES } from "~/utils/images";
-import { mockUser, mockBookings } from "~/data/profile";
+import { mockBookings } from "~/data/profile";
 import { useAuthStore } from "~/stores/auth";
+import { useMemberStore } from "~/stores/member";
 import { useRouter } from "vue-router";
+import { formatDate } from "~/utils/format";
 
 definePageMeta({
   auth: true,
@@ -16,9 +18,46 @@ useSeoMeta({
 });
 
 const authStore = useAuthStore();
+const memberStore = useMemberStore();
 const router = useRouter();
 
-const user = ref(mockUser);
+onMounted(async () => {
+  await memberStore.getDashboard();
+});
+
+const dashboardData = computed(() => memberStore.dashboardData);
+const profileData = computed(() => dashboardData.value?.profile);
+const summaryData = computed(() => dashboardData.value?.summary);
+const membershipData = computed(() => dashboardData.value?.membership);
+
+const user = computed(() => {
+  return {
+    name: profileData.value?.fullName || "",
+    initials: profileData.value?.initials || "",
+    email: profileData.value?.email || "",
+    phone: profileData.value?.phoneNumber || "",
+    memberSince: formatDate(profileData.value?.memberSince ?? ""),
+    isMember: membershipData.value?.isActive || false,
+    membership: {
+      name: membershipData.value?.planName || "",
+      subtitle: "",
+      period: membershipData.value?.frequencyLabel || "",
+      tier: membershipData.value?.planName || "",
+      billing: membershipData.value
+        ? `${membershipData.value.currency} ${membershipData.value.price}/${membershipData.value.frequencyLabel.toLowerCase()}`
+        : "",
+      benefit: membershipData.value?.memberBenefitPercent
+        ? `${membershipData.value.memberBenefitPercent}% off`
+        : "",
+    },
+    stats: {
+      totalBookings: summaryData.value?.totalBookings || 0,
+      upcoming: summaryData.value?.upcomingBookings || 0,
+      canceled: summaryData.value?.cancelledBookings || 0,
+    },
+  };
+});
+
 const bookings = ref(mockBookings);
 
 const activeTab = ref("UPCOMING");
@@ -32,18 +71,12 @@ const filteredBookings = computed(() => {
 
 // Update the tab counts dynamically based on bookings data
 const tabs = computed(() => {
-  const upcomingCount = bookings.value.filter(
-    (b) => b.status === "UPCOMING",
-  ).length;
-  const pastCount = bookings.value.filter((b) => b.status === "PAST").length;
-  const canceledCount = bookings.value.filter(
-    (b) => b.status === "CANCELED",
-  ).length;
+  const pastCount = summaryData.value?.pastBookings || 0;
 
   return [
-    { value: "UPCOMING", label: `UPCOMING (${upcomingCount})` },
+    { value: "UPCOMING", label: `UPCOMING (${user.value.stats.upcoming})` },
     { value: "PAST", label: `PAST (${pastCount})` },
-    { value: "CANCELED", label: `CANCELED (${canceledCount})` },
+    { value: "CANCELED", label: `CANCELED (${user.value.stats.canceled})` },
   ];
 });
 
