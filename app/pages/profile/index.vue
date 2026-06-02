@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { IMAGES } from "~/utils/images";
-import { mockBookings } from "~/data/profile";
 import { useAuthStore } from "~/stores/auth";
 import { useMemberStore } from "~/stores/member";
 import { useRouter } from "vue-router";
-import { formatDate } from "~/utils/format";
+import { formatDate, formatTime } from "~/utils/format";
+import { usePagination } from "~/composables/use-pagination";
+import type { Booking } from "~/data/profile";
 
 definePageMeta({
   auth: true,
@@ -20,9 +21,29 @@ useSeoMeta({
 const authStore = useAuthStore();
 const memberStore = useMemberStore();
 const router = useRouter();
+const { pagination } = usePagination();
+
+const activeTab = ref("UPCOMING");
+
+const fetchBookings = async () => {
+  const statusMap: Record<string, string> = {
+    UPCOMING: "upcoming",
+    PAST: "past",
+    CANCELED: "cancelled",
+  };
+  const params = {
+    status: statusMap[activeTab.value],
+  };
+  await memberStore.getBookings(params);
+};
 
 onMounted(async () => {
   await memberStore.getDashboard();
+  await fetchBookings();
+});
+
+watch(activeTab, async () => {
+  await fetchBookings();
 });
 
 const dashboardData = computed(() => memberStore.dashboardData);
@@ -58,15 +79,24 @@ const user = computed(() => {
   };
 });
 
-const bookings = ref(mockBookings);
-
-const activeTab = ref("UPCOMING");
-
 const isSignOutModalOpen = ref(false);
 const loadingSignOut = ref(false);
 
-const filteredBookings = computed(() => {
-  return bookings.value.filter((b) => b.status === activeTab.value);
+const filteredBookings = computed<Booking[]>(() => {
+  const data = memberStore.bookingsData?.data || [];
+  return data.map((b) => {
+    return {
+      id: b.id.toString(),
+      title: b.itemName,
+      type: (b.itemType === 'session' ? 'Session' : b.itemType === 'spa' ? 'Spa' : b.itemType === 'pass' ? 'Pass' : 'Session') as "Session" | "Spa" | "Pass",
+      date: formatDate(b.bookedFor),
+      time: b.bookedFor ? formatDate(new Date(b.bookedFor), "hh:mm a") : "",
+      location: "",
+      price: `${b.currency} ${b.amount}`,
+      image: b.bannerUrl,
+      status: activeTab.value as "UPCOMING" | "PAST" | "CANCELED",
+    };
+  });
 });
 
 // Update the tab counts dynamically based on bookings data

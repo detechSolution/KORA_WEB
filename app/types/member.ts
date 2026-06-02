@@ -53,3 +53,42 @@ export interface MemberDashboardResponse {
   membership: MemberMembership | null;
   passes: MemberPass[];
 }
+
+export interface MemberBookingVisitor {
+  id: number;
+  fullName: string;
+  phoneNumber: string | null;
+  email: string | null;
+}
+
+export interface MemberBooking {
+  id: number;
+  bookingCode: string;
+  itemName: string;
+  itemType: string;
+  serviceOfferingName: string | null;
+  serviceDuration: string | null;
+  sessionId: number | null;
+  status: string;
+  bookedAt: string;
+  bookedFor: string;
+  originalAmount: number;
+  discountAmount: number;
+  amount: number;
+  currency: string;
+  promoCode: string | null;
+  paymentStatus: string | null;
+  visitors: MemberBookingVisitor[];
+  bannerUrl: string | null;
+}
+
+export interface MemberBookingsResponse {
+  status: string;
+  data: MemberBooking[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}

@@ -243,7 +243,6 @@ async function getSessionsList() {
       endDate: currentRange.value.endDate,
       type: search.session === "all" ? "" : search.session,
     };
-    console.log("🚀 ~ getSessionsList ~ params:", params)
     await sessionStore.getSessions(params);
   } catch (error: unknown) {
     showError({
