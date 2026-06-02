@@ -23,6 +23,7 @@ export const API_ENDPOINTS = {
 
   SPA: {
     GET: "/api/v1/spa/website",
+    TIME_AVAILABILITY: "/api/v1/bookings/website/spa-time-availability",
   },
 
   MEMBERSHIP: {

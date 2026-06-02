@@ -23,7 +23,7 @@ const spa = computed(() =>  spaStore.spa);
 
 const spaStore = useSpaStore();
 const { error: showError } = useNotification();
-const selectedSpa = ref<string| null> (null);
+const selectedSpa = ref(null);
 
 async function getSpaLists() {
   try {
@@ -38,6 +38,10 @@ async function getSpaLists() {
   }
 }
 
+const handleBookingClick = ( spa: any) => {
+  selectedSpa.value = spa;
+  isBookingModalOpen.value = true;
+}
 
 onMounted(() => {
   getSpaLists();
@@ -233,7 +237,7 @@ onMounted(() => {
 
                     <div class="mt-3 flex items-center justify-between">
                       <base-button
-                      @click="selectedSpa = price.id, isBookingModalOpen = true" 
+                      @click="handleBookingClick({ ...price, name: item.name, referenceId: item.id })" 
                       variant="link"
                         class="text-primary p-0"
                         >
@@ -331,6 +335,7 @@ onMounted(() => {
 
 
     <SpaBookingModal
+      v-if="isBookingModalOpen"
       :is-open="isBookingModalOpen"
       @close="isBookingModalOpen = false"
       v-model:selected-spa="selectedSpa"
