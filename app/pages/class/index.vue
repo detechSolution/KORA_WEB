@@ -25,13 +25,13 @@ const { error: showError } = useNotification();
 
 const route = useRoute();
 const router = useRouter();
-
-type Tab = "" | "class" | "workshop" | "event" | "photos";
-const activeFilter = ref<Tab>((route.query.tab as Tab) ?? "event");
   
+type Tab = "all" | "class" | "workshop" | "event" | "photos";
+const activeFilter = ref<Tab>((route.query.tab as Tab) ?? "all");
+
 const filters = [
   // { label: "PHOTOS", value: "photos" },
-  { label: "ALL", value: "" },
+  { label: "ALL", value: "all" },
   { label: "EVENTS", value: "event" },
   { label: "CLASSES", value: "class" },
   { label: "WORKSHOPS", value: "workshop" },
@@ -44,7 +44,7 @@ async function getSessionsList() {
     const params = {
       page: pagination.value.page,
       limit: pagination.value.pageSize,
-      type: activeFilter.value,
+      type: activeFilter.value === "all" ? undefined : activeFilter.value,
     };
     await sessionStore.getSessions(params);
   } catch (error: unknown) {
@@ -65,18 +65,25 @@ onMounted(() => {
   getSessionsList();
 });
 
-watch(activeFilter, (tab) => {
-  if (route.path !== "/class") return;
-  router.replace({ query: { ...route.query, tab } });
-  pagination.value.page = 1;
-  getSessionsList();
-}, { immediate: true });
+watch(
+  activeFilter,
+  (tab) => {
+    if (route.path !== "/class") return;
+    router.replace({ query: { ...route.query, tab } });
+    pagination.value.page = 1;
+    getSessionsList();
+  },
+  { immediate: true }
+);
 
-watch(() => route.query.tab, (tab) => {
-  if (route.path !== "/class") return;
-  const next = (tab as Tab) ?? "event";
-  if (next !== activeFilter.value) activeFilter.value = next;
-});
+watch(
+  () => route.query.tab,
+  (tab) => {
+    if (route.path !== "/class") return;
+    const next = (tab as Tab) ?? "event";
+    if (next !== activeFilter.value) activeFilter.value = next;
+  }
+);
 </script>
 
 <template>

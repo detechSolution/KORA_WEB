@@ -22,7 +22,11 @@ const isDark = computed(() => colorMode.value === "dark");
             class="flex items-center gap-3 w-fit focus:outline-none"
           >
             <img
-              :src="isDark ? '/logo/kora_white_logo.svg' : '/logo/kora_black_logo.svg'"
+              :src="
+                isDark
+                  ? '/logo/kora_white_logo.svg'
+                  : '/logo/kora_black_logo.svg'
+              "
               alt="KORA Logo"
               class="w-12 h-12 md:w-32 md:h-8 object-contain group-hover:scale-105 transition-transform duration-200"
             />
@@ -42,31 +46,26 @@ const isDark = computed(() => colorMode.value === "dark");
           >
             Spaces
           </h4>
-          <ul class="flex flex-col gap-3 text-xs md:text-sm text-muted-foreground">
+          <ul
+            class="flex flex-col gap-3 text-xs md:text-sm text-muted-foreground"
+          >
             <li>
               <NuxtLink
-                to="/spaces/class"
-                class="hover:text-primary transition-colors duration-200"
-                >CLASS</NuxtLink
-              >
-            </li>
-            <li>
-              <NuxtLink
-                to="/spaces/nutrition"
+                to="/nutrition"
                 class="hover:text-primary transition-colors duration-200"
                 >NUTRITION</NuxtLink
               >
             </li>
             <li>
               <NuxtLink
-                to="/spaces/recovery"
+                to="/recovery"
                 class="hover:text-primary transition-colors duration-200"
                 >RECOVERY</NuxtLink
               >
             </li>
             <li>
               <NuxtLink
-                to="/spaces/wellness"
+                to="/wellness"
                 class="hover:text-primary transition-colors duration-200"
                 >WELLNESS</NuxtLink
               >
@@ -81,10 +80,12 @@ const isDark = computed(() => colorMode.value === "dark");
           >
             Navigate
           </h4>
-          <ul class="flex flex-col gap-3 text-xs md:text-sm text-muted-foreground">
+          <ul
+            class="flex flex-col gap-3 text-xs md:text-sm text-muted-foreground"
+          >
             <li>
               <NuxtLink
-                to="/sessions"
+                to="/class?tab=all"
                 class="hover:text-primary transition-colors duration-200"
                 >SESSIONS</NuxtLink
               >
@@ -105,7 +106,7 @@ const isDark = computed(() => colorMode.value === "dark");
             </li>
             <li>
               <NuxtLink
-                to="/schedule"
+                to="/schedules"
                 class="hover:text-primary transition-colors duration-200"
                 >SCHEDULE</NuxtLink
               >
@@ -120,7 +121,9 @@ const isDark = computed(() => colorMode.value === "dark");
           >
             Company
           </h4>
-          <ul class="flex flex-col gap-3 text-xs md:text-sm text-muted-foreground">
+          <ul
+            class="flex flex-col gap-3 text-xs md:text-sm text-muted-foreground"
+          >
             <li>
               <NuxtLink
                 to="/careers"
@@ -130,7 +133,7 @@ const isDark = computed(() => colorMode.value === "dark");
             </li>
             <li>
               <NuxtLink
-                to="/feedback"
+                to="/inquire"
                 class="hover:text-primary transition-colors duration-200"
                 >FEEDBACK & INQUIRY</NuxtLink
               >

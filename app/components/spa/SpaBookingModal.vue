@@ -4,7 +4,9 @@ import * as z from "zod";
 import { useSpaStore } from "~/stores/spa";
 import { getApiErrorMessage } from "~/utils/error";
 import { useCartStore } from "~/stores/cart";
-import { getLocalTimeZone } from "@internationalized/date";
+import { formatDate } from "~/utils/format";
+import { calculatePrice } from "~/utils/helper";
+import { useRouter } from "vue-router";
 
 defineProps<{
   isOpen: boolean;
@@ -24,7 +26,7 @@ const steps = [
   { label: "Overview" },
 ];
 
-
+const router = useRouter();
 const currentStep = ref(0);
 const formRef = ref<InstanceType<typeof UForm> | null>(null);
 const availableTimeSlots = ref<{ time: string; label: string }[]>([]);
@@ -32,8 +34,11 @@ const isTimeSlotLoading = ref(false);
 const selectedSpaModel = defineModel<any>("selectedSpa");
 
 const defaultOpenSubtype = computed(() => {
-  if (!selectedSpaModel.value?.referenceId || !spa.value?.subTypes) return undefined;
-  const index = spa.value.subTypes.findIndex((st: any) => st.id === selectedSpaModel.value.referenceId);
+  if (!selectedSpaModel.value?.referenceId || !spa.value?.subTypes)
+    return undefined;
+  const index = spa.value.subTypes.findIndex(
+    (st: any) => st.id === selectedSpaModel.value.referenceId
+  );
   return index !== -1 ? String(index) : undefined;
 });
 
@@ -48,32 +53,34 @@ const schema = [
   // Step 0
   z.object({
     selectedSpa: z.object(
-      { id: z.union([z.string(), z.number()]) },
+      { id: z.number() },
       {
         message: "Please select a spa",
-      },
+      }
     ),
   }),
   // Step 1
   z.object({
     selectedDate: z.any().refine((v) => !!v, "Please select a date"),
-    selectedTime: z.string().min(1, "Please select a time"),
+    selectedTime: z
+      .string({ message: "Please select a time" })
+      .min(1, "Please select a time"),
   }),
- // Step 2
-z.object({
-  guests: z.array(
-    z.object({
-      fullName: z.string().min(1, "Please enter the full name"),
-      phone: z.string().min(1, "Please enter a phone number"),
-      email: z.string().email("Please enter a valid email"),
-    }),
-  ),
-}),
+  // Step 2
+  z.object({
+    guests: z.array(
+      z.object({
+        fullName: z.string().min(1, "Please enter the full name"),
+        phone: z.string().min(1, "Please enter a phone number"),
+        email: z.string().email("Please enter a valid email"),
+      })
+    ),
+  }),
 ];
 
 async function validateCurrentStep(): Promise<boolean> {
   try {
-    await formRef.value?.validate({ name: undefined });
+    await formRef.value?.validate();
     return true;
   } catch {
     return false;
@@ -105,7 +112,7 @@ function previousStep() {
 const handleBookingClick = (spaData: any) => {
   state.selectedSpa = spaData;
   selectedSpaModel.value = spaData;
-}
+};
 
 function selectTime(time: string) {
   state.selectedTime = time;
@@ -120,30 +127,48 @@ function removeGuest(index: number) {
 }
 
 function close() {
-  emit("close");
-}
-
-const spaItem = computed(() => ({
-  id: spa.value?.id,
-  title: spa.value?.name,
-  price: state.selectedSpa?.price,
-  duration: state.selectedSpa?.duration,
-  timeUnit: state.selectedSpa?.timeUnit,
-  bookingDate: state.selectedDate.toDate(getLocalTimeZone()),
-  bookingTime: state.selectedTime,
-  visitors: state.guests.slice(1),
-  referenceId: state.selectedSpa?.referenceId,
-}));
-
-const addToCart = () => {
-  cartStore.addToCart(spaItem.value);
-  success({ message: "Item added to cart successfully!" });
-  close();
   state.selectedSpa = null;
   state.selectedDate = null;
   state.selectedTime = undefined;
   selectedSpaModel.value = null;
   state.guests = [];
+  emit("close");
+}
+
+const pricing = computed(() =>
+  calculatePrice({
+    price: state.selectedSpa?.price,
+    guests: state.guests.length,
+  })
+);
+
+const spaItem = computed(() => ({
+  parentId: state.selectedSpa?.referenceId,
+  title: state.selectedSpa?.name,
+  price: state.selectedSpa?.price,
+  duration: state.selectedSpa?.duration,
+  timeUnit: state.selectedSpa?.timeUnit,
+  bookingDate: formatDate(state.selectedDate, "YYYY-MM-DD"),
+  bookingTime: state.selectedTime,
+  visitors: state.guests.slice(1),
+  referenceId: state.selectedSpa?.id,
+  itemType: "spa",
+  type: "spa",
+  image: state.selectedSpa?.image,
+  discountAmount: pricing.value.discountAmount,
+  finalPrice: pricing.value.finalPrice,
+}));
+
+const addToCart = () => {
+  cartStore.addToCart(spaItem.value);
+  success({ message: "Item added to cart successfully!" });
+};
+
+const proceedToCheckout = () => {
+  cartStore.addToCart(spaItem.value);
+  success({ message: "Item added to cart successfully!" });
+  router.push("/checkout");
+  close();
 };
 
 async function fetchAvailableTimes() {
@@ -161,7 +186,7 @@ async function fetchAvailableTimes() {
     showError({
       message: getApiErrorMessage(error, "Failed to load available times"),
     });
-  }finally{
+  } finally {
     isTimeSlotLoading.value = false;
   }
 }
@@ -176,7 +201,7 @@ onMounted(() => {
         email: user.email ?? "",
       };
     }
-  } catch(error) {
+  } catch (error) {
     console.log(error);
   }
 
@@ -189,7 +214,7 @@ watch(
   () => {
     state.selectedTime = undefined;
     fetchAvailableTimes();
-  },
+  }
 );
 </script>
 
@@ -203,7 +228,7 @@ watch(
     class="dark:bg-nirvana-mist"
     @close="close"
   >
-    <div class="p-4">
+    <div class="p-4 flex flex-col gap-6">
       <base-form-stepper
         :steps="steps"
         :current-step="currentStep"
@@ -258,7 +283,14 @@ watch(
                         ? 'bg-primary-500 text-white dark:bg-primary'
                         : 'bg-[#c9a55a]/10 dark:bg-[#2A2722]'
                     "
-                    @click="handleBookingClick({ ...duration, name: item.name, referenceId: item.id })"
+                    @click="
+                      handleBookingClick({
+                        ...duration,
+                        name: item.name,
+                        referenceId: item.id,
+                        image: spa?.bannerUrl,
+                      })
+                    "
                   >
                     <div
                       class="flex items-center gap-2 text-xs uppercase"
@@ -405,31 +437,29 @@ watch(
                   </button>
                 </div>
 
-        
-                  <base-input
-                    v-model="guest.fullName"
-                    placeholder="Enter your full name"
-                    type="text"
-                    name="fullName"
-                    label="Full Name"
-                  />
+                <base-input
+                  v-model="guest.fullName"
+                  placeholder="Enter your full name"
+                  type="text"
+                  :name="`guests.${index}.fullName`"
+                  label="Full Name"
+                />
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                    <base-input
-                      v-model="guest.phone"
-                      placeholder="Enter your phone number"
-                      type="tel"
-                      name="phone"
-                      label="Phone Number"
-                    />
-               
-                    <base-input
-                      v-model="guest.email"
-                      name="email"
-                      placeholder="Enter your email address"
-                      label="Email"
-                    />
+                  <base-input
+                    v-model="guest.phone"
+                    placeholder="Enter your phone number"
+                    type="tel"
+                    :name="`guests.${index}.phone`"
+                    label="Phone Number"
+                  />
+
+                  <base-input
+                    v-model="guest.email"
+                    :name="`guests.${index}.email`"
+                    placeholder="Enter your email address"
+                    label="Email"
+                  />
                 </div>
               </div>
 
@@ -469,8 +499,9 @@ watch(
                   class="flex justify-between items-center text-sm text-foreground"
                 >
                   <span
-                    >{{ state.selectedSpa?.name }} ×
-                    {{ state.guests.length }}</span
+                    >{{ state.selectedSpa?.name }} (
+                    {{ state.selectedSpa?.price }} ×
+                    {{ state.guests.length }})</span
                   >
                   <span
                     >Rs.
@@ -516,13 +547,20 @@ watch(
           NEXT
         </base-button>
 
-        <base-button
-          v-else
-          class="uppercase text-[11px] tracking-widest font-bold px-8 h-11 rounded-none text-white"
-          @click="addToCart"
-        >
-          ADD TO CART
-        </base-button>
+        <div v-else class="flex gap-4">
+          <base-button
+            class="bg-black dark:bg-black hover:bg-black/70"
+            @click="addToCart"
+          >
+            ADD TO CART
+          </base-button>
+          <base-button
+            class="uppercase text-[11px] tracking-widest font-bold px-8 h-11 rounded-none text-white"
+            @click="proceedToCheckout"
+          >
+            PROCEED TO CHECKOUT
+          </base-button>
+        </div>
       </div>
     </div>
   </base-modal>

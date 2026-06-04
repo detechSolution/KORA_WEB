@@ -19,7 +19,7 @@ const isPlayingVideo = ref(false);
 const isBookingModalOpen = ref(false);
 const loading = ref(false);
 
-const spa = computed(() =>  spaStore.spa);
+const spa = computed(() => spaStore.spa);
 
 const spaStore = useSpaStore();
 const { error: showError } = useNotification();
@@ -31,22 +31,21 @@ async function getSpaLists() {
     await spaStore.getSpas();
   } catch (error: unknown) {
     showError({
-      message: getApiErrorMessage(error, "Failed to fetch spa lists")
+      message: getApiErrorMessage(error, "Failed to fetch spa lists"),
     });
   } finally {
     loading.value = false;
   }
 }
 
-const handleBookingClick = ( spa: any) => {
+const handleBookingClick = (spa: any) => {
   selectedSpa.value = spa;
   isBookingModalOpen.value = true;
-}
+};
 
 onMounted(() => {
   getSpaLists();
 });
-
 </script>
 
 <template>
@@ -55,7 +54,7 @@ onMounted(() => {
   >
     <!-- Premium absolute-positioned foliage watermark overlay -->
     <div
-      class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 xl:w-50 aspect-square z-10 -translate-y-12 "
+      class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 xl:w-50 aspect-square z-10 -translate-y-12"
     >
       <img
         :src="IMAGES.LEAF"
@@ -69,122 +68,10 @@ onMounted(() => {
         <!-- Left Column -->
         <div>
           <ClassHeader title="Spa Sanctuary" />
-          <div class="max-w-400 px-4 md:px-8 lg:px-12 py-10 md:py-7">
-            <p
-              class="text-sm md:text-[15px] leading-7 text-foreground/90 dark:text-[#f4f3f1]/90"
-            >
-              Our swimming pool service ensures your pool remains clean, safe,
-              and ready to enjoy at all times. With regular maintenance and
-              professional care, we handle everything from water treatment to
-              equipment checks, so you can relax and make the most of your pool
-              without the hassle. Whether it's routine upkeep or a deep clean,
-              our team delivers reliable service tailored to your needs.
-            </p>
-          </div>
-
-          <div class="max-w-400 px-4 md:px-8 lg:px-12 py-10 md:py-7">
-            <h2
-              class="font-sans font-bold text-sm uppercase tracking-[0.2em] mb-4 text-foreground dark:text-[#f4f3f1]"
-            >
-              What's Included:
-            </h2>
-            <ul
-              class="space-y-2 text-sm md:text-[15px] text-foreground/90 dark:text-[#f4f3f1]/90"
-            >
-              <li class="flex gap-3">
-                <span
-                  class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-black dark:bg-white"
-                ></span>
-                <span>Routine cleaning and debris removal</span>
-              </li>
-              <li class="flex gap-3">
-                <span
-                  class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-black dark:bg-white"
-                ></span>
-                <span>Water testing and chemical balancing</span>
-              </li>
-              <li class="flex gap-3">
-                <span
-                  class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-black dark:bg-white"
-                ></span>
-                <span>Filter and pump inspection</span>
-              </li>
-              <li class="flex gap-3">
-                <span
-                  class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-black dark:bg-white"
-                ></span>
-                <span>Tile and surface brushing</span>
-              </li>
-              <li class="flex gap-3">
-                <span
-                  class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-black dark:bg-white"
-                ></span>
-                <span>Seasonal maintenance and system checks</span>
-              </li>
-            </ul>
-
-            <div class="mt-12">
-              <base-section-label
-                label="Feature Video"
-                align="left"
-                class="mb-4"
-              />
-              <div
-                v-if="!isPlayingVideo"
-                class="relative overflow-hidden group cursor-pointer h-[300px] md:h-[460px] bg-muted"
-                @click="isPlayingVideo = true"
-              >
-                <img
-                  :src="IMAGES.EXPERIENCE_MAIN"
-                  alt="Spa Feature"
-                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div
-                  class="absolute inset-0 bg-black/40 transition-opacity duration-300 group-hover:bg-black/50"
-                ></div>
-
-                <!-- Corner Brackets -->
-                <div
-                  class="absolute top-6 left-6 w-8 h-8 border-t border-l border-primary/70"
-                ></div>
-                <div
-                  class="absolute top-6 right-6 w-8 h-8 border-t border-r border-primary/70"
-                ></div>
-                <div
-                  class="absolute bottom-6 left-6 w-8 h-8 border-b border-l border-primary/70"
-                ></div>
-                <div
-                  class="absolute bottom-6 right-6 w-8 h-8 border-b border-r border-primary/70"
-                ></div>
-
-                <!-- Play Button Center -->
-                <div class="absolute inset-0 flex items-center justify-center">
-                  <div
-                    class="w-16 h-16 md:w-20 md:h-20 border border-primary/60 flex items-center justify-center bg-black/20 backdrop-blur-sm transition-all duration-300 group-hover:bg-black/40 group-hover:scale-110"
-                  >
-                    <svg
-                      class="w-6 h-6 md:w-8 md:h-8 text-primary translate-x-1"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div v-else class="w-full h-[300px] md:h-[460px] bg-black">
-                <iframe
-                  class="w-full h-full"
-                  src="https://www.youtube.com/embed/unCya_-8ECs?autoplay=1"
-                  title="YouTube video player"
-                  frameborder="0"
-                  allow="autoplay; encrypted-media"
-                  allowfullscreen
-                ></iframe>
-              </div>
-            </div>
-          </div>
-
+          <div
+            v-html="spa?.description"
+            class="spa-description max-w-400 prose dark:prose-invert px-4 md:px-8 lg:px-12 py-10 md:py-7"
+          ></div>
           <div class="max-w-400 px-4 md:px-8 lg:px-12 py-10 mb-5 md:py-7">
             <base-section-label
               label="Available Offerings"
@@ -203,20 +90,21 @@ onMounted(() => {
               <template #default="{ item }">
                 <div class="flex flex-col">
                   <span>{{ item.name }}</span>
-                  <p class="text-sm text-foreground/80 dark:text-secondary-500 mt-4">
+                  <p
+                    class="text-sm text-foreground/80 dark:text-secondary-500 mt-4"
+                  >
                     {{ item.description }}
                   </p>
                 </div>
               </template>
               <template #content="{ item }">
-              
                 <!-- Pricing Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                   <div
                     v-for="(price, index) in item.prices"
                     :key="index"
                     class="group relative border border-white/10 dark:border-white/10 bg-[#c9a55a]/10 dark:bg-[#2A2722] rounded-xs p-4 flex flex-col justify-between transition-all duration-300"
-                    >
+                  >
                     <div>
                       <div
                         class="flex items-center gap-2 text-xs uppercase text-secondary-500"
@@ -237,10 +125,17 @@ onMounted(() => {
 
                     <div class="mt-3 flex items-center justify-between">
                       <base-button
-                      @click="handleBookingClick({ ...price, name: item.name, referenceId: item.id })" 
-                      variant="link"
+                        @click="
+                          handleBookingClick({
+                            ...price,
+                            name: item.name,
+                            referenceId: item.id,
+                            image: spa?.bannerUrl,
+                          })
+                        "
+                        variant="link"
                         class="text-primary p-0"
-                        >
+                      >
                         Tap to Book
                         <UIcon
                           name="i-lucide-arrow-right"
@@ -258,18 +153,14 @@ onMounted(() => {
         <!-- Right Column (Sidebar) -->
         <aside class="sticky lg:top-28 lg:self-start px-4 md:px-8 lg:px-0">
           <div class="border border-border bg-card px-5 py-5 md:px-6">
-            <p class="text-[10px] uppercase text-primary mb-3">
-              SPA MENU
-            </p>
+            <p class="text-[10px] uppercase text-primary mb-3">SPA MENU</p>
             <h3
               class="font-serif text-3xl text-foreground dark:text-white mb-8"
             >
-            {{ spa?.subTypes.length || 0 }} Offerings Available
+              {{ spa?.subTypes.length || 0 }} Offerings Available
             </h3>
 
-            <div 
-            v-if="spa?.subTypes.length"
-            class="space-y-6">
+            <div v-if="spa?.subTypes.length" class="space-y-6">
               <div v-for="subType in spa.subTypes" :key="subType.id">
                 <div class="flex justify-between items-center gap-4">
                   <span
@@ -280,7 +171,8 @@ onMounted(() => {
                     class="text-right text-[10px] text-secondary-500 font-normal dark:text-white/70 space-y-1 mt-1"
                   >
                     <div v-for="price in subType.prices" :key="price.duration">
-                      {{ price.duration }} {{ price.timeUnit }} - {{ price.price }}
+                      {{ price.duration }} {{ price.timeUnit }} -
+                      {{ price.price }}
                     </div>
                   </div>
                 </div>
@@ -333,7 +225,6 @@ onMounted(() => {
       </div>
     </div>
 
-
     <SpaBookingModal
       v-if="isBookingModalOpen"
       :is-open="isBookingModalOpen"
@@ -344,5 +235,32 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* Scoped styles */
+.spa-description :deep(ul) {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin: 0.75rem 0;
+}
+
+.spa-description :deep(ol) {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin: 0.75rem 0;
+}
+
+.spa-description :deep(li) {
+  margin: 0.35rem 0;
+  padding-left: 0.25rem;
+}
+
+.spa-description :deep(li::marker) {
+  color: var(--color-primary);
+}
+
+.spa-description :deep(p) {
+  margin: 0.75rem 0;
+}
+
+.spa-description :deep(strong) {
+  font-weight: 600;
+}
 </style>
