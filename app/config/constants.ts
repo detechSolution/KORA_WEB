@@ -45,5 +45,8 @@ export const API_ENDPOINTS = {
   MEMBER: {
     DASHBOARD: "/api/v1/members/me/dashboard",
     BOOKINGS: "/api/v1/members/me/bookings",
+  }, 
+  NEWSLETTER: {
+    CREATE: "/api/v1/mails/newsletter-signups",
   }
 };
