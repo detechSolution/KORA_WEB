@@ -9,17 +9,8 @@ const { error: showError, success: showSuccess } = useNotification();
 const newsletterStore = useNewsletterStore();
 
 const loading = ref(false);
-const apiError = ref<string | null>(null);
-const formRef = ref<InstanceType<typeof UForm> | null>(null);
 
-const schema = z.object({
-  lastName: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email"),
-});
-
-type Schema = z.output<typeof schema>;
-
-const newsletterFormState = reactive<Schema>({
+const newsletterFormState = reactive({
   lastName: "",
   email: "",
 });
@@ -29,16 +20,7 @@ function resetForm() {
   newsletterFormState.email = "";
 }
 
-function setApiError(error: string): void {
-  apiError.value = error;
-}
-
-function clearApiError(): void {
-  apiError.value = null;
-}
-
 async function onSubmit() {
-  clearApiError();
   loading.value = true;
 
   try {
@@ -47,7 +29,6 @@ async function onSubmit() {
     resetForm();
   } catch (error: any) {
     const message = error?.data?.message || "Failed to subscribe. Please try again.";
-    setApiError(message);
     showError(message);
   } finally {
     loading.value = false;
@@ -74,31 +55,31 @@ async function onSubmit() {
 
       <!-- Right side: Sleek, horizontal form -->
       <form
-        @submit.prevent
+        @submit.prevent="onSubmit"
         class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto items-stretch sm:items-center"
       >
-        <base-input
+        <input
           v-model="newsletterFormState.lastName"
           type="text"
           name="lastName"
           placeholder="Enter your name"
-          class="w-full sm:w-[220px] md:w-[260px] bg-white dark:bg-transparent"
+          class="w-full sm:w-[220px] md:w-[260px] bg-white dark:bg-transparent ring-primary-50 dark:ring-primary-800 focus:ring-1 focus:outline-none placeholder:text-secondary-400 placeholder:text-sm rounded-xs h-11 px-3 border-0 dark:border dark:border-secondary-800"
           required
         />
 
-        <base-input
+        <input
           v-model="newsletterFormState.email"
           type="email"
           name="email"
           placeholder="Enter your email"
-          class="w-full sm:w-[220px] md:w-[260px] bg-white dark:bg-transparent"
+          class="w-full sm:w-[220px] md:w-[260px] bg-white dark:bg-transparent ring-primary-50 dark:ring-primary-800 focus:ring-1 focus:outline-none placeholder:text-secondary-400 placeholder:text-sm rounded-xs h-11 px-3 border-0 dark:border dark:border-secondary-800"
+          required
         />
 
         <base-button 
         type="submit"
         :loading="loading"
         :disabled="loading"
-        @click="onSubmit"
         >
          SUBSCRIBE 
         </base-button>
