@@ -70,7 +70,7 @@ onMounted(() => {
           <ClassHeader title="Spa Sanctuary" />
           <div
             v-html="spa?.description"
-            class="spa-description max-w-400 prose dark:prose-invert px-4 md:px-8 lg:px-12 py-10 md:py-7"
+            class="spa-description max-w-400 px-4 md:px-8 lg:px-12 py-10 md:py-7"
           ></div>
           <div class="max-w-400 px-4 md:px-8 lg:px-12 py-10 mb-5 md:py-7">
             <base-section-label
@@ -234,33 +234,20 @@ onMounted(() => {
   </section>
 </template>
 
-<style scoped>
-.spa-description :deep(ul) {
-  list-style-type: disc;
-  padding-left: 1.5rem;
-  margin: 0.75rem 0;
-}
-
-.spa-description :deep(ol) {
+<style>
+.spa-description ol {
   list-style-type: decimal;
   padding-left: 1.5rem;
   margin: 0.75rem 0;
 }
 
-.spa-description :deep(li) {
-  margin: 0.35rem 0;
-  padding-left: 0.25rem;
+.spa-description ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
 }
 
-.spa-description :deep(li::marker) {
-  color: var(--color-primary);
-}
-
-.spa-description :deep(p) {
-  margin: 0.75rem 0;
-}
-
-.spa-description :deep(strong) {
-  font-weight: 600;
+.spa-description li {
+  margin-bottom: 0.5rem;
 }
 </style>
