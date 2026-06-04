@@ -95,6 +95,8 @@ const filteredBookings = computed<Booking[]>(() => {
       price: `${b.currency} ${b.amount}`,
       image: b.bannerUrl,
       status: activeTab.value as "UPCOMING" | "PAST" | "CANCELED",
+      sessionId: b.sessionId,
+      itemType: b.itemType,
     };
   });
 });

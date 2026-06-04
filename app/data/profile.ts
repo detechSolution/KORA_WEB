@@ -11,4 +11,6 @@ export interface Booking {
   price: string;
   image?: string;
   status: "UPCOMING" | "PAST" | "CANCELED";
+  sessionId?: number;
+  itemType: "session" | "spa" | "passes";
 }
