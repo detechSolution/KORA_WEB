@@ -5,6 +5,7 @@ import type { Booking } from "~/data/profile";
 
 const props = defineProps<{
   booking: Booking;
+  activeTab: string;
 }>();
 
 const router = useRouter();
@@ -41,15 +42,15 @@ const handleViewDetail = (booking: Booking) => {
     <div class="flex flex-col sm:flex-row gap-6">
       <!-- Thumbnail (Image or Icon) -->
       <div
-        v-if="booking.type === 'Pass'"
-        class="w-24 h-24 border border-stone-800 bg-[#1A1A1A] flex flex-col items-center justify-center rounded-sm shrink-0"
+        v-if="booking.itemType === 'passes'"
+        class="w-24 h-24 border border-border dark:bg-[#1A1A1A] flex flex-col items-center justify-center rounded-xs shrink-0"
       >
         <!-- Pass Icon -->
-        <UIcon name="i-lucide-badge" class="w-8 h-8 text-[#B59A6D]" />
+        <UIcon name="i-lucide-id-card-lanyard" class="w-12 h-12 text-[#B59A6D]" />
       </div>
       <div
         v-else
-        class="w-24 h-24 rounded-sm overflow-hidden bg-stone-900 shrink-0"
+        class="w-24 h-24 rounded-xs overflow-hidden bg-stone-900 shrink-0"
       >
         <img
           v-if="booking.image"
@@ -110,10 +111,10 @@ const handleViewDetail = (booking: Booking) => {
         {{ booking.price }}
       </div>
 
-      <div class="flex items-center gap-3 self-end">
+      <div v-if="activeTab.toLowerCase() === 'upcoming'" class="w-full md:w-auto flex items-center gap-3 self-end">
         <base-button
           variant="outline"
-          class="bg-transparent text-red-700 dark:text-red-800 border-red-700 dark:border-red-800 ring-none h-8 text-xs dark:hover:text-red-800 font-medium"
+          class="w-full md:w-auto bg-transparent text-red-700 dark:text-red-800 border-red-700 dark:border-red-800 ring-none h-8 text-xs dark:hover:text-red-800 font-medium"
         >
           CANCEL REQUEST
         </base-button>
@@ -121,7 +122,7 @@ const handleViewDetail = (booking: Booking) => {
         <base-button
           v-if="booking.type !== 'Pass'"
           variant="outline"
-          class="h-8 text-xs font-medium"
+          class="w-full md:w-auto h-8 text-xs font-medium"
           @click="handleViewDetail(booking)"
         >
           VIEW DETAIL

@@ -18,6 +18,7 @@ useSeoMeta({
   description: "View and manage your Kora profile and bookings.",
 });
 
+const loading = ref(true);
 const authStore = useAuthStore();
 const memberStore = useMemberStore();
 const router = useRouter();
@@ -26,15 +27,22 @@ const { pagination } = usePagination();
 const activeTab = ref("UPCOMING");
 
 const fetchBookings = async () => {
-  const statusMap: Record<string, string> = {
-    UPCOMING: "upcoming",
-    PAST: "past",
-    CANCELED: "cancelled",
-  };
-  const params = {
-    status: statusMap[activeTab.value],
-  };
-  await memberStore.getBookings(params);
+  try {
+    loading.value = true;
+    const statusMap: Record<string, string> = {
+      UPCOMING: "upcoming",
+      PAST: "past",
+      CANCELED: "cancelled",
+    };
+    const params = {
+      status: statusMap[activeTab.value],
+    };
+    await memberStore.getBookings(params);
+  } catch (error) {
+    console.error("Error fetching bookings:", error);
+  } finally {
+    loading.value = false;
+  }
 };
 
 onMounted(async () => {
@@ -88,7 +96,13 @@ const filteredBookings = computed<Booking[]>(() => {
     return {
       id: b.id.toString(),
       title: b.itemName,
-      type: (b.itemType === 'session' ? 'Session' : b.itemType === 'spa' ? 'Spa' : b.itemType === 'pass' ? 'Pass' : 'Session') as "Session" | "Spa" | "Pass",
+      type: (b.itemType === "session"
+        ? "Session"
+        : b.itemType === "spa"
+          ? "Spa"
+          : b.itemType === "pass"
+            ? "Pass"
+            : "Session") as "Session" | "Spa" | "Pass",
       date: formatDate(b.bookedFor),
       time: b.bookedFor ? formatDate(new Date(b.bookedFor), "hh:mm a") : "",
       location: "",
@@ -317,30 +331,36 @@ function handleLogout(): void {
             </div>
 
             <!-- Bookings List -->
-            <div v-if="filteredBookings.length > 0" class="flex flex-col">
-              <ProfileBookingItem
-                v-for="booking in filteredBookings"
-                :key="booking.id"
-                :booking="booking"
-              />
+            <div v-if="loading">
+              <ProfileBookingSkeleton />
             </div>
-
-            <!-- Empty State for Bookings -->
-            <div
-              v-else
-              class="py-20 flex flex-col items-center justify-center text-center"
-            >
-              <div
-                class="w-14 h-14 border border-border bg-card flex items-center justify-center text-[#B59A6D] rounded-sm mb-6"
-              >
-                <UIcon name="i-lucide-calendar" class="w-6 h-6" />
+            <div v-else>
+              <div v-if="filteredBookings.length > 0" class="flex flex-col">
+                <ProfileBookingItem
+                  v-for="booking in filteredBookings"
+                  :key="booking.id"
+                  :booking="booking"
+                  :active-tab="activeTab"
+                />
               </div>
-              <h4 class="font-serif text-2xl text-foreground mb-3">
-                No Bookings Found
-              </h4>
-              <p class="text-sm text-stone-400 font-light">
-                Book sessions, spa or passes to begin your ritual
-              </p>
+
+              <!-- Empty State for Bookings -->
+              <div
+                v-else
+                class="py-20 flex flex-col items-center justify-center text-center"
+              >
+                <div
+                  class="w-14 h-14 border border-border bg-card flex items-center justify-center text-[#B59A6D] rounded-sm mb-6"
+                >
+                  <UIcon name="i-lucide-calendar" class="w-6 h-6" />
+                </div>
+                <h4 class="font-serif text-2xl text-foreground mb-3">
+                  No Bookings Found
+                </h4>
+                <p class="text-sm text-stone-400 font-light">
+                  Book sessions, spa or passes to begin your ritual
+                </p>
+              </div>
             </div>
           </div>
         </div>
