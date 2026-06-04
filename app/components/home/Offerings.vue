@@ -141,10 +141,14 @@
 
           <!-- CTA Buttons -->
           <div
-            class="flex flex-col sm:flex-row gap-4 justify-center items-center"
+            class="w-full sm:w-auto flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
-            <base-button>BEGIN YOUR JOURNEY</base-button>
-            <base-button variant="outline"> EXPLORE SESSIONS </base-button>
+            <base-button class="w-full sm:w-auto"
+              >BEGIN YOUR JOURNEY</base-button
+            >
+            <base-button variant="outline" class="w-full sm:w-auto">
+              EXPLORE SESSIONS
+            </base-button>
           </div>
         </div>
 

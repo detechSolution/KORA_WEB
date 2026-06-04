@@ -193,6 +193,7 @@ onMounted(() => {
     </div>
 
     <div
+      v-if="membershipPlans.length > 0"
       class="relative z-20 grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-400 mx-auto mt-16 px-4 md:px-8"
     >
       <div
@@ -282,6 +283,16 @@ onMounted(() => {
           </base-button>
         </div>
       </div>
+    </div>
+    <div v-else class="relative z-20 mt-16 text-center">
+      <span class="text-lg text-primary-900 dark:text-primary-800">
+        Space to breathe, but no plans here.
+      </span>
+      <p class="text-sm text-secondary-500 dark:text-secondary-400">
+        This timeframe is currently an
+        open canvas. To find the perfect supportive structure for your practice,
+        please explore our other membership durations.
+      </p>
     </div>
 
     <!-- Passes Section -->
