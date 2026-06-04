@@ -129,12 +129,12 @@ async function handleInquireSubmit() {
     class="relative bg-background dark:bg-secondary-900 text-foreground dark:text-white transition-colors duration-300"
   >
     <div
-      class="absolute top-0 right-0 pointer-events-none select-none opacity-35 md:opacity-45"
+      class="absolute z-100 top-0 right-0 pointer-events-none select-none opacity-35 md:opacity-45"
     >
       <img
         :src="IMAGES.LEAF"
         alt="Kora foliage decoration"
-        class="w-full h-full object-cover translate-x-10 -translate-y-10"
+        class="w-full h-full object-cover -translate-y-20"
       />
     </div>
 

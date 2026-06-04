@@ -80,12 +80,6 @@ onMounted(() => {
             />
             <UAccordion
               :items="spa?.subTypes"
-              :ui="{
-                root: 'w-full flex flex-col gap-4 mb-6',
-                item: 'border border-border dark:bg-[#212121] p-6 dark:text-white font-serif rounded-xs',
-                label: 'text-xl',
-                body: 'mt-4',
-              }"
             >
               <template #default="{ item }">
                 <div class="flex flex-col">
