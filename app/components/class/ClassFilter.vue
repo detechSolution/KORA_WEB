@@ -23,7 +23,7 @@ const selectFilter = (val: string) => {
 
 <template>
   <div
-    class="bg-background dark:bg-secondary-900 w-full py-4 select-none z-10 relative"
+    class="bg-transparent w-full py-4 select-none z-10 relative"
   >
     <div
       :class="props.class"

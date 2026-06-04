@@ -12,10 +12,10 @@ defineProps({
 
 <template>
   <div
-    class="bg-transparent group flex md:flex-row items-start md:items-center justify-between gap-6 md:gap-10 py-10 border-b border-border last:border-b-0 w-full"
+    class="bg-transparent group flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-10 py-10 border-b border-border last:border-b-0 w-full"
   >
     <div
-      class="relative w-full md:w-[260px] lg:w-[300px] shrink-0 aspect-[1.15] overflow-hidden border-primary bg-muted select-none z-10 shadow-lg"
+      class="relative w-full sm:w-auto md:w-[260px] lg:w-[300px] shrink-0 aspect-[1.15] overflow-hidden border-primary bg-muted select-none z-10 shadow-lg"
     >
       <img
         :src="session.bannerUrl"
@@ -68,18 +68,20 @@ defineProps({
     </div>
 
     <div
-      class="flex flex-col justify-center items-start md:items-end gap-3 min-w-[160px] pt-4 md:pt-0 border-t border-border/10 md:border-none select-none shrink-0"
+      class="w-full md:w-auto flex md:flex-col justify-between md:justify-center items-start md:items-end gap-3 min-w-[160px] pt-4 md:pt-0 border-t border-border/10 md:border-none select-none shrink-0"
     >
-      <span
-        class="font-sans text-[8px] md:text-[9px] text-primary/70 tracking-[0.2em] uppercase font-bold"
-      >
-        PER SESSION
-      </span>
-      <span
-        class="font-serif text-2xl md:text-3xl text-black dark:text-white font-normal leading-none tracking-wide"
-      >
-        {{ session.price }}
-      </span>
+      <div class="flex flex-col justify-center items-start md:items-end gap-3">
+        <span
+          class="font-sans text-[8px] md:text-[9px] text-primary/70 tracking-[0.2em] uppercase font-bold"
+        >
+          PER SESSION
+        </span>
+        <span
+          class="font-serif text-2xl md:text-3xl text-black dark:text-white font-normal leading-none tracking-wide"
+        >
+          Rs. {{ session.price }}
+        </span>
+      </div>
 
       <base-button
         variant="outline"

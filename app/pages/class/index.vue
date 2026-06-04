@@ -91,16 +91,7 @@ watch(
     class="relative w-full bg-background dark:bg-secondary-900 text-[#f4f3f1] min-h-screen pb-16 flex flex-col transition-colors duration-300"
   >
     <div
-      class="absolute top-0 right-0 w-64 h-64 md:w-80 md:h-80 aspect-square z-100 -translate-y-12"
-    >
-      <img
-        :src="IMAGES.LEAF"
-        alt="Kora foliage decoration"
-        class="w-full h-full object-cover"
-      />
-    </div>
-    <div
-      class="absolute top-0 right-0 w-64 h-64 md:w-80 md:h-80 aspect-square z-100 -translate-y-12"
+      class="absolute top-0 right-0 w-50 md:w-60 lg:w-80 aspect-square z-10 -translate-y-12"
     >
       <img
         :src="IMAGES.LEAF"
@@ -114,7 +105,7 @@ watch(
     <ClassFilter
       v-model="activeFilter"
       :filters="filters"
-      class="px-4 md:px-8 lg:px-12"
+      class="px-4 md:px-8 lg:px-12 w-full"
     />
 
     <ClassSessionList

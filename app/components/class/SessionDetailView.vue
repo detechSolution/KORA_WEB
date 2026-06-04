@@ -32,7 +32,7 @@ const handleOpenBookingModal = () => {
     class="relative bg-background dark:bg-secondary-900 text-foreground dark:text-white transition-colors duration-300 w-full"
   >
     <div
-      class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 xl:w-50 aspect-square z-10 -translate-y-12"
+      class="absolute top-0 right-0 w-50 h-50 md:w-60 md:h-70 xl:w-80 aspect-square z-100 lg:z-10 -translate-y-12"
     >
       <img
         :src="IMAGES.LEAF"
@@ -46,7 +46,10 @@ const handleOpenBookingModal = () => {
         <div>
           <ClassHeader :title="session.name" />
           <div class="max-w-400 px-4 md:px-8 lg:px-12 py-10 md:py-7">
-            <div class="session-description" v-html="session.description" />
+            <div
+              class="session-description text-stone-50"
+              v-html="session.description"
+            />
 
             <!-- <div class="mt-10">
               <h2
@@ -68,7 +71,7 @@ const handleOpenBookingModal = () => {
               </ul>
             </div> -->
 
-            <div class="mt-10">
+            <div class="mt-10 text-stone-50">
               <h2
                 class="font-sans font-bold text-sm uppercase tracking-[0.2em] mb-3"
               >
@@ -119,16 +122,11 @@ const handleOpenBookingModal = () => {
 
                 <!-- Play Button Center -->
                 <div class="absolute inset-0 flex items-center justify-center">
-                  <div
-                    class="w-16 h-16 md:w-20 md:h-20 border border-primary/60 flex items-center justify-center bg-black/20 backdrop-blur-sm transition-all duration-300 group-hover:bg-black/40 group-hover:scale-110"
-                  >
-                    <svg
-                      class="w-6 h-6 md:w-8 md:h-8 text-primary translate-x-1"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
+                  <div class="w-16 h-16 md:w-20 md:h-20 border border-primary/60 flex items-center justify-center bg-black/20 backdrop-blur-sm">
+                    <UIcon
+                      name="i-lucide-play"
+                      class="absolute inset-0 m-auto w-6 h-6 text-primary/80 transition-transform duration-300 group-hover:scale-110"
+                    />
                   </div>
                 </div>
               </div>
@@ -203,7 +201,11 @@ const handleOpenBookingModal = () => {
                 >{{ session.remainingSpots }} / {{ session.capacity }}</span
               >
             </div>
-            <UProgress v-model="session.bookedCount" :max="session.capacity" class="mt-2" />
+            <UProgress
+              v-model="session.bookedCount"
+              :max="session.capacity"
+              class="mt-2"
+            />
           </div>
         </div>
 
