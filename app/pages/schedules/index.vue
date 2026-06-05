@@ -17,29 +17,27 @@ useSeoMeta({
   description: "Weekly sessions, classes, and workshops.",
 });
 
-const router = useRouter();
 const sessionStore = useSessionStore();
 const { pagination } = usePagination(100);
 const { error: showError } = useNotification();
+const router = useRouter();
 
 const loading = ref(false);
 const weekOffset = ref(0);
-
 const search = reactive({
   session: "all",
   venue: "all",
 });
-
-const venueOptions = [
-  {
-    label: "All Venues",
-    value: "all",
-  },
-  {
-    label: "Kora Studio",
-    value: "kora-studio",
-  },
-];
+// const venueOptions = [
+//   {
+//     label: "All Venues",
+//     value: "all",
+//   },
+//   {
+//     label: "Kora Studio",
+//     value: "kora-studio",
+//   },
+// ];
 const sessionOptions = [
   {
     label: "All Sessions",
@@ -193,37 +191,6 @@ const prevWeek = () => {
 
 const getEventsForCell = (day: Date, timeKey: string) =>
   scheduleByDayAndTime.value.get(`${day.toDateString()}__${timeKey}`) ?? [];
-
-const getBadgeClass = (type: string) => {
-  if (type === "event")
-    return "bg-emerald-800 dark:bg-[#1B3B36] text-white dark:text-[#6EE7B7]";
-  if (type === "workshop")
-    return "bg-purple-800 dark:bg-[#3D1E62] text-white dark:text-[#D8B4FE]";
-  if (type === "class")
-    return "bg-blue-800 dark:bg-[#1E3A8A] text-white dark:text-[#93C5FD]";
-  return "bg-stone-800 text-white dark:text-stone-300";
-};
-
-const getProgressColor = (type: string) => {
-  if (type === "event") return "emerald";
-  if (type === "workshop") return "purple";
-  if (type === "class") return "blue";
-  return "stone";
-};
-
-const getBorderClass = (type: string) => {
-  if (type === "event") return "border-emerald-800";
-  if (type === "workshop") return "border-purple-800";
-  if (type === "class") return "border-blue-800";
-  return "border-stone-300 dark:border-stone-800";
-};
-
-const getCardClass = (type: string) => {
-  if (type === "event") return "bg-[#006045]/15 hover:bg-[#006045]/35";
-  if (type === "workshop") return "bg-[#6E11B0]/15 hover:bg-[#6E11B0]/35";
-  if (type === "class") return "bg-[#193CB8]/15 hover:bg-[#193CB8]/35";
-  return "bg-[#151515] hover:bg-[#1C1C1C]";
-};
 
 const formatTime = (value: string | Date) => {
   const date = value instanceof Date ? value : new Date(value);
