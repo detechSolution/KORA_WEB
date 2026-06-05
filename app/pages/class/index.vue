@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { IMAGES } from "~/utils/images";
 import { useSessionStore } from "~/stores/session";
 import { usePagination } from "~/composables/use-pagination";
@@ -17,7 +17,7 @@ useSeoMeta({
     "Explore curated restorative wellness sessions, mindfulness group classes, sound baths, and therapeutic bodywork offerings.",
 });
 
-const loading = ref(false);
+type Tab = "all" | "class" | "workshop" | "event" | "photos";
 
 const sessionStore = useSessionStore();
 const { pagination } = usePagination(10);
@@ -25,8 +25,8 @@ const { error: showError } = useNotification();
 
 const route = useRoute();
 const router = useRouter();
-  
-type Tab = "all" | "class" | "workshop" | "event" | "photos";
+
+const loading = ref(false);
 const activeFilter = ref<Tab>((route.query.tab as Tab) ?? "all");
 
 const filters = [
@@ -36,6 +36,7 @@ const filters = [
   { label: "CLASSES", value: "class" },
   { label: "WORKSHOPS", value: "workshop" },
 ];
+
 const sessions = computed(() => sessionStore.sessions);
 
 async function getSessionsList() {
@@ -61,10 +62,6 @@ function handleLoadSessionList(page: number) {
   getSessionsList();
 }
 
-onMounted(() => {
-  getSessionsList();
-});
-
 watch(
   activeFilter,
   (tab) => {
@@ -73,7 +70,7 @@ watch(
     pagination.value.page = 1;
     getSessionsList();
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -82,7 +79,7 @@ watch(
     if (route.path !== "/class") return;
     const next = (tab as Tab) ?? "event";
     if (next !== activeFilter.value) activeFilter.value = next;
-  }
+  },
 );
 </script>
 
