@@ -59,7 +59,7 @@ async function handleGoogleLogin(): Promise<void> {
     loading.value = true;
     await authStore.loginWithGoogle();
   } catch (error) {
-    console.error(error);
+    console.error("Error occurred while logging in with Google:", error);
   } finally {
     loading.value = false;
   }
