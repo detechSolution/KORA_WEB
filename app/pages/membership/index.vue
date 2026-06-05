@@ -21,14 +21,16 @@ useSeoMeta({
 const authStore = useAuthStore();
 const router = useRouter();
 const membershipStore = useMembershipStore();
-
 const { error: showError } = useNotification();
 
-const loading = ref(false);
-
 const membershipPeriods = ["MONTHLY", "QUARTERLY", "YEARLY", "100 DAYS"];
-
+const loading = ref(false);
+const isPassModalOpen = ref(false);
+const selectedPass = ref<any>(null);
 const activePeriod = ref("MONTHLY");
+const isMembershipModalOpen = ref(false);
+const selectedMembershipTier = ref<any>(null);
+const selectedMembershipPrice = ref<string>("");
 
 const membershipPlans = computed(() => {
   const period = activePeriod.value.toLowerCase();
@@ -49,13 +51,6 @@ const getIcon = (index: number) => {
 
   return icons[index] || "i-lucide-check";
 };
-
-const isPassModalOpen = ref(false);
-const selectedPass = ref<any>(null);
-
-const isMembershipModalOpen = ref(false);
-const selectedMembershipTier = ref<any>(null);
-const selectedMembershipPrice = ref<string>("");
 
 const getDescriptionItems = (description: string) => {
   if (!description) return [];
@@ -173,22 +168,24 @@ onMounted(() => {
         class="my-12"
       />
 
-      <div
-        class="inline-flex border border-border/80 bg-card/60 backdrop-blur-md p-1 rounded-xs"
-      >
-        <button
-          v-for="period in membershipPeriods"
-          :key="period"
-          @click="activePeriod = period"
-          :class="[
-            'px-5 py-2.5 text-xs font-semibold tracking-wider transition-all duration-200 uppercase rounded-xs cursor-pointer',
-            activePeriod === period
-              ? 'bg-primary text-white shadow-sm'
-              : 'bg-transparent text-foreground hover:bg-white/[0.02]',
-          ]"
+      <div class="w-full overflow-x-auto sm:overflow-visible scrollbar-hide">
+        <div
+          class="inline-flex min-w-max border border-border/80 bg-card/60 backdrop-blur-md p-1 rounded-xs"
         >
-          {{ period }}
-        </button>
+          <button
+            v-for="period in membershipPeriods"
+            :key="period"
+            @click="activePeriod = period"
+            :class="[
+              'shrink-0 px-4 sm:px-5 py-2.5 text-xs font-semibold tracking-wider uppercase rounded-xs transition-all duration-200 cursor-pointer whitespace-nowrap',
+              activePeriod === period
+                ? 'bg-primary text-white shadow-sm'
+                : 'bg-transparent text-foreground hover:bg-white/[0.02]',
+            ]"
+          >
+            {{ period }}
+          </button>
+        </div>
       </div>
     </div>
 
@@ -289,9 +286,9 @@ onMounted(() => {
         Space to breathe, but no plans here.
       </span>
       <p class="text-sm text-secondary-500 dark:text-secondary-400">
-        This timeframe is currently an
-        open canvas. To find the perfect supportive structure for your practice,
-        please explore our other membership durations.
+        This timeframe is currently an open canvas. To find the perfect
+        supportive structure for your practice, please explore our other
+        membership durations.
       </p>
     </div>
 
@@ -376,5 +373,14 @@ onMounted(() => {
 <style scoped>
 .scale-102 {
   transform: scale(1.02);
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 </style>
