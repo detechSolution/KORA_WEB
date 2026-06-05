@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Pagination } from "~/composables/use-pagination";
-import { useSessionStore } from "~/stores/session";
 import type { Session } from "~/types/session";
 
 type Props = {
@@ -15,6 +14,7 @@ type Props = {
   };
   pagination: Pagination;
 };
+
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
   sessions: () => ({
@@ -29,8 +29,6 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits(["loadSessionList"]);
-
-const sessionStore = useSessionStore();
 </script>
 
 <template>
@@ -52,14 +50,6 @@ const sessionStore = useSessionStore();
             v-for="session in sessions.data"
             :key="session.id"
             :session="session"
-          />
-
-          <base-pagination
-            :page="pagination.page"
-            :total="sessions?.meta?.total"
-            :items-per-page="pagination.pageSize"
-            :disabled="sessionStore.loading"
-            @update:page="emit('loadSessionList', $event)"
           />
         </div>
       </div>

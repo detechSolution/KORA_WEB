@@ -57,11 +57,6 @@ async function getSessionsList() {
   }
 }
 
-function handleLoadSessionList(page: number) {
-  pagination.value.page = page;
-  getSessionsList();
-}
-
 watch(
   activeFilter,
   (tab) => {
@@ -109,7 +104,19 @@ watch(
       :loading="loading"
       :sessions="sessions"
       :pagination="pagination"
-      @load-session-list="handleLoadSessionList"
+    />
+
+    <base-pagination
+      :page="pagination.page"
+      :total="sessions?.meta?.total"
+      :items-per-page="pagination.pageSize"
+      :disabled="sessionStore.loading"
+      @update:page="
+        (v) => {
+          pagination.page = v;
+          getSessionsList();
+        }
+      "
     />
   </div>
 </template>
