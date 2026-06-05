@@ -334,7 +334,19 @@ watch(
           </button>
         </div>
 
-        <div class="overflow-x-auto">
+        <div
+          v-if="loading"
+          class="flex flex-col items-center justify-center py-32 text-stone-400 gap-4"
+        >
+          <UIcon
+            name="i-lucide-loader-2"
+            class="w-8 h-8 animate-spin text-[#B59A6D]"
+          />
+          <span class="text-sm tracking-widest uppercase font-bold"
+            >Loading Schedules...</span
+          >
+        </div>
+        <div v-else class="overflow-x-auto">
           <div
             class="min-w-[1400px] border border-stone-300 dark:border-stone-800 xl:min-w-0"
           >

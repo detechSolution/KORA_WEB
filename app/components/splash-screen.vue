@@ -38,28 +38,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.loader {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--color-primary);
-  animation: bounce 1.4s ease-in-out infinite;
-}
-
-.dot:nth-child(1) {
-  animation-delay: -0.32s;
-}
-
-.dot:nth-child(2) {
-  animation-delay: -0.16s;
-}
-
 .heart {
   animation: beat 0.5s infinite alternate;
   transform-origin: center;
