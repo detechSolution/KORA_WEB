@@ -110,7 +110,10 @@ function togglePasswordVisibility() {
       }"
     >
       <template v-if="props.leadingIcon" #leading>
-        <UIcon :name="props.leadingIcon" class="h-5 w-5" />
+        <UIcon
+          :name="props.leadingIcon"
+          class="h-5 w-5 text-black dark:text-white"
+        />
       </template>
       <template
         v-if="props.type === 'password' || props.trailingIcon"
@@ -119,12 +122,12 @@ function togglePasswordVisibility() {
         <UIcon
           v-if="props.trailingIcon"
           :name="props.trailingIcon"
-          class="h-5 w-5"
+          class="h-5 w-5 text-black dark:text-white"
         />
         <UIcon
           v-else
           :name="showPassword ? ICONS.EYE : ICONS.EYE_OFF"
-          class="cursor-pointer w-5 h-5"
+          class="cursor-pointer w-5 h-5 text-black dark:text-white"
           @click="togglePasswordVisibility"
         />
       </template>
