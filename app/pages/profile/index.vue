@@ -68,12 +68,13 @@ const user = computed(() => {
     memberSince: formatDate(profileData.value?.memberSince ?? ""),
     isMember: membershipData.value?.isActive || false,
     membership: {
+      hasPlan: !!membershipData.value && (!!membershipData.value.planId || !!(membershipData.value as any).membershipPlanId),
       name: membershipData.value?.planName || "",
       subtitle: "",
       period: membershipData.value?.frequencyLabel || "",
       tier: membershipData.value?.planName || "",
       billing: membershipData.value
-        ? `${membershipData.value.currency} ${membershipData.value.price}/${membershipData.value.frequencyLabel.toLowerCase()}`
+        ? `${membershipData.value.currency} ${membershipData.value.price}/${membershipData.value.frequencyLabel?.toLowerCase()}`
         : "",
       benefit: membershipData.value?.memberBenefitPercent
         ? `${membershipData.value.memberBenefitPercent}% off`
@@ -250,7 +251,7 @@ function handleLogout(): void {
               YOUR MEMBERSHIP
             </h3>
 
-            <div class="bg-[#C9A55A1A] border border-border rounded-sm p-8">
+            <div v-if="user.membership.hasPlan" class="bg-[#C9A55A1A] border border-border rounded-sm p-8">
               <div
                 class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8"
               >
@@ -310,6 +311,22 @@ function handleLogout(): void {
                   </div>
                 </div>
               </div>
+            </div>
+
+            <!-- Empty State for Membership -->
+            <div v-else class="bg-card border border-border rounded-sm p-8 flex flex-col items-center justify-center text-center">
+              <div class="w-14 h-14 border border-border bg-[#C9A55A1A] flex items-center justify-center text-[#B59A6D] rounded-full mb-4">
+                <UIcon name="i-lucide-award" class="w-6 h-6" />
+              </div>
+              <h4 class="font-serif text-2xl text-foreground mb-2">
+                No Active Membership
+              </h4>
+              <p class="text-sm text-stone-400 font-light mb-6">
+                Elevate your experience with an exclusive Kora membership and unlock premium benefits.
+              </p>
+              <base-button variant="outline" @click="router.push('/membership')" class="w-full sm:w-auto px-8">
+                Explore Memberships
+              </base-button>
             </div>
           </div>
 
