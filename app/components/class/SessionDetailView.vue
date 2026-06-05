@@ -29,7 +29,7 @@ const handleOpenBookingModal = () => {
 
 <template>
   <section
-    class="relative bg-background dark:bg-secondary-900 text-foreground dark:text-white transition-colors duration-300 w-full"
+    class="relative bg-background dark:bg-secondary-900 transition-colors duration-300 w-full"
   >
     <div
       class="absolute top-0 right-0 w-50 h-50 md:w-60 md:h-70 xl:w-80 aspect-square z-100 lg:z-10 -translate-y-12"
@@ -47,7 +47,7 @@ const handleOpenBookingModal = () => {
           <ClassHeader :title="session.name" />
           <div class="max-w-400 px-4 md:px-8 lg:px-12 py-10 md:py-7">
             <div
-              class="session-description text-stone-50"
+              class="session-description text-foreground dark:text-stone-50"
               v-html="session.description"
             />
 
@@ -71,7 +71,7 @@ const handleOpenBookingModal = () => {
               </ul>
             </div> -->
 
-            <div class="mt-10 text-stone-50">
+            <div class="mt-10 text-foreground dark:text-stone-50">
               <h2
                 class="font-sans font-bold text-sm uppercase tracking-[0.2em] mb-3"
               >
@@ -94,35 +94,33 @@ const handleOpenBookingModal = () => {
                 class="relative overflow-hidden group cursor-pointer"
                 @click="isPlayingVideo = true"
               >
-                <!-- Image -->
                 <img
                   :src="session.bannerUrl"
                   :alt="session.name"
                   class="w-full h-[300px] md:h-[460px] object-cover transition-transform duration-700 group-hover:scale-105"
                 />
 
-                <!-- Dark Overlay -->
                 <div
                   class="absolute inset-0 bg-black/40 transition-opacity duration-300 group-hover:bg-black/50"
-                ></div>
+                />
 
-                <!-- Corner Brackets -->
                 <div
                   class="absolute top-6 left-6 w-8 h-8 border-t border-l border-primary/70"
-                ></div>
+                />
                 <div
                   class="absolute top-6 right-6 w-8 h-8 border-t border-r border-primary/70"
-                ></div>
+                />
                 <div
                   class="absolute bottom-6 left-6 w-8 h-8 border-b border-l border-primary/70"
-                ></div>
+                />
                 <div
                   class="absolute bottom-6 right-6 w-8 h-8 border-b border-r border-primary/70"
-                ></div>
+                />
 
-                <!-- Play Button Center -->
                 <div class="absolute inset-0 flex items-center justify-center">
-                  <div class="w-16 h-16 md:w-20 md:h-20 border border-primary/60 flex items-center justify-center bg-black/20 backdrop-blur-sm">
+                  <div
+                    class="w-16 h-16 md:w-20 md:h-20 border border-primary/60 flex items-center justify-center bg-black/20 backdrop-blur-sm"
+                  >
                     <UIcon
                       name="i-lucide-play"
                       class="absolute inset-0 m-auto w-6 h-6 text-primary/80 transition-transform duration-300 group-hover:scale-110"
@@ -130,6 +128,7 @@ const handleOpenBookingModal = () => {
                   </div>
                 </div>
               </div>
+
               <div v-else class="w-full h-[300px] md:h-[460px] bg-black">
                 <video
                   class="w-full h-full object-cover"
