@@ -2,8 +2,10 @@
 import { computed, ref, onMounted, watch } from "vue";
 import { IMAGES } from "~/utils/images";
 import { useSpaStore } from "~/stores/spa";
+import { useAuthStore } from "~/stores/auth";
 import { getApiErrorMessage } from "~/utils/error";
 import { useNotification } from "~/composables/use-notification";
+import { useRouter } from "vue-router";
 
 definePageMeta({
   layout: "default",
@@ -20,7 +22,8 @@ const isBookingModalOpen = ref(false);
 const loading = ref(false);
 
 const spa = computed(() => spaStore.spa);
-
+const router = useRouter();
+const authStore = useAuthStore();
 const spaStore = useSpaStore();
 const { error: showError } = useNotification();
 const selectedSpa = ref(null);
@@ -39,8 +42,20 @@ async function getSpaLists() {
 }
 
 const handleBookingClick = (spa: any) => {
-  selectedSpa.value = spa;
-  isBookingModalOpen.value = true;
+  if (authStore.isAuthenticated) {
+    selectedSpa.value = spa;
+    isBookingModalOpen.value = true;
+  } else {
+    router.push("/login");
+  }
+};
+
+const handleOpenBookingModal = () => {
+  if (authStore.isAuthenticated) {
+    isBookingModalOpen.value = true;
+  } else {
+    router.push("/login");
+  }
 };
 
 onMounted(() => {
@@ -204,7 +219,7 @@ onMounted(() => {
               variant="solid"
               color="primary"
               class="w-full text-sm font-semibold uppercase mt-6"
-              @click="isBookingModalOpen = true"
+              @click="handleOpenBookingModal()"
             >
               Book This Service
             </base-button>
