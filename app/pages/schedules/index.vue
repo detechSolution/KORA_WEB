@@ -224,10 +224,6 @@ const handleDetailSessionView = (id: string | number) => {
   router.push(`/class/${id}`);
 };
 
-onMounted(() => {
-  getSessionsList();
-});
-
 watch(
   () => weekOffset.value,
   () => {
@@ -240,6 +236,10 @@ watch(
     getSessionsList();
   },
 );
+
+onMounted(() => {
+  getSessionsList();
+});
 </script>
 
 <template>
@@ -322,7 +322,7 @@ watch(
             <UIcon name="i-lucide-chevron-left" class="w-4 h-4" />
           </button>
           <div
-            class="px-5 py-2.5 border border-stone-300 dark:border-stone-800 text-[10px] font-bold tracking-widest uppercase text-foreground dark:text-stone-300 rounded-xs"
+            class="min-w-50 flex justify-center px-5 py-2.5 border border-stone-300 dark:border-stone-800 text-[10px] font-bold tracking-widest uppercase text-foreground dark:text-stone-300 rounded-xs"
           >
             {{ currentRange.title }}
           </div>
