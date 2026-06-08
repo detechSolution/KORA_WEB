@@ -17,9 +17,15 @@ useHead({
     <div class="max-w-4xl w-full">
       <!-- Main Error Content -->
       <div class="text-center flex flex-col gap-4">
-        <h1 class="text-8xl font-bold text-foreground">404</h1>
-        <h2 class="text-3xl font-semibold text-foreground">PAGE NOT FOUND</h2>
-        <p class="text-xl text-foreground">This page doesn't exist (yet).</p>
+        <h1 class="text-8xl font-bold text-foreground">
+          404
+        </h1>
+        <h2 class="text-3xl font-semibold text-foreground">
+          PAGE NOT FOUND
+        </h2>
+        <p class="text-xl text-foreground">
+          This page doesn't exist (yet).
+        </p>
         <p class="text-muted-foreground max-w-2xl mx-auto">
           The link you followed may be broken or the page may have been moved.
           You can go back to the dashboard.

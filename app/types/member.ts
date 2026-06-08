@@ -1,4 +1,4 @@
-export interface MemberProfile {
+export type MemberProfile = {
   memberId: number;
   userId: number;
   fullName: string;
@@ -9,17 +9,17 @@ export interface MemberProfile {
   memberSince: string;
   identificationDocumentUrl: string | null;
   isActive: boolean;
-}
+};
 
-export interface MemberSummary {
+export type MemberSummary = {
   totalBookings: number;
   upcomingBookings: number;
   pastBookings: number;
   cancelledBookings: number;
   activePasses: number;
-}
+};
 
-export interface MemberMembership {
+export type MemberMembership = {
   isActive: boolean;
   planId: number;
   planName: string;
@@ -32,9 +32,9 @@ export interface MemberMembership {
   memberBenefitPercent: number;
   subscriptionStartDate: string;
   subscriptionEndDate: string;
-}
+};
 
-export interface MemberPass {
+export type MemberPass = {
   id: number;
   passId: number;
   name: string;
@@ -45,23 +45,23 @@ export interface MemberPass {
   allowedSessionType: string;
   currency: string;
   price: number;
-}
+};
 
-export interface MemberDashboardResponse {
+export type MemberDashboardResponse = {
   profile: MemberProfile;
   summary: MemberSummary;
   membership: MemberMembership | null;
   passes: MemberPass[];
-}
+};
 
-export interface MemberBookingVisitor {
+export type MemberBookingVisitor = {
   id: number;
   fullName: string;
   phoneNumber: string | null;
   email: string | null;
-}
+};
 
-export interface MemberBooking {
+export type MemberBooking = {
   id: number;
   bookingCode: string;
   itemName: string;
@@ -80,9 +80,9 @@ export interface MemberBooking {
   paymentStatus: string | null;
   visitors: MemberBookingVisitor[];
   bannerUrl: string | null;
-}
+};
 
-export interface MemberBookingsResponse {
+export type MemberBookingsResponse = {
   status: string;
   data: MemberBooking[];
   meta: {
@@ -91,4 +91,4 @@ export interface MemberBookingsResponse {
     total: number;
     totalPages: number;
   };
-}
+};

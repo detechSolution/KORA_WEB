@@ -68,7 +68,7 @@ const socials = [
               src="/logo/kora_white_logo.svg"
               alt="KORA Logo"
               class="w-12 h-12 md:w-32 md:h-8 object-contain"
-            />
+            >
           </NuxtLink>
           <p class="text-secondary-foreground text-sm leading-relaxed max-w-70">
             The bridge between the chaos of the city and the clarity of the
@@ -116,14 +116,12 @@ const socials = [
             >
               <span
                 class="text-secondary-400 font-bold uppercase tracking-wider text-[10px]"
-                >{{ c.label }}</span
-              >
+              >{{ c.label }}</span>
               <a
                 v-if="c.href"
                 :href="c.href"
                 class="text-secondary-200 text-sm hover:text-primary transition-colors duration-200"
-                >{{ c.value }}</a
-              >
+              >{{ c.value }}</a>
               <p
                 v-else
                 class="text-secondary-200 text-sm leading-relaxed whitespace-pre-line"

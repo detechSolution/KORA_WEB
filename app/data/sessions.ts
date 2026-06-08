@@ -165,5 +165,6 @@ export const sessionCollection = {
   },
 };
 
-export const getSessionBySlug = (slug: string) =>
-  sessions.find((session) => session.slug === slug);
+export function getSessionBySlug(slug: string) {
+  return sessions.find(session => session.slug === slug);
+}

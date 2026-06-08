@@ -1,6 +1,6 @@
 import type { PaymentInfo } from "~/types/payment";
 
-export const redirectToPaymentProvider = (payment: PaymentInfo) => {
+export function redirectToPaymentProvider(payment: PaymentInfo) {
   switch (payment.mode) {
     case "redirect_url":
       if (!payment.redirectUrl) {
@@ -35,4 +35,4 @@ export const redirectToPaymentProvider = (payment: PaymentInfo) => {
     default:
       throw new Error(`Unsupported payment mode: ${payment.mode}`);
   }
-};
+}

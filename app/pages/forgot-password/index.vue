@@ -1,11 +1,11 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { reactive, ref } from "vue";
-import { IMAGES } from "~/utils/images";
-import { useAuthStore } from "~/stores/auth";
-import z from "zod";
-import { getApiErrorMessage } from "~/utils/error";
 import { useRouter } from "vue-router";
+import z from "zod";
 import { useNotification } from "~/composables/use-notification";
+import { useAuthStore } from "~/stores/auth";
+import { getApiErrorMessage } from "~/utils/error";
+import { IMAGES } from "~/utils/images";
 
 definePageMeta({
   layout: false,
@@ -49,7 +49,8 @@ const emailFormState = reactive({ email: "" });
 async function handleSubmitEmail(): Promise<void> {
   try {
     await emailFormRef.value?.validate();
-  } catch {
+  }
+  catch {
     return;
   }
   try {
@@ -58,10 +59,11 @@ async function handleSubmitEmail(): Promise<void> {
     await authStore.forgotPassword({ email: emailFormState.email });
     submittedEmail.value = emailFormState.email;
     step.value = "otp";
-  } catch (error: unknown) {
+  }
+  catch (error: unknown) {
     const message = getApiErrorMessage(
       error,
-      "Something went wrong. Please try again."
+      "Something went wrong. Please try again.",
     );
     if (message !== "Something went wrong. Please try again.") {
       emailApiError.value = message;
@@ -69,7 +71,8 @@ async function handleSubmitEmail(): Promise<void> {
       return;
     }
     showError({ message });
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
 }
@@ -96,7 +99,8 @@ const otpFormState = reactive({ code: "" });
 async function handleVerifyOtp(): Promise<void> {
   try {
     await otpFormRef.value?.validate();
-  } catch {
+  }
+  catch {
     return;
   }
   try {
@@ -108,10 +112,11 @@ async function handleVerifyOtp(): Promise<void> {
     });
     submittedCode.value = otpFormState.code;
     step.value = "reset";
-  } catch (error: unknown) {
+  }
+  catch (error: unknown) {
     const message = getApiErrorMessage(
       error,
-      "Something went wrong. Please try again."
+      "Something went wrong. Please try again.",
     );
     if (message !== "Something went wrong. Please try again.") {
       otpApiError.value = message;
@@ -119,7 +124,8 @@ async function handleVerifyOtp(): Promise<void> {
       return;
     }
     showError({ message });
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
 }
@@ -134,9 +140,9 @@ const resetSchema = z
   })
   .superRefine((data, ctx) => {
     if (
-      data.newPassword &&
-      data.confirmPassword &&
-      data.newPassword !== data.confirmPassword
+      data.newPassword
+      && data.confirmPassword
+      && data.newPassword !== data.confirmPassword
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -158,7 +164,8 @@ const resetFormState = reactive({ newPassword: "", confirmPassword: "" });
 async function handleResetPassword(): Promise<void> {
   try {
     await resetFormRef.value?.validate();
-  } catch {
+  }
+  catch {
     return;
   }
   try {
@@ -170,10 +177,11 @@ async function handleResetPassword(): Promise<void> {
     });
     showSuccess({ message: "Password updated successfully. Please log in." });
     router.push({ name: "login" });
-  } catch (error: unknown) {
+  }
+  catch (error: unknown) {
     const message = getApiErrorMessage(
       error,
-      "Something went wrong. Please try again."
+      "Something went wrong. Please try again.",
     );
     if (message !== "Something went wrong. Please try again.") {
       resetApiError.value = message;
@@ -181,7 +189,8 @@ async function handleResetPassword(): Promise<void> {
       return;
     }
     showError({ message });
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
 }
@@ -199,7 +208,7 @@ async function handleResetPassword(): Promise<void> {
           :src="IMAGES.LEAF"
           class="w-full h-full object-cover rotate-12"
           alt=""
-        />
+        >
       </div>
 
       <!-- Logo -->
@@ -210,7 +219,7 @@ async function handleResetPassword(): Promise<void> {
             alt="Kora Logo"
             class="w-44 h-w-28"
             onerror="this.style.display = 'none'"
-          />
+          >
         </NuxtLink>
       </div>
 
@@ -246,8 +255,8 @@ async function handleResetPassword(): Promise<void> {
 
               <base-button
                 class="w-full"
-                @click="handleSubmitEmail"
                 :loading="loading"
+                @click="handleSubmitEmail"
               >
                 SUBMIT
               </base-button>
@@ -256,7 +265,9 @@ async function handleResetPassword(): Promise<void> {
 
           <!-- Step 2: Enter OTP -->
           <template v-else-if="step === 'otp'">
-            <h1 class="font-serif text-4xl mb-3 text-white">Enter OTP Code</h1>
+            <h1 class="font-serif text-4xl mb-3 text-white">
+              Enter OTP Code
+            </h1>
             <p class="text-xs text-secondary-400 mb-6">
               Enter OTP code sent to your email
             </p>
@@ -281,8 +292,8 @@ async function handleResetPassword(): Promise<void> {
 
               <base-button
                 class="w-full"
-                @click="handleVerifyOtp"
                 :loading="loading"
+                @click="handleVerifyOtp"
               >
                 NEXT
               </base-button>
@@ -327,8 +338,8 @@ async function handleResetPassword(): Promise<void> {
 
               <base-button
                 class="w-full"
-                @click="handleResetPassword"
                 :loading="loading"
+                @click="handleResetPassword"
               >
                 UPDATE PASSWORD
               </base-button>
@@ -344,7 +355,7 @@ async function handleResetPassword(): Promise<void> {
         :src="IMAGES.LOGIN"
         alt="Meditation"
         class="w-full h-full object-cover"
-      />
+      >
     </div>
   </div>
 </template>

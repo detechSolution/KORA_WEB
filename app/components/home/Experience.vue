@@ -11,7 +11,7 @@
         :src="IMAGES.LEAF"
         alt="The Kora Experience"
         class="w-full h-full object-cover"
-      />
+      >
     </div>
 
     <div
@@ -26,11 +26,11 @@
             :src="IMAGES.EXPERIENCE_MAIN"
             alt="The Kora Experience"
             class="w-full h-full object-cover transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
-          />
+          >
           <!-- Premium subtle inner ring highlight -->
           <div
             class="absolute inset-0 ring-1 ring-inset ring-black/5 dark:ring-white/10 rounded-[24px] pointer-events-none"
-          ></div>
+          />
         </div>
       </div>
 
@@ -77,10 +77,10 @@
               :src="IMAGES.EXPERIENCE_AROMA"
               alt="Aroma therapy"
               class="w-full h-full object-cover transition-transform duration-[4000ms] ease-out-quad group-hover:scale-108"
-            />
+            >
             <div
               class="absolute inset-0 ring-1 ring-inset ring-black/5 dark:ring-white/5 rounded-[16px] pointer-events-none"
-            ></div>
+            />
           </div>
 
           <!-- Card 2: Rising Steam -->
@@ -91,10 +91,10 @@
               :src="IMAGES.EXPERIENCE_STEAM"
               alt="Recovery steam"
               class="w-full h-full object-cover transition-transform duration-[4000ms] ease-out-quad group-hover:scale-108"
-            />
+            >
             <div
               class="absolute inset-0 ring-1 ring-inset ring-black/5 dark:ring-white/5 rounded-[16px] pointer-events-none"
-            ></div>
+            />
           </div>
 
           <!-- Card 3: Wellness Food & Menu -->
@@ -105,10 +105,10 @@
               :src="IMAGES.EXPERIENCE_FOOD"
               alt="Wellness nutrition"
               class="w-full h-full object-cover transition-transform duration-[4000ms] ease-out-quad group-hover:scale-108"
-            />
+            >
             <div
               class="absolute inset-0 ring-1 ring-inset ring-black/5 dark:ring-white/5 rounded-[16px] pointer-events-none"
-            ></div>
+            />
           </div>
         </div>
       </div>

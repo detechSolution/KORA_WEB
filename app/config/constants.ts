@@ -39,14 +39,14 @@ export const API_ENDPOINTS = {
   },
 
   PAYMENT: {
-    PAY_NOW: "/api/v1/commerce/checkout/pay-now"
+    PAY_NOW: "/api/v1/commerce/checkout/pay-now",
   },
 
   MEMBER: {
     DASHBOARD: "/api/v1/members/me/dashboard",
     BOOKINGS: "/api/v1/members/me/bookings",
-  }, 
+  },
   NEWSLETTER: {
     CREATE: "/api/v1/mails/newsletter-signups",
-  }
+  },
 };

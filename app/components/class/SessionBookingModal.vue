@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
 import type { PropType } from "vue";
+import type { Session } from "~/types/session";
+import { computed, ref } from "vue";
+
 import { useRouter } from "vue-router";
 
-import type { Session } from "~/types/session";
+import { useNotification } from "~/composables/use-notification";
 
 import { useCartStore } from "~/stores/cart";
-
-import { formatTime } from "~/utils/format";
 import { calculatePrice } from "~/utils/helper";
-import { useNotification } from "~/composables/use-notification";
 
 type Guest = {
   fullName: string;
@@ -48,26 +47,29 @@ const currentUser = computed(() => ({
   email: userDetail?.email || "",
 }));
 
-const createGuest = (): Guest => ({
-  fullName: "",
-  phone: "",
-  email: "",
-});
+function createGuest(): Guest {
+  return {
+    fullName: "",
+    phone: "",
+    email: "",
+  };
+}
 
 const guests = ref<Guest[]>([]);
 
-const resetGuests = () => {
+function resetGuests() {
   guests.value = [];
-};
-const addGuest = () => {
+}
+function addGuest() {
   guests.value.push(createGuest());
-};
+}
 
-const removeGuest = (index: number) => {
-  if (guests.value.length <= 0) return;
+function removeGuest(index: number) {
+  if (guests.value.length <= 0)
+    return;
 
   guests.value.splice(index, 1);
-};
+}
 
 // const MEMBERSHIP_DISCOUNT = userDetail?.membership?.option?.memberBenefit || 0;
 // const PROMO_DISCOUNT = 0;
@@ -97,13 +99,13 @@ async function validateCurrentStep() {
   return true;
 }
 
-const nextStep = () => {
+function nextStep() {
   currentStep.value = 1;
-};
+}
 
-const previousStep = () => {
+function previousStep() {
   currentStep.value = 0;
-};
+}
 
 const bookingItem = computed(() => ({
   referenceId: props.session.id,
@@ -123,33 +125,33 @@ const bookingItem = computed(() => ({
   itemType: "session",
 }));
 
-const addToCart = () => {
+function addToCart() {
   cartStore.addToCart(bookingItem.value);
   success({ message: "Item added to cart successfully!" });
-};
+}
 
-const proceedToCheckout = () => {
+function proceedToCheckout() {
   cartStore.addToCart(bookingItem.value);
   router.push("/checkout");
   close();
-};
+}
 
-const close = () => {
+function close() {
   currentStep.value = 0;
   resetGuests();
   emit("close");
-};
+}
 </script>
 
 <template>
   <base-modal
     title=""
     :open="isOpen"
-    @close="close"
     :modal-width="700"
     modal-max-height="90vh"
     :dismissible="true"
     class="dark:bg-nirvana-mist"
+    @close="close"
   >
     <div class="p-4 md:p-6">
       <!-- Stepper -->
@@ -179,12 +181,12 @@ const close = () => {
             </p>
           </div>
 
-          <div class="w-full h-px bg-border/40 mb-8"></div>
+          <div class="w-full h-px bg-border/40 mb-8" />
 
           <div class="flex flex-col gap-6 mb-8">
             <base-input
               v-model="currentUser.fullName"
-              :name="`fullName`"
+              name="fullName"
               label="FULL NAME *"
               type="text"
               class="bg-white dark:bg-transparent"
@@ -193,7 +195,7 @@ const close = () => {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <base-input
                 v-model="currentUser.phone"
-                :name="`phone`"
+                name="phone"
                 label="PHONE NUMBER"
                 type="text"
                 class="bg-white dark:bg-transparent"
@@ -201,7 +203,7 @@ const close = () => {
 
               <base-input
                 v-model="currentUser.email"
-                :name="`email`"
+                name="email"
                 label="EMAIL ADDRESS"
                 type="email"
                 class="bg-white dark:bg-transparent"
@@ -215,7 +217,7 @@ const close = () => {
               :key="index"
               class="relative flex flex-col gap-6"
             >
-              <div v-if="index > 0" class="w-full h-px bg-border/40"></div>
+              <div v-if="index > 0" class="w-full h-px bg-border/40" />
 
               <div class="flex items-center justify-between">
                 <h4 v-if="index > 0" class="text-sm font-serif text-[#A08860]">
@@ -224,8 +226,8 @@ const close = () => {
 
                 <button
                   v-if="guests.length > 0"
-                  @click="removeGuest(index)"
                   class="absolute top-0 right-0 flex items-center gap-1 text-xs text-red-800 hover:text-red-600 transition-colors hover:cursor-pointer"
+                  @click="removeGuest(index)"
                 >
                   <UIcon name="i-lucide-trash-2" class="w-3.5 h-3.5" />
 
@@ -261,9 +263,9 @@ const close = () => {
             </div>
 
             <base-button
-              @click="addGuest"
               variant="outline"
               class="w-full border-[#A08860] text-[#A08860] hover:bg-[#A08860]/10 uppercase text-[11px] tracking-widest font-bold h-12 mt-4"
+              @click="addGuest"
             >
               ADD GUEST +
             </base-button>
@@ -271,8 +273,8 @@ const close = () => {
 
           <div class="flex justify-end">
             <base-button
-              @click="nextStep"
               class="uppercase text-[11px] tracking-widest font-bold px-10 h-11 rounded-none bg-[#A08860] hover:bg-[#8c7550] text-white"
+              @click="nextStep"
             >
               Next
             </base-button>
@@ -280,7 +282,11 @@ const close = () => {
         </div>
 
         <!-- STEP 2 -->
-        <div v-else key="step-overview" class="flex flex-col">
+        <div
+          v-else
+          key="step-overview"
+          class="flex flex-col"
+        >
           <div class="mb-8">
             <h2 class="text-3xl font-serif text-foreground mb-3">
               Review Your Booking
@@ -333,25 +339,25 @@ const close = () => {
               </span>
             </div>
 
-            <div class="border-b border-border/40 pb-6 mb-8"></div>
+            <div class="border-b border-border/40 pb-6 mb-8" />
           </div>
 
           <div class="flex flex-col sm:flex-row justify-between gap-4 mt-auto">
-            <base-button @click="previousStep" variant="outline">
+            <base-button variant="outline" @click="previousStep">
               Back
             </base-button>
 
             <div class="flex flex-col sm:flex-row gap-2">
               <base-button
-                @click="addToCart"
                 class="bg-black dark:bg-black hover:bg-black/70"
+                @click="addToCart"
               >
                 ADD TO CART
               </base-button>
 
               <base-button
-                @click="proceedToCheckout"
                 class="uppercase text-[11px] tracking-widest font-bold px-8 h-11 rounded-none bg-[#A08860] hover:bg-[#8c7550] text-white"
+                @click="proceedToCheckout"
               >
                 PROCEED TO CHECKOUT
               </base-button>

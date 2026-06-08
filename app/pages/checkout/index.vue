@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, onUnmounted } from "vue";
+import type { PaymentProvider } from "~/types/payment";
+import { computed, onUnmounted, ref } from "vue";
 import { usePayment } from "~/composables/use-payment";
-import { ICONS } from "~/config/icons";
 // import { cartItems } from "~/data/cart";
 import { useCartStore } from "~/stores/cart";
 import { calculatePrice } from "~/utils/helper";
-import type { PaymentProvider } from "~/types/payment";
 
 definePageMeta({
   layout: "default",
@@ -54,43 +53,44 @@ const totalItems = computed(() =>
   }, 0),
 );
 
-const handleApplyPromo = async () => {
+async function handleApplyPromo() {
   if (inputPromoCode.value.trim()) {
     await cartStore.applyPromoCode(inputPromoCode.value.trim());
   }
-};
+}
 
-const handleRemovePromo = () => {
+function handleRemovePromo() {
   cartStore.removePromoCode();
   inputPromoCode.value = "";
-};
+}
 
-const openRemoveModal = (id: string) => {
+function openRemoveModal(id: string) {
   selectedItemId.value = id;
   isRemoveItemModalOpen.value = true;
-};
+}
 
-const handleRemoveItem = () => {
+function handleRemoveItem() {
   if (selectedItemId.value !== "") {
     cartStore.removeItem(selectedItemId.value);
   }
 
   isRemoveItemModalOpen.value = false;
   selectedItemId.value = "";
-};
+}
 
-const goBack = () => {
+function goBack() {
   step.value = 1;
-};
+}
 
 async function handlePayNowClick() {
   if (step.value === 1) {
     step.value = 2;
-  } else {
+  }
+  else {
     try {
       const payload = {
         provider: paymentMethod.value,
-        items: cartItems.value.map((item) => ({
+        items: cartItems.value.map(item => ({
           itemType: item.itemType,
 
           referenceId: item.referenceId,
@@ -113,7 +113,8 @@ async function handlePayNowClick() {
       };
 
       await payNow(payload);
-    } catch (error) {
+    }
+    catch (error) {
       console.error("Payment failed:", error);
     }
   }
@@ -170,10 +171,10 @@ onUnmounted(() => {
                 <!-- Image / Icon -->
                 <div
                   v-if="
-                    item.type === 'class' ||
-                    item.type === 'event' ||
-                    item.type === 'workshop' ||
-                    item.type === 'spa'
+                    item.type === 'class'
+                      || item.type === 'event'
+                      || item.type === 'workshop'
+                      || item.type === 'spa'
                   "
                   class="w-20 h-20 bg-muted shrink-0 overflow-hidden relative"
                 >
@@ -182,7 +183,7 @@ onUnmounted(() => {
                     :src="item.image"
                     :alt="item.title"
                     class="w-full h-full object-cover"
-                  />
+                  >
                 </div>
                 <div
                   v-else-if="item.itemType === 'pass'"
@@ -203,39 +204,31 @@ onUnmounted(() => {
                     <div class="flex flex-wrap items-start gap-2">
                       <h4 class="text-sm font-serif text-foreground">
                         {{ item.title }}
-                        <br />
+                        <br>
                         <span v-if="item.itemType !== 'membership'">
-                          (<span class="text-xl"
-                            >{{ item.visitors.length + 1 }} x
-                            {{ formatPrice(item.price) }}</span
-                          >)
+                          (<span class="text-xl">{{ item.visitors.length + 1 }} x
+                            {{ formatPrice(item.price) }}</span>)
                         </span>
                       </h4>
                       <span
                         v-if="item.itemType === 'session'"
                         class="text-[8px] px-1.5 py-0.5 bg-purple-900/40 text-purple-300 font-medium tracking-wide"
-                        >Session</span
-                      >
+                      >Session</span>
                       <span
                         v-if="item.itemType === 'spa'"
                         class="text-[8px] px-1.5 py-0.5 bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
-                        >Spa</span
-                      >
+                      >Spa</span>
                       <span
                         v-if="item.itemType === 'pass'"
                         class="text-[8px] px-1.5 py-0.5 bg-blue-900/40 text-blue-400 font-medium tracking-wide"
-                        >Pass</span
-                      >
+                      >Pass</span>
                       <span
                         v-if="item.itemType === 'membership'"
                         class="text-[8px] px-1.5 py-0.5 bg-[#B59A6D] text-white font-medium tracking-wide"
-                        >Membership</span
-                      >
+                      >Membership</span>
                     </div>
                     <div>
-                      <span class="text-sm font-serif text-[#B59A6D]"
-                        >Rs. {{ formatPrice(item.finalPrice) }}</span
-                      >
+                      <span class="text-sm font-serif text-[#B59A6D]">Rs. {{ formatPrice(item.finalPrice) }}</span>
                     </div>
                   </div>
 
@@ -283,17 +276,19 @@ onUnmounted(() => {
               <div class="flex items-center justify-between">
                 <span
                   class="font-serif text-xl md:text-2xl text-foreground font-bold"
-                  >Total</span
-                >
+                >Total</span>
                 <span
                   class="font-serif text-xl md:text-2xl text-[#B59A6D] font-bold"
-                  >{{ formatPrice(subtotal) }}</span
-                >
+                >{{ formatPrice(subtotal) }}</span>
               </div>
             </div>
           </div>
           <!-- Step 2: Payment Method -->
-          <div v-else class="flex flex-col w-full" key="step2">
+          <div
+            v-else
+            key="step2"
+            class="flex flex-col w-full"
+          >
             <div
               class="dark:bg-[#212121] border border-border p-6 flex items-center gap-3"
             >
@@ -325,18 +320,16 @@ onUnmounted(() => {
                     />
                   </div>
                   <input
+                    v-model="paymentMethod"
                     type="radio"
                     value="esewa"
-                    v-model="paymentMethod"
                     class="hidden"
-                  />
+                  >
                   <!-- eSewa placeholder logo -->
                   <div
                     class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
                   >
-                    <span class="text-[#60B54F] font-bold text-lg leading-none"
-                      >eSewa</span
-                    >
+                    <span class="text-[#60B54F] font-bold text-lg leading-none">eSewa</span>
                   </div>
                 </label>
 
@@ -357,18 +350,16 @@ onUnmounted(() => {
                     />
                   </div>
                   <input
+                    v-model="paymentMethod"
                     type="radio"
                     value="fonepay"
-                    v-model="paymentMethod"
                     class="hidden"
-                  />
+                  >
                   <!-- Fonepay placeholder logo -->
                   <div
                     class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
                   >
-                    <span class="text-[#E31E24] font-bold text-lg leading-none"
-                      >fonepay</span
-                    >
+                    <span class="text-[#E31E24] font-bold text-lg leading-none">fonepay</span>
                   </div>
                 </label>
 
@@ -389,18 +380,16 @@ onUnmounted(() => {
                     />
                   </div>
                   <input
+                    v-model="paymentMethod"
                     type="radio"
                     value="stripe"
-                    v-model="paymentMethod"
                     class="hidden"
-                  />
+                  >
                   <!-- Stripe placeholder logo -->
                   <div
                     class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
                   >
-                    <span class="text-[#635BFF] font-bold text-lg leading-none"
-                      >stripe</span
-                    >
+                    <span class="text-[#635BFF] font-bold text-lg leading-none">stripe</span>
                   </div>
                 </label>
               </div>
@@ -414,19 +403,19 @@ onUnmounted(() => {
             >
               <base-button
                 v-if="step === 2"
-                @click="goBack"
                 variant="outline"
                 leading-icon="i-lucide-arrow-left"
                 class="uppercase text-[11px] tracking-widest font-bold px-8 rounded-none border-border hover:border-primary-700"
+                @click="goBack"
               >
                 GO BACK
               </base-button>
 
               <base-button
-                @click="handlePayNowClick"
                 trailing-icon="i-lucide-arrow-right"
                 class="uppercase self-end flex tracking-widest font-bold px-8 rounded-none"
                 :loading="loading"
+                @click="handlePayNowClick"
               >
                 PAY NOW
               </base-button>
@@ -443,7 +432,7 @@ onUnmounted(() => {
           </p>
           <Transition name="fade" mode="out-in">
             <!-- Step 1: Form -->
-            <div class="flex flex-col w-full" key="step1">
+            <div key="step1" class="flex flex-col w-full">
               <!-- Promo Code -->
               <div class="flex flex-col gap-2 w-full h-30">
                 <div class="flex items-end w-full gap-4">
@@ -455,25 +444,25 @@ onUnmounted(() => {
                       placeholder="e.g KORA20"
                       type="text"
                       :disabled="
-                        cartStore.isApplyingPromo ||
-                        cartStore.promoCode !== null
+                        cartStore.isApplyingPromo
+                          || cartStore.promoCode !== null
                       "
                       @keyup.enter="handleApplyPromo"
                     />
                   </div>
                   <base-button
                     v-if="!cartStore.promoCode"
-                    @click="handleApplyPromo"
                     :disabled="!inputPromoCode || cartStore.isApplyingPromo"
+                    @click="handleApplyPromo"
                   >
                     <span v-if="cartStore.isApplyingPromo">APPLYING...</span>
                     <span v-else>APPLY</span>
                   </base-button>
                   <base-button
                     v-else
-                    @click="handleRemovePromo"
                     variant="outline"
                     class=""
+                    @click="handleRemovePromo"
                   >
                     REMOVE
                   </base-button>
@@ -509,9 +498,7 @@ onUnmounted(() => {
                 >
                   <h2>
                     Promo Discount
-                    <span v-if="cartStore.promoCode"
-                      >({{ cartStore.promoCode }})</span
-                    >
+                    <span v-if="cartStore.promoCode">({{ cartStore.promoCode }})</span>
                   </h2>
                   <p>- Rs. {{ formatPrice(cartStore.discountAmount) }}</p>
                 </div>
@@ -519,7 +506,9 @@ onUnmounted(() => {
                 <div
                   class="text-sm text-secondary dark:text-white font-normal flex justify-between pt-1"
                 >
-                  <h2 class="font-bold">Total</h2>
+                  <h2 class="font-bold">
+                    Total
+                  </h2>
                   <p class="font-bold text-primary">
                     Rs. {{ formatPrice(totalPrice) }}
                   </p>
@@ -537,18 +526,18 @@ onUnmounted(() => {
           >
             <base-button
               v-if="step === 2"
-              @click="goBack"
               variant="outline"
               leading-icon="i-lucide-arrow-left"
               class="uppercase text-[11px] tracking-widest font-bold px-8 rounded-none border-border hover:border-primary-700"
+              @click="goBack"
             >
               GO BACK
             </base-button>
 
             <base-button
-              @click="handlePayNowClick"
               trailing-icon="i-lucide-arrow-right"
               class="uppercase self-end flex tracking-widest font-bold px-8 rounded-none"
+              @click="handlePayNowClick"
             >
               PAY NOW
             </base-button>

@@ -31,7 +31,11 @@ const emit = defineEmits<{
       </p>
 
       <div class="flex justify-end gap-2">
-        <base-button variant="outline" @click="emit('close')" class="w-full">
+        <base-button
+          variant="outline"
+          class="w-full"
+          @click="emit('close')"
+        >
           Cancel
         </base-button>
 
@@ -42,7 +46,7 @@ const emit = defineEmits<{
           class="cursor-pointer font-semibold w-full bg-red-900 dark:bg-red-900 hover:bg-red-900/75 dark:hover:bg-red-900/75 text-white"
           @click="emit('confirm')"
         >
-        Remove
+          Remove
         </base-button>
       </div>
     </div>

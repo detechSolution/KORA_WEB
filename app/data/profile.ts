@@ -1,6 +1,6 @@
 export type BookingType = "Session" | "Spa" | "Pass";
 
-export interface Booking {
+export type Booking = {
   id: string;
   title: string;
   type: BookingType;
@@ -13,4 +13,4 @@ export interface Booking {
   status: "UPCOMING" | "PAST" | "CANCELED";
   sessionId?: number;
   itemType: "session" | "spa" | "passes";
-}
+};

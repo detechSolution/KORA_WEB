@@ -16,9 +16,9 @@ const props = defineProps({
 
 const emit = defineEmits(["update:modelValue"]);
 
-const selectFilter = (val: string) => {
+function selectFilter(val: string) {
   emit("update:modelValue", val);
-};
+}
 </script>
 
 <template>
@@ -32,13 +32,13 @@ const selectFilter = (val: string) => {
       <button
         v-for="filter in filters"
         :key="filter.value"
-        @click="selectFilter(filter.value)"
+        class="px-4 md:px-5 py-2 text-[9px] md:text-xs font-sans tracking-[0.2em] font-semibold border uppercase transition-all duration-300 cursor-pointer focus:outline-none whitespace-nowrap"
         :class="[
-          'px-4 md:px-5 py-2 text-[9px] md:text-xs font-sans tracking-[0.2em] font-semibold border uppercase transition-all duration-300 cursor-pointer focus:outline-none whitespace-nowrap',
           modelValue === filter.value
             ? 'bg-primary-700 border-primary-700 text-white shadow-md active:scale-95'
             : 'border-stone-300 dark:border-stone-700 text-black dark:text-white/70 hover:border-primary/60 hover:text-primary hover:bg-primary/5 active:scale-95',
         ]"
+        @click="selectFilter(filter.value)"
       >
         {{ filter.label }}
       </button>

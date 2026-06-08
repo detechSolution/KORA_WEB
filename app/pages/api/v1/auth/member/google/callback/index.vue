@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useAuthStore } from "~/stores/auth";
 import { getHttp } from "~/composables/use-api";
 import { useStorage } from "~/composables/use-storage";
+import { useAuthStore } from "~/stores/auth";
 
 definePageMeta({
   layout: false,
@@ -45,16 +45,19 @@ onMounted(async () => {
       await authStore.checkAuth(true); // Fetch user details
 
       router.push("/profile"); // Redirect on success
-    } else {
+    }
+    else {
       throw new Error("Invalid tokens received from the server.");
     }
-  } catch (error: any) {
+  }
+  catch (error: any) {
     console.error("Google Callback Error:", error);
-    errorMsg.value =
-      error.data?.message ||
-      error.message ||
-      "An error occurred during authentication.";
-  } finally {
+    errorMsg.value
+      = error.data?.message
+        || error.message
+        || "An error occurred during authentication.";
+  }
+  finally {
     loading.value = false;
   }
 });
@@ -67,8 +70,10 @@ onMounted(async () => {
     <div v-if="loading" class="text-center">
       <div
         class="i-lucide-loader-2 animate-spin w-8 h-8 mx-auto mb-4 text-[#B59A6D]"
-      ></div>
-      <p class="text-secondary-400 text-sm">Authenticating with Google...</p>
+      />
+      <p class="text-secondary-400 text-sm">
+        Authenticating with Google...
+      </p>
     </div>
 
     <div
@@ -78,10 +83,14 @@ onMounted(async () => {
       <div class="w-12 h-12 mx-auto mb-4 text-red-500">
         <UIcon name="lucide-x-circle" class="w-full h-full" />
       </div>
-      <h2 class="font-serif text-2xl mb-2">Authentication Failed</h2>
-      <p class="text-sm text-secondary-400 mb-6">{{ errorMsg }}</p>
+      <h2 class="font-serif text-2xl mb-2">
+        Authentication Failed
+      </h2>
+      <p class="text-sm text-secondary-400 mb-6">
+        {{ errorMsg }}
+      </p>
 
-      <base-button @click="router.push('/login')" class="w-full">
+      <base-button class="w-full" @click="router.push('/login')">
         BACK TO LOGIN
       </base-button>
     </div>

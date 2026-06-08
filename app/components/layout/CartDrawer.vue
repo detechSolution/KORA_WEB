@@ -11,9 +11,9 @@ const props = defineProps({
 
 const emit = defineEmits(["close"]);
 
-const close = () => {
+function close() {
   emit("close");
-};
+}
 
 const isRemoveItemModalOpen = ref(false);
 const selectedItemId = ref<string | "">("");
@@ -25,34 +25,39 @@ const totalPrice = computed(() => {
   return cartItems.value.reduce((total, item) => total + item.finalPrice, 0);
 });
 
-
-const formatPrice = (price: number) => {
+function formatPrice(price: number) {
   return new Intl.NumberFormat("en-IN").format(price);
-};
+}
 
-const openRemoveModal = (id: string) => {
+function openRemoveModal(id: string) {
   selectedItemId.value = id;
   isRemoveItemModalOpen.value = true;
-};
+}
 
-const handleRemoveItem = () => {
+function handleRemoveItem() {
   if (selectedItemId.value !== "") {
     cartStore.removeItem(selectedItemId.value);
   }
 
   isRemoveItemModalOpen.value = false;
   selectedItemId.value = "";
-};
+}
 </script>
 
 <template>
-  <base-drawer :open="isOpen" @close="close" :drawer-width="520">
+  <base-drawer
+    :open="isOpen"
+    :drawer-width="520"
+    @close="close"
+  >
     <template #header>
       <div
         class="flex items-start justify-between p-8 pb-6 border-b border-border"
       >
         <div class="flex flex-col gap-2">
-          <h2 class="text-2xl font-serif text-foreground">Your Cart</h2>
+          <h2 class="text-2xl font-serif text-foreground">
+            Your Cart
+          </h2>
           <span
             class="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold"
           >
@@ -61,17 +66,17 @@ const handleRemoveItem = () => {
         </div>
 
         <button
-          @click="close"
           class="w-8 h-8 flex items-center justify-center border border-border/40 text-muted-foreground hover:text-foreground hover:border-border transition-colors duration-200"
           aria-label="Close cart"
+          @click="close"
         >
           <span class="relative w-3 h-3 flex items-center justify-center">
             <span
               class="absolute h-[1px] w-full bg-current transform rotate-45"
-            ></span>
+            />
             <span
               class="absolute h-[1px] w-full bg-current transform -rotate-45"
-            ></span>
+            />
           </span>
         </button>
       </div>
@@ -87,7 +92,9 @@ const handleRemoveItem = () => {
         <UIcon name="i-lucide-shopping-bag" class="w-6 h-6" />
       </div>
       <div class="flex flex-col gap-3">
-        <h3 class="text-xl font-serif text-foreground">Your Cart is Empty</h3>
+        <h3 class="text-xl font-serif text-foreground">
+          Your Cart is Empty
+        </h3>
         <p
           class="text-xs text-muted-foreground max-w-[240px] mx-auto leading-relaxed"
         >
@@ -107,10 +114,10 @@ const handleRemoveItem = () => {
         >
           <div
             v-if="
-              item.type === 'class' ||
-              item.type === 'event' ||
-              item.type === 'workshop' ||
-              item.type === 'spa'
+              item.type === 'class'
+                || item.type === 'event'
+                || item.type === 'workshop'
+                || item.type === 'spa'
             "
             class="w-24 h-24 shrink-0 overflow-hidden relative"
           >
@@ -119,7 +126,7 @@ const handleRemoveItem = () => {
               :src="item.image"
               :alt="item.title"
               class="w-full h-full object-cover"
-            />
+            >
           </div>
           <div
             v-else-if="item.itemType === 'pass'"
@@ -140,38 +147,30 @@ const handleRemoveItem = () => {
               <div class="flex items-start gap-2">
                 <h4 class="text-sm font-serif text-foreground">
                   {{ item.title }}
-                  <br />
+                  <br>
                   <span v-if="item.itemType !== 'membership'">
-                    (<span class="text-xl"
-                      >{{ item.visitors.length + 1 }} x
-                      {{ formatPrice(item.price) }}</span
-                    >)
+                    (<span class="text-xl">{{ item.visitors.length + 1 }} x
+                      {{ formatPrice(item.price) }}</span>)
                   </span>
                 </h4>
                 <span
                   v-if="item.itemType === 'session'"
                   class="text-[9px] px-1.5 py-0.5 bg-purple-900/40 text-purple-300 font-medium tracking-wide"
-                  >Session</span
-                >
+                >Session</span>
                 <span
                   v-if="item.itemType === 'spa'"
                   class="text-[9px] px-1.5 py-0.5 bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
-                  >Spa</span
-                >
+                >Spa</span>
                 <span
                   v-if="item.itemType === 'pass'"
                   class="text-[9px] px-1.5 py-0.5 bg-blue-900/40 text-blue-400 font-medium tracking-wide"
-                  >Pass</span
-                >
+                >Pass</span>
                 <span
                   v-if="item.itemType === 'membership'"
                   class="text-[9px] px-1.5 py-0.5 bg-primary text-primary-foreground font-medium tracking-wide"
-                  >Membership</span
-                >
+                >Membership</span>
               </div>
-              <span class="text-sm font-serif text-[#B59A6D]"
-                >Rs. {{ formatPrice(item.finalPrice) }}</span
-              >
+              <span class="text-sm font-serif text-[#B59A6D]">Rs. {{ formatPrice(item.finalPrice) }}</span>
             </div>
 
             <div class="mt-2 flex flex-col gap-1.5">
@@ -206,9 +205,9 @@ const handleRemoveItem = () => {
 
             <div class="mt-auto flex justify-end">
               <button
-                @click="openRemoveModal(item.cartId)"
                 class="text-red-800 hover:text-red-700 transition-colors hover:cursor-pointer"
                 aria-label="Remove item"
+                @click="openRemoveModal(item.cartId)"
               >
                 <UIcon name="i-lucide-trash-2" class="w-3.5 h-3.5" />
               </button>
@@ -229,7 +228,11 @@ const handleRemoveItem = () => {
             }}</span>
           </div>
 
-          <base-button to="/checkout" @click="close" class="w-full">
+          <base-button
+            to="/checkout"
+            class="w-full"
+            @click="close"
+          >
             Proceed to Checkout
           </base-button>
         </div>

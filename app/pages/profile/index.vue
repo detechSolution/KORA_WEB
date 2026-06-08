@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
-import { IMAGES } from "~/utils/images";
+import type { Booking } from "~/data/profile";
+import { computed, onMounted, ref, watch } from "vue";
+import { useRouter } from "vue-router";
+import { usePagination } from "~/composables/use-pagination";
 import { useAuthStore } from "~/stores/auth";
 import { useMemberStore } from "~/stores/member";
-import { useRouter } from "vue-router";
-import { formatDate, formatTime } from "~/utils/format";
-import { usePagination } from "~/composables/use-pagination";
-import type { Booking } from "~/data/profile";
+import { formatDate } from "~/utils/format";
+import { IMAGES } from "~/utils/images";
 
 definePageMeta({
   auth: true,
@@ -26,7 +26,7 @@ const { pagination } = usePagination();
 
 const activeTab = ref("UPCOMING");
 
-const fetchBookings = async () => {
+async function fetchBookings() {
   try {
     loading.value = true;
     const statusMap: Record<string, string> = {
@@ -38,12 +38,14 @@ const fetchBookings = async () => {
       status: statusMap[activeTab.value],
     };
     await memberStore.getBookings(params);
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Error fetching bookings:", error);
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
-};
+}
 
 onMounted(async () => {
   await memberStore.getDashboard();
@@ -146,7 +148,7 @@ function handleLogout(): void {
         :src="IMAGES.LEAF"
         alt="Kora foliage right"
         class="w-full h-full object-cover"
-      />
+      >
     </div>
 
     <div class="relative z-10 max-w-400 mx-auto mb-20 px-4 md:px-8 lg:px-12">
@@ -324,7 +326,11 @@ function handleLogout(): void {
               <p class="text-sm text-stone-400 font-light mb-6">
                 Elevate your experience with an exclusive Kora membership and unlock premium benefits.
               </p>
-              <base-button variant="outline" @click="router.push('/membership')" class="w-full sm:w-auto px-8">
+              <base-button
+                variant="outline"
+                class="w-full sm:w-auto px-8"
+                @click="router.push('/membership')"
+              >
                 Explore Memberships
               </base-button>
             </div>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
 import type { PropType } from "vue";
 import type { Pass } from "~/data/membership";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
-import { useCartStore } from "~/stores/cart";
 import { useNotification } from "~/composables/use-notification";
+import { useCartStore } from "~/stores/cart";
 import { calculatePrice } from "~/utils/helper";
 
 type Guest = {
@@ -24,6 +24,7 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(["close"]);
 const router = useRouter();
 const cartStore = useCartStore();
 const { success } = useNotification();
@@ -51,7 +52,7 @@ const steps = [
   },
   {
     label: "Overview",
-  }
+  },
 ];
 
 function goToStep(step: number) {
@@ -70,18 +71,17 @@ function goToStep(step: number) {
 async function validateCurrentStep(): Promise<boolean> {
   try {
     return true;
-  } catch {
+  }
+  catch {
     return false;
   }
 }
 
-const emit = defineEmits(["close"]);
-
-const close = () => {
+function close() {
   currentStep.value = 0;
   resetGuests();
   emit("close");
-};
+}
 
 const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
 const currentStep = ref(0);
@@ -94,55 +94,56 @@ const currentUser = computed(() => ({
 
 const guests = ref<Guest[]>([]);
 
+function createGuest(): Guest {
+  return {
+    fullName: "",
+    phone: "",
+    email: "",
+  };
+}
 
-const createGuest = (): Guest => ({
-  fullName: "",
-  phone: "",
-  email: "",
-});
-
-const resetGuests = () => {
+function resetGuests() {
   guests.value = [];
-};
+}
 
-const addGuest = () => {
+function addGuest() {
   guests.value.push(createGuest());
-};
+}
 
-const removeGuest = (index: number) => {
+function removeGuest(index: number) {
   if (guests.value.length > 0) {
     guests.value.splice(index, 1);
   }
-};
+}
 
-const previousStep = () => {
+function previousStep() {
   currentStep.value = 0;
-};
-const nextStep = () => {
+}
+function nextStep() {
   currentStep.value = 1;
-};
+}
 
-const addToCart = () => {
+function addToCart() {
   cartStore.addToCart(passItem.value);
   success({ message: "Item added to cart successfully!" });
-};
+}
 
-const proceedToCheckout = () => {
+function proceedToCheckout() {
   cartStore.addToCart(passItem.value);
   close();
   router.push("/checkout");
-};
+}
 </script>
 
 <template>
   <base-modal
     title=""
     :open="isOpen"
-    @close="close"
     :modal-width="700"
     modal-max-height="90vh"
     :dismissible="true"
     class="dark:bg-nirvana-mist"
+    @close="close"
   >
     <div class="p-4 md:p-6">
       <!-- Step Indicators -->
@@ -156,7 +157,11 @@ const proceedToCheckout = () => {
 
       <Transition name="fade" mode="out-in">
         <!-- Step 1: Attendees -->
-        <div v-if="currentStep === 0" key="step1" class="flex flex-col">
+        <div
+          v-if="currentStep === 0"
+          key="step1"
+          class="flex flex-col"
+        >
           <div class="mb-8">
             <h2 class="text-3xl font-serif text-foreground mb-3">
               Who's Joining?
@@ -167,12 +172,12 @@ const proceedToCheckout = () => {
             </p>
           </div>
 
-          <div class="w-full h-px bg-border/40 mb-8"></div>
+          <div class="w-full h-px bg-border/40 mb-8" />
 
           <div class="flex flex-col gap-6 mb-8">
             <base-input
               v-model="currentUser.fullName"
-              :name="`fullName`"
+              name="fullName"
               label="FULL NAME *"
               type="text"
               class="bg-white dark:bg-transparent"
@@ -181,7 +186,7 @@ const proceedToCheckout = () => {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <base-input
                 v-model="currentUser.phone"
-                :name="`phone`"
+                name="phone"
                 label="PHONE NUMBER"
                 type="text"
                 class="bg-white dark:bg-transparent"
@@ -189,7 +194,7 @@ const proceedToCheckout = () => {
 
               <base-input
                 v-model="currentUser.email"
-                :name="`email`"
+                name="email"
                 label="EMAIL ADDRESS"
                 type="email"
                 class="bg-white dark:bg-transparent"
@@ -198,15 +203,21 @@ const proceedToCheckout = () => {
           </div>
 
           <div class="flex flex-col gap-6 mb-8">
-            <div v-for="(guest, index) in guests" :key="index" class="flex flex-col gap-6 relative">
-              <div v-if="index > 0" class="w-full h-1px bg-border/40 mt-2 mb-2"></div>
-              
+            <div
+              v-for="(guest, index) in guests"
+              :key="index"
+              class="flex flex-col gap-6 relative"
+            >
+              <div v-if="index > 0" class="w-full h-1px bg-border/40 mt-2 mb-2" />
+
               <div class="flex items-center justify-between">
-                <h4 v-if="index > 0" class="text-sm font-serif text-[#A08860]">Guest {{ index + 1 }}</h4>
+                <h4 v-if="index > 0" class="text-sm font-serif text-[#A08860]">
+                  Guest {{ index + 1 }}
+                </h4>
                 <button
                   v-if="guests.length > 0"
-                  @click="removeGuest(index)"
                   class="text-xs text-red-800 hover:text-red-600 transition-colors flex items-center gap-1 absolute right-0 top-2"
+                  @click="removeGuest(index)"
                 >
                   <UIcon name="i-lucide-trash-2" class="w-3.5 h-3.5" /> Remove
                 </button>
@@ -239,9 +250,9 @@ const proceedToCheckout = () => {
             </div>
 
             <base-button
-              @click="addGuest"
               variant="outline"
               class="w-full border-[#A08860] text-[#A08860] hover:bg-[#A08860]/10 uppercase text-[11px] tracking-widest font-bold h-12 mt-4"
+              @click="addGuest"
             >
               ADD GUEST +
             </base-button>
@@ -249,8 +260,8 @@ const proceedToCheckout = () => {
 
           <div class="flex justify-end">
             <base-button
-              @click="nextStep"
               class="uppercase text-[11px] tracking-widest font-bold px-10 h-11 rounded-none bg-[#A08860] hover:bg-[#8c7550] text-white"
+              @click="nextStep"
             >
               Next
             </base-button>
@@ -258,7 +269,11 @@ const proceedToCheckout = () => {
         </div>
 
         <!-- Step 2: Overview -->
-        <div v-else key="step2" class="flex flex-col">
+        <div
+          v-else
+          key="step2"
+          class="flex flex-col"
+        >
           <div class="mb-8">
             <h2 class="text-3xl font-serif text-foreground mb-3">
               Review Your Booking
@@ -298,24 +313,28 @@ const proceedToCheckout = () => {
               <span class="font-serif font-bold">Total</span>
               <span class="font-serif font-bold"> Rs. {{ formatPrice(pricing.finalPrice) }}</span>
             </div>
-            <div class="border-b border-border/40 pb-6 mb-8"></div>
+            <div class="border-b border-border/40 pb-6 mb-8" />
           </div>
 
           <div class="flex flex-col sm:flex-row justify-between gap-4 mt-auto">
-            <base-button class="" @click="previousStep" variant="outline">
+            <base-button
+              class=""
+              variant="outline"
+              @click="previousStep"
+            >
               Back
             </base-button>
             <div class="flex flex-col sm:flex-row gap-2">
               <base-button
-                @click="addToCart"
                 class="bg-black dark:bg-black hover:bg-black/70"
+                @click="addToCart"
               >
                 ADD TO CART
               </base-button>
 
               <base-button
-                @click="proceedToCheckout"
                 class="uppercase text-[11px] tracking-widest font-bold px-8 h-11 rounded-none bg-[#A08860] hover:bg-[#8c7550] text-white"
+                @click="proceedToCheckout"
               >
                 PROCEED TO CHECKOUT
               </base-button>

@@ -27,14 +27,14 @@ export const useAuthStore = defineStore("auth", () => {
     is_active?: boolean;
     role_id?: number | null;
     last_login_at?: string | null;
-    membership?: {} | null
+    membership?: {} | null;
   }>({
     id: null,
     email: "",
     name: "",
     phone: "",
     avatar: "",
-    membership: null
+    membership: null,
   });
 
   const permissions = ref<string[]>([]);
@@ -52,7 +52,8 @@ export const useAuthStore = defineStore("auth", () => {
           isAuthenticated.value = true;
         }
       }
-    } catch {
+    }
+    catch {
       // Ignore errors, just proceed without cached data
     }
   };
@@ -71,10 +72,11 @@ export const useAuthStore = defineStore("auth", () => {
           is_active: user.value.is_active,
           role_id: user.value.role_id,
           last_login_at: user.value.last_login_at,
-          membership: user.value.membership
+          membership: user.value.membership,
         }),
       );
-    } catch {
+    }
+    catch {
       // Ignore storage errors
     }
   };
@@ -96,7 +98,8 @@ export const useAuthStore = defineStore("auth", () => {
     permissions.value = [];
     try {
       localStorage.removeItem(USER_DATA_KEY);
-    } catch {
+    }
+    catch {
       // Ignore storage errors
     }
   };
@@ -109,7 +112,8 @@ export const useAuthStore = defineStore("auth", () => {
     try {
       storage.removeTokens();
       clearData();
-    } catch (error: unknown) {
+    }
+    catch (error: unknown) {
       console.error(error, "Logout Error");
     }
   };
@@ -152,11 +156,13 @@ export const useAuthStore = defineStore("auth", () => {
         saveUserToStorage();
         lastAuthCheck.value = now;
       }
-    } catch (error: unknown) {
+    }
+    catch (error: unknown) {
       console.error(error, "Check Auth Error");
       clearAuthData();
       logout();
-    } finally {
+    }
+    finally {
       isCheckingAuth.value = false;
     }
   };
@@ -189,7 +195,8 @@ export const useAuthStore = defineStore("auth", () => {
         // After login, immediately check auth to get user data
         await checkAuth(true);
       }
-    } catch (error: unknown) {
+    }
+    catch (error: unknown) {
       console.error(error, "Login Error");
       throw error;
     }
@@ -211,7 +218,8 @@ export const useAuthStore = defineStore("auth", () => {
         isAuthenticated.value = true;
         await checkAuth(true);
       }
-    } catch (error: unknown) {
+    }
+    catch (error: unknown) {
       console.error(error, "Register Error");
       throw error;
     }
@@ -222,7 +230,8 @@ export const useAuthStore = defineStore("auth", () => {
     const baseURL = config.public.apiBase;
     try {
       window.location.href = `${baseURL}${API_ENDPOINTS.AUTH.GOOGLE_LOGIN}`;
-    } catch (error: unknown) {
+    }
+    catch (error: unknown) {
       throw error;
     }
   };
@@ -236,7 +245,8 @@ export const useAuthStore = defineStore("auth", () => {
         API_ENDPOINTS.AUTH.UPDATE_PASSWORD,
         payload,
       )) as any;
-    } catch (error: unknown) {
+    }
+    catch (error: unknown) {
       console.error(error, "Update Password Error");
       throw error;
     }
@@ -255,7 +265,8 @@ export const useAuthStore = defineStore("auth", () => {
         API_ENDPOINTS.AUTH.UPDATE_PROFILE,
         payload,
       )) as any;
-    } catch (error: unknown) {
+    }
+    catch (error: unknown) {
       console.error(error, "Update Profile Error");
       throw error;
     }
@@ -267,7 +278,8 @@ export const useAuthStore = defineStore("auth", () => {
         API_ENDPOINTS.AUTH.FORGOT_PASSWORD,
         payload,
       )) as any;
-    } catch (error: unknown) {
+    }
+    catch (error: unknown) {
       console.error(error, "Forgot Password Error");
       throw error;
     }
@@ -279,7 +291,8 @@ export const useAuthStore = defineStore("auth", () => {
   }): Promise<void> => {
     try {
       return (await http.post(API_ENDPOINTS.AUTH.VERIFY_OTP, payload)) as any;
-    } catch (error: unknown) {
+    }
+    catch (error: unknown) {
       console.error(error, "Verify OTP Error");
       throw error;
     }
@@ -294,7 +307,8 @@ export const useAuthStore = defineStore("auth", () => {
         API_ENDPOINTS.AUTH.RESET_PASSWORD,
         payload,
       )) as any;
-    } catch (error: unknown) {
+    }
+    catch (error: unknown) {
       console.error(error, "Reset Password Error");
       throw error;
     }

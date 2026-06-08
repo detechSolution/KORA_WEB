@@ -1,8 +1,8 @@
 <script setup lang="ts">
 defineProps<{
-  label: string
-  align?: "left" | "center" | "right"
-}>()
+  label: string;
+  align?: "left" | "center" | "right";
+}>();
 </script>
 
 <template>
@@ -11,7 +11,7 @@ defineProps<{
     :class="{
       'justify-start': align === 'left',
       'justify-center': align === 'center',
-      'justify-end': align === 'right'
+      'justify-end': align === 'right',
     }"
   >
     <!-- Left line -->

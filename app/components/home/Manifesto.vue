@@ -7,7 +7,7 @@
       :src="IMAGES.MANIFESTO_BACKGROUND"
       alt="Manifesto Background Texture"
       class="absolute inset-0 w-full h-full object-cover pointer-events-none mix-blend-lighten select-none z-0"
-    />
+    >
 
     <!-- Subtle gradient to blend borders with adjacent dark sections -->
     <!-- <div
@@ -30,10 +30,10 @@
             :src="IMAGES.MANIFESTO_MEDITATION"
             alt="Meditation sanctuary"
             class="w-full h-full object-cover transition-transform duration-[4000ms] group-hover:scale-105"
-          />
+          >
           <div
             class="absolute ring-1 ring-inset ring-white/10 rounded-2xl pointer-events-none"
-          ></div>
+          />
         </div>
 
         <!-- Card 2: Crystals (Bottom Left) -->
@@ -44,10 +44,10 @@
             :src="IMAGES.MANIFESTO_CRYSTALS"
             alt="Holistic crystals"
             class="w-full h-full object-cover transition-transform duration-[4000ms] group-hover:scale-105"
-          />
+          >
           <div
             class="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-2xl pointer-events-none"
-          ></div>
+          />
         </div>
 
         <!-- Card 3: Wet Stone Spa Mist (Top Right) -->
@@ -58,10 +58,10 @@
             :src="IMAGES.MANIFESTO_STEAM"
             alt="Volcanic stone steam"
             class="w-full h-full object-cover transition-transform duration-[4000ms] group-hover:scale-105"
-          />
+          >
           <div
             class="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-2xl pointer-events-none"
-          ></div>
+          />
         </div>
 
         <!-- Card 4: Singing Bowls (Bottom Right) -->
@@ -72,10 +72,10 @@
             :src="IMAGES.MANIFESTO_SINGING"
             alt="Tibetan singing bowls meditation"
             class="w-full h-full object-cover transition-transform duration-[4000ms] group-hover:scale-105"
-          />
+          >
           <div
             class="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-2xl pointer-events-none"
-          ></div>
+          />
         </div>
       </div>
 
@@ -86,14 +86,13 @@
         <!-- Gold Serif Quotes -->
         <span
           class="font-serif text-primary text-6xl md:text-7xl leading-none select-none mb-4"
-          >”</span
-        >
+        >”</span>
 
         <!-- Manifesto Title -->
         <h2
           class="font-serif text-3xl md:text-4xl lg:text-5xl text-stone-100 font-normal leading-snug tracking-wide mb-6"
         >
-          We Do Not Sell Memberships;<br />
+          We Do Not Sell Memberships;<br>
           We Facilitate <span class="text-primary italic">Metamorphosis</span>
         </h2>
 
@@ -126,7 +125,7 @@
           :src="IMAGES.MANIFESTO_MEDITATION"
           alt="Meditation"
           class="w-full h-full object-cover"
-        />
+        >
       </div>
       <div
         class="aspect-[3/4] rounded-2xl overflow-hidden border border-stone-900 manifesto-card mt-4"
@@ -135,7 +134,7 @@
           :src="IMAGES.MANIFESTO_STEAM"
           alt="Spa Mist"
           class="w-full h-full object-cover"
-        />
+        >
       </div>
       <div
         class="aspect-[3/4] rounded-2xl overflow-hidden border border-stone-900 manifesto-card -mt-4"
@@ -144,7 +143,7 @@
           :src="IMAGES.MANIFESTO_CRYSTALS"
           alt="Crystals"
           class="w-full h-full object-cover"
-        />
+        >
       </div>
       <div
         class="aspect-[3/4] rounded-2xl overflow-hidden border border-stone-900 manifesto-card"
@@ -153,7 +152,7 @@
           :src="IMAGES.MANIFESTO_SINGING"
           alt="Singing Bowls"
           class="w-full h-full object-cover"
-        />
+        >
       </div>
     </div>
   </section>

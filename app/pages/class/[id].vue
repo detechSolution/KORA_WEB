@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
-import { useSessionStore } from "~/stores/session";
 import { createError, useAsyncData } from "#imports";
+import { useSessionStore } from "~/stores/session";
 
 definePageMeta({
   layout: "default",
@@ -13,11 +13,13 @@ const id = String(route.params.id || "");
 
 const { data: session, pending } = await useAsyncData(`session-${id}`, async () => {
   const existing = sessionStore.getSessionById(id);
-  if (existing) return existing;
-  
+  if (existing)
+    return existing;
+
   try {
     return await sessionStore.getSessionDetail(id);
-  } catch (e) {
+  }
+  catch (e) {
     throw createError({ statusCode: 404, statusMessage: "Session not found" });
   }
 });
