@@ -2,7 +2,7 @@ import type { PaymentInfo } from "~/types/payment";
 
 export function redirectToPaymentProvider(payment: PaymentInfo) {
   switch (payment.mode) {
-    case "redirect_url":
+    case "redirect_url": {
       if (!payment.redirectUrl) {
         throw new Error("Payment redirect URL missing");
       }
@@ -10,8 +10,8 @@ export function redirectToPaymentProvider(payment: PaymentInfo) {
       window.location.assign(payment.redirectUrl);
 
       break;
-
-    case "redirect_form":
+    }
+    case "redirect_form": {
       if (!payment.url || !payment.fields) {
         throw new Error("Payment form URL or fields missing");
       }
@@ -31,7 +31,7 @@ export function redirectToPaymentProvider(payment: PaymentInfo) {
       document.body.appendChild(form);
       form.submit();
       break;
-
+    }
     default:
       throw new Error(`Unsupported payment mode: ${payment.mode}`);
   }

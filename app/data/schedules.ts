@@ -25,9 +25,9 @@ function getSundayOfCurrentWeek() {
 const thisSunday = getSundayOfCurrentWeek();
 
 // Helper to easily generate dates relative to this Sunday
-function generateDate(daysOffset: number, time: string) {
-  const targetDate = new Date(thisSunday);
-  targetDate.setDate(targetDate.getDate() + daysOffset);
-  const dateStr = targetDate.toLocaleDateString("en-CA"); // 'YYYY-MM-DD' format (local time instead of UTC)
-  return `${dateStr}T${time}:00`;
-}
+// function generateDate(daysOffset: number, time: string) {
+//   const targetDate = new Date(thisSunday);
+//   targetDate.setDate(targetDate.getDate() + daysOffset);
+//   const dateStr = targetDate.toLocaleDateString("en-CA"); // 'YYYY-MM-DD' format (local time instead of UTC)
+//   return `${dateStr}T${time}:00`;
+// }

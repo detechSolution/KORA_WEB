@@ -15,7 +15,7 @@ type Props = {
   pagination: Pagination;
 };
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   loading: false,
   sessions: () => ({
     data: [] as Session[],
@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<Props>(), {
   pagination: {} as any,
 });
 
-const emit = defineEmits(["loadSessionList"]);
+defineEmits(["loadSessionList"]);
 </script>
 
 <template>

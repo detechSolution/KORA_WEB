@@ -29,6 +29,9 @@ const router = useRouter();
 const cartStore = useCartStore();
 const { success } = useNotification();
 
+const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
+const currentStep = ref(0);
+
 const pricing = computed(() =>
   calculatePrice({
     price: props.pass.price,
@@ -71,8 +74,7 @@ function goToStep(step: number) {
 async function validateCurrentStep(): Promise<boolean> {
   try {
     return true;
-  }
-  catch {
+  } catch {
     return false;
   }
 }
@@ -82,9 +84,6 @@ function close() {
   resetGuests();
   emit("close");
 }
-
-const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
-const currentStep = ref(0);
 
 const currentUser = computed(() => ({
   fullName: userDetail?.fullName || userDetail?.name || "You",
@@ -157,18 +156,14 @@ function proceedToCheckout() {
 
       <Transition name="fade" mode="out-in">
         <!-- Step 1: Attendees -->
-        <div
-          v-if="currentStep === 0"
-          key="step1"
-          class="flex flex-col"
-        >
+        <div v-if="currentStep === 0" key="step1" class="flex flex-col">
           <div class="mb-8">
             <h2 class="text-3xl font-serif text-foreground mb-3">
               Who's Joining?
             </h2>
             <p class="text-xs text-[#A08860]">
-              Add any additional guests joining, or simply click
-              next to continue.
+              Add any additional guests joining, or simply click next to
+              continue.
             </p>
           </div>
 
@@ -208,7 +203,10 @@ function proceedToCheckout() {
               :key="index"
               class="flex flex-col gap-6 relative"
             >
-              <div v-if="index > 0" class="w-full h-1px bg-border/40 mt-2 mb-2" />
+              <div
+                v-if="index > 0"
+                class="w-full h-1px bg-border/40 mt-2 mb-2"
+              />
 
               <div class="flex items-center justify-between">
                 <h4 v-if="index > 0" class="text-sm font-serif text-[#A08860]">
@@ -269,11 +267,7 @@ function proceedToCheckout() {
         </div>
 
         <!-- Step 2: Overview -->
-        <div
-          v-else
-          key="step2"
-          class="flex flex-col"
-        >
+        <div v-else key="step2" class="flex flex-col">
           <div class="mb-8">
             <h2 class="text-3xl font-serif text-foreground mb-3">
               Review Your Booking
@@ -298,10 +292,16 @@ function proceedToCheckout() {
               <div
                 class="flex justify-between items-center text-sm text-foreground"
               >
-                <span>{{ pass.name }} (Rs. {{ pass.price }} × {{ guests.length + 1 }})</span>
+                <span
+                  >{{ pass.name }} (Rs. {{ pass.price }} ×
+                  {{ guests.length + 1 }})</span
+                >
                 <span>Rs. {{ formatPrice(pricing.subtotal) }}</span>
               </div>
-              <div v-if="pass.discountTag" class="flex justify-between items-center text-sm text-muted-foreground">
+              <div
+                v-if="pass.discountTag"
+                class="flex justify-between items-center text-sm text-muted-foreground"
+              >
                 <span>Discount</span>
                 <span>{{ pass.discountTag }}</span>
               </div>
@@ -311,17 +311,15 @@ function proceedToCheckout() {
               class="flex justify-between items-center border-t border-border/40 pt-4 text-foreground"
             >
               <span class="font-serif font-bold">Total</span>
-              <span class="font-serif font-bold"> Rs. {{ formatPrice(pricing.finalPrice) }}</span>
+              <span class="font-serif font-bold">
+                Rs. {{ formatPrice(pricing.finalPrice) }}</span
+              >
             </div>
             <div class="border-b border-border/40 pb-6 mb-8" />
           </div>
 
           <div class="flex flex-col sm:flex-row justify-between gap-4 mt-auto">
-            <base-button
-              class=""
-              variant="outline"
-              @click="previousStep"
-            >
+            <base-button class="" variant="outline" @click="previousStep">
               Back
             </base-button>
             <div class="flex flex-col sm:flex-row gap-2">

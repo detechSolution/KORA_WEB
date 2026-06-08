@@ -13,9 +13,6 @@ useSeoMeta({
   description:
     "At Kora, we’re building more than a workplace. We’re creating a team driven by creativity, craftsmanship, and meaningful experiences.",
 });
-
-const authStore = useAuthStore();
-const router = useRouter();
 </script>
 
 <template>

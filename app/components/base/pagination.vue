@@ -15,15 +15,15 @@ const emit = defineEmits(["update:page"]);
 
 const totalPages = computed(() => Math.ceil(props.total / props.itemsPerPage));
 
-const rangeStart = computed(() => {
-  if (props.total === 0)
-    return 0;
-  return (props.page - 1) * props.itemsPerPage + 1;
-});
+// const rangeStart = computed(() => {
+//   if (props.total === 0)
+//     return 0;
+//   return (props.page - 1) * props.itemsPerPage + 1;
+// });
 
-const rangeEnd = computed(() =>
-  Math.min(props.page * props.itemsPerPage, props.total),
-);
+// const rangeEnd = computed(() =>
+//   Math.min(props.page * props.itemsPerPage, props.total),
+// );
 
 function onPageChange(value: number): void {
   emit("update:page", value);

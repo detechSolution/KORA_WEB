@@ -17,16 +17,16 @@ useSeoMeta({
     "Experience true relaxation with our curated spa offerings including massages and therapies.",
 });
 
-const isPlayingVideo = ref(false);
-const isBookingModalOpen = ref(false);
-const loading = ref(false);
-
-const spa = computed(() => spaStore.spa);
 const router = useRouter();
 const authStore = useAuthStore();
 const spaStore = useSpaStore();
 const { error: showError } = useNotification();
+
+const spa = computed(() => spaStore.spa);
+
 const selectedSpa = ref(null);
+const isBookingModalOpen = ref(false);
+const loading = ref(false);
 
 async function getSpaLists() {
   try {

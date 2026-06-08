@@ -13,7 +13,6 @@ definePageMeta({
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
-const http = getHttp();
 const storage = useStorage();
 
 const loading = ref(true);

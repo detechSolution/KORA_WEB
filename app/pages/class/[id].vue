@@ -19,7 +19,8 @@ const { data: session, pending } = await useAsyncData(`session-${id}`, async () 
   try {
     return await sessionStore.getSessionDetail(id);
   }
-  catch (e) {
+  catch (error) {
+    console.error(`Failed to fetch session detail for ${id}:`, error);
     throw createError({ statusCode: 404, statusMessage: "Session not found" });
   }
 });

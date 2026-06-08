@@ -17,6 +17,7 @@ export const useNewsletterStore = defineStore("newsletter", () => {
       return response.data;
     }
     catch (error) {
+      console.error("Failed to create newsletter", error);
       throw error;
     }
   };

@@ -115,10 +115,10 @@ async function handleRegister(): Promise<void> {
       "Something went wrong. Please try again.",
     );
     if (message !== "Something went wrong. Please try again.") {
-      if (isApiError(error) && error.data.code == "conflict.this_phone_number_is_already_linked_to_another_user") {
+      if (isApiError(error) && error.data.code === "conflict.this_phone_number_is_already_linked_to_another_user") {
         setApiError("phone", message);
       }
-      if (isApiError(error) && error.data.code == "conflict.this_email_is_already_linked_to_another_phone_number") {
+      if (isApiError(error) && error.data.code === "conflict.this_email_is_already_linked_to_another_phone_number") {
         setApiError("email", message);
       }
       formRef.value?.validate();

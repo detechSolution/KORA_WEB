@@ -25,6 +25,7 @@ onMounted(async () => {
     paymentStatus.value = "paid";
   }
   catch (error) {
+    console.error(error);
     paymentStatus.value = "failed";
   }
   finally {

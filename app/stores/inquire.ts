@@ -15,7 +15,9 @@ export const useInquireStore = defineStore("inquire", () => {
         inquire,
       );
       return response.data;
-    } catch (error) {
+    }
+    catch (error) {
+      console.error("Failed to create inquire", error);
       throw error;
     }
   };
