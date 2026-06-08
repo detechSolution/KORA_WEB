@@ -210,7 +210,7 @@ onMounted(() => {
     }
   }
   catch (error) {
-    console.log(error);
+    console.error(error);
   }
 
   if (selectedSpaModel.value) {

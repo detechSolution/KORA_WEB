@@ -85,11 +85,12 @@ function goBack() {
 async function handlePayNowClick() {
   if (step.value === 1) {
     step.value = 2;
-  } else {
+  }
+  else {
     try {
       const payload = {
         provider: paymentMethod.value,
-        items: cartItems.value.map((item) => ({
+        items: cartItems.value.map(item => ({
           itemType: item.itemType,
 
           referenceId: item.referenceId,
@@ -112,7 +113,8 @@ async function handlePayNowClick() {
       };
 
       await payNow(payload);
-    } catch (error) {
+    }
+    catch (error) {
       console.error("Payment failed:", error);
     }
   }
@@ -169,10 +171,10 @@ onUnmounted(() => {
                 <!-- Image / Icon -->
                 <div
                   v-if="
-                    item.type === 'class' ||
-                    item.type === 'event' ||
-                    item.type === 'workshop' ||
-                    item.type === 'spa'
+                    item.type === 'class'
+                      || item.type === 'event'
+                      || item.type === 'workshop'
+                      || item.type === 'spa'
                   "
                   class="w-20 h-20 bg-muted shrink-0 overflow-hidden relative"
                 >
@@ -181,7 +183,7 @@ onUnmounted(() => {
                     :src="item.image"
                     :alt="item.title"
                     class="w-full h-full object-cover"
-                  />
+                  >
                 </div>
                 <div
                   v-else-if="item.itemType === 'pass'"
@@ -202,39 +204,31 @@ onUnmounted(() => {
                     <div class="flex flex-wrap items-start gap-2">
                       <h4 class="text-sm font-serif text-foreground">
                         {{ item.title }}
-                        <br />
+                        <br>
                         <span v-if="item.itemType !== 'membership'">
-                          (<span class="text-xl"
-                            >{{ item.visitors.length + 1 }} x
-                            {{ formatPrice(item.price) }}</span
-                          >)
+                          (<span class="text-xl">{{ item.visitors.length + 1 }} x
+                            {{ formatPrice(item.price) }}</span>)
                         </span>
                       </h4>
                       <span
                         v-if="item.itemType === 'session'"
                         class="text-[8px] px-1.5 py-0.5 bg-purple-900/40 text-purple-300 font-medium tracking-wide"
-                        >Session</span
-                      >
+                      >Session</span>
                       <span
                         v-if="item.itemType === 'spa'"
                         class="text-[8px] px-1.5 py-0.5 bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
-                        >Spa</span
-                      >
+                      >Spa</span>
                       <span
                         v-if="item.itemType === 'pass'"
                         class="text-[8px] px-1.5 py-0.5 bg-blue-900/40 text-blue-400 font-medium tracking-wide"
-                        >Pass</span
-                      >
+                      >Pass</span>
                       <span
                         v-if="item.itemType === 'membership'"
                         class="text-[8px] px-1.5 py-0.5 bg-[#B59A6D] text-white font-medium tracking-wide"
-                        >Membership</span
-                      >
+                      >Membership</span>
                     </div>
                     <div>
-                      <span class="text-sm font-serif text-[#B59A6D]"
-                        >Rs. {{ formatPrice(item.finalPrice) }}</span
-                      >
+                      <span class="text-sm font-serif text-[#B59A6D]">Rs. {{ formatPrice(item.finalPrice) }}</span>
                     </div>
                   </div>
 
@@ -282,17 +276,19 @@ onUnmounted(() => {
               <div class="flex items-center justify-between">
                 <span
                   class="font-serif text-xl md:text-2xl text-foreground font-bold"
-                  >Total</span
-                >
+                >Total</span>
                 <span
                   class="font-serif text-xl md:text-2xl text-[#B59A6D] font-bold"
-                  >{{ formatPrice(subtotal) }}</span
-                >
+                >{{ formatPrice(subtotal) }}</span>
               </div>
             </div>
           </div>
           <!-- Step 2: Payment Method -->
-          <div v-else key="step2" class="flex flex-col w-full">
+          <div
+            v-else
+            key="step2"
+            class="flex flex-col w-full"
+          >
             <div
               class="dark:bg-[#212121] border border-border p-6 flex items-center gap-3"
             >
@@ -328,14 +324,12 @@ onUnmounted(() => {
                     type="radio"
                     value="esewa"
                     class="hidden"
-                  />
+                  >
                   <!-- eSewa placeholder logo -->
                   <div
                     class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
                   >
-                    <span class="text-[#60B54F] font-bold text-lg leading-none"
-                      >eSewa</span
-                    >
+                    <span class="text-[#60B54F] font-bold text-lg leading-none">eSewa</span>
                   </div>
                 </label>
 
@@ -360,14 +354,12 @@ onUnmounted(() => {
                     type="radio"
                     value="fonepay"
                     class="hidden"
-                  />
+                  >
                   <!-- Fonepay placeholder logo -->
                   <div
                     class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
                   >
-                    <span class="text-[#E31E24] font-bold text-lg leading-none"
-                      >fonepay</span
-                    >
+                    <span class="text-[#E31E24] font-bold text-lg leading-none">fonepay</span>
                   </div>
                 </label>
 
@@ -392,14 +384,12 @@ onUnmounted(() => {
                     type="radio"
                     value="stripe"
                     class="hidden"
-                  />
+                  >
                   <!-- Stripe placeholder logo -->
                   <div
                     class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
                   >
-                    <span class="text-[#635BFF] font-bold text-lg leading-none"
-                      >stripe</span
-                    >
+                    <span class="text-[#635BFF] font-bold text-lg leading-none">stripe</span>
                   </div>
                 </label>
               </div>
@@ -454,8 +444,8 @@ onUnmounted(() => {
                       placeholder="e.g KORA20"
                       type="text"
                       :disabled="
-                        cartStore.isApplyingPromo ||
-                        cartStore.promoCode !== null
+                        cartStore.isApplyingPromo
+                          || cartStore.promoCode !== null
                       "
                       @keyup.enter="handleApplyPromo"
                     />
@@ -508,9 +498,7 @@ onUnmounted(() => {
                 >
                   <h2>
                     Promo Discount
-                    <span v-if="cartStore.promoCode"
-                      >({{ cartStore.promoCode }})</span
-                    >
+                    <span v-if="cartStore.promoCode">({{ cartStore.promoCode }})</span>
                   </h2>
                   <p>- Rs. {{ formatPrice(cartStore.discountAmount) }}</p>
                 </div>
@@ -518,7 +506,9 @@ onUnmounted(() => {
                 <div
                   class="text-sm text-secondary dark:text-white font-normal flex justify-between pt-1"
                 >
-                  <h2 class="font-bold">Total</h2>
+                  <h2 class="font-bold">
+                    Total
+                  </h2>
                   <p class="font-bold text-primary">
                     Rs. {{ formatPrice(totalPrice) }}
                   </p>

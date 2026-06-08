@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { getHttp } from "~/composables/use-api";
 import { useStorage } from "~/composables/use-storage";
 import { useAuthStore } from "~/stores/auth";
 

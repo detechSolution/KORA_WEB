@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { useRouter } from "vue-router";
 import { ICONS } from "~/config/icons";
-import { useAuthStore } from "~/stores/auth";
 import { IMAGES } from "~/utils/images";
 
 definePageMeta({

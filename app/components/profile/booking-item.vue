@@ -24,8 +24,6 @@ const badgeClass = computed(() => {
 });
 
 function handleViewDetail(booking: Booking) {
-  // Implement navigation to detail page or modal
-  console.log("View details for booking:", booking);
   if (booking.itemType === "spa") {
     router.push({ path: `/spa` });
   }

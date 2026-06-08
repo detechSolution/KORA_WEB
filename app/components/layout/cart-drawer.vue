@@ -2,7 +2,7 @@
 import { computed, ref } from "vue";
 import { useCartStore } from "~/stores/cart";
 
-const props = defineProps({
+defineProps({
   isOpen: {
     type: Boolean,
     required: true,

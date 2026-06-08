@@ -31,6 +31,7 @@ const { success } = useNotification();
 
 const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
 const currentStep = ref(0);
+const guests = ref<Guest[]>([]);
 
 const pricing = computed(() =>
   calculatePrice({
@@ -74,7 +75,8 @@ function goToStep(step: number) {
 async function validateCurrentStep(): Promise<boolean> {
   try {
     return true;
-  } catch {
+  }
+  catch {
     return false;
   }
 }
@@ -90,8 +92,6 @@ const currentUser = computed(() => ({
   phone: userDetail?.phone || "",
   email: userDetail?.email || "",
 }));
-
-const guests = ref<Guest[]>([]);
 
 function createGuest(): Guest {
   return {
@@ -156,7 +156,11 @@ function proceedToCheckout() {
 
       <Transition name="fade" mode="out-in">
         <!-- Step 1: Attendees -->
-        <div v-if="currentStep === 0" key="step1" class="flex flex-col">
+        <div
+          v-if="currentStep === 0"
+          key="step1"
+          class="flex flex-col"
+        >
           <div class="mb-8">
             <h2 class="text-3xl font-serif text-foreground mb-3">
               Who's Joining?
@@ -267,7 +271,11 @@ function proceedToCheckout() {
         </div>
 
         <!-- Step 2: Overview -->
-        <div v-else key="step2" class="flex flex-col">
+        <div
+          v-else
+          key="step2"
+          class="flex flex-col"
+        >
           <div class="mb-8">
             <h2 class="text-3xl font-serif text-foreground mb-3">
               Review Your Booking
@@ -292,10 +300,8 @@ function proceedToCheckout() {
               <div
                 class="flex justify-between items-center text-sm text-foreground"
               >
-                <span
-                  >{{ pass.name }} (Rs. {{ pass.price }} ×
-                  {{ guests.length + 1 }})</span
-                >
+                <span>{{ pass.name }} (Rs. {{ pass.price }} ×
+                  {{ guests.length + 1 }})</span>
                 <span>Rs. {{ formatPrice(pricing.subtotal) }}</span>
               </div>
               <div
@@ -312,14 +318,17 @@ function proceedToCheckout() {
             >
               <span class="font-serif font-bold">Total</span>
               <span class="font-serif font-bold">
-                Rs. {{ formatPrice(pricing.finalPrice) }}</span
-              >
+                Rs. {{ formatPrice(pricing.finalPrice) }}</span>
             </div>
             <div class="border-b border-border/40 pb-6 mb-8" />
           </div>
 
           <div class="flex flex-col sm:flex-row justify-between gap-4 mt-auto">
-            <base-button class="" variant="outline" @click="previousStep">
+            <base-button
+              class=""
+              variant="outline"
+              @click="previousStep"
+            >
               Back
             </base-button>
             <div class="flex flex-col sm:flex-row gap-2">

@@ -2,7 +2,6 @@
 import type { Booking } from "~/data/profile";
 import { computed, onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import { usePagination } from "~/composables/use-pagination";
 import { useAuthStore } from "~/stores/auth";
 import { useMemberStore } from "~/stores/member";
 import { formatDate } from "~/utils/format";
@@ -44,9 +43,11 @@ async function fetchBookings() {
       status: statusMap[activeTab.value],
     };
     await memberStore.getBookings(params);
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Error fetching bookings:", error);
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
 }
@@ -61,9 +62,9 @@ const user = computed(() => {
     isMember: membershipData.value?.isActive || false,
     membership: {
       hasPlan:
-        !!membershipData.value &&
-        (!!membershipData.value.planId ||
-          !!(membershipData.value as any).membershipPlanId),
+        !!membershipData.value
+        && (!!membershipData.value.planId
+          || !!(membershipData.value as any).membershipPlanId),
       name: membershipData.value?.planName || "",
       subtitle: "",
       period: membershipData.value?.frequencyLabel || "",
@@ -147,7 +148,7 @@ onMounted(async () => {
         :src="IMAGES.LEAF"
         alt="Kora foliage right"
         class="w-full h-full object-cover"
-      />
+      >
     </div>
 
     <div class="relative z-10 max-w-400 mx-auto mb-20 px-4 md:px-8 lg:px-12">

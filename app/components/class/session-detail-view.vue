@@ -201,10 +201,12 @@ function handleOpenBookingModal() {
               >
                 Seats Left
               </span>
-              <span class="text-primary text-xs">{{ session.remainingSpots }} / {{ session.capacity }}</span>
+              <span class="text-primary text-xs">
+                {{ session.remainingSpots }} / {{ session.capacity }}
+              </span>
             </div>
             <UProgress
-              v-model="session.bookedCount"
+              :model-value="session.bookedCount"
               :max="session.capacity"
               class="mt-2"
             />
