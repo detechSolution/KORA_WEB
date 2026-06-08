@@ -17,7 +17,7 @@ export default defineNuxtConfig({
   },
   compatibilityDate: "2025-07-15",
   devtools: { enabled: false },
-  modules: ["@nuxt/ui", "@pinia/nuxt"],
+  modules: ["@nuxt/ui", "@pinia/nuxt", "@nuxt/eslint"],
   css: ["~/assets/css/main.css"],
 
   icon: {
@@ -28,6 +28,12 @@ export default defineNuxtConfig({
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE_URL || "",
       apiTimeout: process.env.NUXT_PUBLIC_API_TIMEOUT || "",
+    },
+  },
+
+  eslint: {
+    config: {
+      standalone: false,
     },
   },
 
