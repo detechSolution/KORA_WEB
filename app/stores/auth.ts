@@ -27,7 +27,7 @@ export const useAuthStore = defineStore("auth", () => {
     is_active?: boolean;
     role_id?: number | null;
     last_login_at?: string | null;
-    membership?: {} | null;
+    membership?: Record<string, unknown> | null;
   }>({
     id: null,
     email: "",
@@ -151,7 +151,8 @@ export const useAuthStore = defineStore("auth", () => {
         // user.value.is_active = u.is_active as boolean | undefined;
         user.value.role_id = (u?.adminRole?.id as number | null) ?? null;
         // user.value.last_login_at = (u.last_login_at as string | null) ?? null;
-        user.value.membership = (u.membership as {} | null) ?? null;
+        user.value.membership
+          = (u.membership as Record<string, unknown> | null) ?? null;
         permissions.value = Array.isArray(u?.permissions) ? u.permissions : [];
         saveUserToStorage();
         lastAuthCheck.value = now;
@@ -228,12 +229,8 @@ export const useAuthStore = defineStore("auth", () => {
   const loginWithGoogle = async () => {
     const config = useRuntimeConfig();
     const baseURL = config.public.apiBase;
-    try {
-      window.location.href = `${baseURL}${API_ENDPOINTS.AUTH.GOOGLE_LOGIN}`;
-    }
-    catch (error: unknown) {
-      throw error;
-    }
+
+    window.location.href = `${baseURL}${API_ENDPOINTS.AUTH.GOOGLE_LOGIN}`;
   };
 
   const updatePassword = async (payload: {
