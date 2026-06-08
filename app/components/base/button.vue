@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import type { RouteLocationAsPathGeneric, RouteLocationAsRelativeGeneric } from "vue-router";
+import type {
+  RouteLocationAsPathGeneric,
+  RouteLocationAsRelativeGeneric,
+} from "vue-router";
 
 import { computed } from "vue";
 
@@ -12,7 +15,7 @@ type Props = {
   to?: string | RouteLocationAsRelativeGeneric | RouteLocationAsPathGeneric;
   type?: "button" | "submit" | "reset";
   size?: "sm" | "md" | "lg" | "xl";
-  color?: "primary";
+  color?: "primary" | "error";
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -32,9 +35,9 @@ const getStyles = computed(() => {
   if (props.color === "primary") {
     switch (props.variant) {
       case "solid":
-        return "bg-secondary dark:bg-secondary hover:bg-secondary/75 active:bg-secondary/75 disabled:bg-secondary disabled:dark:bg-secondary text-white";
+        return "bg-primary-700 dark:bg-primary-700 hover:bg-primary-700/75 active:bg-primary-700/75 disabled:bg-primary-700 disabled:dark:bg-primary-700 text-white";
       case "outline":
-        return "border ring-0 text-secondary bg-transparent border-stone-300 hover:bg-stone-50 disabled:bg-transparent";
+        return "border border-primary-700 dark:border-primary-700 text-primary-700 dark:text-primary-700 bg-[#C9A55A1A] dark:bg-transparent hover:bg-[#C9A55A1A]/50 dark:hover:text-primary-700 disabled:bg-transparent";
       case "ghost":
         return "bg-transparent hover:bg-primary/10 disabled:bg-transparent";
       case "link":
@@ -59,7 +62,10 @@ const getStyles = computed(() => {
     :size="size"
     :variant="variant"
     :color="color"
-    :class="`cursor-pointer ${getStyles} flex items-center justify-center font-semibold`"
+    :class="`cursor-pointer ${getStyles} flex items-center justify-center font-semibold px-8 text-xs tracking-widest uppercase`"
+    :ui="{
+      base: 'rounded-xs h-[44px]',
+    }"
   >
     <slot />
   </UButton>
