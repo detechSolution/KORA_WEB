@@ -28,7 +28,7 @@ export type Session = {
   isBookable: boolean;
 };
 
-export type CreatedBy = {
+type CreatedBy = {
   id: number;
   fullName: string;
   email: string;
