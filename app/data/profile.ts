@@ -1,4 +1,4 @@
-export type BookingType = "Session" | "Spa" | "Pass";
+type BookingType = "Session" | "Spa" | "Pass";
 
 export type Booking = {
   id: string;

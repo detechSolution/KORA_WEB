@@ -2,7 +2,7 @@
  * Generic API list response shape used by most getList endpoints.
  * Use this type when typing store state or API responses instead of `any`.
  */
-export type ApiListResponse<T = unknown> = {
+type ApiListResponse<T = unknown> = {
   data: T[];
   total_count?: number;
 };

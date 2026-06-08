@@ -10,7 +10,7 @@ export type MembershipPlans = {
   options: Option[];
 };
 
-export type Option = {
+type Option = {
   id: number;
   createdAt: Date;
   updatedAt: Date;
