@@ -4,7 +4,7 @@ export type PaymentProvider
     | "khalti"
     | "fonepay";
 
-export type PaymentMode
+type PaymentMode
   = | "redirect_url"
     | "sdk"
     | "redirect_form"

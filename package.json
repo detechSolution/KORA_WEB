@@ -11,12 +11,10 @@
     "postinstall": "nuxt prepare",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "prepare": "husky"
+    "prepare": "husky",
+    "knip": "knip"
   },
   "dependencies": {
-    "@fullcalendar/core": "^6.1.20",
-    "@fullcalendar/timegrid": "^6.1.20",
-    "@fullcalendar/vue3": "^6.1.20",
     "@nuxt/eslint": "^1.15.2",
     "@nuxt/ui": "^4.7.1",
     "@pinia/nuxt": "^0.11.3",
@@ -34,6 +32,7 @@
     "@types/node": "^25.9.1",
     "eslint-plugin-format": "^2.0.1",
     "husky": "^9.1.7",
+    "knip": "^6.16.1",
     "lint-staged": "^17.0.7"
   },
   "lint-staged": {

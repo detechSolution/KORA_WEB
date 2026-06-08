@@ -1,4 +1,4 @@
-export type MemberProfile = {
+type MemberProfile = {
   memberId: number;
   userId: number;
   fullName: string;
@@ -11,7 +11,7 @@ export type MemberProfile = {
   isActive: boolean;
 };
 
-export type MemberSummary = {
+type MemberSummary = {
   totalBookings: number;
   upcomingBookings: number;
   pastBookings: number;
@@ -19,7 +19,7 @@ export type MemberSummary = {
   activePasses: number;
 };
 
-export type MemberMembership = {
+type MemberMembership = {
   isActive: boolean;
   planId: number;
   planName: string;
@@ -34,7 +34,7 @@ export type MemberMembership = {
   subscriptionEndDate: string;
 };
 
-export type MemberPass = {
+type MemberPass = {
   id: number;
   passId: number;
   name: string;
@@ -54,14 +54,14 @@ export type MemberDashboardResponse = {
   passes: MemberPass[];
 };
 
-export type MemberBookingVisitor = {
+type MemberBookingVisitor = {
   id: number;
   fullName: string;
   phoneNumber: string | null;
   email: string | null;
 };
 
-export type MemberBooking = {
+type MemberBooking = {
   id: number;
   bookingCode: string;
   itemName: string;

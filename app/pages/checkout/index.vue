@@ -2,7 +2,6 @@
 import type { PaymentProvider } from "~/types/payment";
 import { computed, onUnmounted, ref } from "vue";
 import { usePayment } from "~/composables/use-payment";
-// import { cartItems } from "~/data/cart";
 import { useCartStore } from "~/stores/cart";
 import { calculatePrice } from "~/utils/helper";
 

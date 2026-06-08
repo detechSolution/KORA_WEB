@@ -8,14 +8,14 @@ export type Spa = {
   availableDays: string[];
 };
 
-export type SpaSubType = {
+type SpaSubType = {
   id: number;
   name: string;
   description: string;
   prices: SpaPrice[];
 };
 
-export type SpaPrice = {
+type SpaPrice = {
   id: string;
   duration: number;
   timeUnit: string;

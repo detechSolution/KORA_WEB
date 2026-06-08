@@ -1,0 +1,9 @@
+{
+  "entry": ["app.vue", "src/main.ts", "nuxt.config.ts"],
+  "project": [
+    "components/**/*",
+    "pages/**/*",
+    "composables/**/*",
+    "stores/**/*"
+  ]
+}

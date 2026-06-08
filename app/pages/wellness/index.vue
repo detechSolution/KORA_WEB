@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import ClassHeader from "~/components/class/ClassHeader.vue";
 import { wellnessOfferings } from "~/data/wellness";
 import { IMAGES } from "~/utils/images";
 

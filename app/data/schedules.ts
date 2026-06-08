@@ -1,4 +1,4 @@
-export type ScheduleType = "Event" | "Class" | "Workshop";
+type ScheduleType = "Event" | "Class" | "Workshop";
 
 export type ScheduleEvent = {
   id: string;
