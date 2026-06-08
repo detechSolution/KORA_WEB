@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useSlots } from "vue";
+
 type Props = {
   label?: string;
   title: string;
@@ -9,6 +10,7 @@ defineProps<Props>();
 
 const slots = useSlots();
 </script>
+
 <template>
   <div
     class="bg-background dark:bg-secondary-900 relative w-full pb-6 select-none"

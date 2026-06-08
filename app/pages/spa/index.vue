@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, watch } from "vue";
-import { IMAGES } from "~/utils/images";
-import { useSpaStore } from "~/stores/spa";
-import { useAuthStore } from "~/stores/auth";
-import { getApiErrorMessage } from "~/utils/error";
-import { useNotification } from "~/composables/use-notification";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import { useNotification } from "~/composables/use-notification";
+import { useAuthStore } from "~/stores/auth";
+import { useSpaStore } from "~/stores/spa";
+import { getApiErrorMessage } from "~/utils/error";
+import { IMAGES } from "~/utils/images";
 
 definePageMeta({
   layout: "default",
@@ -17,46 +17,50 @@ useSeoMeta({
     "Experience true relaxation with our curated spa offerings including massages and therapies.",
 });
 
-const isPlayingVideo = ref(false);
-const isBookingModalOpen = ref(false);
-const loading = ref(false);
-
-const spa = computed(() => spaStore.spa);
 const router = useRouter();
 const authStore = useAuthStore();
 const spaStore = useSpaStore();
 const { error: showError } = useNotification();
+
+const spa = computed(() => spaStore.spa);
+
 const selectedSpa = ref(null);
+const isBookingModalOpen = ref(false);
+const loading = ref(false);
 
 async function getSpaLists() {
   try {
     loading.value = true;
     await spaStore.getSpas();
-  } catch (error: unknown) {
+  }
+  catch (error: unknown) {
     showError({
       message: getApiErrorMessage(error, "Failed to fetch spa lists"),
     });
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
 }
 
-const handleBookingClick = (spa: any) => {
+function handleBookingClick(spa: any) {
   if (authStore.isAuthenticated) {
     selectedSpa.value = spa;
     isBookingModalOpen.value = true;
-  } else {
+  }
+  else {
     router.push("/login");
   }
-};
+}
 
-const handleOpenBookingModal = () => {
+function handleOpenBookingModal() {
   if (authStore.isAuthenticated) {
     isBookingModalOpen.value = true;
-  } else {
+  }
+  else {
     router.push("/login");
   }
-};
+}
 
 onMounted(() => {
   getSpaLists();
@@ -75,7 +79,7 @@ onMounted(() => {
         :src="IMAGES.LEAF"
         alt="Kora foliage decoration"
         class="w-full h-full object-cover"
-      />
+      >
     </div>
 
     <div class="relative z-10 max-w-400 mx-auto py-12">
@@ -84,9 +88,9 @@ onMounted(() => {
         <div>
           <ClassHeader title="Spa Sanctuary" />
           <div
-            v-html="spa?.description"
             class="spa-description max-w-400 px-4 md:px-8 lg:px-12 py-10 md:py-7"
-          ></div>
+            v-html="spa?.description"
+          />
           <div class="max-w-400 px-4 md:px-8 lg:px-12 py-10 mb-5 md:py-7">
             <base-section-label
               label="Available Offerings"
@@ -123,7 +127,7 @@ onMounted(() => {
                           class="h-3.5 w-3.5 text-primary"
                         />
                         <span class="text-primary text-sm">{{
-                          price.duration + " " + price.timeUnit
+                          `${price.duration} ${price.timeUnit}`
                         }}</span>
                       </div>
 
@@ -134,6 +138,8 @@ onMounted(() => {
 
                     <div class="mt-3 flex items-center justify-between">
                       <base-button
+                        variant="link"
+                        class="text-primary p-0"
                         @click="
                           handleBookingClick({
                             ...price,
@@ -142,8 +148,6 @@ onMounted(() => {
                             image: spa?.bannerUrl,
                           })
                         "
-                        variant="link"
-                        class="text-primary p-0"
                       >
                         Tap to Book
                         <UIcon
@@ -162,7 +166,9 @@ onMounted(() => {
         <!-- Right Column (Sidebar) -->
         <aside class="sticky lg:top-28 lg:self-start px-4 md:px-8 lg:px-0">
           <div class="border border-border bg-card px-5 py-5 md:px-6">
-            <p class="text-[10px] uppercase text-primary mb-3">SPA MENU</p>
+            <p class="text-[10px] uppercase text-primary mb-3">
+              SPA MENU
+            </p>
             <h3
               class="font-serif text-3xl text-foreground dark:text-white mb-8"
             >
@@ -174,8 +180,7 @@ onMounted(() => {
                 <div class="flex justify-between items-center gap-4">
                   <span
                     class="font-serif text-foreground dark:text-white text-base"
-                    >{{ subType.name }}</span
-                  >
+                  >{{ subType.name }}</span>
                   <div
                     class="text-right text-[10px] text-secondary-500 font-normal dark:text-white/70 space-y-1 mt-1"
                   >
@@ -236,9 +241,9 @@ onMounted(() => {
 
     <SpaBookingModal
       v-if="isBookingModalOpen"
+      v-model:selected-spa="selectedSpa"
       :is-open="isBookingModalOpen"
       @close="isBookingModalOpen = false"
-      v-model:selected-spa="selectedSpa"
     />
   </section>
 </template>

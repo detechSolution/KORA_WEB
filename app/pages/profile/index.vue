@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
-import { IMAGES } from "~/utils/images";
+import type { Booking } from "~/data/profile";
+import { computed, onMounted, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import { useAuthStore } from "~/stores/auth";
 import { useMemberStore } from "~/stores/member";
-import { useRouter } from "vue-router";
-import { formatDate, formatTime } from "~/utils/format";
-import { usePagination } from "~/composables/use-pagination";
-import type { Booking } from "~/data/profile";
+import { formatDate } from "~/utils/format";
+import { IMAGES } from "~/utils/images";
 
 definePageMeta({
   auth: true,
@@ -18,15 +17,21 @@ useSeoMeta({
   description: "View and manage your Kora profile and bookings.",
 });
 
-const loading = ref(true);
+const router = useRouter();
 const authStore = useAuthStore();
 const memberStore = useMemberStore();
-const router = useRouter();
-const { pagination } = usePagination();
 
+const loading = ref(true);
 const activeTab = ref("UPCOMING");
+const isSignOutModalOpen = ref(false);
+const loadingSignOut = ref(false);
 
-const fetchBookings = async () => {
+const dashboardData = computed(() => memberStore.dashboardData);
+const profileData = computed(() => dashboardData.value?.profile);
+const summaryData = computed(() => dashboardData.value?.summary);
+const membershipData = computed(() => dashboardData.value?.membership);
+
+async function fetchBookings() {
   try {
     loading.value = true;
     const statusMap: Record<string, string> = {
@@ -38,26 +43,14 @@ const fetchBookings = async () => {
       status: statusMap[activeTab.value],
     };
     await memberStore.getBookings(params);
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Error fetching bookings:", error);
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
-};
-
-onMounted(async () => {
-  await memberStore.getDashboard();
-  await fetchBookings();
-});
-
-watch(activeTab, async () => {
-  await fetchBookings();
-});
-
-const dashboardData = computed(() => memberStore.dashboardData);
-const profileData = computed(() => dashboardData.value?.profile);
-const summaryData = computed(() => dashboardData.value?.summary);
-const membershipData = computed(() => dashboardData.value?.membership);
+}
 
 const user = computed(() => {
   return {
@@ -68,7 +61,10 @@ const user = computed(() => {
     memberSince: formatDate(profileData.value?.memberSince ?? ""),
     isMember: membershipData.value?.isActive || false,
     membership: {
-      hasPlan: !!membershipData.value && (!!membershipData.value.planId || !!(membershipData.value as any).membershipPlanId),
+      hasPlan:
+        !!membershipData.value
+        && (!!membershipData.value.planId
+          || !!(membershipData.value as any).membershipPlanId),
       name: membershipData.value?.planName || "",
       subtitle: "",
       period: membershipData.value?.frequencyLabel || "",
@@ -87,9 +83,6 @@ const user = computed(() => {
     },
   };
 });
-
-const isSignOutModalOpen = ref(false);
-const loadingSignOut = ref(false);
 
 const filteredBookings = computed<Booking[]>(() => {
   const data = memberStore.bookingsData?.data || [];
@@ -132,6 +125,15 @@ function handleLogout(): void {
   isSignOutModalOpen.value = false;
   router.push({ name: "login" });
 }
+
+watch(activeTab, async () => {
+  await fetchBookings();
+});
+
+onMounted(async () => {
+  await memberStore.getDashboard();
+  await fetchBookings();
+});
 </script>
 
 <template>
@@ -146,7 +148,7 @@ function handleLogout(): void {
         :src="IMAGES.LEAF"
         alt="Kora foliage right"
         class="w-full h-full object-cover"
-      />
+      >
     </div>
 
     <div class="relative z-10 max-w-400 mx-auto mb-20 px-4 md:px-8 lg:px-12">
@@ -251,7 +253,10 @@ function handleLogout(): void {
               YOUR MEMBERSHIP
             </h3>
 
-            <div v-if="user.membership.hasPlan" class="bg-[#C9A55A1A] border border-border rounded-sm p-8">
+            <div
+              v-if="user.membership.hasPlan"
+              class="bg-[#C9A55A1A] border border-border rounded-sm p-8"
+            >
               <div
                 class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8"
               >
@@ -314,17 +319,27 @@ function handleLogout(): void {
             </div>
 
             <!-- Empty State for Membership -->
-            <div v-else class="bg-card border border-border rounded-sm p-8 flex flex-col items-center justify-center text-center">
-              <div class="w-14 h-14 border border-border bg-[#C9A55A1A] flex items-center justify-center text-[#B59A6D] rounded-full mb-4">
+            <div
+              v-else
+              class="bg-card border border-border rounded-sm p-8 flex flex-col items-center justify-center text-center"
+            >
+              <div
+                class="w-14 h-14 border border-border bg-[#C9A55A1A] flex items-center justify-center text-[#B59A6D] rounded-full mb-4"
+              >
                 <UIcon name="i-lucide-award" class="w-6 h-6" />
               </div>
               <h4 class="font-serif text-2xl text-foreground mb-2">
                 No Active Membership
               </h4>
               <p class="text-sm text-stone-400 font-light mb-6">
-                Elevate your experience with an exclusive Kora membership and unlock premium benefits.
+                Elevate your experience with an exclusive Kora membership and
+                unlock premium benefits.
               </p>
-              <base-button variant="outline" @click="router.push('/membership')" class="w-full sm:w-auto px-8">
+              <base-button
+                variant="outline"
+                class="w-full sm:w-auto px-8"
+                @click="router.push('/membership')"
+              >
                 Explore Memberships
               </base-button>
             </div>
@@ -454,14 +469,13 @@ function handleLogout(): void {
         </div>
       </div>
     </div>
+    <profile-signout-modal
+      :open="isSignOutModalOpen"
+      :loading="loadingSignOut"
+      @close="isSignOutModalOpen = false"
+      @confirm="handleLogout"
+    />
   </div>
-
-  <profile-signout-modal
-    :open="isSignOutModalOpen"
-    :loading="loadingSignOut"
-    @close="isSignOutModalOpen = false"
-    @confirm="handleLogout"
-  />
 </template>
 
 <style scoped></style>

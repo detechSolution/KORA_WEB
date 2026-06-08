@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import type { PropType } from "vue";
-import { useRouter } from "vue-router";
 import type { Session } from "~/types/session";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { useAuthStore } from "~/stores/auth";
 
 defineProps({
@@ -18,13 +18,14 @@ const router = useRouter();
 const isPlayingVideo = ref(false);
 const isBookingModalOpen = ref(false);
 
-const handleOpenBookingModal = () => {
+function handleOpenBookingModal() {
   if (authStore.isAuthenticated) {
     isBookingModalOpen.value = true;
-  } else {
+  }
+  else {
     router.push("/login");
   }
-};
+}
 </script>
 
 <template>
@@ -38,7 +39,7 @@ const handleOpenBookingModal = () => {
         :src="IMAGES.LEAF"
         alt="Kora foliage decoration"
         class="w-full h-full object-cover"
-      />
+      >
     </div>
 
     <div class="relative z-10 max-w-400 mx-auto">
@@ -78,8 +79,8 @@ const handleOpenBookingModal = () => {
                 Know Your Instructor
               </h2>
               <p
-                v-html="session.instructor.bio"
                 class="text-sm md:text-[15px] leading-7"
+                v-html="session.instructor.bio"
               />
             </div>
 
@@ -98,7 +99,7 @@ const handleOpenBookingModal = () => {
                   :src="session.bannerUrl"
                   :alt="session.name"
                   class="w-full h-[300px] md:h-[460px] object-cover transition-transform duration-700 group-hover:scale-105"
-                />
+                >
 
                 <div
                   class="absolute inset-0 bg-black/40 transition-opacity duration-300 group-hover:bg-black/50"
@@ -147,7 +148,9 @@ const handleOpenBookingModal = () => {
                   name="i-lucide-calendar-days"
                   class="mt-0.5 h-3.5 w-3.5 text-primary"
                 />
-                <p class="text-xs uppercase text-secondary-500 mb-2">Date</p>
+                <p class="text-xs uppercase text-secondary-500 mb-2">
+                  Date
+                </p>
                 <p class="text-sm text-foreground">
                   {{ formatDate(session.sessionDate) }}
                 </p>
@@ -185,7 +188,9 @@ const handleOpenBookingModal = () => {
                 <p class="text-xs uppercase text-secondary-500 mb-2">
                   Location
                 </p>
-                <p class="text-sm text-foreground">{{ session.venue }}</p>
+                <p class="text-sm text-foreground">
+                  {{ session.venue }}
+                </p>
               </div>
             </div>
 
@@ -196,12 +201,12 @@ const handleOpenBookingModal = () => {
               >
                 Seats Left
               </span>
-              <span class="text-primary text-xs"
-                >{{ session.remainingSpots }} / {{ session.capacity }}</span
-              >
+              <span class="text-primary text-xs">
+                {{ session.remainingSpots }} / {{ session.capacity }}
+              </span>
             </div>
             <UProgress
-              v-model="session.bookedCount"
+              :model-value="session.bookedCount"
               :max="session.capacity"
               class="mt-2"
             />
@@ -251,10 +256,10 @@ const handleOpenBookingModal = () => {
               </div>
 
               <base-button
-                @click="handleOpenBookingModal"
                 variant="solid"
                 color="primary"
                 class="w-full text-sm uppercase"
+                @click="handleOpenBookingModal"
               >
                 Book This Session
               </base-button>
@@ -275,6 +280,7 @@ const handleOpenBookingModal = () => {
     />
   </section>
 </template>
+
 <style>
 .session-description ul {
   list-style-type: disc;

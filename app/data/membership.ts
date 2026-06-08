@@ -1,4 +1,4 @@
-export interface MembershipTier {
+export type MembershipTier = {
   id: string;
   name: string;
   subtitle: string;
@@ -7,16 +7,16 @@ export interface MembershipTier {
   features: string[];
   buttonText: string;
   isPopular?: boolean;
-}
+};
 
-export interface Pass {
+export type Pass = {
   id: string;
   name: string;
   price: number;
   discountTag: string;
   description: string;
   buttonText: string;
-}
+};
 
 export const membershipPeriods = [
   "MONTHLY",

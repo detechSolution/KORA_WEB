@@ -1,5 +1,5 @@
 // Time Formatter
-export const formatTime = (time: string): string => {
+export function formatTime(time: string): string {
   const [hours, minutes] = time.split(":");
 
   const date = new Date();
@@ -11,7 +11,7 @@ export const formatTime = (time: string): string => {
     minute: "2-digit",
     hour12: true,
   });
-};
+}
 
 // Date Formatter
 /**
@@ -33,7 +33,7 @@ export const formatTime = (time: string): string => {
  * formatDate("2026-05-29", "MM-DD-YYYY");
  * // 05-29-2026
  */
-export const formatDate = (date: string | Date, format?: string): string => {
+export function formatDate(date: string | Date, format?: string): string {
   const parsedDate = new Date(date);
 
   if (Number.isNaN(parsedDate.getTime())) {
@@ -57,13 +57,13 @@ export const formatDate = (date: string | Date, format?: string): string => {
     .replace("YYYY", String(year))
     .replace("MM", month)
     .replace("DD", day);
-};
+}
 
-export const normalizeDateTime = (dateString: string): string => {
+export function normalizeDateTime(dateString: string): string {
   return dateString.replace("Z", "").split(".")[0] ?? "";
-};
+}
 
 // Price Formatter
-export const formatPrice = (price: number) => {
+export function formatPrice(price: number) {
   return new Intl.NumberFormat("en-NP").format(price);
-};
+}

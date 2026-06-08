@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { useNotification } from "~/composables/use-notification";
-import { reactive } from "vue";
-import { IMAGES } from "~/utils/images";
-import z from "zod";
-import { useInquireStore } from "~/stores/inquire";
 import type { Inquire } from "~/types/inquire";
+import { reactive, ref } from "vue";
+
+import z from "zod";
+import { useNotification } from "~/composables/use-notification";
+import { useInquireStore } from "~/stores/inquire";
 import { getApiErrorMessage } from "~/utils/error";
+import { IMAGES } from "~/utils/images";
 
 definePageMeta({
   layout: "default",
@@ -52,7 +52,6 @@ function clearApiError(): void {
   apiError.value = null;
 }
 
-
 const contactItems = [
   {
     icon: "i-lucide-mail",
@@ -91,7 +90,8 @@ function resetForm() {
 async function handleInquireSubmit() {
   try {
     await formRef.value?.validate();
-  } catch {
+  }
+  catch {
     return;
   }
   try {
@@ -107,7 +107,8 @@ async function handleInquireSubmit() {
     await inquireStore.createInquire(payload as Inquire);
     showSuccess({ message: "Inquiry submitted successfully" });
     resetForm();
-  } catch (error) {
+  }
+  catch (error) {
     const message = getApiErrorMessage(
       error,
       "Something went wrong. Please try again.",
@@ -118,7 +119,8 @@ async function handleInquireSubmit() {
       return;
     }
     showError({ message });
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
 }
@@ -135,7 +137,7 @@ async function handleInquireSubmit() {
         :src="IMAGES.LEAF"
         alt="Kora foliage decoration"
         class="w-full h-full object-cover -translate-y-20"
-      />
+      >
     </div>
 
     <ClassHeader

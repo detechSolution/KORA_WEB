@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch, onMounted, onUnmounted } from "vue";
+import { computed, onMounted, onUnmounted, watch } from "vue";
 
 const props = defineProps({
   isOpen: {
@@ -10,9 +10,9 @@ const props = defineProps({
 
 const emit = defineEmits(["close"]);
 
-const close = () => {
+function close() {
   emit("close");
-};
+}
 
 const authStore = useAuthStore();
 
@@ -89,11 +89,11 @@ const menuItems = computed(() => {
 });
 
 // Close sidebar on Escape key press
-const handleKeyDown = (e: KeyboardEvent) => {
+function handleKeyDown(e: KeyboardEvent) {
   if (e.key === "Escape" && props.isOpen) {
     close();
   }
-};
+}
 
 // Lock body scrolling when sidebar is open to preserve visual polish
 watch(
@@ -102,7 +102,8 @@ watch(
     if (typeof document !== "undefined") {
       if (newVal) {
         document.body.style.overflow = "hidden";
-      } else {
+      }
+      else {
         document.body.style.overflow = "";
       }
     }
@@ -130,7 +131,7 @@ onUnmounted(() => {
         v-if="isOpen"
         class="fixed inset-0 z-[100] bg-black/40 backdrop-blur-[4px] transition-opacity cursor-pointer"
         @click="close"
-      ></div>
+      />
     </Transition>
 
     <!-- Sidebar Main Panel -->
@@ -143,27 +144,31 @@ onUnmounted(() => {
       >
         <!-- Panel Header -->
         <div class="px-8 pt-8 pb-4 md:px-12 flex justify-between items-center">
-          <NuxtLink to="/" class="focus:outline-none group" @click="close">
+          <NuxtLink
+            to="/"
+            class="focus:outline-none group"
+            @click="close"
+          >
             <img
               :src="logoSrc"
               alt="KORA Logo"
               class="w-10 h-10 md:w-28 md:h-8 object-contain transition-transform duration-200 group-hover:scale-105"
-            />
+            >
           </NuxtLink>
 
           <!-- Luxury Close Button (Cross elements spin on hover) -->
           <button
-            @click="close"
             class="group flex items-center justify-center w-10 h-10 rounded-full border border-primary/20 text-foreground hover:border-primary/80 hover:text-primary transition-all duration-300 cursor-pointer focus:outline-none"
             aria-label="Close menu"
+            @click="close"
           >
             <span class="relative w-4 h-4 flex items-center justify-center">
               <span
                 class="absolute h-[1.5px] w-full bg-current transform rotate-45 transition-transform duration-300 group-hover:rotate-[135deg]"
-              ></span>
+              />
               <span
                 class="absolute h-[1.5px] w-full bg-current transform -rotate-45 transition-transform duration-300 group-hover:rotate-[45deg]"
-              ></span>
+              />
             </span>
           </button>
         </div>
@@ -202,7 +207,7 @@ onUnmounted(() => {
                     <!-- Expanding gold horizontal line -->
                     <span
                       class="absolute bottom-0 left-0 w-0 h-[1.5px] bg-primary/70 transition-all duration-300 group-hover:w-full"
-                    ></span>
+                    />
                   </span>
                   <span
                     class="font-sans text-[10px] md:text-xs text-muted-foreground/60 tracking-wider mt-0.5 group-hover:text-foreground/80 transition-colors duration-300"
@@ -226,26 +231,22 @@ onUnmounted(() => {
             <a
               href="#"
               class="hover:text-primary transition-colors duration-200"
-              >Contact</a
-            >
+            >Contact</a>
             <span class="text-border/40">•</span>
             <a
               href="#"
               class="hover:text-primary transition-colors duration-200"
-              >Journal</a
-            >
+            >Journal</a>
             <span class="text-border/40">•</span>
             <a
               href="#"
               class="hover:text-primary transition-colors duration-200"
-              >Location</a
-            >
+            >Location</a>
             <span class="text-border/40">•</span>
             <a
               href="#"
               class="hover:text-primary transition-colors duration-200"
-              >Instagram</a
-            >
+            >Instagram</a>
           </div>
 
           <!-- Brand Philosophy Note & Copyright -->

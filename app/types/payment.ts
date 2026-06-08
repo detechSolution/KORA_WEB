@@ -1,16 +1,16 @@
-export type PaymentProvider =
-  | "stripe"
-  | "esewa"
-  | "khalti"
-  | "fonepay";
+export type PaymentProvider
+  = | "stripe"
+    | "esewa"
+    | "khalti"
+    | "fonepay";
 
-export type PaymentMode =
-  | "redirect_url"
-  | "sdk"
-  | "redirect_form"
-  | "embedded";
+export type PaymentMode
+  = | "redirect_url"
+    | "sdk"
+    | "redirect_form"
+    | "embedded";
 
-export interface PaymentInfo {
+export type PaymentInfo = {
   provider: PaymentProvider;
   mode: PaymentMode;
   redirectUrl?: string;
@@ -18,9 +18,9 @@ export interface PaymentInfo {
   url?: string;
   method?: string;
   fields?: Record<string, string>;
-}
+};
 
-export interface CheckoutResponse {
+export type CheckoutResponse = {
   checkoutCode: string;
   provider: PaymentProvider;
   status: string;
@@ -28,4 +28,4 @@ export interface CheckoutResponse {
   amount: number;
   currency: string;
   payment: PaymentInfo;
-}
+};

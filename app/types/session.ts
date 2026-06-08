@@ -1,4 +1,4 @@
-export interface Session {
+export type Session = {
   id: number;
   name: string;
   type: string;
@@ -26,12 +26,12 @@ export interface Session {
   isFree: boolean;
   remainingSpots: number;
   isBookable: boolean;
-}
+};
 
-export interface CreatedBy {
+export type CreatedBy = {
   id: number;
   fullName: string;
   email: string;
   phoneNumber: string;
   bio?: string;
-}
+};

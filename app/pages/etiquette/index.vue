@@ -1,9 +1,4 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-import { ICONS } from "~/config/icons";
-import { membershipTiers, passes, membershipPeriods } from "~/data/membership";
-import { useAuthStore } from "~/stores/auth";
 import { IMAGES } from "~/utils/images";
 
 definePageMeta({
@@ -15,9 +10,6 @@ useSeoMeta({
   description:
     "At Kora, we value respect, kindness, and thoughtful behavior in every interaction. Our etiquettes reflect the standards we uphold across our spaces, experiences, and community",
 });
-
-const authStore = useAuthStore();
-const router = useRouter();
 </script>
 
 <template>
@@ -32,7 +24,7 @@ const router = useRouter();
         :src="IMAGES.LEAF"
         alt="Kora foliage left"
         class="w-full h-full object-cover scale-x-[-1] -translate-x-12 -translate-y-12 rotate-12"
-      />
+      >
     </div>
 
     <!-- Premium absolute-positioned foliage watermark overlay (Right) -->
@@ -43,7 +35,7 @@ const router = useRouter();
         :src="IMAGES.LEAF"
         alt="Kora foliage right"
         class="w-full h-full object-cover translate-x-12 -translate-y-12 -rotate-12"
-      />
+      >
     </div>
 
     <div class="relative z-20 mx-auto px-4 md:px-8">

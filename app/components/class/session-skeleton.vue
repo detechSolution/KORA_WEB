@@ -27,9 +27,9 @@
       <div
         class="flex flex-col justify-center items-start md:items-end gap-3 min-w-[160px] pt-4 md:pt-0 shrink-0 w-full md:w-auto"
       >
-        <div class="h-2 w-20 bg-muted/60 dark:bg-muted/10 rounded"></div>
-        <div class="h-7 w-16 bg-muted/60 dark:bg-muted/10 rounded"></div>
-        <div class="h-10 w-32 bg-muted/60 dark:bg-muted/10 rounded mt-2"></div>
+        <div class="h-2 w-20 bg-muted/60 dark:bg-muted/10 rounded" />
+        <div class="h-7 w-16 bg-muted/60 dark:bg-muted/10 rounded" />
+        <div class="h-10 w-32 bg-muted/60 dark:bg-muted/10 rounded mt-2" />
       </div>
     </div>
   </div>

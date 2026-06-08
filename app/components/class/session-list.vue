@@ -3,8 +3,8 @@ import type { Pagination } from "~/composables/use-pagination";
 import type { Session } from "~/types/session";
 
 type Props = {
-  loading: boolean;
-  sessions: {
+  loading?: boolean;
+  sessions?: {
     data: Session[];
     meta: {
       page: number;
@@ -12,10 +12,10 @@ type Props = {
       total: number;
     };
   };
-  pagination: Pagination;
+  pagination?: Pagination;
 };
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   loading: false,
   sessions: () => ({
     data: [] as Session[],
@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<Props>(), {
   pagination: {} as any,
 });
 
-const emit = defineEmits(["loadSessionList"]);
+defineEmits(["loadSessionList"]);
 </script>
 
 <template>

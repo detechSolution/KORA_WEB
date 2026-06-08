@@ -1,6 +1,6 @@
 import type { CheckoutResponse } from "~/types/payment";
 
-export const usePayment = () => {
+export function usePayment() {
   const paymentStore = usePaymentStore();
 
   const payNow = async (payload: any) => {
@@ -12,4 +12,4 @@ export const usePayment = () => {
     payNow,
     loading: computed(() => paymentStore.loading),
   };
-};
+}

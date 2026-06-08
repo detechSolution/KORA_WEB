@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, reactive, computed, watch, onMounted } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import * as z from "zod";
+import { useCartStore } from "~/stores/cart";
 import { useSpaStore } from "~/stores/spa";
 import { getApiErrorMessage } from "~/utils/error";
-import { useCartStore } from "~/stores/cart";
 import { formatDate } from "~/utils/format";
 import { calculatePrice } from "~/utils/helper";
-import { useRouter } from "vue-router";
 
 defineProps<{
   isOpen: boolean;
@@ -37,7 +37,7 @@ const defaultOpenSubtype = computed(() => {
   if (!selectedSpaModel.value?.referenceId || !spa.value?.subTypes)
     return undefined;
   const index = spa.value.subTypes.findIndex(
-    (st: any) => st.id === selectedSpaModel.value.referenceId
+    (st: any) => st.id === selectedSpaModel.value.referenceId,
   );
   return index !== -1 ? String(index) : undefined;
 });
@@ -56,12 +56,12 @@ const schema = [
       { id: z.number() },
       {
         message: "Please select a spa",
-      }
+      },
     ),
   }),
   // Step 1
   z.object({
-    selectedDate: z.any().refine((v) => !!v, "Please select a date"),
+    selectedDate: z.any().refine(v => !!v, "Please select a date"),
     selectedTime: z
       .string({ message: "Please select a time" })
       .min(1, "Please select a time"),
@@ -73,7 +73,7 @@ const schema = [
         fullName: z.string().min(1, "Please enter the full name"),
         phone: z.string().min(1, "Please enter a phone number"),
         email: z.string().email("Please enter a valid email"),
-      })
+      }),
     ),
   }),
 ];
@@ -82,7 +82,8 @@ async function validateCurrentStep(): Promise<boolean> {
   try {
     await formRef.value?.validate();
     return true;
-  } catch {
+  }
+  catch {
     return false;
   }
 }
@@ -93,7 +94,8 @@ function goToStep(step: number) {
     return;
   }
   void validateCurrentStep().then((isValid) => {
-    if (isValid) currentStep.value = step;
+    if (isValid)
+      currentStep.value = step;
   });
 }
 
@@ -106,13 +108,14 @@ function nextStep() {
 }
 
 function previousStep() {
-  if (currentStep.value > 0) currentStep.value -= 1;
+  if (currentStep.value > 0)
+    currentStep.value -= 1;
 }
 
-const handleBookingClick = (spaData: any) => {
+function handleBookingClick(spaData: any) {
   state.selectedSpa = spaData;
   selectedSpaModel.value = spaData;
-};
+}
 
 function selectTime(time: string) {
   state.selectedTime = time;
@@ -123,7 +126,8 @@ function addGuest() {
 }
 
 function removeGuest(index: number) {
-  if (state.guests.length > 1) state.guests.splice(index, 1);
+  if (state.guests.length > 1)
+    state.guests.splice(index, 1);
 }
 
 function close() {
@@ -139,7 +143,7 @@ const pricing = computed(() =>
   calculatePrice({
     price: state.selectedSpa?.price,
     guests: state.guests.length,
-  })
+  }),
 );
 
 const spaItem = computed(() => ({
@@ -159,20 +163,21 @@ const spaItem = computed(() => ({
   finalPrice: pricing.value.finalPrice,
 }));
 
-const addToCart = () => {
+function addToCart() {
   cartStore.addToCart(spaItem.value);
   success({ message: "Item added to cart successfully!" });
-};
+}
 
-const proceedToCheckout = () => {
+function proceedToCheckout() {
   cartStore.addToCart(spaItem.value);
   success({ message: "Item added to cart successfully!" });
   router.push("/checkout");
   close();
-};
+}
 
 async function fetchAvailableTimes() {
-  if (!state.selectedDate || !state.selectedSpa) return;
+  if (!state.selectedDate || !state.selectedSpa)
+    return;
   try {
     isTimeSlotLoading.value = true;
     const params = {
@@ -182,11 +187,13 @@ async function fetchAvailableTimes() {
     };
     const response = await spaStore.getAvailableTimes(params);
     availableTimeSlots.value = Array.isArray(response) ? response : [];
-  } catch (error) {
+  }
+  catch (error) {
     showError({
       message: getApiErrorMessage(error, "Failed to load available times"),
     });
-  } finally {
+  }
+  finally {
     isTimeSlotLoading.value = false;
   }
 }
@@ -201,8 +208,9 @@ onMounted(() => {
         email: user.email ?? "",
       };
     }
-  } catch (error) {
-    console.log(error);
+  }
+  catch (error) {
+    console.error(error);
   }
 
   if (selectedSpaModel.value) {
@@ -214,7 +222,7 @@ watch(
   () => {
     state.selectedTime = undefined;
     fetchAvailableTimes();
-  }
+  },
 );
 </script>
 
@@ -237,10 +245,18 @@ watch(
         @select="goToStep"
       />
 
-      <UForm ref="formRef" :schema="schema[currentStep]" :state="state">
+      <UForm
+        ref="formRef"
+        :schema="schema[currentStep]"
+        :state="state"
+      >
         <Transition name="fade" mode="out-in">
           <!-- Step 1: Select Spa Type -->
-          <div v-if="currentStep === 0" key="step1" class="flex flex-col">
+          <div
+            v-if="currentStep === 0"
+            key="step1"
+            class="flex flex-col"
+          >
             <div class="mb-8">
               <h2 class="text-3xl font-serif text-foreground mb-3">
                 Select a Spa Type
@@ -395,7 +411,11 @@ watch(
           </div>
 
           <!-- Step 3: Guests -->
-          <div v-else-if="currentStep === 2" key="step3" class="flex flex-col">
+          <div
+            v-else-if="currentStep === 2"
+            key="step3"
+            class="flex flex-col"
+          >
             <div class="mb-8">
               <h2 class="text-3xl font-serif text-foreground mb-3">
                 Who's Joining?
@@ -468,7 +488,11 @@ watch(
           </div>
 
           <!-- Step 4: Overview -->
-          <div v-else key="step4" class="flex flex-col">
+          <div
+            v-else
+            key="step4"
+            class="flex flex-col"
+          >
             <div class="mb-8">
               <h2 class="text-3xl font-serif text-foreground mb-3">
                 Review Your Booking
@@ -492,17 +516,13 @@ watch(
                 <div
                   class="flex justify-between items-center text-sm text-foreground"
                 >
-                  <span
-                    >{{ state.selectedSpa?.name }} (
+                  <span>{{ state.selectedSpa?.name }} (
                     {{ state.selectedSpa?.price }} ×
-                    {{ state.guests.length }})</span
-                  >
-                  <span
-                    >Rs.
+                    {{ state.guests.length }})</span>
+                  <span>Rs.
                     {{
                       (state.selectedSpa?.price ?? 0) * state.guests.length
-                    }}</span
-                  >
+                    }}</span>
                 </div>
               </div>
 

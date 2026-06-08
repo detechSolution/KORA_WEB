@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 const isLoading = ref(true);
 const colorMode = useColorMode();
@@ -31,7 +31,7 @@ onMounted(() => {
         "
         alt="KORA Logo"
         class="w-12 h-12 md:w-16 md:h-16 object-contain"
-      />
+      >
     </div>
     <span class="text-6xl font-bold text-foreground">KORA</span>
   </div>

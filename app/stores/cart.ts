@@ -16,7 +16,8 @@ export const useCartStore = defineStore("cart", () => {
     if (saved) {
       try {
         cartItems.value = JSON.parse(saved);
-      } catch (e) {
+      }
+      catch (e) {
         console.error("Failed to parse cart items from local storage", e);
       }
     }
@@ -26,7 +27,7 @@ export const useCartStore = defineStore("cart", () => {
       (newVal) => {
         localStorage.setItem("cartItems", JSON.stringify(newVal));
       },
-      { deep: true }
+      { deep: true },
     );
   }
 
@@ -39,25 +40,27 @@ export const useCartStore = defineStore("cart", () => {
   };
 
   const removeItem = (cartId: string | number) => {
-    cartItems.value = cartItems.value.filter((item) => item.cartId !== cartId && item.id !== cartId);
+    cartItems.value = cartItems.value.filter(item => item.cartId !== cartId && item.id !== cartId);
   };
 
   const applyPromoCode = async (code: string) => {
     isApplyingPromo.value = true;
     promoError.value = null;
     try {
-      const response:any = await http.post(API_ENDPOINTS.PROMO_CODE.VALIDATE, { code });
-      
+      const response: any = await http.post(API_ENDPOINTS.PROMO_CODE.VALIDATE, { code });
+
       promoCode.value = code;
       discountAmount.value = response?.discountAmount || response?.discount || response?.amount || 0;
       isPromoValid.value = response.isValid;
       promoError.value = response.message;
-    } catch (e: any) {
+    }
+    catch (e: any) {
       promoCode.value = null;
       discountAmount.value = 0;
       isPromoValid.value = false;
-      promoError.value = e?.response?._data?.message || e?.message || 'Failed to apply promo code';
-    } finally {
+      promoError.value = e?.response?._data?.message || e?.message || "Failed to apply promo code";
+    }
+    finally {
       isApplyingPromo.value = false;
     }
   };

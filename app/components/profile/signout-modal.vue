@@ -31,7 +31,11 @@ const emit = defineEmits<{
       </p>
 
       <div class="flex justify-end gap-2">
-        <base-button variant="outline" @click="emit('close')" class="w-full">
+        <base-button
+          variant="outline"
+          class="w-full"
+          @click="emit('close')"
+        >
           Cancel
         </base-button>
 

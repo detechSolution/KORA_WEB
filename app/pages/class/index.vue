@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
-import { IMAGES } from "~/utils/images";
-import { useSessionStore } from "~/stores/session";
-import { usePagination } from "~/composables/use-pagination";
-import { getApiErrorMessage } from "~/utils/error";
-import { useNotification } from "~/composables/use-notification";
+import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useNotification } from "~/composables/use-notification";
+import { usePagination } from "~/composables/use-pagination";
+import { useSessionStore } from "~/stores/session";
+import { getApiErrorMessage } from "~/utils/error";
+import { IMAGES } from "~/utils/images";
 
 definePageMeta({
   layout: "default",
@@ -48,11 +48,13 @@ async function getSessionsList() {
       type: activeFilter.value === "all" ? undefined : activeFilter.value,
     };
     await sessionStore.getSessions(params);
-  } catch (error: unknown) {
+  }
+  catch (error: unknown) {
     showError({
       message: getApiErrorMessage(error, "Failed to load inquiries"),
     });
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
 }
@@ -60,7 +62,8 @@ async function getSessionsList() {
 watch(
   activeFilter,
   (tab) => {
-    if (route.path !== "/class") return;
+    if (route.path !== "/class")
+      return;
     router.replace({ query: { ...route.query, tab } });
     pagination.value.page = 1;
     getSessionsList();
@@ -71,9 +74,11 @@ watch(
 watch(
   () => route.query.tab,
   (tab) => {
-    if (route.path !== "/class") return;
+    if (route.path !== "/class")
+      return;
     const next = (tab as Tab) ?? "event";
-    if (next !== activeFilter.value) activeFilter.value = next;
+    if (next !== activeFilter.value)
+      activeFilter.value = next;
   },
 );
 </script>
@@ -89,7 +94,7 @@ watch(
         :src="IMAGES.LEAF"
         alt="Kora foliage decoration"
         class="w-full h-full object-cover"
-      />
+      >
     </div>
 
     <ClassHeader label="Upcoming Sessions" title="Session Details" />

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { IMAGES } from "~/utils/images";
-import { useAuthStore } from "~/stores/auth";
 import { reactive, ref } from "vue";
-import z from "zod";
-import { getApiErrorMessage, isApiError } from "~/utils/error";
-import { useNotification } from "~/composables/use-notification";
 import { useRouter } from "vue-router";
+import z from "zod";
+import { useNotification } from "~/composables/use-notification";
+import { useAuthStore } from "~/stores/auth";
+import { getApiErrorMessage, isApiError } from "~/utils/error";
+import { IMAGES } from "~/utils/images";
 
 definePageMeta({
   layout: false,
@@ -74,9 +74,11 @@ async function handleGoogleLogin(): Promise<void> {
   try {
     loading.value = true;
     await authStore.loginWithGoogle();
-  } catch (error) {
+  }
+  catch (error) {
     console.error(error);
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
 }
@@ -84,7 +86,8 @@ async function handleGoogleLogin(): Promise<void> {
 async function handleRegister(): Promise<void> {
   try {
     await formRef.value?.validate();
-  } catch {
+  }
+  catch {
     return;
   }
   try {
@@ -105,23 +108,25 @@ async function handleRegister(): Promise<void> {
       },
     );
     router.push({ name: "index" });
-  } catch (error: unknown) {
+  }
+  catch (error: unknown) {
     const message = getApiErrorMessage(
       error,
       "Something went wrong. Please try again.",
     );
     if (message !== "Something went wrong. Please try again.") {
-      if (isApiError(error) && error.data.code == "conflict.this_phone_number_is_already_linked_to_another_user") {
+      if (isApiError(error) && error.data.code === "conflict.this_phone_number_is_already_linked_to_another_user") {
         setApiError("phone", message);
       }
-      if (isApiError(error) && error.data.code == "conflict.this_email_is_already_linked_to_another_phone_number") {
+      if (isApiError(error) && error.data.code === "conflict.this_email_is_already_linked_to_another_phone_number") {
         setApiError("email", message);
       }
       formRef.value?.validate();
       return;
     }
     showError({ message });
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
 }
@@ -139,7 +144,7 @@ async function handleRegister(): Promise<void> {
           :src="IMAGES.LEAF"
           class="w-full h-full object-cover rotate-12"
           alt=""
-        />
+        >
       </div>
 
       <!-- Form Container -->
@@ -152,24 +157,34 @@ async function handleRegister(): Promise<void> {
               alt="Kora Logo"
               class="w-44 h-w-28"
               onerror="this.style.display = 'none'"
-            />
+            >
           </NuxtLink>
         </div>
 
-        <h1 class="font-serif text-4xl mb-3 text-white">Create Account</h1>
+        <h1 class="font-serif text-4xl mb-3 text-white">
+          Create Account
+        </h1>
         <p class="text-xs text-secondary-400 mb-10">
           Begin your ritual of becoming. Join the sanctuary.
         </p>
 
         <base-button
-          @click="handleGoogleLogin"
           class="w-full h-11 bg-[#252525] dark:bg-[#252525] border border-white/5 hover:bg-[#2A2A2A] font-medium text-[11px] mb-5"
+          @click="handleGoogleLogin"
         >
-          <img :src="IMAGES.GOOGLE_LOGO" alt="Google" class="w-4 h-4" />
+          <img
+            :src="IMAGES.GOOGLE_LOGO"
+            alt="Google"
+            class="w-4 h-4"
+          >
           Log in with Google
         </base-button>
 
-        <base-section-label label="Or" align="center" class="mb-5" />
+        <base-section-label
+          label="Or"
+          align="center"
+          class="mb-5"
+        />
 
         <UForm
           ref="formRef"
@@ -215,8 +230,8 @@ async function handleRegister(): Promise<void> {
 
           <base-button
             class="w-full"
-            @click="handleRegister"
             :loading="loading"
+            @click="handleRegister"
           >
             REGISTER
           </base-button>
@@ -227,13 +242,14 @@ async function handleRegister(): Promise<void> {
           <NuxtLink
             to="/login"
             class="text-[#B59A6D] hover:text-[#C5AA7D] underline decoration-[#B59A6D]/30 underline-offset-4"
-            >Log In</NuxtLink
           >
+            Log In
+          </NuxtLink>
         </p>
       </div>
 
       <!-- Footer spacer -->
-      <div class="mt-auto relative z-10"></div>
+      <div class="mt-auto relative z-10" />
     </div>
 
     <!-- Right Panel: Image -->
@@ -242,7 +258,7 @@ async function handleRegister(): Promise<void> {
         :src="IMAGES.LOGIN"
         alt="Meditation"
         class="w-full h-full object-cover"
-      />
+      >
     </div>
   </div>
 </template>

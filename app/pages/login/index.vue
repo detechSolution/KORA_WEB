@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-import { IMAGES } from "~/utils/images";
-import { useAuthStore } from "~/stores/auth";
-import z from "zod";
-import { getApiErrorMessage } from "~/utils/error";
 import { useRouter } from "vue-router";
+import z from "zod";
 import { useNotification } from "~/composables/use-notification";
+import { useAuthStore } from "~/stores/auth";
+import { getApiErrorMessage } from "~/utils/error";
+import { IMAGES } from "~/utils/images";
 
 definePageMeta({
   layout: false,
@@ -58,9 +58,11 @@ async function handleGoogleLogin(): Promise<void> {
   try {
     loading.value = true;
     await authStore.loginWithGoogle();
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Error occurred while logging in with Google:", error);
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
 }
@@ -68,7 +70,8 @@ async function handleGoogleLogin(): Promise<void> {
 async function handleLogin(): Promise<void> {
   try {
     await formRef.value?.validate();
-  } catch {
+  }
+  catch {
     return;
   }
   try {
@@ -80,7 +83,8 @@ async function handleLogin(): Promise<void> {
     };
     await authStore.login(payload as { email: string; password: string });
     router.push({ name: "index" });
-  } catch (error: unknown) {
+  }
+  catch (error: unknown) {
     const message = getApiErrorMessage(
       error,
       "Something went wrong. Please try again.",
@@ -91,7 +95,8 @@ async function handleLogin(): Promise<void> {
       return;
     }
     showError({ message });
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
 }
@@ -107,7 +112,7 @@ async function handleLogin(): Promise<void> {
           :src="IMAGES.LEAF"
           class="w-full h-full object-cover rotate-12"
           alt=""
-        />
+        >
       </div>
 
       <!-- Form Container -->
@@ -120,24 +125,34 @@ async function handleLogin(): Promise<void> {
               alt="Kora Logo"
               class="w-44 h-w-28"
               onerror="this.style.display = 'none'"
-            />
+            >
           </NuxtLink>
         </div>
 
-        <h1 class="font-serif text-4xl mb-3 text-white">Login</h1>
+        <h1 class="font-serif text-4xl mb-3 text-white">
+          Login
+        </h1>
         <p class="text-xs text-secondary-400 mb-6">
           Sign in to access your account and continue your experience.
         </p>
 
         <base-button
-          @click="handleGoogleLogin"
           class="w-full h-11 bg-[#252525] dark:bg-[#252525] border border-white/5 hover:bg-[#2A2A2A] font-medium text-[11px] mb-5"
+          @click="handleGoogleLogin"
         >
-          <img :src="IMAGES.GOOGLE_LOGO" alt="Google" class="w-4 h-4" />
+          <img
+            :src="IMAGES.GOOGLE_LOGO"
+            alt="Google"
+            class="w-4 h-4"
+          >
           Log in with Google
         </base-button>
 
-        <base-section-label label="Or" align="center" class="mb-5" />
+        <base-section-label
+          label="Or"
+          align="center"
+          class="mb-5"
+        />
 
         <UForm
           ref="formRef"
@@ -174,7 +189,7 @@ async function handleLogin(): Promise<void> {
               <input
                 type="checkbox"
                 class="w-4 h-4 rounded-xs border-white/20 bg-transparent text-[#B59A6D] focus:ring-[#B59A6D] focus:ring-offset-0 focus:ring-offset-transparent"
-              />
+              >
               Remember me
             </label>
             <NuxtLink
@@ -185,7 +200,11 @@ async function handleLogin(): Promise<void> {
             </NuxtLink>
           </div>
 
-          <base-button class="w-full" @click="handleLogin" :loading="loading">
+          <base-button
+            class="w-full"
+            :loading="loading"
+            @click="handleLogin"
+          >
             SIGN IN
           </base-button>
         </UForm>
@@ -195,12 +214,13 @@ async function handleLogin(): Promise<void> {
           <NuxtLink
             to="/register"
             class="text-[#B59A6D] hover:text-[#C5AA7D] underline decoration-[#B59A6D]/30 underline-offset-4"
-            >Register Now</NuxtLink
           >
+            Register Now
+          </NuxtLink>
         </p>
       </div>
 
-      <div class="mt-auto relative z-10"></div>
+      <div class="mt-auto relative z-10" />
     </div>
 
     <!-- Right Panel: Image -->
@@ -209,7 +229,7 @@ async function handleLogin(): Promise<void> {
         :src="IMAGES.LOGIN"
         alt="Meditation"
         class="w-full h-full object-cover"
-      />
+      >
     </div>
   </div>
 </template>

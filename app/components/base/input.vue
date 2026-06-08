@@ -57,7 +57,7 @@ const emit = defineEmits(["update:modelValue"]);
 
 const inputValue = computed({
   get: () => props.modelValue,
-  set: (value) => emit("update:modelValue", value),
+  set: value => emit("update:modelValue", value),
 });
 
 const showPassword = ref(false);
@@ -103,7 +103,8 @@ function togglePasswordVisibility() {
       :disabled="props.disabled"
       :readonly="props.readonly"
       variant="outline"
-      :class="['w-full', props.class]"
+      class="w-full"
+      :class="[props.class]"
       size="lg"
       :ui="{
         base: `bg-white dark:bg-transparent ring-secondary-50 dark:ring-secondary-800 focus:ring-1 focus:outline-none placeholder:text-secondary-300 rounded-xs h-11`,

@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import type { Booking } from "~/data/profile";
 import { computed } from "vue";
 import { useRouter } from "vue-router";
-import type { Booking } from "~/data/profile";
 
 const props = defineProps<{
   booking: Booking;
@@ -13,25 +13,27 @@ const router = useRouter();
 const badgeClass = computed(() => {
   if (props.booking.type === "Session") {
     return "bg-[#3D1E62] text-[#D8B4FE]"; // Purple
-  } else if (props.booking.type === "Spa") {
+  }
+  else if (props.booking.type === "Spa") {
     return "bg-[#1B3B36] text-[#6EE7B7]"; // Teal/Green
-  } else if (props.booking.type === "Pass") {
+  }
+  else if (props.booking.type === "Pass") {
     return "bg-[#1E3A8A] text-[#93C5FD]"; // Blue
   }
   return "bg-stone-800 text-stone-300";
 });
 
-const handleViewDetail = (booking: Booking) => {
-  // Implement navigation to detail page or modal
-  console.log("View details for booking:", booking);
+function handleViewDetail(booking: Booking) {
   if (booking.itemType === "spa") {
     router.push({ path: `/spa` });
-  } else if (booking.itemType === "session") {
+  }
+  else if (booking.itemType === "session") {
     router.push({ path: `/class/${booking.sessionId}` });
-  } else if (booking.itemType === "passes") {
+  }
+  else if (booking.itemType === "passes") {
     router.push({ path: `/membership` });
   }
-};
+}
 </script>
 
 <template>
@@ -57,7 +59,7 @@ const handleViewDetail = (booking: Booking) => {
           :src="booking.image"
           :alt="booking.title"
           class="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-300"
-        />
+        >
       </div>
 
       <!-- Details -->
@@ -68,8 +70,8 @@ const handleViewDetail = (booking: Booking) => {
             {{ booking.title }}
           </h4>
           <span
+            class="px-2 py-0.5 text-[10px] font-bold rounded-sm"
             :class="[
-              'px-2 py-0.5 text-[10px] font-bold rounded-sm',
               badgeClass,
             ]"
           >
@@ -82,15 +84,15 @@ const handleViewDetail = (booking: Booking) => {
           v-if="booking.type !== 'Pass'"
           class="flex flex-wrap items-center gap-4 text-xs text-stone-400 font-light"
         >
-          <div class="flex items-center gap-1.5" v-if="booking.date">
+          <div v-if="booking.date" class="flex items-center gap-1.5">
             <UIcon name="i-lucide-calendar" class="w-3.5 h-3.5" />
             {{ booking.date }}
           </div>
-          <div class="flex items-center gap-1.5" v-if="booking.time">
+          <div v-if="booking.time" class="flex items-center gap-1.5">
             <UIcon name="i-lucide-clock" class="w-3.5 h-3.5" />
             {{ booking.time }}
           </div>
-          <div class="flex items-center gap-1.5" v-if="booking.location">
+          <div v-if="booking.location" class="flex items-center gap-1.5">
             <UIcon name="i-lucide-map-pin" class="w-3.5 h-3.5" />
             {{ booking.location }}
           </div>

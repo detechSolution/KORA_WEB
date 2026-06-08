@@ -23,9 +23,12 @@ onMounted(async () => {
     }
 
     paymentStatus.value = "paid";
-  } catch (error) {
+  }
+  catch (error) {
+    console.error(error);
     paymentStatus.value = "failed";
-  } finally {
+  }
+  finally {
     setTimeout(() => {
       loading.value = false;
     }, 800);
@@ -39,10 +42,10 @@ onMounted(async () => {
   >
     <div v-if="loading" class="flex flex-col items-center justify-center gap-6">
       <div class="relative w-16 h-16 flex items-center justify-center">
-        <div class="absolute inset-0 border-2 border-border rounded-full"></div>
+        <div class="absolute inset-0 border-2 border-border rounded-full" />
         <div
           class="absolute inset-0 border-2 border-[#B59A6D] rounded-full border-t-transparent animate-spin"
-        ></div>
+        />
         <UIcon name="i-lucide-check" class="w-6 h-6 text-[#B59A6D]/50" />
       </div>
       <p
@@ -59,14 +62,14 @@ onMounted(async () => {
       <!-- Decorative background glow -->
       <div
         class="absolute top-0 left-1/2 -translate-x-1/2 w-[150%] h-40 bg-gradient-to-b from-[#B59A6D]/10 to-transparent blur-3xl rounded-[100%] pointer-events-none"
-      ></div>
+      />
 
       <div
         class="w-24 h-24 bg-card rounded-full flex items-center justify-center mb-2 z-10 border border-[#B59A6D]/30 shadow-[0_0_30px_rgba(181,154,109,0.15)] relative"
       >
         <div
           class="absolute inset-0 rounded-full border border-[#B59A6D] animate-[ping_2s_ease-out_infinite] opacity-20"
-        ></div>
+        />
         <UIcon name="i-lucide-check" class="w-10 h-10 text-[#B59A6D]" />
       </div>
 
@@ -77,7 +80,7 @@ onMounted(async () => {
           Payment Successful
         </h1>
 
-        <div class="h-[1px] w-12 bg-[#B59A6D]/50 mx-auto my-1"></div>
+        <div class="h-[1px] w-12 bg-[#B59A6D]/50 mx-auto my-1" />
 
         <p
           class="text-sm md:text-base text-muted-foreground leading-relaxed max-w-lg mx-auto"

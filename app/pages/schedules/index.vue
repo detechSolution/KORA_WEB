@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import type { ScheduleEvent } from "~/data/schedules";
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useNotification } from "~/composables/use-notification";
 import { usePagination } from "~/composables/use-pagination";
-import type { ScheduleEvent } from "~/data/schedules";
 import { useSessionStore } from "~/stores/session";
 import { getApiErrorMessage } from "~/utils/error";
 import { formatDate, normalizeDateTime } from "~/utils/format";
@@ -71,31 +71,33 @@ const sessions = computed(() => {
   }));
 });
 
-const startOfWeek = (date: Date) => {
+function startOfWeek(date: Date) {
   const start = new Date(date);
   start.setHours(0, 0, 0, 0);
   start.setDate(start.getDate() - start.getDay());
   return start;
-};
+}
 
-const addDays = (date: Date, days: number) => {
+function addDays(date: Date, days: number) {
   const next = new Date(date);
   next.setDate(next.getDate() + days);
   return next;
-};
+}
 
-const isSameDay = (left: Date, right: Date) =>
-  left.getFullYear() === right.getFullYear() &&
-  left.getMonth() === right.getMonth() &&
-  left.getDate() === right.getDate();
+function isSameDay(left: Date, right: Date) {
+  return left.getFullYear() === right.getFullYear()
+    && left.getMonth() === right.getMonth()
+    && left.getDate() === right.getDate();
+}
 
-const getTimeKey = (date: Date) =>
-  `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+function getTimeKey(date: Date) {
+  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+}
 
-const toMinutes = (timeKey: string) => {
+function toMinutes(timeKey: string) {
   const [hours, minutes] = timeKey.split(":").map(Number);
   return hours * 60 + minutes;
-};
+}
 
 const baseWeekStart = startOfWeek(new Date());
 
@@ -104,7 +106,7 @@ const currentWeekStart = computed(() =>
 );
 const currentWeekEnd = computed(() => addDays(currentWeekStart.value, 6));
 
-const getCurrentRangeTitle = (format?: string) => {
+function getCurrentRangeTitle(format?: string) {
   const start = currentWeekStart.value;
   const end = currentWeekEnd.value;
 
@@ -128,7 +130,7 @@ const getCurrentRangeTitle = (format?: string) => {
   return sameMonth
     ? `${startMonth} ${start.getDate()} - ${end.getDate()}, ${end.getFullYear()}`
     : `${startMonth} ${start.getDate()} - ${endMonth} ${end.getDate()}, ${end.getFullYear()}`;
-};
+}
 
 const currentRange = computed(() => ({
   title: getCurrentRangeTitle(),
@@ -138,16 +140,15 @@ const currentRange = computed(() => ({
 
 const weekDates = computed(() =>
   Array.from({ length: 7 }, (_, index) =>
-    addDays(currentWeekStart.value, index),
-  ),
+    addDays(currentWeekStart.value, index)),
 );
 
 const weekEvents = computed(() =>
   sessions.value.filter((event) => {
     const start = new Date(event.start);
     return (
-      start >= currentWeekStart.value &&
-      start < addDays(currentWeekStart.value, 7)
+      start >= currentWeekStart.value
+      && start < addDays(currentWeekStart.value, 7)
     );
   }),
 );
@@ -155,7 +156,7 @@ const weekEvents = computed(() =>
 const timeSlots = computed(() =>
   [
     ...new Set(
-      weekEvents.value.map((event) => getTimeKey(new Date(event.start))),
+      weekEvents.value.map(event => getTimeKey(new Date(event.start))),
     ),
   ].sort((left, right) => toMinutes(left) - toMinutes(right)),
 );
@@ -175,30 +176,31 @@ const scheduleByDayAndTime = computed(() => {
 });
 
 const sessionCounts = computed(() => ({
-  Event: weekEvents.value.filter((event) => event.type === "event").length,
-  Class: weekEvents.value.filter((event) => event.type === "class").length,
-  Workshop: weekEvents.value.filter((event) => event.type === "workshop")
+  Event: weekEvents.value.filter(event => event.type === "event").length,
+  Class: weekEvents.value.filter(event => event.type === "class").length,
+  Workshop: weekEvents.value.filter(event => event.type === "workshop")
     .length,
 }));
 
-const nextWeek = () => {
+function nextWeek() {
   weekOffset.value += 1;
-};
+}
 
-const prevWeek = () => {
+function prevWeek() {
   weekOffset.value -= 1;
-};
+}
 
-const getEventsForCell = (day: Date, timeKey: string) =>
-  scheduleByDayAndTime.value.get(`${day.toDateString()}__${timeKey}`) ?? [];
+function getEventsForCell(day: Date, timeKey: string) {
+  return scheduleByDayAndTime.value.get(`${day.toDateString()}__${timeKey}`) ?? [];
+}
 
-const formatTime = (value: string | Date) => {
+function formatTime(value: string | Date) {
   const date = value instanceof Date ? value : new Date(value);
   return date.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
   });
-};
+}
 
 async function getSessionsList() {
   try {
@@ -211,18 +213,20 @@ async function getSessionsList() {
       type: search.session === "all" ? "" : search.session,
     };
     await sessionStore.getSessions(params);
-  } catch (error: unknown) {
+  }
+  catch (error: unknown) {
     showError({
       message: getApiErrorMessage(error, "Failed to load inquiries"),
     });
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
 }
 
-const handleDetailSessionView = (id: string | number) => {
+function handleDetailSessionView(id: string | number) {
   router.push(`/class/${id}`);
-};
+}
 
 watch(
   () => weekOffset.value,
@@ -271,26 +275,20 @@ onMounted(() => {
             <div class="flex items-center gap-1.5">
               <span
                 class="w-2 h-2 bg-emerald-800 rounded-full inline-block"
-              ></span>
-              <span class="text-stone-400"
-                >EVENTS - {{ sessionCounts.Event }}</span
-              >
+              />
+              <span class="text-stone-400">EVENTS - {{ sessionCounts.Event }}</span>
             </div>
             <div class="flex items-center gap-1.5">
               <span
                 class="w-2 h-2 bg-blue-800 rounded-full inline-block"
-              ></span>
-              <span class="text-stone-400"
-                >CLASSES - {{ sessionCounts.Class }}</span
-              >
+              />
+              <span class="text-stone-400">CLASSES - {{ sessionCounts.Class }}</span>
             </div>
             <div class="flex items-center gap-1.5">
               <span
                 class="w-2 h-2 bg-purple-800 rounded-full inline-block"
-              ></span>
-              <span class="text-stone-400"
-                >WORKSHOPS - {{ sessionCounts.Workshop }}</span
-              >
+              />
+              <span class="text-stone-400">WORKSHOPS - {{ sessionCounts.Workshop }}</span>
             </div>
           </div>
 
@@ -316,8 +314,8 @@ onMounted(() => {
       <div class="bg-background dark:bg-transparent rounded-sm">
         <div class="flex items-center gap-4 mb-6">
           <button
-            @click="prevWeek"
             class="w-9 h-9 border border-stone-300 dark:border-stone-800 flex items-center justify-center rounded-xs text-foreground dark:text-stone-400 hover:text-white hover:bg-[#212121] transition-colors"
+            @click="prevWeek"
           >
             <UIcon name="i-lucide-chevron-left" class="w-4 h-4" />
           </button>
@@ -327,8 +325,8 @@ onMounted(() => {
             {{ currentRange.title }}
           </div>
           <button
-            @click="nextWeek"
             class="w-9 h-9 border border-stone-300 dark:border-stone-800 flex items-center justify-center rounded-xs text-foreground dark:text-stone-400 hover:text-white hover:bg-[#212121] transition-colors"
+            @click="nextWeek"
           >
             <UIcon name="i-lucide-chevron-right" class="w-4 h-4" />
           </button>
@@ -342,9 +340,7 @@ onMounted(() => {
             name="i-lucide-loader-2"
             class="w-8 h-8 animate-spin text-[#B59A6D]"
           />
-          <span class="text-sm tracking-widest uppercase font-bold"
-            >Loading Schedules...</span
-          >
+          <span class="text-sm tracking-widest uppercase font-bold">Loading Schedules...</span>
         </div>
         <div v-else class="overflow-x-auto">
           <div
@@ -412,8 +408,8 @@ onMounted(() => {
                       <div
                         v-for="event in getEventsForCell(day, timeKey)"
                         :key="event.id"
+                        class="group relative min-h-[180px] w-full flex flex-col p-3 border-t-4 transition-colors rounded-xs hover:cursor-pointer"
                         :class="[
-                          'group relative min-h-[180px] w-full flex flex-col p-3 border-t-4 transition-colors rounded-xs hover:cursor-pointer',
                           getBorderClass(event.type),
                           getCardClass(event.type),
                         ]"
@@ -421,15 +417,15 @@ onMounted(() => {
                       >
                         <UIcon
                           name="i-lucide-arrow-up-right"
+                          class="pointer-events-none absolute right-3 top-3 h-5 w-5 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
                           :class="[
-                            'pointer-events-none absolute right-3 top-3 h-5 w-5 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100',
                             `bg-${getProgressColor(event.type)}-800`,
                           ]"
                         />
                         <div class="mb-2.5">
                           <span
+                            class="px-1.5 py-0.5 text-[8px] font-bold tracking-wider uppercase rounded-xs inline-block"
                             :class="[
-                              'px-1.5 py-0.5 text-[8px] font-bold tracking-wider uppercase rounded-xs inline-block',
                               getBadgeClass(event.type),
                             ]"
                           >

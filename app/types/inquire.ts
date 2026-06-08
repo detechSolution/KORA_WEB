@@ -1,6 +1,6 @@
 export type Inquire = {
-    fullName: string;
-    email: string;
-    phone: string;
-    inquiry: string;
-}
+  fullName: string;
+  email: string;
+  phone: string;
+  inquiry: string;
+};

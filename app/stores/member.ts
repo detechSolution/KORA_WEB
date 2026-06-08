@@ -1,8 +1,8 @@
+import type { MemberBookingsResponse, MemberDashboardResponse } from "~/types/member";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { getHttp } from "~/composables/use-api";
 import { API_ENDPOINTS } from "~/config/constants";
-import type { MemberDashboardResponse, MemberBookingsResponse } from "~/types/member";
 
 export const useMemberStore = defineStore("member", () => {
   const http = getHttp();
@@ -17,10 +17,12 @@ export const useMemberStore = defineStore("member", () => {
     try {
       const response = await http.get(API_ENDPOINTS.MEMBER.DASHBOARD);
       dashboardData.value = response as MemberDashboardResponse;
-    } catch (error) {
+    }
+    catch (error) {
       console.error("Failed to fetch member dashboard:", error);
       throw error;
-    } finally {
+    }
+    finally {
       loading.value = false;
     }
   };
@@ -31,10 +33,12 @@ export const useMemberStore = defineStore("member", () => {
       const qs = buildQueryString(params);
       const response = await http.get(`${API_ENDPOINTS.MEMBER.BOOKINGS}?${qs}`);
       bookingsData.value = response as MemberBookingsResponse;
-    } catch (error) {
+    }
+    catch (error) {
       console.error("Failed to fetch member bookings:", error);
       throw error;
-    } finally {
+    }
+    finally {
       bookingsLoading.value = false;
     }
   };

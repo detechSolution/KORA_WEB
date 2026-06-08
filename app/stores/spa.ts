@@ -1,10 +1,9 @@
+import type { Spa } from "~/types/spa";
+
 import { defineStore } from "pinia";
 import { ref } from "vue";
-
 import { getHttp } from "~/composables/use-api";
 import { API_ENDPOINTS } from "~/config/constants";
-import type { ApiResponse } from "~/types/api";
-import type { Spa } from "~/types/spa";
 
 export const useSpaStore = defineStore("spa", () => {
   const http = getHttp();
@@ -15,18 +14,20 @@ export const useSpaStore = defineStore("spa", () => {
     try {
       const response = await http.get(API_ENDPOINTS.SPA.GET);
       spa.value = response as Spa;
-    } catch (error) {
+    }
+    catch (error) {
       console.error("Failed to fetch spas:", error);
       throw error;
     }
   };
 
-  const getAvailableTimes = async (params : Record<string, any>) => {
+  const getAvailableTimes = async (params: Record<string, any>) => {
     try {
-       const qs = buildQueryString(params);
-      const response = await http.get(`${API_ENDPOINTS.SPA.TIME_AVAILABILITY}?${qs}` );
+      const qs = buildQueryString(params);
+      const response = await http.get(`${API_ENDPOINTS.SPA.TIME_AVAILABILITY}?${qs}`);
       return response.data;
-    } catch (error) {
+    }
+    catch (error) {
       console.error("Failed to fetch available times:", error);
       throw error;
     }
@@ -35,6 +36,6 @@ export const useSpaStore = defineStore("spa", () => {
   return {
     spa,
     getSpas,
-    getAvailableTimes
+    getAvailableTimes,
   };
 });

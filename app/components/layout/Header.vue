@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { ICONS } from "~/config/icons";
 
 const props = defineProps({
@@ -26,9 +26,9 @@ const isDark = computed({
   },
 });
 
-const toggleColorMode = () => {
+function toggleColorMode() {
   isDark.value = !isDark.value;
-};
+}
 
 // Sidebar and Cart visibility state
 const isSidebarOpen = ref(false);
@@ -36,9 +36,9 @@ const isCartOpen = ref(false);
 
 // Scroll listener to toggle header background color on scroll
 const isScrolled = ref(false);
-const handleScroll = () => {
+function handleScroll() {
   isScrolled.value = window.scrollY > 20;
-};
+}
 
 const getColorClass = computed(() => {
   if (props.isHome) {
@@ -48,25 +48,29 @@ const getColorClass = computed(() => {
           text: "text-white",
           image: "/logo/kora_white_logo.svg",
         };
-      } else {
+      }
+      else {
         return {
           text: "text-dark",
           image: "/logo/kora_black_logo.svg",
         };
       }
-    } else {
+    }
+    else {
       return {
         text: "text-white",
         image: "/logo/kora_white_logo.svg",
       };
     }
-  } else {
+  }
+  else {
     if (isDark.value) {
       return {
         text: "text-white",
         image: "/logo/kora_white_logo.svg",
       };
-    } else {
+    }
+    else {
       return {
         text: "text-dark",
         image: "/logo/kora_black_logo.svg",
@@ -87,8 +91,8 @@ onUnmounted(() => {
 
 <template>
   <header
+    class="w-full transition-all duration-300 px-4 md:px-8 lg:px-12 z-1000"
     :class="[
-      'w-full transition-all duration-300 px-4 md:px-8 lg:px-12 z-1000',
       isScrolled
         ? 'border-b border-border/80 shadow-sm py-1'
         : 'border-b border-transparent py-3',
@@ -107,24 +111,23 @@ onUnmounted(() => {
       <!-- Left: Menu Trigger -->
       <div class="flex-1 flex items-center" :class="getColorClass?.text">
         <button
-          @click="isSidebarOpen = true"
           class="group flex items-center gap-2.5 hover:text-primary transition-colors duration-200 cursor-pointer py-1.5 focus:outline-none"
+          @click="isSidebarOpen = true"
         >
           <span class="flex flex-col gap-1 w-5">
             <span
               class="h-0.5 w-full bg-current transition-transform duration-200 group-hover:translate-x-0.5"
-            ></span>
+            />
             <span
               class="h-0.5 w-4 bg-current transition-transform duration-200 group-hover:translate-x-1"
-            ></span>
+            />
             <span
               class="h-0.5 w-5 bg-current transition-transform duration-200 group-hover:translate-x-0.5"
-            ></span>
+            />
           </span>
           <span
             class="text-xs md:text-sm font-semibold uppercase tracking-widest font-sans"
-            >Menu</span
-          >
+          >Menu</span>
         </button>
       </div>
 
@@ -134,7 +137,7 @@ onUnmounted(() => {
           :src="getColorClass?.image"
           alt="KORA Logo"
           class="w-12 h-12 md:w-32 md:h-8 object-contain group-hover:scale-105 transition-transform duration-200"
-        />
+        >
       </NuxtLink>
 
       <!-- Right: Action items -->
@@ -142,9 +145,9 @@ onUnmounted(() => {
         <!-- Wifi Status Button (Replacer of theme toggle) -->
         <!-- Dark Mode Toggle Button -->
         <button
-          @click="toggleColorMode"
           class="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center border border-primary/40 text-primary hover:bg-primary/10 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
           title="Toggle Theme"
+          @click="toggleColorMode"
         >
           <UIcon
             :name="isDark ? ICONS.SUN : ICONS.MOON"
@@ -155,9 +158,9 @@ onUnmounted(() => {
         <!-- Cart Button -->
         <button
           v-if="authStore.isAuthenticated"
-          @click="isCartOpen = true"
           class="flex w-9 h-9 md:w-10 md:h-10 items-center justify-center border border-primary/40 text-primary hover:bg-primary/10 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
           title="Cart"
+          @click="isCartOpen = true"
         >
           <UIcon
             :name="ICONS.HANDBAG"
@@ -185,9 +188,14 @@ onUnmounted(() => {
             src="/avatar.png"
             alt="User Profile"
             class="w-full h-full object-cover"
-          />
+          >
         </NuxtLink>
-        <base-button v-else to="/login" variant="ghost" color="primary">
+        <base-button
+          v-else
+          to="/login"
+          variant="ghost"
+          color="primary"
+        >
           Login
         </base-button>
       </div>

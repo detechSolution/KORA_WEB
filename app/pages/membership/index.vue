@@ -46,54 +46,59 @@ const membershipPlans = computed(() => {
   );
 });
 
-const getIcon = (index: number) => {
+function getIcon(index: number) {
   const icons = ["i-lucide-sparkles", "i-lucide-star", "i-lucide-crown"];
 
   return icons[index] || "i-lucide-check";
-};
+}
 
-const getDescriptionItems = (description: string) => {
-  if (!description) return [];
+function getDescriptionItems(description: string) {
+  if (!description)
+    return [];
 
   const parser = new DOMParser();
   const doc = parser.parseFromString(description, "text/html");
 
   return Array.from(doc.querySelectorAll("li"))
-    .map((item) => item.textContent?.trim())
+    .map(item => item.textContent?.trim())
     .filter(Boolean);
-};
+}
 
-const openPassModal = (pass: any) => {
+function openPassModal(pass: any) {
   if (authStore.isAuthenticated) {
     selectedPass.value = pass;
     isPassModalOpen.value = true;
-  } else {
+  }
+  else {
     router.push("/login");
   }
-};
+}
 
-const openMembershipModal = (tier: any) => {
+function openMembershipModal(tier: any) {
   if (authStore.isAuthenticated) {
     selectedMembershipTier.value = tier;
 
     selectedMembershipPrice.value = `Rs. ${tier.selectedOption?.price?.toLocaleString()}`;
 
     isMembershipModalOpen.value = true;
-  } else {
+  }
+  else {
     router.push("/login");
   }
-};
+}
 
 async function getMembershipPlans() {
   try {
     loading.value = true;
 
     await membershipStore.getMembership();
-  } catch (error: unknown) {
+  }
+  catch (error: unknown) {
     showError({
       message: getApiErrorMessage(error, "Failed to load membership plans"),
     });
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
 }
@@ -103,11 +108,13 @@ async function getPassPlans() {
     loading.value = true;
 
     await membershipStore.getPass();
-  } catch (error: unknown) {
+  }
+  catch (error: unknown) {
     showError({
       message: getApiErrorMessage(error, "Failed to load pass plans"),
     });
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
 }
@@ -129,7 +136,7 @@ onMounted(() => {
         :src="IMAGES.LEAF"
         alt="Kora foliage left"
         class="w-full h-full object-cover scale-x-[-1] -translate-x-12 -translate-y-12 rotate-12"
-      />
+      >
     </div>
 
     <div
@@ -139,7 +146,7 @@ onMounted(() => {
         :src="IMAGES.LEAF"
         alt="Kora foliage right"
         class="w-full h-full object-cover translate-x-12 -translate-y-12 -rotate-12"
-      />
+      >
     </div>
 
     <div class="relative z-20 max-w-400 mx-auto text-center px-4 md:px-8">
@@ -152,7 +159,7 @@ onMounted(() => {
       <h1
         class="font-serif text-6xl md:text-8xl lg:text-9xl text-foreground dark:text-white font-normal leading-[1.1] tracking-wide mb-6"
       >
-        Choose Your <br />
+        Choose Your <br>
         <span class="text-primary italic">Ritual</span>
       </h1>
 
@@ -175,13 +182,13 @@ onMounted(() => {
           <button
             v-for="period in membershipPeriods"
             :key="period"
-            @click="activePeriod = period"
+            class="shrink-0 px-4 sm:px-5 py-2.5 text-xs font-semibold tracking-wider uppercase rounded-xs transition-all duration-200 cursor-pointer whitespace-nowrap"
             :class="[
-              'shrink-0 px-4 sm:px-5 py-2.5 text-xs font-semibold tracking-wider uppercase rounded-xs transition-all duration-200 cursor-pointer whitespace-nowrap',
               activePeriod === period
                 ? 'bg-primary text-white shadow-sm'
                 : 'bg-transparent text-foreground hover:bg-white/[0.02]',
             ]"
+            @click="activePeriod = period"
           >
             {{ period }}
           </button>
@@ -196,8 +203,8 @@ onMounted(() => {
       <div
         v-for="(tier, index) in membershipPlans"
         :key="tier.id"
+        class="relative backdrop-blur-md rounded-xs p-6 md:p-8 flex flex-col justify-between transition-all duration-500 group"
         :class="[
-          'relative backdrop-blur-md rounded-xs p-6 md:p-8 flex flex-col justify-between transition-all duration-500 group',
           index === 1
             ? 'border border-primary-700 bg-[#EFEAE2] dark:bg-[#2A2722] lg:scale-[1.03] z-25'
             : 'border border-border/40 bg-card dark:bg-[#212121]',
@@ -233,7 +240,7 @@ onMounted(() => {
             </div>
           </div>
 
-          <div class="mt-4" v-if="tier.options?.length">
+          <div v-if="tier.options?.length" class="mt-4">
             <p
               class="font-serif text-4xl md:text-5xl text-foreground dark:text-white tracking-wide"
             >
@@ -245,7 +252,7 @@ onMounted(() => {
             </p>
           </div>
 
-          <div class="h-px bg-stone-300 dark:bg-stone-700 my-6 w-full"></div>
+          <div class="h-px bg-stone-300 dark:bg-stone-700 my-6 w-full" />
 
           <ul class="space-y-4 my-8">
             <li
@@ -267,14 +274,14 @@ onMounted(() => {
 
         <div class="mt-6 pt-4">
           <base-button
+            :variant="index === 1 ? 'solid' : 'outline'"
+            class="w-full"
             @click="
               openMembershipModal({
                 ...tier,
                 selectedOption: tier.options[0],
               })
             "
-            :variant="index === 1 ? 'solid' : 'outline'"
-            class="w-full"
           >
             BEGIN NOW
           </base-button>
@@ -338,12 +345,12 @@ onMounted(() => {
             </span>
 
             <p
-              v-html="pass.description"
               class="text-xs md:text-sm text-muted-foreground dark:text-white/60 leading-relaxed mb-8"
+              v-html="pass.description"
             />
           </div>
 
-          <base-button @click="openPassModal(pass)" variant="outline">
+          <base-button variant="outline" @click="openPassModal(pass)">
             BEGIN NOW
           </base-button>
         </div>

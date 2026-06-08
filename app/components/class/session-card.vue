@@ -21,18 +21,19 @@ defineProps({
         :src="session.bannerUrl"
         :alt="session.name"
         class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-      />
+      >
       <div
         class="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/15 opacity-70 group-hover:opacity-40 transition-opacity duration-500"
-      ></div>
+      />
     </div>
 
     <div class="grow flex flex-col items-start gap-1 py-1">
       <base-badge
         color="primary"
         class="rounded-xs text-stone-900 dark:text-white uppercase"
-        >{{ session.type }}</base-badge
       >
+        {{ session.type }}
+      </base-badge>
 
       <span
         class="flex items-center gap-1.5 text-[10px] md:text-xs font-sans tracking-wide text-primary mt-2 select-none"
@@ -48,8 +49,8 @@ defineProps({
       </h3>
 
       <div
-        v-html="session.description"
         class="font-sans text-xs md:text-sm text-secondary-400 leading-relaxed max-w-2xl mb-3 line-clamp-2 overflow-hidden"
+        v-html="session.description"
       />
 
       <div

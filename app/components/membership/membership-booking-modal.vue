@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, type PropType } from "vue";
+import type { PropType } from "vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { useNotification } from "~/composables/use-notification";
 import { useCartStore } from "~/stores/cart";
@@ -40,46 +41,50 @@ const membershipItem = computed(() => ({
   memberBenefit: props.membership.selectedOption.memberBenefit,
 }));
 
-const close = () => {
+function close() {
   emit("close");
-};
+}
 
-const addToCart = () => {
+function addToCart() {
   cartStore.addToCart(membershipItem.value);
   success({ message: "Item added to cart successfully!" });
-};
+}
 
-const proceedToCheckout = () => {
+function proceedToCheckout() {
   cartStore.addToCart(membershipItem.value);
   close();
   router.push("/checkout");
-};
+}
 
 // Assuming 10% discount for Quarterly and 20% for Yearly based on the membership page logic
 // This is just a mock for UI to show discount line if applicable
-const getDiscount = () => {
-  if (props.period === "QUARTERLY") return "10%";
-  if (props.period === "YEARLY") return "20%";
+function getDiscount() {
+  if (props.period === "QUARTERLY")
+    return "10%";
+  if (props.period === "YEARLY")
+    return "20%";
   return null;
-};
+}
 </script>
 
 <template>
   <base-modal
     title=""
     :open="isOpen"
-    @close="close"
     :modal-width="700"
     modal-max-height="90vh"
     :dismissible="true"
     class="dark:bg-nirvana-mist"
+    @close="close"
   >
     <div class="p-6 md:p-12">
       <div class="mb-8 mt-4">
         <h2 class="text-3xl font-serif text-foreground mb-2">
           Purchase Membership
         </h2>
-        <p class="text-xs text-[#A08860]">Begin your metamorphosis</p>
+        <p class="text-xs text-[#A08860]">
+          Begin your metamorphosis
+        </p>
       </div>
 
       <h3
@@ -115,20 +120,20 @@ const getDiscount = () => {
           <span class="font-serif font-bold">Total</span>
           <span class="font-serif font-bold">{{ price }}</span>
         </div>
-        <div class="border-b border-border/40 pb-6 mb-8"></div>
+        <div class="border-b border-border/40 pb-6 mb-8" />
       </div>
 
       <div class="flex flex-col sm:flex-row justify-end gap-4 mt-auto">
         <base-button
-          @click="addToCart"
           class="uppercase text-[11px] tracking-widest font-bold px-8 h-11 rounded-none bg-[#1C1C1C] hover:bg-[#111111] dark:bg-black dark:hover:bg-[#111] text-white"
+          @click="addToCart"
         >
           ADD TO CART
         </base-button>
 
         <base-button
-          @click="proceedToCheckout"
           class="uppercase text-[11px] tracking-widest font-bold px-8 h-11 rounded-none bg-[#A08860] hover:bg-[#8c7550] text-white"
+          @click="proceedToCheckout"
         >
           PROCEED TO CHECKOUT
         </base-button>

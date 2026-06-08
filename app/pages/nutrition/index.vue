@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { IMAGES } from "~/utils/images";
-import { recoveryOfferings } from "~/data/recovery";
-import { wellnessOfferings } from "~/data/wellness";
 import { nutritionOfferings } from "~/data/nutrition";
+import { IMAGES } from "~/utils/images";
 
 definePageMeta({
   layout: "default",
@@ -43,7 +41,7 @@ useSeoMeta({
           :src="IMAGES.LEAF"
           alt="Kora foliage decoration"
           class="w-full h-full object-cover"
-        />
+        >
       </div>
     </div>
 
@@ -55,8 +53,8 @@ useSeoMeta({
     >
       <!-- Image Column -->
       <div
+        class="w-full h-[50vh] lg:h-full relative overflow-hidden group"
         :class="[
-          'w-full h-[50vh] lg:h-full relative overflow-hidden group',
           index % 2 === 0 ? 'order-1' : 'order-1 lg:order-2',
         ]"
       >
@@ -64,16 +62,16 @@ useSeoMeta({
           :src="offering.image"
           :alt="offering.imageAlt"
           class="w-full h-full object-cover transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
-        />
+        >
         <div
           class="absolute inset-0 ring-1 ring-inset ring-black/5 dark:ring-white/5 pointer-events-none"
-        ></div>
+        />
       </div>
 
       <!-- Text Column -->
       <div
+        class="w-full h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 lg:py-0"
         :class="[
-          'w-full h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 lg:py-0',
           index % 2 === 0 ? 'order-2' : 'order-2 lg:order-1',
         ]"
       >
@@ -102,7 +100,7 @@ useSeoMeta({
           :src="IMAGES.LEAF"
           alt="leaf"
           class="w-full h-full object-cover scale-x-[-1] scale-y-[-1]"
-        />
+        >
       </div>
       <div
         class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 pointer-events-none translate-x-12 -translate-y-12 select-none z-10 opacity-30 md:opacity-40"
@@ -111,7 +109,7 @@ useSeoMeta({
           :src="IMAGES.LEAF"
           alt="leaf decoration"
           class="w-full h-full object-cover"
-        />
+        >
       </div>
 
       <div
@@ -121,7 +119,7 @@ useSeoMeta({
           <h2
             class="font-serif text-3xl md:text-5xl text-foreground font-normal leading-tight tracking-wide mb-6"
           >
-            Commit to a Practice That Moves<br />
+            Commit to a Practice That Moves<br>
             With You,
             <span class="text-primary italic">Every Step of the Way</span>
           </h2>
@@ -138,7 +136,9 @@ useSeoMeta({
           <div
             class="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
-            <base-button to="/membership">BECOME A MEMBER</base-button>
+            <base-button to="/membership">
+              BECOME A MEMBER
+            </base-button>
           </div>
         </div>
       </div>

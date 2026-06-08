@@ -1,6 +1,6 @@
+import type { CheckoutResponse } from "~/types/payment";
 import { defineStore } from "pinia";
 import { API_ENDPOINTS } from "~/config/constants";
-import type { CheckoutResponse } from "~/types/payment";
 
 export const usePaymentStore = defineStore("payment", () => {
   const http = getHttp();
@@ -17,7 +17,8 @@ export const usePaymentStore = defineStore("payment", () => {
       checkout.value = response as CheckoutResponse;
 
       return response;
-    } finally {
+    }
+    finally {
       loading.value = false;
     }
   }
