@@ -1,9 +1,7 @@
 {
-  "entry": ["app.vue", "src/main.ts", "nuxt.config.ts"],
-  "project": [
-    "components/**/*",
-    "pages/**/*",
-    "composables/**/*",
-    "stores/**/*"
-  ]
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignoreFiles": ["types/shims-nuxt-ui.d.ts"],
+  "ignoreIssues": {
+    "app/components/**/*.vue": ["files"]
+  }
 }
