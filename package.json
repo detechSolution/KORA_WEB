@@ -1,6 +1,7 @@
 {
   "name": "kora-web",
   "type": "module",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "build": "nuxt build",
@@ -9,7 +10,8 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint",
-    "lint:fix": "eslint --fix"
+    "lint:fix": "eslint --fix",
+    "prepare": "husky"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.20",
@@ -30,6 +32,11 @@
   "devDependencies": {
     "@antfu/eslint-config": "^9.0.0",
     "@types/node": "^25.9.1",
-    "eslint-plugin-format": "^2.0.1"
+    "eslint-plugin-format": "^2.0.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.7"
+  },
+  "lint-staged": {
+    "*": "npm run lint"
   }
 }
