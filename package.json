@@ -5,8 +5,8 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
+    "dev": "nuxt dev --dotenv .env.local --host",
+    "generate": "nuxt generate --dotenv .env",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint",
