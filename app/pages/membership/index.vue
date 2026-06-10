@@ -127,7 +127,7 @@ onMounted(() => {
 
 <template>
   <div
-    class="relative bg-background dark:bg-secondary-900 text-foreground dark:text-white transition-colors duration-300 w-full min-h-screen py-16 md:py-24 overflow-hidden"
+    class="relative bg-background dark:bg-secondary-900 text-foreground dark:text-white transition-colors duration-300 w-full min-h-screen pt-16 md:pt-24 overflow-hidden"
   >
     <div
       class="absolute top-0 left-0 w-64 h-64 md:w-96 md:h-96 xl:w-[480px] xl:h-[480px] pointer-events-none select-none z-10 opacity-30 md:opacity-40"

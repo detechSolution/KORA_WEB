@@ -212,19 +212,19 @@ onUnmounted(() => {
                         </h4>
                         <span
                           v-if="item.itemType === 'session'"
-                          class="text-[8px] px-1.5 py-0.5 bg-purple-900/40 text-purple-300 font-medium tracking-wide"
+                          class="text-[8px] px-1.5 py-0.5 bg-purple-900 dark:bg-purple-900/40 text-purple-300 font-medium tracking-wide"
                         >Session</span>
                         <span
                           v-if="item.itemType === 'spa'"
-                          class="text-[8px] px-1.5 py-0.5 bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
+                          class="text-[8px] px-1.5 py-0.5 bg-emerald-900 dark:bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
                         >Spa</span>
                         <span
                           v-if="item.itemType === 'pass'"
-                          class="text-[8px] px-1.5 py-0.5 bg-blue-900/40 text-blue-400 font-medium tracking-wide"
+                          class="text-[8px] px-1.5 py-0.5 bg-blue-900 dark:bg-blue-900/40 text-blue-400 font-medium tracking-wide"
                         >Pass</span>
                         <span
                           v-if="item.itemType === 'membership'"
-                          class="text-[8px] px-1.5 py-0.5 bg-[#B59A6D] text-white font-medium tracking-wide"
+                          class="text-[8px] px-1.5 py-0.5 bg-[#B59A6D] dark:bg-[#5D4A17] text-white font-medium tracking-wide"
                         >Membership</span>
                       </div>
                       <div>
@@ -332,9 +332,11 @@ onUnmounted(() => {
                     <div
                       class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
                     >
-                      <span
-                        class="text-[#60B54F] font-bold text-lg leading-none"
-                      >eSewa</span>
+                      <img
+                        :src="IMAGES.ESEWA_LOGO"
+                        alt="eSewa"
+                        class="w-18 object-contain"
+                      >
                     </div>
                   </label>
 
@@ -364,9 +366,11 @@ onUnmounted(() => {
                     <div
                       class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
                     >
-                      <span
-                        class="text-[#E31E24] font-bold text-lg leading-none"
-                      >fonepay</span>
+                      <img
+                        :src="IMAGES.FONEPAY_LOGO"
+                        alt="Fonepay"
+                        class="w-18 object-contain"
+                      >
                     </div>
                   </label>
 
@@ -396,9 +400,11 @@ onUnmounted(() => {
                     <div
                       class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
                     >
-                      <span
-                        class="text-[#635BFF] font-bold text-lg leading-none"
-                      >stripe</span>
+                      <img
+                        :src="IMAGES.STRIPE_LOGO"
+                        alt="Stripe"
+                        class="w-18 object-contain"
+                      >
                     </div>
                   </label>
                 </div>

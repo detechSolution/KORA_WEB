@@ -155,15 +155,15 @@ function handleRemoveItem() {
                 </h4>
                 <span
                   v-if="item.itemType === 'session'"
-                  class="text-[9px] px-1.5 py-0.5 bg-purple-900/40 text-purple-300 font-medium tracking-wide"
+                  class="text-[9px] px-1.5 py-0.5 bg-purple-900 dark:bg-purple-900/40 text-purple-300 font-medium tracking-wide"
                 >Session</span>
                 <span
                   v-if="item.itemType === 'spa'"
-                  class="text-[9px] px-1.5 py-0.5 bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
+                  class="text-[9px] px-1.5 py-0.5 bg-emerald-900 dark:bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
                 >Spa</span>
                 <span
                   v-if="item.itemType === 'pass'"
-                  class="text-[9px] px-1.5 py-0.5 bg-blue-900/40 text-blue-400 font-medium tracking-wide"
+                  class="text-[9px] px-1.5 py-0.5 bg-blue-900 dark:bg-blue-900/40 text-blue-400 font-medium tracking-wide"
                 >Pass</span>
                 <span
                   v-if="item.itemType === 'membership'"

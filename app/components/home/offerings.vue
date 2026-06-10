@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+</script>
+
 <template>
   <div
     class="bg-background dark:bg-secondary-900 text-foreground font-sans select-none"
@@ -145,10 +151,17 @@
           <div
             class="w-full sm:w-auto flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
-            <base-button class="w-full sm:w-auto">
+            <base-button
+              class="w-full sm:w-auto"
+              @click="router.push('/membership')"
+            >
               BEGIN YOUR JOURNEY
             </base-button>
-            <base-button variant="outline" class="w-full sm:w-auto">
+            <base-button
+              variant="outline"
+              class="w-full sm:w-auto"
+              @click="router.push('/class')"
+            >
               EXPLORE SESSIONS
             </base-button>
           </div>
