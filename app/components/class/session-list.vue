@@ -73,7 +73,9 @@ defineEmits(["loadSessionList"]);
         </svg>
 
         <div class="flex flex-col gap-1">
-          <h4 class="font-serif text-xl text-white font-medium">
+          <h4
+            class="font-serif text-xl text-foreground dark:text-white font-medium"
+          >
             No Sessions Available
           </h4>
 
