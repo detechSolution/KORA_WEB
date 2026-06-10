@@ -12,7 +12,7 @@
           :src="IMAGES.OFFERINGS_MEMBERSHIP"
           alt="Metamorphosis crafted for you"
           class="w-full h-full object-cover transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
-        >
+        />
         <div
           class="absolute inset-0 ring-1 ring-inset ring-black/5 dark:ring-white/5 pointer-events-none"
         />
@@ -24,7 +24,9 @@
       >
         <span
           class="font-serif text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
-        >01</span>
+        >
+          01
+        </span>
         <h3
           class="font-serif text-3xl md:text-4xl text-foreground font-normal leading-tight tracking-wide mb-6"
         >
@@ -56,7 +58,9 @@
       >
         <span
           class="font-serif text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
-        >02</span>
+        >
+          02
+        </span>
         <h3
           class="font-serif text-3xl md:text-4xl text-foreground font-normal leading-tight tracking-wide mb-6"
         >
@@ -85,7 +89,7 @@
           :src="IMAGES.OFFERINGS_SESSIONS"
           alt="Sessions designed for you"
           class="w-full h-full object-cover transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
-        >
+        />
         <div
           class="absolute inset-0 ring-1 ring-inset ring-black/5 dark:ring-white/5 pointer-events-none"
         />
@@ -104,7 +108,7 @@
           :src="IMAGES.LEAF"
           alt="The Kora Experience"
           class="w-full h-full object-cover"
-        >
+        />
       </div>
 
       <!-- Bottom-Left Foliage Decal -->
@@ -115,7 +119,7 @@
           :src="IMAGES.LEAF"
           alt="leaf"
           class="w-full h-full object-cover scale-x-[-1] scale-y-[-1]"
-        >
+        />
       </div>
 
       <div
@@ -125,7 +129,7 @@
           <h2
             class="font-serif text-3xl md:text-5xl text-foreground font-normal leading-tight tracking-wide mb-6"
           >
-            Access a Different Way of Living,<br>
+            Access a Different Way of Living,<br />
             <span class="text-primary italic">Rooted in Clarity</span>
           </h2>
 
