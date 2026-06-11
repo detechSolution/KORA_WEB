@@ -118,7 +118,7 @@ function handleViewDetail(booking: Booking) {
           variant="outline"
           class="w-full md:w-auto bg-transparent text-red-700 dark:text-red-800 border-red-700 dark:border-red-800 ring-none h-8 text-xs dark:hover:text-red-800 font-medium"
         >
-          CANCEL REQUEST
+          CANCEL
         </base-button>
 
         <base-button
@@ -127,7 +127,7 @@ function handleViewDetail(booking: Booking) {
           class="w-full md:w-auto h-8 text-xs font-medium"
           @click="handleViewDetail(booking)"
         >
-          VIEW DETAIL
+          VIEW
           <UIcon name="i-lucide-arrow-up-right" class="w-3.5 h-3.5" />
         </base-button>
       </div>

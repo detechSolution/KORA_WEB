@@ -121,7 +121,7 @@ async function handleVerifyOtp(): Promise<void> {
     step.value = "reset";
   }
   catch (error: unknown) {
-    console.log("🚀 ~ handleVerifyOtp ~ error:", error);
+    console.error("🚀 ~ handleVerifyOtp ~ error:", error);
     const message = getApiErrorMessage(
       error,
       "Something went wrong. Please try again.",
