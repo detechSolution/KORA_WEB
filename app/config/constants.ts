@@ -40,6 +40,7 @@ export const API_ENDPOINTS = {
 
   PAYMENT: {
     PAY_NOW: "/api/v1/commerce/checkout/pay-now",
+    VERIFY: "/api/v1/commerce/payments/verify",
   },
 
   MEMBER: {

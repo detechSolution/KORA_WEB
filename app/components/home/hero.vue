@@ -45,7 +45,7 @@ onMounted(() => {
         alt="Kora Spa Sanctuary"
         class="absolute inset-0 w-full h-full object-cover transition-all duration-[8000ms] ease-out-quad"
         :class="isLoaded ? 'scale-100' : 'scale-110'"
-      />
+      >
     </div>
 
     <!-- Luxury Dark Overlay Layer 1: Top-to-Bottom Linear Gradient (Header Legibility) -->
