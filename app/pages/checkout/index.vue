@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { PaymentProvider } from "~/types/payment";
 import { computed, onUnmounted, ref } from "vue";
+import { useNotification } from "~/composables/use-notification";
 import { usePayment } from "~/composables/use-payment";
 import { useCartStore } from "~/stores/cart";
+import { getApiErrorMessage } from "~/utils/error";
 import { calculatePrice } from "~/utils/helper";
 
 definePageMeta({
@@ -13,21 +15,21 @@ useSeoMeta({
   title: "Kora | Checkout",
 });
 
-const step = ref(1);
-
-const inputPromoCode = ref("");
-const paymentMethod = ref<PaymentProvider>("stripe");
-const isRemoveItemModalOpen = ref(false);
-const selectedItemId = ref<string | "">("");
-const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
-
 const cartStore = useCartStore();
 const { loading, payNow } = usePayment();
+const { error: showError } = useNotification();
 
 const cartItems = computed(() => cartStore.cartItems);
 const subtotal = computed(() => {
   return cartItems.value.reduce((total, item) => total + item.finalPrice, 0);
 });
+
+const step = ref(1);
+const inputPromoCode = ref("");
+const paymentMethod = ref<PaymentProvider>("stripe");
+const isRemoveItemModalOpen = ref(false);
+const selectedItemId = ref<string | "">("");
+const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
 
 const MEMBERSHIP_DISCOUNT = userDetail?.membership?.option?.memberBenefit || 0;
 
@@ -115,6 +117,11 @@ async function handlePayNowClick() {
     }
     catch (error) {
       console.error("Payment failed:", error);
+      const message = getApiErrorMessage(
+        error,
+        "Something went wrong. Please try again.",
+      );
+      showError({ message });
     }
   }
 }

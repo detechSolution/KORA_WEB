@@ -13,6 +13,7 @@ type MemberProfile = {
 
 type MemberSummary = {
   totalBookings: number;
+  todayBookings: number;
   upcomingBookings: number;
   pastBookings: number;
   cancelledBookings: number;

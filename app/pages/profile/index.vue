@@ -24,7 +24,7 @@ const memberStore = useMemberStore();
 const { pagination } = usePagination(10);
 
 const loading = ref(true);
-const activeTab = ref("UPCOMING");
+const activeTab = ref("TODAY");
 const isSignOutModalOpen = ref(false);
 const loadingSignOut = ref(false);
 
@@ -37,6 +37,7 @@ async function fetchBookings() {
   try {
     loading.value = true;
     const statusMap: Record<string, string> = {
+      TODAY: "today",
       UPCOMING: "upcoming",
       PAST: "past",
       CANCELED: "cancelled",
@@ -81,6 +82,7 @@ const user = computed(() => {
         : "",
     },
     stats: {
+      todayBookings: summaryData.value?.todayBookings || 0,
       totalBookings: summaryData.value?.totalBookings || 0,
       upcoming: summaryData.value?.upcomingBookings || 0,
       canceled: summaryData.value?.cancelledBookings || 0,
@@ -118,6 +120,7 @@ const tabs = computed(() => {
   const pastCount = summaryData.value?.pastBookings || 0;
 
   return [
+    { value: "TODAY", label: `TODAY (${user.value.stats.todayBookings})` },
     { value: "UPCOMING", label: `UPCOMING (${user.value.stats.upcoming})` },
     { value: "PAST", label: `PAST (${pastCount})` },
     { value: "CANCELED", label: `CANCELED (${user.value.stats.canceled})` },
@@ -362,7 +365,11 @@ onMounted(async () => {
               </h3>
 
               <div>
-                <ClassFilter v-model="activeTab" :filters="tabs" />
+                <ClassFilter
+                  v-model="activeTab"
+                  :filters="tabs"
+                  button-class="text-[9px] xl:text-xs"
+                />
               </div>
             </div>
 
