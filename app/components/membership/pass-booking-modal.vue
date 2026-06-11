@@ -93,7 +93,7 @@ const steps = [
     label: "Attendees",
   },
   {
-    label: "Date & Time",
+    label: "Date",
   },
   {
     label: "Overview",
@@ -336,7 +336,7 @@ function proceedToCheckout() {
                 Choose Your Date
               </h2>
               <p class="text-xs text-[#A08860]">
-                Pick a time that works best for your relaxation
+                Access to this pass begins on the date you select.
               </p>
             </div>
 
