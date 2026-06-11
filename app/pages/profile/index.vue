@@ -2,6 +2,7 @@
 import type { Booking } from "~/data/profile";
 import { computed, onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
+import { usePagination } from "~/composables/use-pagination";
 import { useAuthStore } from "~/stores/auth";
 import { useMemberStore } from "~/stores/member";
 import { formatDate } from "~/utils/format";
@@ -20,6 +21,7 @@ useSeoMeta({
 const router = useRouter();
 const authStore = useAuthStore();
 const memberStore = useMemberStore();
+const { pagination } = usePagination(10);
 
 const loading = ref(true);
 const activeTab = ref("UPCOMING");
@@ -41,6 +43,8 @@ async function fetchBookings() {
     };
     const params = {
       status: statusMap[activeTab.value],
+      page: pagination.value.page,
+      limit: pagination.value.pageSize,
     };
     await memberStore.getBookings(params);
   }
@@ -291,7 +295,7 @@ onMounted(async () => {
                   >
                     MEMBER SINCE
                   </div>
-                  <div class="text-sm text-foreground font-serif">
+                  <div class="text-lg text-foreground font-serif">
                     {{ user.membership.tier }}
                   </div>
                 </div>
@@ -301,7 +305,7 @@ onMounted(async () => {
                   >
                     BILLING
                   </div>
-                  <div class="text-sm text-foreground font-serif">
+                  <div class="text-lg text-foreground font-serif">
                     {{ user.membership.billing }}
                   </div>
                 </div>
@@ -311,7 +315,7 @@ onMounted(async () => {
                   >
                     MEMBER BENEFIT
                   </div>
-                  <div class="text-sm text-foreground font-serif">
+                  <div class="text-lg text-foreground font-serif">
                     {{ user.membership.benefit }}
                   </div>
                 </div>
@@ -394,6 +398,18 @@ onMounted(async () => {
                 </p>
               </div>
             </div>
+            <base-pagination
+              :page="pagination.page"
+              :total="memberStore.bookingsData.meta.total"
+              :items-per-page="pagination.pageSize"
+              :disabled="memberStore.loading"
+              @update:page="
+                (v) => {
+                  pagination.page = v;
+                  fetchBookings();
+                }
+              "
+            />
           </div>
         </div>
 

@@ -70,12 +70,12 @@ function handleViewDetail(booking: Booking) {
             {{ booking.title }}
           </h4>
           <span
-            class="px-2 py-0.5 text-[10px] font-bold rounded-sm"
+            class="px-2 py-0.5 text-[10px] font-bold rounded-sm capitalize"
             :class="[
               badgeClass,
             ]"
           >
-            {{ booking.type }}
+            {{ booking.itemType }}
           </span>
         </div>
 
