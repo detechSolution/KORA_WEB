@@ -5,7 +5,6 @@ import { useNotification } from "~/composables/use-notification";
 import { usePagination } from "~/composables/use-pagination";
 import { useSessionStore } from "~/stores/session";
 import { getApiErrorMessage } from "~/utils/error";
-import { formatDate } from "~/utils/format";
 import { IMAGES } from "~/utils/images";
 
 definePageMeta({
@@ -29,7 +28,6 @@ const router = useRouter();
 
 const loading = ref(false);
 const activeFilter = ref<Tab>((route.query.tab as Tab) ?? "all");
-const currentDate = new Date();
 
 const filters = [
   // { label: "PHOTOS", value: "photos" },
@@ -48,7 +46,6 @@ async function getSessionsList() {
       page: pagination.value.page,
       limit: pagination.value.pageSize,
       type: activeFilter.value === "all" ? undefined : activeFilter.value,
-      startDate: formatDate(currentDate.toISOString(), "YYYY-MM-DD"),
     };
     await sessionStore.getSessions(params);
   }

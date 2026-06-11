@@ -1,6 +1,8 @@
 import type { PaymentInfo } from "~/types/payment";
 
-export function redirectToPaymentProvider(payment: PaymentInfo) {
+const router = useRouter();
+
+export function redirectToPaymentProvider(payment: PaymentInfo, checkoutCode?: string) {
   switch (payment.mode) {
     case "redirect_url": {
       if (!payment.redirectUrl) {
@@ -30,6 +32,13 @@ export function redirectToPaymentProvider(payment: PaymentInfo) {
 
       document.body.appendChild(form);
       form.submit();
+      break;
+    }
+    case "free": {
+      router.push({
+        path: "/checkout/success",
+        query: { checkout_code: checkoutCode || "" },
+      });
       break;
     }
     default:

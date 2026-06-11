@@ -8,6 +8,7 @@ type PaymentMode
   = | "redirect_url"
     | "sdk"
     | "redirect_form"
+    | "free"
     | "embedded";
 
 export type PaymentInfo = {
