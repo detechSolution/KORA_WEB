@@ -11,6 +11,6 @@ export type Booking = {
   price: string;
   image?: string;
   status: "UPCOMING" | "PAST" | "CANCELED";
-  sessionId?: number;
+  productId?: number;
   itemType: "session" | "spa" | "passes";
 };

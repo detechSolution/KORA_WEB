@@ -69,7 +69,7 @@ type MemberBooking = {
   itemType: string;
   serviceOfferingName: string | null;
   serviceDuration: string | null;
-  sessionId: number | null;
+  productId: number | null;
   status: string;
   bookedAt: string;
   bookedFor: string;

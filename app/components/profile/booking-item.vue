@@ -28,7 +28,7 @@ function handleViewDetail(booking: Booking) {
     router.push({ path: `/spa` });
   }
   else if (booking.itemType === "session") {
-    router.push({ path: `/session/${booking.sessionId}` });
+    router.push({ path: `/session/${booking.productId}` });
   }
   else if (booking.itemType === "passes") {
     router.push({ path: `/membership` });
