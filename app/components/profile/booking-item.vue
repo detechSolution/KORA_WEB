@@ -11,13 +11,13 @@ const props = defineProps<{
 const router = useRouter();
 
 const badgeClass = computed(() => {
-  if (props.booking.type === "Session") {
+  if (props.booking.itemType === "session") {
     return "bg-[#3D1E62] text-[#D8B4FE]"; // Purple
   }
-  else if (props.booking.type === "Spa") {
+  else if (props.booking.itemType === "spa") {
     return "bg-[#1B3B36] text-[#6EE7B7]"; // Teal/Green
   }
-  else if (props.booking.type === "Pass") {
+  else if (props.booking.itemType === "passes") {
     return "bg-[#1E3A8A] text-[#93C5FD]"; // Blue
   }
   return "bg-stone-800 text-stone-300";

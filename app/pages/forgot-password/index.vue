@@ -58,6 +58,7 @@ async function handleSubmitEmail(): Promise<void> {
     emailApiError.value = null;
     await authStore.forgotPassword({ email: emailFormState.email });
     submittedEmail.value = emailFormState.email;
+    showSuccess({ message: "OTP sent successfully. Please check your email." });
     step.value = "otp";
   }
   catch (error: unknown) {
@@ -95,6 +96,12 @@ const otpSchema = z
   });
 
 const otpFormState = reactive({ code: "" });
+const otpCode = ref(["", "", "", "", "", ""]);
+
+function handleOtpInput(): void {
+  otpFormState.code = otpCode.value.join("");
+  otpApiError.value = null;
+}
 
 async function handleVerifyOtp(): Promise<void> {
   try {
@@ -114,6 +121,7 @@ async function handleVerifyOtp(): Promise<void> {
     step.value = "reset";
   }
   catch (error: unknown) {
+    console.log("🚀 ~ handleVerifyOtp ~ error:", error);
     const message = getApiErrorMessage(
       error,
       "Something went wrong. Please try again.",
@@ -279,16 +287,21 @@ async function handleResetPassword(): Promise<void> {
               :validate-on="['input', 'change', 'blur']"
               class="mt-8 w-full space-y-4"
             >
-              <base-input
-                v-model="otpFormState.code"
-                name="code"
-                label="OTP CODE"
-                placeholder="Enter OTP Code"
-                type="text"
-                leading-icon="i-lucide-key-round"
-                class="bg-transparent"
-                @input="otpApiError = null"
-              />
+              <UFormField name="code">
+                <UPinInput
+                  v-model="otpCode"
+                  name="code"
+                  label="OTP CODE"
+                  type="text"
+                  :length="6"
+                  size="lg"
+                  :ui="{
+                    root: 'flex items-center gap-4',
+                    base: `bg-white dark:bg-transparent text-xl ring-secondary-50 dark:ring-secondary-800 focus:ring-1 focus:outline-none placeholder:text-secondary-300 rounded-xs h-11 w-11`,
+                  }"
+                  @input="handleOtpInput"
+                />
+              </UFormField>
 
               <base-button
                 class="w-full"
