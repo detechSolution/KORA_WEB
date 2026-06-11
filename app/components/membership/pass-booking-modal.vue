@@ -8,6 +8,7 @@ import { useRouter } from "vue-router";
 import z from "zod";
 import { useNotification } from "~/composables/use-notification";
 import { useCartStore } from "~/stores/cart";
+import { formatDate } from "~/utils/format";
 import { calculatePrice } from "~/utils/helper";
 
 type Guest = {
@@ -62,7 +63,7 @@ const passItem = computed(() => ({
   itemType: "pass",
   finalPrice: pricing.value.finalPrice,
   memberBenefit: props.pass.discountTag,
-  bookingDate: state.date,
+  bookingDate: formatDate(state.date, "YYYY-MM-DD"),
 }));
 
 const schema = [

@@ -49,7 +49,9 @@ const router = useRouter();
           body, clear your mind, and maintain a sense of balance.
         </p>
         <div>
-          <base-button @click="router.push('/membership')">View Memberships</base-button>
+          <base-button @click="router.push('/membership')">
+            View Memberships
+          </base-button>
         </div>
       </div>
     </section>
@@ -83,7 +85,9 @@ const router = useRouter();
           leave feeling balanced.
         </p>
         <div>
-          <base-button @click="router.push('/class')">View All Sessions</base-button>
+          <base-button @click="router.push('/class')">
+            View All Sessions
+          </base-button>
         </div>
       </div>
 

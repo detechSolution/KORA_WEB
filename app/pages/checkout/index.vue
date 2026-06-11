@@ -96,6 +96,10 @@ async function handlePayNowClick() {
 
           referenceId: item.referenceId,
 
+          ...(item.itemType === "pass" && {
+            bookingDate: item.bookingDate,
+          }),
+
           ...(item.itemType === "spa" && {
             bookingDate: item.bookingDate,
             bookingTime: item.bookingTime,
@@ -209,7 +213,7 @@ onUnmounted(() => {
                   <div class="flex-1 flex flex-col">
                     <div class="flex justify-between items-start gap-4 mb-2">
                       <div class="flex flex-wrap items-start gap-2">
-                        <h4 class="text-sm font-serif text-foreground">
+                        <h4 class="text-base font-serif text-foreground">
                           {{ item.title }}
                           <br>
                           <span v-if="item.itemType !== 'membership'">
@@ -235,7 +239,7 @@ onUnmounted(() => {
                         >Membership</span>
                       </div>
                       <div>
-                        <span class="text-sm font-serif text-[#B59A6D]">Rs. {{ formatPrice(item.finalPrice) }}</span>
+                        <span class="text-lg font-serif text-[#B59A6D]">Rs. {{ formatPrice(item.finalPrice) }}</span>
                       </div>
                     </div>
 
@@ -286,7 +290,7 @@ onUnmounted(() => {
                   >Total</span>
                   <span
                     class="font-serif text-xl md:text-2xl text-[#B59A6D] font-bold"
-                  >{{ formatPrice(subtotal) }}</span>
+                  >Rs. {{ formatPrice(subtotal) }}</span>
                 </div>
               </div>
             </div>

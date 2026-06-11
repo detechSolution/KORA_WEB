@@ -145,7 +145,7 @@ function handleRemoveItem() {
           <div class="flex-1 flex flex-col pt-1">
             <div class="flex justify-between items-start gap-4">
               <div class="flex items-start gap-2">
-                <h4 class="text-sm font-serif text-foreground">
+                <h4 class="text-base font-serif text-foreground">
                   {{ item.title }}
                   <br>
                   <span v-if="item.itemType !== 'membership'">
@@ -167,10 +167,10 @@ function handleRemoveItem() {
                 >Pass</span>
                 <span
                   v-if="item.itemType === 'membership'"
-                  class="text-[9px] px-1.5 py-0.5 bg-primary text-primary-foreground font-medium tracking-wide"
+                  class="text-[9px] px-1.5 py-0.5 bg-primary dark:bg-[#5D4A17] text-primary-foreground font-medium tracking-wide"
                 >Membership</span>
               </div>
-              <span class="text-sm font-serif text-[#B59A6D]">Rs. {{ formatPrice(item.finalPrice) }}</span>
+              <span class="text-lg font-serif text-[#B59A6D]">Rs. {{ formatPrice(item.finalPrice) }}</span>
             </div>
 
             <div class="mt-2 flex flex-col gap-1.5">
