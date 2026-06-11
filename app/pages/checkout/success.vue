@@ -116,7 +116,7 @@ onMounted(async () => {
           GO TO PROFILE
         </base-button>
         <base-button
-          to="/class"
+          to="/session"
           class="w-full text-[11px]"
         >
           BOOK MORE SERVICES

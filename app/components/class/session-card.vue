@@ -87,7 +87,7 @@ defineProps({
       <base-button
         variant="outline"
         color="primary"
-        :to="{ path: `/class/${session.id}`, query: {} }"
+        :to="{ path: `/session/${session.id}`, query: {} }"
       >
         View Detail
         <UIcon

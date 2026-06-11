@@ -35,11 +35,11 @@ const menuItems = computed(() => {
       sub: "Your Profile & Wellness Journey",
       requiresAuth: true,
     },
-    { name: "Class", path: "/class?tab=class", sub: "Daily Practice & Group Sessions" },
-    { name: "Events", path: "/class?tab=event", sub: "Curated Gatherings & Occasions" },
+    { name: "Class", path: "/session?tab=class", sub: "Daily Practice & Group Sessions" },
+    { name: "Events", path: "/session?tab=event", sub: "Curated Gatherings & Occasions" },
     {
       name: "Workshops",
-      path: "/class?tab=workshop",
+      path: "/session?tab=workshop",
       sub: "Immersive Learning & Wisdom",
     },
     {

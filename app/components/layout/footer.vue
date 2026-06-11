@@ -11,7 +11,7 @@ const navColumns = [
   {
     title: "Navigate",
     links: [
-      { label: "SESSIONS", to: "/class?tab=all" },
+      { label: "SESSIONS", to: "/session?tab=all" },
       { label: "SPA SANCTUARY", to: "/spa" },
       { label: "MEMBERSHIP", to: "/membership" },
       { label: "SCHEDULE", to: "/schedules" },

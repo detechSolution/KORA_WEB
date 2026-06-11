@@ -85,7 +85,7 @@ const router = useRouter();
           leave feeling balanced.
         </p>
         <div>
-          <base-button @click="router.push('/class')">
+          <base-button @click="router.push('/session')">
             View All Sessions
           </base-button>
         </div>
@@ -164,7 +164,7 @@ const router = useRouter();
             <base-button
               variant="outline"
               class="w-full sm:w-auto"
-              @click="router.push('/class')"
+              @click="router.push('/session')"
             >
               EXPLORE SESSIONS
             </base-button>

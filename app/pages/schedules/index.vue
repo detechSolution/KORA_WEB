@@ -225,7 +225,7 @@ async function getSessionsList() {
 }
 
 function handleDetailSessionView(id: string | number) {
-  router.push(`/class/${id}`);
+  router.push(`/session/${id}`);
 }
 
 watch(
