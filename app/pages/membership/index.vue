@@ -35,15 +35,19 @@ const selectedMembershipPrice = ref<string>("");
 const membershipPlans = computed(() => {
   const period = activePeriod.value.toLowerCase();
 
-  if (period === "100 days") {
-    return membershipStore.groupedMembershipPlans.custom;
-  }
+  const plans
+    = period === "100 days"
+      ? membershipStore.groupedMembershipPlans.custom
+      : membershipStore.groupedMembershipPlans[
+        period as "monthly" | "quarterly" | "yearly"
+      ] || [];
 
-  return (
-    membershipStore.groupedMembershipPlans[
-      period as "monthly" | "quarterly" | "yearly"
-    ] || []
-  );
+  return plans.map((tier: any) => ({
+    ...tier,
+    selectedOption: tier.options?.find(
+      (option: any) => option.frequency?.toUpperCase() === activePeriod.value,
+    ),
+  }));
 });
 
 function getIcon(index: number) {
@@ -119,9 +123,9 @@ async function getPassPlans() {
   }
 }
 
-onMounted(() => {
-  getMembershipPlans();
-  getPassPlans();
+onMounted(async () => {
+  await getMembershipPlans();
+  await getPassPlans();
 });
 </script>
 
@@ -240,15 +244,15 @@ onMounted(() => {
             </div>
           </div>
 
-          <div v-if="tier.options?.length" class="mt-4">
+          <div v-if="tier.selectedOption" class="mt-4">
             <p
               class="font-serif text-4xl md:text-5xl text-foreground dark:text-white tracking-wide"
             >
-              Rs. {{ tier.options[0]?.price?.toLocaleString() }}
+              Rs. {{ tier.selectedOption.price?.toLocaleString() }}
             </p>
 
             <p class="text-xs text-muted-foreground mt-2 capitalize">
-              Per {{ tier.options[0]?.frequency }}
+              Per {{ tier.selectedOption.frequency }}
             </p>
           </div>
 
@@ -276,12 +280,8 @@ onMounted(() => {
           <base-button
             :variant="index === 1 ? 'solid' : 'outline'"
             class="w-full"
-            @click="
-              openMembershipModal({
-                ...tier,
-                selectedOption: tier.options[0],
-              })
-            "
+            :disabled="!tier.selectedOption"
+            @click="openMembershipModal(tier)"
           >
             BEGIN NOW
           </base-button>
