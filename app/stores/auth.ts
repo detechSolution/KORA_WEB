@@ -22,7 +22,7 @@ export const useAuthStore = defineStore("auth", () => {
     id: number | null;
     email: string;
     name: string;
-    phone: string;
+    phoneNumber: string;
     avatar?: string;
     is_active?: boolean;
     role_id?: number | null;
@@ -32,7 +32,7 @@ export const useAuthStore = defineStore("auth", () => {
     id: null,
     email: "",
     name: "",
-    phone: "",
+    phoneNumber: "",
     avatar: "",
     membership: null,
   });
@@ -67,7 +67,7 @@ export const useAuthStore = defineStore("auth", () => {
           id: user.value.id,
           email: user.value.email,
           name: user.value.name,
-          phone: user.value.phone,
+          phone: user.value.phoneNumber,
           avatar: user.value.avatar,
           is_active: user.value.is_active,
           role_id: user.value.role_id,
@@ -92,7 +92,7 @@ export const useAuthStore = defineStore("auth", () => {
       id: null,
       email: "",
       name: "",
-      phone: "",
+      phoneNumber: "",
       avatar: "",
     };
     permissions.value = [];
@@ -146,7 +146,7 @@ export const useAuthStore = defineStore("auth", () => {
         user.value.id = (u.id as number) ?? null;
         user.value.email = (u.email as string) ?? "";
         user.value.name = (u.fullName as string) ?? "";
-        // user.value.phone = (u.phone as string) ?? "";
+        user.value.phoneNumber = (u.phoneNumber as string) ?? "";
         // user.value.avatar = (u.avatar as string) ?? "";
         // user.value.is_active = u.is_active as boolean | undefined;
         user.value.role_id = (u?.adminRole?.id as number | null) ?? null;
