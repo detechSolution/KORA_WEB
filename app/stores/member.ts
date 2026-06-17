@@ -57,6 +57,16 @@ export const useMemberStore = defineStore("member", () => {
     }
   };
 
+  const requestBookingCancellation = async (bookingId: number): Promise<void> => {
+    try {
+      await http.patch(API_ENDPOINTS.AUTH.REQUEST_CANCELLATION(bookingId));
+    }
+    catch (error: unknown) {
+      console.error(error, "Request Booking Cancellation Error");
+      throw error;
+    }
+  };
+
   return {
     dashboardData,
     bookingsData,
@@ -64,5 +74,6 @@ export const useMemberStore = defineStore("member", () => {
     bookingsLoading,
     getDashboard,
     getBookings,
+    requestBookingCancellation,
   };
 });

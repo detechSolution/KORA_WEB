@@ -1,7 +1,7 @@
 type BookingType = "Session" | "Spa" | "Pass";
 
 export type Booking = {
-  id: string;
+  id: number;
   title: string;
   type: BookingType;
   date?: string;

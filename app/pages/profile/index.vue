@@ -384,6 +384,7 @@ onMounted(async () => {
                   :key="booking.id"
                   :booking="booking"
                   :active-tab="activeTab"
+                  @fetch-bookings="fetchBookings"
                 />
               </div>
 

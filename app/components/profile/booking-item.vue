@@ -1,14 +1,24 @@
 <script setup lang="ts">
 import type { Booking } from "~/data/profile";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
+import { useNotification } from "~/composables/use-notification";
+import { useMemberStore } from "~/stores/member";
+import { getApiErrorMessage } from "~/utils/error";
 
 const props = defineProps<{
   booking: Booking;
   activeTab: string;
 }>();
 
+const emit = defineEmits(["fetchBookings"]);
+
 const router = useRouter();
+const { success, error: showError } = useNotification();
+const memberstore = useMemberStore();
+
+const isCancelRequestModalOpen = ref(false);
+const loadingCancelRequest = ref(false);
 
 const badgeClass = computed(() => {
   if (props.booking.itemType === "session") {
@@ -34,6 +44,33 @@ function handleViewDetail(booking: Booking) {
     router.push({ path: `/membership` });
   }
 }
+
+async function handleCancelRequest() {
+  if (!props.booking)
+    return;
+
+  try {
+    loadingCancelRequest.value = true;
+
+    await memberstore.requestBookingCancellation(props.booking.id);
+
+    success({ message: "Cancellation requested successfully" });
+
+    emit("fetchBookings");
+  }
+  catch (err: unknown) {
+    showError({
+      message: getApiErrorMessage(
+        err,
+        "Failed to request booking cancellation",
+      ),
+    });
+  }
+  finally {
+    loadingCancelRequest.value = false;
+    isCancelRequestModalOpen.value = false;
+  }
+}
 </script>
 
 <template>
@@ -48,7 +85,10 @@ function handleViewDetail(booking: Booking) {
         class="w-24 h-24 border border-border dark:bg-[#1A1A1A] flex flex-col items-center justify-center rounded-xs shrink-0"
       >
         <!-- Pass Icon -->
-        <UIcon name="i-lucide-id-card-lanyard" class="w-12 h-12 text-[#B59A6D]" />
+        <UIcon
+          name="i-lucide-id-card-lanyard"
+          class="w-12 h-12 text-[#B59A6D]"
+        />
       </div>
       <div
         v-else
@@ -71,9 +111,7 @@ function handleViewDetail(booking: Booking) {
           </h4>
           <span
             class="px-2 py-0.5 text-[10px] font-bold rounded-sm capitalize"
-            :class="[
-              badgeClass,
-            ]"
+            :class="[badgeClass]"
           >
             {{ booking.itemType }}
           </span>
@@ -113,10 +151,14 @@ function handleViewDetail(booking: Booking) {
         {{ booking.price }}
       </div>
 
-      <div v-if="activeTab.toLowerCase() === 'upcoming'" class="w-full md:w-auto flex items-center gap-3 self-end">
+      <div
+        v-if="activeTab.toLowerCase() === 'upcoming'"
+        class="w-full md:w-auto flex items-center gap-3 self-end"
+      >
         <base-button
           variant="outline"
           class="w-full md:w-auto bg-transparent text-red-700 dark:text-red-800 border-red-700 dark:border-red-800 ring-none h-8 text-xs dark:hover:text-red-800 font-medium"
+          @click="isCancelRequestModalOpen = true"
         >
           CANCEL
         </base-button>
@@ -133,6 +175,12 @@ function handleViewDetail(booking: Booking) {
       </div>
     </div>
   </div>
+  <profile-request-cancel-modal
+    :open="isCancelRequestModalOpen"
+    :loading="loadingCancelRequest"
+    @close="isCancelRequestModalOpen = false"
+    @confirm="handleCancelRequest"
+  />
 </template>
 
 <style scoped></style>
