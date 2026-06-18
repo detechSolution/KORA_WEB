@@ -95,6 +95,7 @@ async function handlePayNowClick() {
           itemType: item.itemType,
 
           referenceId: item.referenceId,
+          bookingFor: item.bookingFor,
 
           ...(item.itemType === "pass" && {
             bookingDate: item.bookingDate,
