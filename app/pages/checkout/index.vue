@@ -218,8 +218,8 @@ onUnmounted(() => {
                           {{ item.title }}
                           <br>
                           <span v-if="item.itemType !== 'membership'">
-                            (<span class="text-xl">{{ item.visitors.length + 1 }} x
-                              {{ formatPrice(item.price) }}</span>)
+                            (<span class="text-xl">{{ item.visitors.length > 0 ? item.visitors.length : 1 }} x
+                              {{ formatPrice(item.unitPriceAfterDiscount || item.finalPrice) }}</span>)
                           </span>
                         </h4>
                         <span
@@ -244,7 +244,7 @@ onUnmounted(() => {
                       </div>
                     </div>
 
-                    <div class="flex flex-col gap-1.5 mt-auto">
+                    <div class="flex gap-1.5 mt-auto">
                       <div
                         v-if="item.bookingDate"
                         class="flex items-center gap-1.5 text-[9px] text-muted-foreground"

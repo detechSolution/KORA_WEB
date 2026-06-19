@@ -149,8 +149,8 @@ function handleRemoveItem() {
                   {{ item.title }}
                   <br>
                   <span v-if="item.itemType !== 'membership'">
-                    (<span class="text-xl">{{ item.visitors.length + 1 }} x
-                      {{ formatPrice(item.price) }}</span>)
+                    (<span class="text-xl">{{ item.visitors.length > 0 ? item.visitors.length : 1 }} x
+                      {{ formatPrice(item.unitPriceAfterDiscount || item.finalPrice) }}</span>)
                   </span>
                 </h4>
                 <span
@@ -173,7 +173,7 @@ function handleRemoveItem() {
               <span class="text-lg font-serif text-[#B59A6D]">Rs. {{ formatPrice(item.finalPrice) }}</span>
             </div>
 
-            <div class="mt-2 flex flex-col gap-1.5">
+            <div class="mt-2 flex gap-1.5">
               <div
                 v-if="item.bookingDate"
                 class="flex items-center gap-1.5 text-[10px] text-muted-foreground"

@@ -20,10 +20,16 @@ export function calculatePrice({
 
   const finalPrice = subtotal - discountAmount;
 
+  const unitPrice = price;
+
+  const unitPriceAfterDiscount = unitPrice - discountAmount;
+
   return {
     subtotal,
     discountAmount,
     finalPrice,
+    unitPrice,
+    unitPriceAfterDiscount,
   };
 }
 

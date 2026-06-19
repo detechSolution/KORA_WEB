@@ -57,7 +57,10 @@ const schema = computed(() => [
           currentUser: z.object({
             fullName: z.string().min(1, "Full name is required"),
             phone: z.string().optional(),
-            email: z.string().email("Invalid email").optional().or(z.literal("")),
+            email: z
+              .string()
+              .email("Invalid email")
+              .optional(),
           }),
         }
       : {}),
@@ -67,7 +70,10 @@ const schema = computed(() => [
             z.object({
               fullName: z.string().min(1, "Full name is required"),
               phone: z.string().optional(),
-              email: z.string().email("Invalid email").min(1, "Email is required"),
+              email: z
+                .string()
+                .email("Invalid email")
+                .min(1, "Email is required"),
             }),
           ),
         }
@@ -109,10 +115,14 @@ function goBackToPreference() {
   resetGuests();
 }
 
+const CLASS_DISCOUNT = userDetail?.membership?.plan?.classBenefit || 0;
+
 const pricing = computed(() => {
   let count = 0;
+  let discount = 0;
   if (state.bookingPreference === "myself") {
     count = 1;
+    discount = CLASS_DISCOUNT;
   }
   else if (state.bookingPreference === "guest") {
     count = state.guests.length;
@@ -123,6 +133,7 @@ const pricing = computed(() => {
   return calculatePrice({
     price: props.session.price,
     guests: count,
+    discount,
   });
 });
 
@@ -170,7 +181,8 @@ const bookingItem = computed(() => ({
   referenceId: props.session.id,
   title: props.session.name,
   type: props.session.type,
-  price: props.session.price,
+  unitPrice: pricing.value.unitPrice,
+  unitPriceAfterDiscount: pricing.value.unitPriceAfterDiscount,
   bookingDate: props.session.sessionDate,
   bookingTime: props.session.startTime,
   location: props.session.venue,
@@ -237,18 +249,25 @@ function close() {
               class="border border-border p-8 flex flex-col items-center text-center cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors group"
               @click="selectPreference('myself')"
             >
-              <div class="w-20 h-20 rounded-full bg-[#f4ebd9] dark:bg-[#A08860]/20 flex items-center justify-center mb-6">
+              <div
+                class="w-20 h-20 rounded-full bg-[#f4ebd9] dark:bg-[#A08860]/20 flex items-center justify-center mb-6"
+              >
                 <UIcon name="i-lucide-user" class="w-8 h-8 text-primary-700" />
               </div>
               <h3 class="text-2xl font-serif mb-4 text-foreground">
                 Book For Myself
               </h3>
-              <div class="w-12 h-px bg-border/40 mb-4 transition-all group-hover:w-20 group-hover:bg-[#A08860]" />
+              <div
+                class="w-12 h-px bg-border/40 mb-4 transition-all group-hover:w-20 group-hover:bg-[#A08860]"
+              />
               <p class="text-sm text-muted-foreground mb-4">
                 Manage your personal bookings & appointments
               </p>
-              <button class="text-xs font-bold text-primary-700 tracking-widest uppercase flex items-center gap-2 mt-auto cursor-pointer">
-                GET STARTED <UIcon name="i-lucide-arrow-right" class="w-4 h-4" />
+              <button
+                class="text-xs font-bold text-primary-700 tracking-widest uppercase flex items-center gap-2 mt-auto cursor-pointer"
+              >
+                GET STARTED
+                <UIcon name="i-lucide-arrow-right" class="w-4 h-4" />
               </button>
             </div>
 
@@ -257,18 +276,26 @@ function close() {
               class="border border-border p-8 flex flex-col items-center text-center cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors group"
               @click="selectPreference('guest')"
             >
-              <div class="w-20 h-20 rounded-full bg-[#f4ebd9] dark:bg-[#A08860]/20 flex items-center justify-center mb-6">
+              <div
+                class="w-20 h-20 rounded-full bg-[#f4ebd9] dark:bg-[#A08860]/20 flex items-center justify-center mb-6"
+              >
                 <UIcon name="i-lucide-users" class="w-8 h-8 text-primary-700" />
               </div>
               <h3 class="text-2xl font-serif mb-4 text-foreground">
                 Book For Guest
               </h3>
-              <div class="w-12 h-px bg-border/40 mb-4 transition-all group-hover:w-20 group-hover:bg-[#A08860]" />
+              <div
+                class="w-12 h-px bg-border/40 mb-4 transition-all group-hover:w-20 group-hover:bg-[#A08860]"
+              />
               <p class="text-sm text-muted-foreground mb-4">
-                Book on behalf of someone else such as friends or family members.
+                Book on behalf of someone else such as friends or family
+                members.
               </p>
-              <button class="text-xs font-bold text-primary-700 tracking-widest uppercase flex items-center gap-2 mt-auto cursor-pointer">
-                GET STARTED <UIcon name="i-lucide-arrow-right" class="w-4 h-4" />
+              <button
+                class="text-xs font-bold text-primary-700 tracking-widest uppercase flex items-center gap-2 mt-auto cursor-pointer"
+              >
+                GET STARTED
+                <UIcon name="i-lucide-arrow-right" class="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -303,17 +330,28 @@ function close() {
               >
                 <div class="mb-8">
                   <h2 class="text-3xl font-serif text-foreground mb-3">
-                    {{ state.bookingPreference === 'myself' ? "Your Details" : "Guest Details" }}
+                    {{
+                      state.bookingPreference === "myself"
+                        ? "Your Details"
+                        : "Guest Details"
+                    }}
                   </h2>
                   <p class="text-xs text-[#A08860]">
-                    {{ state.bookingPreference === 'myself' ? "Please confirm your details for the booking." : "Add the details of the guest joining the session." }}
+                    {{
+                      state.bookingPreference === "myself"
+                        ? "Please confirm your details for the booking."
+                        : "Add the details of the guest joining the session."
+                    }}
                   </p>
                 </div>
 
                 <div class="w-full h-px bg-border/40 mb-8" />
 
                 <!-- Current User Details (Myself) -->
-                <div v-if="state.bookingPreference === 'myself'" class="flex flex-col gap-6 mb-8">
+                <div
+                  v-if="state.bookingPreference === 'myself'"
+                  class="flex flex-col gap-6 mb-8"
+                >
                   <base-input
                     v-model="state.currentUser.fullName"
                     name="currentUser.fullName"
@@ -342,7 +380,10 @@ function close() {
                 </div>
 
                 <!-- Guest Details (Guest) -->
-                <div v-if="state.bookingPreference === 'guest'" class="flex flex-col gap-6 mb-8">
+                <div
+                  v-if="state.bookingPreference === 'guest'"
+                  class="flex flex-col gap-6 mb-8"
+                >
                   <div
                     v-for="(guest, index) in state.guests"
                     :key="index"
@@ -351,7 +392,10 @@ function close() {
                     <div v-if="index > 0" class="w-full h-px bg-border/40" />
 
                     <div class="flex items-center justify-between">
-                      <h4 v-if="index > 0" class="text-sm font-serif text-[#A08860]">
+                      <h4
+                        v-if="index > 0"
+                        class="text-sm font-serif text-[#A08860]"
+                      >
                         Guest {{ index + 1 }}
                       </h4>
 
@@ -438,7 +482,9 @@ function close() {
                 </h3>
 
                 <div class="border-t border-border/40 pt-6">
-                  <h4 class="font-serif text-lg font-medium text-foreground mb-6">
+                  <h4
+                    class="font-serif text-lg font-medium text-foreground mb-6"
+                  >
                     Overview
                   </h4>
 
@@ -448,10 +494,21 @@ function close() {
                     >
                       <span>
                         {{ session.name }} (Rs. {{ session.price }} ×
-                        {{ state.bookingPreference === 'myself' ? 1 : state.guests.length }})
+                        {{
+                          state.bookingPreference === "myself"
+                            ? 1
+                            : state.guests.length
+                        }})
                       </span>
 
                       <span> Rs. {{ formatPrice(pricing.subtotal) }} </span>
+                    </div>
+                    <div
+                      v-if="CLASS_DISCOUNT > 0 && state.bookingPreference === 'myself'"
+                      class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between"
+                    >
+                      <h2>Membership Discount ({{ CLASS_DISCOUNT }}%)</h2>
+                      <p>- Rs. {{ formatPrice(pricing.discountAmount) }}</p>
                     </div>
                   </div>
 
@@ -468,7 +525,9 @@ function close() {
                   <div class="border-b border-border/40 pb-6 mb-8" />
                 </div>
 
-                <div class="flex flex-col sm:flex-row justify-between gap-4 mt-auto">
+                <div
+                  class="flex flex-col sm:flex-row justify-between gap-4 mt-auto"
+                >
                   <base-button variant="outline" @click="previousStep">
                     Back
                   </base-button>
