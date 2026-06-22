@@ -23,7 +23,13 @@ const router = useRouter();
 const membershipStore = useMembershipStore();
 const { error: showError } = useNotification();
 
-const membershipPeriods = ["MONTHLY", "QUARTERLY", "YEARLY", "100 DAYS"];
+const membershipPeriods = [
+  "MONTHLY",
+  "QUARTERLY",
+  "YEARLY",
+  "100 DAYS",
+  "PASSES",
+];
 const loading = ref(false);
 const isPassModalOpen = ref(false);
 const selectedPass = ref<any>(null);
@@ -208,7 +214,7 @@ onMounted(async () => {
 
     <div
       v-if="membershipPlans.length > 0"
-      class="relative z-20 grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-400 mx-auto mt-16 px-4 md:px-8"
+      class="relative z-20 grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-400 mx-auto mt-16 px-4 md:px-8 pb-12"
     >
       <div
         v-for="(tier, index) in membershipPlans"
@@ -294,6 +300,43 @@ onMounted(async () => {
         </div>
       </div>
     </div>
+    <div v-else-if="activePeriod === 'PASSES'" class="relative z-20 grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-400 mx-auto mt-16 px-4 md:px-8">
+      <div
+        v-for="pass in membershipStore.passPlans"
+        :key="pass.id"
+        class="border border-[#E9DEC8] dark:border-border bg-card rounded-xs p-6 md:p-8 flex flex-col justify-between transition-all duration-300 group"
+      >
+        <div>
+          <div class="flex justify-between items-baseline gap-2 mb-3">
+            <h4
+              class="font-serif text-xl md:text-2xl text-foreground dark:text-white"
+            >
+              {{ pass.name }}
+            </h4>
+
+            <span class="font-serif text-2xl text-primary font-normal shrink-0">
+              Rs. {{ pass.price?.toLocaleString() }}
+            </span>
+          </div>
+
+          <span
+            v-if="pass.discount"
+            class="inline-flex px-2 py-0.5 border border-primary/30 text-primary text-[9px] font-bold tracking-wider uppercase rounded-xs bg-primary/5 mb-4"
+          >
+            {{ pass.discount }}% DISCOUNT
+          </span>
+
+          <p
+            class="text-xs md:text-sm text-muted-foreground dark:text-white/60 leading-relaxed mb-8"
+            v-html="pass.description"
+          />
+        </div>
+
+        <base-button variant="outline" @click="openPassModal(pass)">
+          BEGIN NOW
+        </base-button>
+      </div>
+    </div>
     <div v-else class="relative z-20 mt-16 text-center">
       <span class="text-lg text-primary-900 dark:text-primary-800">
         Space to breathe, but no plans here.
@@ -306,7 +349,7 @@ onMounted(async () => {
     </div>
 
     <!-- Passes Section -->
-    <div
+    <!-- <div
       class="relative z-20 border-t border-border bg-[#F1EEEA] dark:bg-[#1D1D1E] py-28 mt-28"
     >
       <div class="relative z-20 text-center">
@@ -361,7 +404,7 @@ onMounted(async () => {
           </base-button>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- Modals -->
 
