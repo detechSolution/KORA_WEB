@@ -143,6 +143,9 @@ function handleRemoveItem() {
 
           <!-- Item Details -->
           <div class="flex-1 flex flex-col pt-1">
+            <span v-if="item.bookingFor === 'visitor'" class="text-[10px] uppercase text-primary-700">
+              {{ "Guest" }}
+            </span>
             <div class="flex justify-between items-start gap-4">
               <div class="flex items-start gap-2">
                 <h4 class="text-base font-serif text-foreground">

@@ -5,7 +5,6 @@ import { useNotification } from "~/composables/use-notification";
 import { usePayment } from "~/composables/use-payment";
 import { useCartStore } from "~/stores/cart";
 import { getApiErrorMessage } from "~/utils/error";
-import { calculatePrice } from "~/utils/helper";
 
 definePageMeta({
   layout: "default",
@@ -29,28 +28,17 @@ const inputPromoCode = ref("");
 const paymentMethod = ref<PaymentProvider>("stripe");
 const isRemoveItemModalOpen = ref(false);
 const selectedItemId = ref<string | "">("");
-const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
-
-const MEMBERSHIP_DISCOUNT = userDetail?.membership?.option?.memberBenefit || 0;
-
-const pricing = computed(() =>
-  calculatePrice({
-    price: subtotal.value,
-    guests: 1,
-    discount: MEMBERSHIP_DISCOUNT,
-  }),
-);
 
 const totalPrice = computed(() => {
-  return Math.max(0, pricing.value.finalPrice - cartStore.discountAmount);
+  return Math.max(0, subtotal.value - cartStore.discountAmount);
 });
 
 // Count the total number of items in the cart, including visitors for each item
 const totalItems = computed(() =>
   cartItems.value.reduce((total, item) => {
-    const visitorsCount = item.visitors?.length ?? 0;
+    const visitorsCount = item.visitors?.length > 0 ? item.visitors.length : 1;
 
-    return total + visitorsCount + 1;
+    return total + visitorsCount;
   }, 0),
 );
 
@@ -212,6 +200,9 @@ onUnmounted(() => {
 
                   <!-- Item Details -->
                   <div class="flex-1 flex flex-col">
+                    <span v-if="item.bookingFor === 'visitor'" class="text-[10px] uppercase text-primary-700">
+                      {{ "Guest" }}
+                    </span>
                     <div class="flex justify-between items-start gap-4 mb-2">
                       <div class="flex flex-wrap items-start gap-2">
                         <h4 class="text-base font-serif text-foreground">
@@ -240,7 +231,7 @@ onUnmounted(() => {
                         >Membership</span>
                       </div>
                       <div>
-                        <span class="text-lg font-serif text-[#B59A6D]">Rs. {{ formatPrice(item.finalPrice) }}</span>
+                        <span class="text-2xl font-serif text-[#B59A6D]">Rs. {{ formatPrice(item.finalPrice) }}</span>
                       </div>
                     </div>
 
@@ -284,7 +275,7 @@ onUnmounted(() => {
               </div>
 
               <!-- Footer Totals -->
-              <div class="pt-6">
+              <!-- <div class="pt-6">
                 <div class="flex items-center justify-between">
                   <span
                     class="font-serif text-xl md:text-2xl text-foreground font-bold"
@@ -293,7 +284,7 @@ onUnmounted(() => {
                     class="font-serif text-xl md:text-2xl text-[#B59A6D] font-bold"
                   >Rs. {{ formatPrice(subtotal) }}</span>
                 </div>
-              </div>
+              </div> -->
             </div>
 
             <!-- Step 2: Payment Method -->
@@ -506,13 +497,6 @@ onUnmounted(() => {
               >
                 <h2>Items Count ({{ totalItems }} items)</h2>
                 <p>Rs. {{ formatPrice(subtotal) }}</p>
-              </div>
-              <div
-                v-if="MEMBERSHIP_DISCOUNT > 0"
-                class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between"
-              >
-                <h2>Membership Discount ({{ MEMBERSHIP_DISCOUNT }}%)</h2>
-                <p>- Rs. {{ formatPrice(pricing.discountAmount) }}</p>
               </div>
               <div
                 v-if="cartStore.discountAmount > 0"

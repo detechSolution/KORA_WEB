@@ -10,6 +10,7 @@ import { useNotification } from "~/composables/use-notification";
 
 import { useCartStore } from "~/stores/cart";
 import { calculatePrice } from "~/utils/helper";
+import { getMembershipBenefits } from "~/utils/membership";
 
 type Guest = {
   fullName: string;
@@ -37,8 +38,9 @@ const cartStore = useCartStore();
 const { success } = useNotification();
 
 const currentStep = ref(0);
-const formRef = ref<InstanceType<typeof UForm> | null>(null);
 const steps = [{ label: "Attendees" }, { label: "Overview" }];
+
+const formRef = ref<InstanceType<typeof UForm> | null>(null);
 const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
 const state = reactive({
   bookingPreference: null as "myself" | "guest" | null,
@@ -50,6 +52,18 @@ const state = reactive({
   guests: [] as Guest[],
 });
 
+const benefits = getMembershipBenefits(userDetail);
+const MEMBERSHIP_DISCOUNT = benefits.member.class || 0;
+const GUEST_DISCOUNT = benefits.guest.class || 0;
+
+const activeDiscount = computed(() => {
+  return state.bookingPreference === "myself"
+    ? MEMBERSHIP_DISCOUNT
+    : GUEST_DISCOUNT;
+});
+
+const showDiscount = computed(() => activeDiscount.value > 0);
+
 const schema = computed(() => [
   z.object({
     ...(state.bookingPreference === "myself"
@@ -57,10 +71,7 @@ const schema = computed(() => [
           currentUser: z.object({
             fullName: z.string().min(1, "Full name is required"),
             phone: z.string().optional(),
-            email: z
-              .string()
-              .email("Invalid email")
-              .optional(),
+            email: z.string().email("Invalid email").optional(),
           }),
         }
       : {}),
@@ -115,17 +126,16 @@ function goBackToPreference() {
   resetGuests();
 }
 
-const CLASS_DISCOUNT = userDetail?.membership?.plan?.classBenefit || 0;
-
 const pricing = computed(() => {
   let count = 0;
   let discount = 0;
   if (state.bookingPreference === "myself") {
     count = 1;
-    discount = CLASS_DISCOUNT;
+    discount = MEMBERSHIP_DISCOUNT;
   }
   else if (state.bookingPreference === "guest") {
     count = state.guests.length;
+    discount = GUEST_DISCOUNT;
   }
   else {
     count = state.guests.length + 1;
@@ -504,10 +514,10 @@ function close() {
                       <span> Rs. {{ formatPrice(pricing.subtotal) }} </span>
                     </div>
                     <div
-                      v-if="CLASS_DISCOUNT > 0 && state.bookingPreference === 'myself'"
-                      class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between"
+                      v-if="showDiscount"
+                      class="flex justify-between text-sm font-normal text-secondary-500 dark:text-secondary-400"
                     >
-                      <h2>Membership Discount ({{ CLASS_DISCOUNT }}%)</h2>
+                      <h2>Membership Discount ({{ activeDiscount }}%)</h2>
                       <p>- Rs. {{ formatPrice(pricing.discountAmount) }}</p>
                     </div>
                   </div>
