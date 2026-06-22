@@ -131,7 +131,7 @@ onMounted(async () => {
 
 <template>
   <div
-    class="relative bg-background dark:bg-secondary-900 text-foreground dark:text-white transition-colors duration-300 w-full min-h-screen pt-16 md:pt-24 overflow-hidden"
+    class="relative bg-background dark:bg-secondary-900 text-foreground dark:text-white transition-colors duration-300 w-full min-h-screen overflow-hidden"
   >
     <div
       class="absolute top-0 left-0 w-64 h-64 md:w-96 md:h-96 xl:w-[480px] xl:h-[480px] pointer-events-none select-none z-10 opacity-30 md:opacity-40"
@@ -153,8 +153,14 @@ onMounted(async () => {
       >
     </div>
 
+    <ClassHeader
+      label="Kora Membership"
+      title="Choose Your Ritual"
+      class="pt-6"
+    />
+
     <div class="relative z-20 max-w-400 mx-auto text-center px-4 md:px-8">
-      <span
+      <!-- <span
         class="font-sans font-bold text-xs uppercase tracking-[0.25em] text-primary mb-3 block"
       >
         Kora Membership
@@ -171,13 +177,13 @@ onMounted(async () => {
         class="text-sm md:text-base leading-relaxed text-foreground/75 dark:text-secondary-400 font-light max-w-2xl mx-auto"
       >
         We do not sell memberships; we facilitate metamorphosis.
-      </p>
+      </p> -->
 
-      <base-section-label
+      <!-- <base-section-label
         label="KORA MEMBERSHIPS"
         align="center"
         class="my-12"
-      />
+      /> -->
 
       <div class="w-full overflow-x-auto sm:overflow-visible scrollbar-hide">
         <div

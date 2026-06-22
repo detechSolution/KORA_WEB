@@ -30,8 +30,10 @@ function toggleColorMode() {
   isDark.value = !isDark.value;
 }
 
-// Sidebar and Cart visibility state
-const isSidebarOpen = ref(false);
+// Menu Modal and Cart visibility state
+// commented sidebar for now as replaced by menu modal dont remove this
+// const isSidebarOpen = ref(false);
+const isMenuModalOpen = ref(false);
 const isCartOpen = ref(false);
 
 // Scroll listener to toggle header background color on scroll
@@ -112,7 +114,7 @@ onUnmounted(() => {
       <div class="flex-1 flex items-center" :class="getColorClass?.text">
         <button
           class="group flex items-center gap-2.5 hover:text-primary transition-colors duration-200 cursor-pointer py-1.5 focus:outline-none"
-          @click="isSidebarOpen = true"
+          @click="isMenuModalOpen = true"
         >
           <span class="flex flex-col gap-1 w-5">
             <span
@@ -200,7 +202,9 @@ onUnmounted(() => {
         </base-button>
       </div>
     </div>
-    <LayoutSidebar :is-open="isSidebarOpen" @close="isSidebarOpen = false" />
+    <!-- commented sidebar for now as replaced by menu modal dont remove this -->
+    <!-- <LayoutSidebar :is-open="isSidebarOpen" @close="isSidebarOpen = false" /> -->
+    <LayoutMenuModal :is-open="isMenuModalOpen" @close="isMenuModalOpen = false" />
     <LayoutCartDrawer :is-open="isCartOpen" @close="isCartOpen = false" />
   </header>
 </template>
