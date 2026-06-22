@@ -17,12 +17,13 @@ export function calculatePrice({
   const subtotal = price * totalQuantity;
 
   const discountAmount = subtotal * (discount / 100);
+  const unitDiscountAmount = price * (discount / 100);
 
   const finalPrice = subtotal - discountAmount;
 
   const unitPrice = price;
 
-  const unitPriceAfterDiscount = unitPrice - discountAmount;
+  const unitPriceAfterDiscount = unitPrice - unitDiscountAmount;
 
   return {
     subtotal,

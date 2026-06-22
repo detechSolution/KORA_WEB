@@ -126,7 +126,7 @@ onUnmounted(() => {
 
 <template>
   <div
-    class="bg-background dark:bg-secondary-900 min-h-screen text-foreground pb-20 font-sans"
+    class="bg-background dark:bg-secondary-900 min-h-screen text-foreground pb-20"
   >
     <div class="max-w-400 mx-auto">
       <!-- Header Section -->
@@ -210,7 +210,7 @@ onUnmounted(() => {
                           <br>
                           <span v-if="item.itemType !== 'membership'">
                             (<span class="text-xl">{{ item.visitors.length > 0 ? item.visitors.length : 1 }} x
-                              {{ formatPrice(item.unitPriceAfterDiscount || item.finalPrice) }}</span>)
+                              {{ formatPrice(item.unitPriceAfterDiscount) }}</span>)
                           </span>
                         </h4>
                         <span
@@ -273,18 +273,6 @@ onUnmounted(() => {
                   </div>
                 </div>
               </div>
-
-              <!-- Footer Totals -->
-              <!-- <div class="pt-6">
-                <div class="flex items-center justify-between">
-                  <span
-                    class="font-serif text-xl md:text-2xl text-foreground font-bold"
-                  >Total</span>
-                  <span
-                    class="font-serif text-xl md:text-2xl text-[#B59A6D] font-bold"
-                  >Rs. {{ formatPrice(subtotal) }}</span>
-                </div>
-              </div> -->
             </div>
 
             <!-- Step 2: Payment Method -->
@@ -451,7 +439,37 @@ onUnmounted(() => {
           </p>
           <div key="step1" class="flex flex-col w-full">
             <!-- Promo Code -->
-            <div class="flex flex-col gap-2 w-full h-30">
+            <div class="border-y border-border flex flex-col gap-3 p-4">
+              <div
+                class="text-sm text-secondary dark:text-white font-normal flex justify-between"
+              >
+                <h2>Items Count ({{ totalItems }} items)</h2>
+                <p>Rs. {{ formatPrice(subtotal) }}</p>
+              </div>
+              <div
+                v-if="cartStore.discountAmount > 0"
+                class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between border-b border-border pb-2"
+              >
+                <h2>
+                  Promo Discount
+                  <span v-if="cartStore.promoCode">({{ cartStore.promoCode }})</span>
+                </h2>
+                <p>- Rs. {{ formatPrice(cartStore.discountAmount) }}</p>
+              </div>
+
+              <div
+                class="text-2xl text-secondary dark:text-white font-normal flex justify-between pt-1 font-serif"
+              >
+                <h2 class="font-bold">
+                  Total
+                </h2>
+                <p class="font-bold text-primary">
+                  Rs. {{ formatPrice(totalPrice) }}
+                </p>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-2 w-full mt-9">
               <div class="flex items-end w-full gap-4">
                 <div class="flex-1">
                   <base-input
@@ -489,36 +507,6 @@ onUnmounted(() => {
               <p v-else class="text-xs text-red-500">
                 {{ cartStore.promoError }}
               </p>
-            </div>
-
-            <div class="border-y border-border flex flex-col gap-3 p-4 mt-2">
-              <div
-                class="text-sm text-secondary dark:text-white font-normal flex justify-between"
-              >
-                <h2>Items Count ({{ totalItems }} items)</h2>
-                <p>Rs. {{ formatPrice(subtotal) }}</p>
-              </div>
-              <div
-                v-if="cartStore.discountAmount > 0"
-                class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between border-b border-border pb-2"
-              >
-                <h2>
-                  Promo Discount
-                  <span v-if="cartStore.promoCode">({{ cartStore.promoCode }})</span>
-                </h2>
-                <p>- Rs. {{ formatPrice(cartStore.discountAmount) }}</p>
-              </div>
-
-              <div
-                class="text-sm text-secondary dark:text-white font-normal flex justify-between pt-1"
-              >
-                <h2 class="font-bold">
-                  Total
-                </h2>
-                <p class="font-bold text-primary">
-                  Rs. {{ formatPrice(totalPrice) }}
-                </p>
-              </div>
             </div>
           </div>
         </div>

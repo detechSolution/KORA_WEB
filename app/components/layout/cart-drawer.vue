@@ -153,7 +153,7 @@ function handleRemoveItem() {
                   <br>
                   <span v-if="item.itemType !== 'membership'">
                     (<span class="text-xl">{{ item.visitors.length > 0 ? item.visitors.length : 1 }} x
-                      {{ formatPrice(item.unitPriceAfterDiscount || item.finalPrice) }}</span>)
+                      {{ formatPrice(item.unitPriceAfterDiscount) }}</span>)
                   </span>
                 </h4>
                 <span
