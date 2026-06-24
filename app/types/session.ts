@@ -26,6 +26,9 @@ export type Session = {
   isFree: boolean;
   remainingSpots: number;
   isBookable: boolean;
+  isBooked?: boolean;
+  isInWaitlist?: boolean;
+  isGuestBookable?: boolean;
 };
 
 type CreatedBy = {

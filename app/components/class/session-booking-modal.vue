@@ -257,6 +257,10 @@ function close() {
             <!-- Book For Myself Card -->
             <div
               class="border border-border p-8 flex flex-col items-center text-center cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors group"
+              :class="{
+                'cursor-pointer hover:bg-black/5 dark:hover:bg-white/5': !session.isBooked,
+                'opacity-50 cursor-not-allowed pointer-events-none': session.isBooked,
+              }"
               @click="selectPreference('myself')"
             >
               <div

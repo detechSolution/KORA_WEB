@@ -19,6 +19,11 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   modules: ["@nuxt/ui", "@pinia/nuxt", "@nuxt/eslint"],
   css: ["~/assets/css/main.css"],
+  colorMode: {
+    preference: "light",
+    fallback: "light",
+    storageKey: "kora-web-color-mode",
+  },
 
   icon: {
     provider: "iconify",

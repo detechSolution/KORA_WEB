@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 import type { Session } from "~/types/session";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
+import { useNotification } from "~/composables/use-notification";
 import { useAuthStore } from "~/stores/auth";
+import { useSessionStore } from "~/stores/session";
 
-defineProps({
+const props = defineProps({
   session: {
     type: Object as PropType<Session>,
     required: true,
@@ -14,9 +16,68 @@ defineProps({
 
 const authStore = useAuthStore();
 const router = useRouter();
+const sessionStore = useSessionStore();
+const { success, error: showError } = useNotification();
 
 const isPlayingVideo = ref(false);
 const isBookingModalOpen = ref(false);
+const isAddingToWaitlist = ref(false);
+
+const sessionStatus = computed(() => {
+  if (!authStore.isAuthenticated) {
+    return {
+      title: "Logged In?",
+      description: "Sign in to book this session or join the waitlist.",
+      actionLabel: "Login Required",
+    };
+  }
+
+  if (props.session.isBooked) {
+    return {
+      title: "Already Booked",
+      description: "You already have a confirmed reservation for this session.",
+      actionLabel: "Booked",
+    };
+  }
+
+  if (props.session.isInWaitlist) {
+    return {
+      title: "Already Waitlisted",
+      description: "You are already on the waitlist for this session.",
+      actionLabel: "On Waitlist",
+    };
+  }
+
+  if (props.session.isBookable && props.session.remainingSpots > 0) {
+    return {
+      title: "Spot Available",
+      description: "A confirmed booking is available right now.",
+      actionLabel: "Book Now",
+    };
+  }
+
+  if (!props.session.isBookable && props.session.remainingSpots > 0) {
+    return {
+      title: "Member Reserved Spot Available",
+      description:
+        "General booking is closed, but a reserved spot may still be available.",
+      actionLabel: "Request Spot",
+    };
+  }
+
+  return {
+    title: "Booking Closed",
+    description:
+      "This session is full. Join the waitlist to be notified if a spot opens.",
+    actionLabel: "Show Waitlist",
+  };
+});
+
+const showWaitlistCta = computed(() => {
+  return (
+    !props.session.isBooked && !props.session.isInWaitlist && !props.session.isBookable
+  );
+});
 
 function handleOpenBookingModal() {
   if (authStore.isAuthenticated) {
@@ -24,6 +85,25 @@ function handleOpenBookingModal() {
   }
   else {
     router.push("/login");
+  }
+}
+
+async function handleAddToWaitlist() {
+  if (!authStore.isAuthenticated) {
+    router.push("/login");
+    return;
+  }
+
+  try {
+    isAddingToWaitlist.value = true;
+    await sessionStore.addToWaitlist(props.session.id);
+    success({ message: "Added to waitlist" });
+  }
+  catch (error: any) {
+    showError({ message: error?.message || "Failed to add to waitlist" });
+  }
+  finally {
+    isAddingToWaitlist.value = false;
   }
 }
 </script>
@@ -255,13 +335,64 @@ function handleOpenBookingModal() {
                 </div>
               </div>
 
+              <div
+                class="w-full border border-border/60 bg-background/60 px-4 py-4 space-y-2"
+              >
+                <p
+                  class="text-[10px] uppercase tracking-[0.24em] text-primary/70"
+                >
+                  Session Status
+                </p>
+                <p class="text-sm font-semibold text-foreground">
+                  {{ sessionStatus.title }}
+                </p>
+                <p class="text-xs leading-6 text-secondary-400">
+                  {{ sessionStatus.description }}
+                </p>
+              </div>
+
               <base-button
+                v-if="session.isBooked && !session.isGuestBookable"
+                variant="outline"
+                color="primary"
+                class="w-full text-sm uppercase"
+                disabled
+              >
+                Already Booked
+              </base-button>
+
+              <base-button
+                v-else-if="session.isInWaitlist"
+                variant="outline"
+                color="primary"
+                class="w-full text-sm uppercase"
+                disabled
+              >
+                Already Waitlisted
+              </base-button>
+
+              <base-button
+                v-else-if="
+                  session.isBookable && session.remainingSpots > 0
+                "
                 variant="solid"
                 color="primary"
                 class="w-full text-sm uppercase"
                 @click="handleOpenBookingModal"
               >
                 Book This Session
+              </base-button>
+
+              <base-button
+                v-else-if="showWaitlistCta"
+                variant="outline"
+                color="primary"
+                class="w-full text-sm uppercase"
+                :loading="isAddingToWaitlist"
+                :disabled="isAddingToWaitlist"
+                @click="handleAddToWaitlist"
+              >
+                Add To Waitlist
               </base-button>
 
               <span class="text-secondary-400 text-xs">

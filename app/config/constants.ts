@@ -11,11 +11,13 @@ export const API_ENDPOINTS = {
     FORGOT_PASSWORD: "/api/v1/password-reset/forgot-password",
     VERIFY_OTP: "/api/v1/password-reset/verify-code",
     RESET_PASSWORD: "/api/v1/password-reset/reset-password",
-    REQUEST_CANCELLATION: (bookingId: number) => `/api/v1/members/me/bookings/${bookingId}/request-cancellation`,
+    REQUEST_CANCELLATION: (bookingId: number) =>
+      `/api/v1/members/me/bookings/${bookingId}/request-cancellation`,
   },
 
   SESSION: {
     GET: "/api/v1/sessions/website",
+    WAITLIST: (id: number) => `/api/v1/sessions/${id}/waitlist`,
   },
 
   INQUIRE: {
