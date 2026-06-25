@@ -136,15 +136,15 @@ onUnmounted(() => {
     <Transition name="fade">
       <div
         v-if="isOpen"
-        class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md flex items-center justify-center p-4 md:p-8"
+        class="fixed inset-0 z-[100] bg-black/60 dark:bg-black/60 bg-black/40 backdrop-blur-md flex items-center justify-center p-4 md:p-8"
         @click.self="close"
       >
         <div
-          class="bg-[#111111] w-full max-w-6xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-full border border-white/5"
+          class="bg-background w-full max-w-6xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-full border border-border"
         >
           <!-- Header -->
           <div
-            class="px-8 py-6 flex justify-between items-center border-b border-white/5"
+            class="px-8 py-6 flex justify-between items-center border-b border-border"
           >
             <NuxtLink
               to="/"
@@ -152,14 +152,17 @@ onUnmounted(() => {
               @click="close"
             >
               <img
-                src="/logo/kora_white_logo.svg"
-                alt="KORA Logo"
+                :src="
+                  $colorMode.value === 'dark'
+                    ? '/logo/kora_white_logo.svg'
+                    : '/logo/kora_black_logo.svg'
+                "
                 class="w-24 md:w-32 object-contain"
               >
             </NuxtLink>
 
             <button
-              class="w-10 h-10 rounded-full border border-white/10 text-white/70 hover:text-white hover:border-white/30 flex items-center justify-center transition-all"
+              class="w-10 h-10 rounded-full border border-border text-muted-foreground hover:text-foreground hover:border-primary/30 flex items-center justify-center transition-all"
               @click="close"
             >
               <UIcon name="i-lucide-x" class="w-4 h-4" />
@@ -173,7 +176,7 @@ onUnmounted(() => {
                 v-for="(item, index) in menuItems"
                 :key="item.path"
                 :to="item.path"
-                class="group bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/10 rounded-sm p-6 transition-all duration-300 flex items-center justify-between cursor-pointer focus:outline-none"
+                class="group bg-card hover:bg-accent/40 dark:hover:bg-white/10 border border-border hover:border-primary/20 rounded-sm p-6 transition-all duration-300 flex items-center justify-between cursor-pointer focus:outline-none"
                 @click="close"
               >
                 <div class="flex items-start gap-5 flex-1">
@@ -184,17 +187,17 @@ onUnmounted(() => {
                   </div>
                   <div class="flex flex-col flex-1">
                     <span
-                      class="text-[#A08860] font-sans text-[10px] font-semibold tracking-wider mb-1"
+                      class="text-primary font-sans text-[10px] font-semibold tracking-wider mb-1"
                     >
                       {{ index + 1 < 10 ? `0${index + 1}` : index + 1 }}
                     </span>
                     <h3
-                      class="text-white font-serif text-lg tracking-wide group-hover:text-[#A08860] transition-colors mb-1"
+                      class="text-foreground font-serif text-lg tracking-wide group-hover:text-primary transition-colors mb-1"
                     >
                       {{ item.name }}
                     </h3>
                     <p
-                      class="text-white/50 text-[11px] font-sans tracking-wide leading-relaxed pr-2"
+                      class="text-muted-foreground text-[11px] font-sans tracking-wide leading-relaxed pr-2"
                     >
                       {{ item.sub }}
                     </p>
@@ -202,7 +205,7 @@ onUnmounted(() => {
                 </div>
                 <UIcon
                   name="i-lucide-chevron-right"
-                  class="w-4 h-4 text-white/30 group-hover:text-white/70 group-hover:translate-x-1 transition-all flex-shrink-0"
+                  class="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0"
                 />
               </NuxtLink>
             </div>
@@ -210,24 +213,24 @@ onUnmounted(() => {
 
           <!-- Footer -->
           <div
-            class="px-8 py-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6"
+            class="px-8 py-6 border-t border-border flex flex-col md:flex-row justify-between items-center gap-6"
           >
             <div
-              class="flex justify-between w-full md:w-auto md:gap-8 items-center text-[9px] font-sans tracking-widest text-white/30 uppercase order-2 md:order-1"
+              class="flex justify-between w-full md:w-auto md:gap-8 items-center text-[9px] font-sans tracking-widest text-muted-foreground uppercase order-2 md:order-1"
             >
               <span>A Sanctuary for Conscious Living</span>
             </div>
 
             <div
-              class="flex flex-wrap justify-center items-center gap-4 text-[10px] md:text-xs font-sans tracking-widest text-white/50 uppercase font-semibold order-1 md:order-2"
+              class="flex flex-wrap justify-center items-center gap-4 text-[10px] md:text-xs font-sans tracking-widest text-foreground/70 uppercase font-semibold order-1 md:order-2"
             >
               <a href="#" class="hover:text-white transition-colors">Contact</a>
-              <span class="text-white/20">•</span>
+              <span class="text-border">•</span>
               <a
                 href="#"
                 class="hover:text-white transition-colors"
               >Location</a>
-              <span class="text-white/20">•</span>
+              <span class="text-border">•</span>
               <a
                 href="#"
                 class="hover:text-white transition-colors"
@@ -235,7 +238,7 @@ onUnmounted(() => {
             </div>
 
             <div
-              class="flex justify-between w-full md:w-auto md:gap-8 items-center text-[9px] font-sans tracking-widest text-white/30 uppercase order-3"
+              class="flex justify-between w-full md:w-auto md:gap-8 items-center text-[9px] font-sans tracking-widest text-muted-foreground uppercase order-3"
             >
               <span>© {{ currentYear }} KORA</span>
             </div>
