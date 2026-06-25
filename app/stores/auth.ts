@@ -28,6 +28,7 @@ export const useAuthStore = defineStore("auth", () => {
     role_id?: number | null;
     last_login_at?: string | null;
     membership?: Record<string, unknown> | null;
+    passes?: Record<string, unknown> | null;
   }>({
     id: null,
     email: "",
@@ -73,6 +74,7 @@ export const useAuthStore = defineStore("auth", () => {
           role_id: user.value.role_id,
           last_login_at: user.value.last_login_at,
           membership: user.value.membership,
+          passes: user.value.passes,
         }),
       );
     }
@@ -153,6 +155,7 @@ export const useAuthStore = defineStore("auth", () => {
         // user.value.last_login_at = (u.last_login_at as string | null) ?? null;
         user.value.membership
           = (u.membership as Record<string, unknown> | null) ?? null;
+        user.value.passes = (u.passes as Record<string, unknown> | null) ?? null;
         permissions.value = Array.isArray(u?.permissions) ? u.permissions : [];
         saveUserToStorage();
         lastAuthCheck.value = now;

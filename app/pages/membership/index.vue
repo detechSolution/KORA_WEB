@@ -43,6 +43,10 @@ const hasMembership = computed(() => {
   return !!userDetail?.membership?.membershipPlanId;
 });
 
+const hasActivePass = computed(() => {
+  return !!userDetail?.passes?.id;
+});
+
 const membershipPlans = computed(() => {
   const period = activePeriod.value.toLowerCase();
 
@@ -339,7 +343,7 @@ onMounted(async () => {
 
         <base-button
           variant="outline"
-          :disabled="hasMembership"
+          :disabled="hasMembership || hasActivePass"
           @click="openPassModal(pass)"
         >
           BEGIN NOW
