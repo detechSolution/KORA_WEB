@@ -14,6 +14,8 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(["fetchSessionDetail"]);
+
 const authStore = useAuthStore();
 const router = useRouter();
 const sessionStore = useSessionStore();
@@ -97,6 +99,7 @@ async function handleAddToWaitlist() {
   try {
     isAddingToWaitlist.value = true;
     await sessionStore.addToWaitlist(props.session.id);
+    emit("fetchSessionDetail");
     success({ message: "Added to waitlist" });
   }
   catch (error: any) {
