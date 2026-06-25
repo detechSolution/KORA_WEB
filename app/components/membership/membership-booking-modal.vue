@@ -39,6 +39,7 @@ const membershipItem = computed(() => ({
   finalPrice: props.membership.selectedOption.price,
   itemType: "membership",
   memberBenefit: props.membership.selectedOption.memberBenefit,
+  bookingFor: "self",
 }));
 
 function close() {
@@ -48,6 +49,7 @@ function close() {
 function addToCart() {
   cartStore.addToCart(membershipItem.value);
   success({ message: "Item added to cart successfully!" });
+  close();
 }
 
 function proceedToCheckout() {
