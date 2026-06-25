@@ -37,6 +37,12 @@ const activePeriod = ref("MONTHLY");
 const isMembershipModalOpen = ref(false);
 const selectedMembershipTier = ref<any>(null);
 const selectedMembershipPrice = ref<string>("");
+const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
+console.log("🚀 ~ userDetail:", userDetail);
+
+const hasMembership = computed(() => {
+  return !!userDetail?.membership?.membershipPlanId;
+});
 
 const membershipPlans = computed(() => {
   const period = activePeriod.value.toLowerCase();
@@ -292,7 +298,7 @@ onMounted(async () => {
           <base-button
             :variant="index === 1 ? 'solid' : 'outline'"
             class="w-full"
-            :disabled="!tier.selectedOption"
+            :disabled="!tier.selectedOption || hasMembership"
             @click="openMembershipModal(tier)"
           >
             BEGIN NOW
@@ -332,7 +338,11 @@ onMounted(async () => {
           />
         </div>
 
-        <base-button variant="outline" @click="openPassModal(pass)">
+        <base-button
+          variant="outline"
+          :disabled="hasMembership"
+          @click="openPassModal(pass)"
+        >
           BEGIN NOW
         </base-button>
       </div>

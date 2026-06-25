@@ -312,16 +312,6 @@ onMounted(async () => {
                     {{ user.membership.billing }}
                   </div>
                 </div>
-                <div>
-                  <div
-                    class="text-[10px] font-bold tracking-widest uppercase text-secondary-400 mb-2"
-                  >
-                    MEMBER BENEFIT
-                  </div>
-                  <div class="text-lg text-foreground font-serif">
-                    {{ user.membership.benefit }}
-                  </div>
-                </div>
               </div>
             </div>
 
