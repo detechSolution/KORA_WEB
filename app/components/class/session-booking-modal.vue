@@ -10,7 +10,7 @@ import { useNotification } from "~/composables/use-notification";
 
 import { useCartStore } from "~/stores/cart";
 import { calculatePrice } from "~/utils/helper";
-import { getMembershipBenefits } from "~/utils/membership";
+import { getMembershipBenefits, getPassesBenefits } from "~/utils/membership";
 
 type Guest = {
   fullName: string;
@@ -53,13 +53,19 @@ const state = reactive({
 });
 
 const benefits = getMembershipBenefits(userDetail);
+const passesBenefits = getPassesBenefits(userDetail);
 const MEMBERSHIP_DISCOUNT = benefits.member.class || 0;
 const GUEST_DISCOUNT = benefits.guest.class || 0;
+const PASS_DISCOUNT = passesBenefits.class || 0;
 
 const activeDiscount = computed(() => {
   return state.bookingPreference === "myself"
-    ? MEMBERSHIP_DISCOUNT
+    ? MEMBERSHIP_DISCOUNT || PASS_DISCOUNT
     : GUEST_DISCOUNT;
+});
+
+const hasMembership = computed(() => {
+  return !!userDetail?.membership?.membershipPlanId;
 });
 
 const showDiscount = computed(() => activeDiscount.value > 0);
@@ -288,6 +294,10 @@ function close() {
             <!-- Book For Guest Card -->
             <div
               class="border border-border p-8 flex flex-col items-center text-center cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors group"
+              :class="{
+                'cursor-pointer hover:bg-black/5 dark:hover:bg-white/5': hasMembership,
+                'opacity-50 cursor-not-allowed pointer-events-none': !hasMembership,
+              }"
               @click="selectPreference('guest')"
             >
               <div

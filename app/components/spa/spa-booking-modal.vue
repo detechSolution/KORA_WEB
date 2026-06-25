@@ -13,7 +13,7 @@ import { useSpaStore } from "~/stores/spa";
 import { getApiErrorMessage } from "~/utils/error";
 import { formatDate, formatPrice } from "~/utils/format";
 import { calculatePrice } from "~/utils/helper";
-import { getMembershipBenefits } from "~/utils/membership";
+import { getMembershipBenefits, getPassesBenefits } from "~/utils/membership";
 
 type Guest = {
   fullName: string;
@@ -63,7 +63,9 @@ const defaultOpenSubtype = computed(() => {
 
 const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
 const benefits = getMembershipBenefits(userDetail);
+const passesBenefits = getPassesBenefits(userDetail);
 const MEMBERSHIP_DISCOUNT = benefits.member.spa || 0;
+const PASS_DISCOUNT = passesBenefits.spa || 0;
 const GUEST_DISCOUNT = benefits.guest.spa || 0;
 
 const state = reactive({
@@ -81,8 +83,12 @@ const state = reactive({
 
 const activeDiscount = computed(() => {
   return state.bookingPreference === "myself"
-    ? MEMBERSHIP_DISCOUNT
+    ? MEMBERSHIP_DISCOUNT || PASS_DISCOUNT
     : GUEST_DISCOUNT;
+});
+
+const hasMembership = computed(() => {
+  return !!userDetail?.membership?.membershipPlanId;
 });
 
 const showDiscount = computed(() => activeDiscount.value > 0);
@@ -226,7 +232,7 @@ const pricing = computed(() => {
   let discount = 0;
   if (state.bookingPreference === "myself") {
     count = 1;
-    discount = MEMBERSHIP_DISCOUNT;
+    discount = MEMBERSHIP_DISCOUNT || PASS_DISCOUNT;
   }
   else if (state.bookingPreference === "guest") {
     count = state.guests.length;
@@ -386,6 +392,10 @@ watch(
             <!-- Book For Guest Card -->
             <div
               class="border border-border p-8 flex flex-col items-center text-center cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors group"
+              :class="{
+                'cursor-pointer hover:bg-black/5 dark:hover:bg-white/5': hasMembership,
+                'opacity-50 cursor-not-allowed pointer-events-none': !hasMembership,
+              }"
               @click="selectPreference('guest')"
             >
               <div

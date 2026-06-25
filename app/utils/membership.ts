@@ -16,3 +16,12 @@ export function getMembershipBenefits(user: any) {
     },
   };
 }
+
+export function getPassesBenefits(user: any) {
+  const pass = user?.passes;
+
+  return {
+    class: pass ? 100 : 0,
+    spa: pass ? pass.discount : 0,
+  };
+}
