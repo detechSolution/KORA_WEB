@@ -117,16 +117,18 @@ const schema = computed(() => [
       : {}),
     ...(state.bookingPreference === "guest"
       ? {
-          guests: z.array(
-            z.object({
-              fullName: z.string().min(1, "Please enter the full name"),
-              phone: z.string().optional(),
-              email: z
-                .string()
-                .email("Invalid email")
-                .min(1, "Email is required"),
-            }),
-          ).min(1, "At least one guest is required"),
+          guests: z
+            .array(
+              z.object({
+                fullName: z.string().min(1, "Please enter the full name"),
+                phone: z.string().optional(),
+                email: z
+                  .string()
+                  .email("Invalid email")
+                  .min(1, "Email is required"),
+              }),
+            )
+            .min(1, "At least one guest is required"),
         }
       : {}),
   }),
@@ -446,69 +448,66 @@ watch(
                   </p>
                 </div>
 
-                <UAccordion
-                  :items="spa?.subTypes"
-                  :default-value="defaultOpenSubtype"
-                  class="mb-2"
+                <UFormField
+                  name="selectedSpa"
                 >
-                  <template #default="{ item }">
-                    <div class="flex flex-col">
-                      <span>{{ item.name }}</span>
-                      <p
-                        class="text-sm text-foreground/80 dark:text-secondary-500 mt-4"
-                      >
-                        {{ item.description }}
-                      </p>
-                    </div>
-                  </template>
-
-                  <template #content="{ item }">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                      <div
-                        v-for="duration in item.prices"
-                        :key="duration.id"
-                        class="group relative border border-white/10 rounded-xs p-4 flex flex-col justify-between transition-all duration-300 cursor-pointer"
-                        :class="
-                          state.selectedSpa?.id === duration.id
-                            ? 'bg-primary-500 text-white dark:bg-primary'
-                            : 'bg-[#c9a55a]/10 dark:bg-[#2A2722]'
-                        "
-                        @click="
-                          handleBookingClick({
-                            ...duration,
-                            name: item.name,
-                            referenceId: item.id,
-                            image: spa?.bannerUrl,
-                          })
-                        "
-                      >
-                        <div
-                          class="flex items-center gap-2 text-xs uppercase"
-                          :class="
-                            state.selectedSpa?.id === duration.id
-                              ? 'text-white'
-                              : 'text-primary-700'
-                          "
+                  <UAccordion
+                    :items="spa?.subTypes"
+                    :default-value="defaultOpenSubtype"
+                    class="mb-2"
+                  >
+                    <template #default="{ item }">
+                      <div class="flex flex-col">
+                        <span>{{ item.name }}</span>
+                        <p
+                          class="text-sm text-foreground/80 dark:text-secondary-500 mt-4"
                         >
-                          <UIcon name="i-lucide-clock" class="h-3.5 w-3.5" />
-                          <span class="text-sm">
-                            {{ duration.duration }} {{ duration.timeUnit }}
-                          </span>
-                        </div>
-                        <p class="text-3xl font-medium text-foreground mt-3">
-                          {{ duration.price }}
+                          {{ item.description }}
                         </p>
                       </div>
-                    </div>
-                  </template>
-                </UAccordion>
+                    </template>
 
-                <p
-                  v-if="formRef?.errors?.selectedSpa"
-                  class="text-xs text-red-600 mt-2"
-                >
-                  Please select a spa.
-                </p>
+                    <template #content="{ item }">
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div
+                          v-for="duration in item.prices"
+                          :key="duration.id"
+                          class="group relative border border-white/10 rounded-xs p-4 flex flex-col justify-between transition-all duration-300 cursor-pointer"
+                          :class="
+                            state.selectedSpa?.id === duration.id
+                              ? 'bg-primary-500 text-white dark:bg-primary'
+                              : 'bg-[#c9a55a]/10 dark:bg-[#2A2722]'
+                          "
+                          @click="
+                            handleBookingClick({
+                              ...duration,
+                              name: item.name,
+                              referenceId: item.id,
+                              image: spa?.bannerUrl,
+                            })
+                          "
+                        >
+                          <div
+                            class="flex items-center gap-2 text-xs uppercase"
+                            :class="
+                              state.selectedSpa?.id === duration.id
+                                ? 'text-white'
+                                : 'text-primary-700'
+                            "
+                          >
+                            <UIcon name="i-lucide-clock" class="h-3.5 w-3.5" />
+                            <span class="text-sm">
+                              {{ duration.duration }} {{ duration.timeUnit }}
+                            </span>
+                          </div>
+                          <p class="text-3xl font-medium text-foreground mt-3">
+                            {{ duration.price }}
+                          </p>
+                        </div>
+                      </div>
+                    </template>
+                  </UAccordion>
+                </UFormField>
               </div>
 
               <!-- Step 1: Date & Time -->
@@ -547,8 +546,13 @@ watch(
 
                 <div>
                   <!-- Loading skeleton -->
-                  <div v-if="isTimeSlotLoading" class="flex flex-col gap-4 mb-6">
-                    <p class="text-primary-700 font-medium mb-2 text-sm capitalize">
+                  <div
+                    v-if="isTimeSlotLoading"
+                    class="flex flex-col gap-4 mb-6"
+                  >
+                    <p
+                      class="text-primary-700 font-medium mb-2 text-sm capitalize"
+                    >
                       Select Time
                     </p>
                     <div class="grid grid-cols-3 gap-4">
@@ -565,7 +569,9 @@ watch(
                     name="selectedTime"
                     class="flex flex-col gap-4 mb-6"
                   >
-                    <p class="text-primary-700 font-medium mb-2 text-sm capitalize">
+                    <p
+                      class="text-primary-700 font-medium mb-2 text-sm capitalize"
+                    >
                       Select Time
                     </p>
                     <div class="grid grid-cols-3 gap-4">
@@ -735,7 +741,9 @@ watch(
                 </h3>
 
                 <div class="border-t border-border/40 pt-6">
-                  <h4 class="font-serif text-lg font-medium text-foreground mb-6">
+                  <h4
+                    class="font-serif text-lg font-medium text-foreground mb-6"
+                  >
                     Overview
                   </h4>
 
@@ -744,7 +752,8 @@ watch(
                       class="flex justify-between items-center text-sm text-foreground"
                     >
                       <span>
-                        {{ state.selectedSpa?.name }} (Rs. {{ state.selectedSpa?.price }} ×
+                        {{ state.selectedSpa?.name }} (Rs.
+                        {{ state.selectedSpa?.price }} ×
                         {{
                           state.bookingPreference === "myself"
                             ? 1
@@ -781,17 +790,18 @@ watch(
             class="flex flex-col sm:flex-row gap-4 mt-8"
             :class="currentStep === 0 ? 'justify-end' : 'justify-between'"
           >
-            <base-button
-              variant="outline"
-              @click="previousStep"
-            >
+            <base-button variant="outline" @click="previousStep">
               Back
             </base-button>
 
             <base-button
               v-if="currentStep < steps.length - 1"
               class="uppercase text-[11px] tracking-widest font-bold px-8 h-11 rounded-none text-white"
-              :class="currentStep === 0 ? 'ml-auto bg-[#A08860] hover:bg-[#8c7550]' : 'bg-[#A08860] hover:bg-[#8c7550]'"
+              :class="
+                currentStep === 0
+                  ? 'ml-auto bg-[#A08860] hover:bg-[#8c7550]'
+                  : 'bg-[#A08860] hover:bg-[#8c7550]'
+              "
               @click="nextStep"
             >
               NEXT
