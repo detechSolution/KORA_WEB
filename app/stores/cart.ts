@@ -7,6 +7,7 @@ export const useCartStore = defineStore("cart", () => {
   const http = getHttp();
   const promoCode = ref<string | null>(null);
   const discountAmount = ref<number>(0);
+  const discountType = ref<string | null>(null);
   const isApplyingPromo = ref<boolean>(false);
   const promoError = ref<string | null>(null);
   const isPromoValid = ref<boolean>(false);
@@ -50,7 +51,8 @@ export const useCartStore = defineStore("cart", () => {
       const response: any = await http.post(API_ENDPOINTS.PROMO_CODE.VALIDATE, { code });
 
       promoCode.value = code;
-      discountAmount.value = response?.discountAmount || response?.discount || response?.amount || 0;
+      discountAmount.value = response?.amount || 0;
+      discountType.value = response?.type;
       isPromoValid.value = response.isValid;
       promoError.value = response.message;
     }
@@ -58,6 +60,7 @@ export const useCartStore = defineStore("cart", () => {
       promoCode.value = null;
       discountAmount.value = 0;
       isPromoValid.value = false;
+      discountType.value = null;
       promoError.value = e?.response?._data?.message || e?.message || "Failed to apply promo code";
     }
     finally {
@@ -76,6 +79,7 @@ export const useCartStore = defineStore("cart", () => {
     cartItems,
     promoCode,
     discountAmount,
+    discountType,
     isApplyingPromo,
     isPromoValid,
     promoError,

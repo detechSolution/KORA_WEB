@@ -29,8 +29,20 @@ const paymentMethod = ref<PaymentProvider>("stripe");
 const isRemoveItemModalOpen = ref(false);
 const selectedItemId = ref<string | "">("");
 
+const discountValue = computed(() => {
+  if (!cartStore.discountAmount) {
+    return 0;
+  }
+
+  if (cartStore.discountType === "percent") {
+    return (subtotal.value * cartStore.discountAmount) / 100;
+  }
+
+  return cartStore.discountAmount;
+});
+
 const totalPrice = computed(() => {
-  return Math.max(0, subtotal.value - cartStore.discountAmount);
+  return Math.max(0, subtotal.value - discountValue.value);
 });
 
 // Count the total number of items in the cart, including visitors for each item
@@ -200,7 +212,10 @@ onUnmounted(() => {
 
                   <!-- Item Details -->
                   <div class="flex-1 flex flex-col">
-                    <span v-if="item.bookingFor === 'visitor'" class="text-[10px] uppercase text-primary-700">
+                    <span
+                      v-if="item.bookingFor === 'visitor'"
+                      class="text-[10px] uppercase text-primary-700"
+                    >
                       {{ "Guest" }}
                     </span>
                     <div class="flex justify-between items-start gap-4 mb-2">
@@ -209,8 +224,15 @@ onUnmounted(() => {
                           {{ item.title }}
                           <br>
                           <span v-if="item.itemType !== 'membership'">
-                            (<span class="text-xl">{{ item.visitors.length > 0 ? item.visitors.length : 1 }} x
-                              {{ formatPrice(item.unitPriceAfterDiscount) }}</span>)
+                            (<span class="text-xl">{{
+                              item.visitors.length > 0
+                                ? item.visitors.length
+                                : 1
+                            }}
+                              x
+                              {{
+                                formatPrice(item.unitPriceAfterDiscount)
+                              }}</span>)
                           </span>
                         </h4>
                         <span
@@ -447,14 +469,23 @@ onUnmounted(() => {
                 <p>Rs. {{ formatPrice(subtotal) }}</p>
               </div>
               <div
-                v-if="cartStore.discountAmount > 0"
+                v-if="discountValue > 0"
                 class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between border-b border-border pb-2"
               >
                 <h2>
                   Promo Discount
-                  <span v-if="cartStore.promoCode">({{ cartStore.promoCode }})</span>
+                  <span v-if="cartStore.promoCode">
+                    ({{ cartStore.promoCode }})
+                  </span>
                 </h2>
-                <p>- Rs. {{ formatPrice(cartStore.discountAmount) }}</p>
+
+                <p v-if="cartStore.discountType === 'percent'">
+                  - {{ cartStore.discountAmount }}%
+                </p>
+
+                <p v-else>
+                  - Rs. {{ formatPrice(discountValue) }}
+                </p>
               </div>
 
               <div
