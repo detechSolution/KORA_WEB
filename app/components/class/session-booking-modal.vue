@@ -137,7 +137,7 @@ const pricing = computed(() => {
   let discount = 0;
   if (state.bookingPreference === "myself") {
     count = 1;
-    discount = MEMBERSHIP_DISCOUNT;
+    discount = MEMBERSHIP_DISCOUNT || PASS_DISCOUNT;
   }
   else if (state.bookingPreference === "guest") {
     count = state.guests.length;
