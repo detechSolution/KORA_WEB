@@ -59,11 +59,14 @@ const passItem = computed(() => ({
   referenceId: props.pass.id,
   title: props.pass.name,
   price: props.pass.price,
+  unitPrice: pricing.value.unitPrice,
+  unitPriceAfterDiscount: pricing.value.unitPriceAfterDiscount,
   visitors: state.guests,
   itemType: "pass",
   finalPrice: pricing.value.finalPrice,
   memberBenefit: props.pass.discountTag,
   bookingDate: formatDate(state.date, "YYYY-MM-DD"),
+  bookingFor: "self",
 }));
 
 const schema = [
