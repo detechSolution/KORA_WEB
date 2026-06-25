@@ -55,16 +55,6 @@ function proceedToCheckout() {
   close();
   router.push("/checkout");
 }
-
-// Assuming 10% discount for Quarterly and 20% for Yearly based on the membership page logic
-// This is just a mock for UI to show discount line if applicable
-function getDiscount() {
-  if (props.period === "QUARTERLY")
-    return "10%";
-  if (props.period === "YEARLY")
-    return "20%";
-  return null;
-}
 </script>
 
 <template>
@@ -104,13 +94,6 @@ function getDiscount() {
           >
             <span>{{ membership.name }} - {{ period }}</span>
             <span>{{ price }}</span>
-          </div>
-          <div
-            v-if="getDiscount()"
-            class="flex justify-between items-center text-sm text-muted-foreground"
-          >
-            <span>Discount</span>
-            <span>{{ getDiscount() }}</span>
           </div>
         </div>
 
