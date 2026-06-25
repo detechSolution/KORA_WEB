@@ -38,7 +38,6 @@ const isMembershipModalOpen = ref(false);
 const selectedMembershipTier = ref<any>(null);
 const selectedMembershipPrice = ref<string>("");
 const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
-console.log("🚀 ~ userDetail:", userDetail);
 
 const hasMembership = computed(() => {
   return !!userDetail?.membership?.membershipPlanId;
