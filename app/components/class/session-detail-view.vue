@@ -25,55 +25,55 @@ const isPlayingVideo = ref(false);
 const isBookingModalOpen = ref(false);
 const isAddingToWaitlist = ref(false);
 
-const sessionStatus = computed(() => {
-  if (!authStore.isAuthenticated) {
-    return {
-      title: "Logged In?",
-      description: "Sign in to book this session or join the waitlist.",
-      actionLabel: "Login Required",
-    };
-  }
+// const sessionStatus = computed(() => {
+//   if (!authStore.isAuthenticated) {
+//     return {
+//       title: "Logged In?",
+//       description: "Sign in to book this session or join the waitlist.",
+//       actionLabel: "Login Required",
+//     };
+//   }
 
-  if (props.session.isBooked) {
-    return {
-      title: "Already Booked",
-      description: "You already have a confirmed reservation for this session.",
-      actionLabel: "Booked",
-    };
-  }
+//   if (props.session.isBooked) {
+//     return {
+//       title: "Already Booked",
+//       description: "You already have a confirmed reservation for this session.",
+//       actionLabel: "Booked",
+//     };
+//   }
 
-  if (props.session.isInWaitlist) {
-    return {
-      title: "Already Waitlisted",
-      description: "You are already on the waitlist for this session.",
-      actionLabel: "On Waitlist",
-    };
-  }
+//   if (props.session.isInWaitlist) {
+//     return {
+//       title: "Already Waitlisted",
+//       description: "You are already on the waitlist for this session.",
+//       actionLabel: "On Waitlist",
+//     };
+//   }
 
-  if (props.session.isBookable && props.session.remainingSpots > 0) {
-    return {
-      title: "Spot Available",
-      description: "A confirmed booking is available right now.",
-      actionLabel: "Book Now",
-    };
-  }
+//   if (props.session.isBookable && props.session.remainingSpots > 0) {
+//     return {
+//       title: "Spot Available",
+//       description: "A confirmed booking is available right now.",
+//       actionLabel: "Book Now",
+//     };
+//   }
 
-  if (!props.session.isBookable && props.session.remainingSpots > 0) {
-    return {
-      title: "Member Reserved Spot Available",
-      description:
-        "General booking is closed, but a reserved spot may still be available.",
-      actionLabel: "Request Spot",
-    };
-  }
+//   if (!props.session.isBookable && props.session.remainingSpots > 0) {
+//     return {
+//       title: "Member Reserved Spot Available",
+//       description:
+//         "General booking is closed, but a reserved spot may still be available.",
+//       actionLabel: "Request Spot",
+//     };
+//   }
 
-  return {
-    title: "Booking Closed",
-    description:
-      "This session is full. Join the waitlist to be notified if a spot opens.",
-    actionLabel: "Show Waitlist",
-  };
-});
+//   return {
+//     title: "Booking Closed",
+//     description:
+//       "This session is full. Join the waitlist to be notified if a spot opens.",
+//     actionLabel: "Show Waitlist",
+//   };
+// });
 
 const showWaitlistCta = computed(() => {
   return (
@@ -338,7 +338,7 @@ async function handleAddToWaitlist() {
                 </div>
               </div>
 
-              <div
+              <!-- <div
                 class="w-full border border-border/60 bg-background/60 px-4 py-4 space-y-2"
               >
                 <p
@@ -352,7 +352,7 @@ async function handleAddToWaitlist() {
                 <p class="text-xs leading-6 text-secondary-400">
                   {{ sessionStatus.description }}
                 </p>
-              </div>
+              </div> -->
 
               <base-button
                 v-if="session.isBooked && !session.isGuestBookable"
@@ -365,7 +365,7 @@ async function handleAddToWaitlist() {
               </base-button>
 
               <base-button
-                v-else-if="session.isInWaitlist"
+                v-else-if="session.isInWaitlist && !session.isBookable"
                 variant="outline"
                 color="primary"
                 class="w-full text-sm uppercase"

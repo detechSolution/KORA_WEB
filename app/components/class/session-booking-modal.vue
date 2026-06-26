@@ -35,7 +35,7 @@ const emit = defineEmits<{
 
 const router = useRouter();
 const cartStore = useCartStore();
-const { success } = useNotification();
+const { success, error: showError } = useNotification();
 
 const currentStep = ref(0);
 const steps = [{ label: "Attendees" }, { label: "Overview" }];
@@ -110,6 +110,19 @@ function resetGuests() {
   state.guests = [];
 }
 function addGuest() {
+  const remainingGuestSpots = props.session.guestRemainingSpots ?? 0;
+
+  if (state.guests.length >= remainingGuestSpots) {
+    showError({
+      message:
+        remainingGuestSpots > 0
+          ? `You can only add up to ${remainingGuestSpots} guest${remainingGuestSpots > 1 ? "s" : ""} for this session.`
+          : "No guest spots are available for this session.",
+    });
+
+    return;
+  }
+
   state.guests.push(createGuest());
 }
 
