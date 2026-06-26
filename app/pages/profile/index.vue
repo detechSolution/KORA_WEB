@@ -75,7 +75,7 @@ const user = computed(() => {
       period: membershipData.value?.frequencyLabel || "",
       tier: membershipData.value?.planName || "",
       billing: membershipData.value
-        ? `${membershipData.value.currency} ${membershipData.value.price}/${membershipData.value.frequencyLabel?.toLowerCase()}`
+        ? `${membershipData.value.currency} ${membershipData.value.price}`
         : "",
       benefit: membershipData.value?.memberBenefitPercent
         ? `${membershipData.value.memberBenefitPercent}% off`
