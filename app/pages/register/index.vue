@@ -31,7 +31,7 @@ const schema = z
   .object({
     fullName: z.string().min(1, "Full name is required"),
     email: z.string().min(1, "Email is required").email("Invalid email"),
-    phone: z.string().optional(),
+    phone: z.string().min(1, "Phone number is required"),
     password: z.string().min(1, "Password is required"),
   })
   .superRefine((data, ctx) => {
@@ -213,7 +213,7 @@ async function handleRegister(): Promise<void> {
           <base-input
             v-model="registerFormState.phone"
             name="phone"
-            label="PHONE NUMBER (optional)"
+            label="PHONE NUMBER"
             placeholder="Your phone number"
             type="tel"
             leading-icon="i-lucide-phone"
