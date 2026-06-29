@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { Booking } from "~/data/profile";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
+import z from "zod";
+import { useNotification } from "~/composables/use-notification";
 import { usePagination } from "~/composables/use-pagination";
 import { useAuthStore } from "~/stores/auth";
 import { useMemberStore } from "~/stores/member";
@@ -24,10 +26,69 @@ const memberStore = useMemberStore();
 const { pagination } = usePagination(10);
 
 const loading = ref(true);
+const formRef = ref<InstanceType<typeof UForm> | null>(null);
 const activeTab = ref("TODAY");
 const isSignOutModalOpen = ref(false);
 const loadingSignOut = ref(false);
 const activeSidebarTab = ref<"info" | "bookings" | "password">("info");
+
+const { success, error: showError } = useNotification();
+const loadingPassword = ref(false);
+
+const schema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: z
+      .string()
+      .min(6, "New password must be at least 6 characters"),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
+  })
+  .superRefine((data, ctx) => {
+    if (data.newPassword !== data.confirmPassword) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["confirmPassword"],
+        message: "Passwords do not match",
+      });
+    }
+  });
+
+type Schema = z.output<typeof schema>;
+const passwordForm = reactive<Partial<Schema>>({
+  currentPassword: "",
+  newPassword: "",
+  confirmPassword: "",
+});
+
+async function handleUpdatePassword() {
+  try {
+    await formRef.value?.validate();
+  }
+  catch {
+    return;
+  }
+
+  try {
+    loadingPassword.value = true;
+    const payload = {
+      currentPassword: passwordForm.currentPassword,
+      newPassword: passwordForm.newPassword,
+    };
+    await authStore.updatePassword(payload as { currentPassword: string; newPassword: string });
+    success({ message: "Password updated successfully." });
+    passwordForm.currentPassword = "";
+    passwordForm.newPassword = "";
+    passwordForm.confirmPassword = "";
+  }
+  catch (error: any) {
+    showError({
+      message: error?.data?.message || "Failed to update password.",
+    });
+  }
+  finally {
+    loadingPassword.value = false;
+  }
+}
 
 const dashboardData = computed(() => memberStore.dashboardData);
 const profileData = computed(() => dashboardData.value?.profile);
@@ -529,40 +590,45 @@ onMounted(async () => {
               </ul>
             </div>
 
-            <div class="space-y-6 mb-8 max-w-xl">
-              <div>
-                <label
-                  class="block text-[10px] font-bold tracking-widest uppercase text-stone-400 mb-2"
-                >CURRENT PASSWORD</label>
-                <input
-                  type="password"
-                  class="w-full bg-[#18181A] border border-border rounded-sm px-4 py-3 text-sm text-foreground focus:outline-none focus:border-[#B59A6D]"
-                  placeholder="Enter your current password"
-                >
-              </div>
-              <div>
-                <label
-                  class="block text-[10px] font-bold tracking-widest uppercase text-stone-400 mb-2"
-                >NEW PASSWORD</label>
-                <input
-                  type="password"
-                  class="w-full bg-[#18181A] border border-border rounded-sm px-4 py-3 text-sm text-foreground focus:outline-none focus:border-[#B59A6D]"
-                  placeholder="Enter your new password"
-                >
-              </div>
-              <div>
-                <label
-                  class="block text-[10px] font-bold tracking-widest uppercase text-stone-400 mb-2"
-                >CONFIRM NEW PASSWORD</label>
-                <input
-                  type="password"
-                  class="w-full bg-[#18181A] border border-border rounded-sm px-4 py-3 text-sm text-foreground focus:outline-none focus:border-[#B59A6D]"
-                  placeholder="Confirm your new password"
-                >
-              </div>
-            </div>
+            <UForm
+              ref="formRef"
+              :schema="schema"
+              :state="passwordForm"
+              class="space-y-6 mb-8 max-w-xl"
+              @submit="handleUpdatePassword"
+            >
+              <base-input
+                v-model="passwordForm.currentPassword"
+                name="currentPassword"
+                type="password"
+                label="CURRENT PASSWORD"
+                placeholder="Enter your current password"
+              />
 
-            <base-button> UPDATE INFO </base-button>
+              <base-input
+                v-model="passwordForm.newPassword"
+                name="newPassword"
+                type="password"
+                label="NEW PASSWORD"
+                placeholder="Enter your new password"
+              />
+
+              <base-input
+                v-model="passwordForm.confirmPassword"
+                name="confirmPassword"
+                type="password"
+                label="CONFIRM NEW PASSWORD"
+                placeholder="Confirm your new password"
+              />
+
+              <base-button
+                type="submit"
+                :loading="loadingPassword"
+                class="mt-6"
+              >
+                UPDATE PASSWORD
+              </base-button>
+            </UForm>
           </div>
         </div>
       </div>
