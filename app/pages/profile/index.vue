@@ -247,6 +247,24 @@ watch(activeTab, async () => {
 });
 
 onMounted(async () => {
+  if (import.meta.client) {
+    try {
+      const storedUserData = localStorage.getItem("user_data");
+      if (storedUserData) {
+        const parsed = JSON.parse(storedUserData);
+        if (parsed?.profile) {
+          profileForm.height = parsed.profile.height || "";
+          profileForm.weight = parsed.profile.weight || "";
+          profileForm.injuryHistory = parsed.profile.injuryHistory || "";
+          profileForm.preferences = parsed.profile.preferences || "";
+        }
+      }
+    }
+    catch (e) {
+      console.error("Error parsing user_data from localStorage", e);
+    }
+  }
+
   await memberStore.getDashboard();
   await fetchBookings();
 });
@@ -379,7 +397,7 @@ onMounted(async () => {
               :class="
                 activeSidebarTab === 'info'
                   ? 'bg-[#B59A6D] text-white'
-                  : 'text-stone-300 hover:bg-[#C9A55A1A]'
+                  : 'text-secondary-900 dark:text-stone-300 hover:bg-[#C9A55A1A]'
               "
               @click="activeSidebarTab = 'info'"
             >
@@ -390,7 +408,7 @@ onMounted(async () => {
               :class="
                 activeSidebarTab === 'bookings'
                   ? 'bg-[#B59A6D] text-white'
-                  : 'text-stone-300 hover:bg-[#C9A55A1A]'
+                  : 'text-secondary-900 dark:text-stone-300 hover:bg-[#C9A55A1A]'
               "
               @click="activeSidebarTab = 'bookings'"
             >
@@ -401,7 +419,7 @@ onMounted(async () => {
               :class="
                 activeSidebarTab === 'password'
                   ? 'bg-[#B59A6D] text-white'
-                  : 'text-stone-300 hover:bg-[#C9A55A1A]'
+                  : 'text-secondary-900 dark:text-stone-300 hover:bg-[#C9A55A1A]'
               "
               @click="activeSidebarTab = 'password'"
             >
@@ -417,7 +435,7 @@ onMounted(async () => {
             <!-- Membership -->
             <div
               v-if="user.membership.hasPlan"
-              class="bg-[#262420] border border-border rounded-sm p-6"
+              class="bg-[#C9A55A1A] border border-border rounded-sm p-6"
             >
               <div
                 class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4"
@@ -446,7 +464,7 @@ onMounted(async () => {
                 </div>
               </div>
               <div
-                class="flex justify-between items-end pt-2 border-t border-border mt-4"
+                class="flex justify-between items-end pt-2 mt-4"
               >
                 <div>
                   <div
@@ -454,7 +472,7 @@ onMounted(async () => {
                   >
                     MEMBER SINCE
                   </div>
-                  <div class="text-sm text-foreground font-serif">
+                  <div class="text-lg text-foreground font-serif">
                     {{ user.membership.tier }}
                   </div>
                 </div>
@@ -464,7 +482,7 @@ onMounted(async () => {
                   >
                     BILLING
                   </div>
-                  <div class="text-sm text-foreground font-serif">
+                  <div class="text-lg text-foreground font-serif">
                     {{ user.membership.billing }}
                   </div>
                 </div>
@@ -626,7 +644,7 @@ onMounted(async () => {
               CHANGE PASSWORD
             </h3>
 
-            <div class="bg-[#262420] border border-border rounded-sm p-6 mb-8">
+            <div class="bg-[#C9A55A1A] border border-border rounded-sm p-6 mb-8">
               <h4 class="text-sm font-bold text-foreground mb-3">
                 Password Requirements
               </h4>
