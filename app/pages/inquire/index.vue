@@ -56,8 +56,8 @@ const contactItems = [
   {
     icon: "i-lucide-mail",
     label: "Email",
-    value: "kora@gmail.com",
-    href: "mailto:kora@gmail.com",
+    value: "info@koranepal.com",
+    href: "mailto:info@koranepal.com",
     external: false,
   },
   {
@@ -70,7 +70,7 @@ const contactItems = [
   {
     icon: "i-lucide-map-pin",
     label: "Address",
-    value: "Golfutar, Budhanilkantha-08, Kathmandu 44600",
+    value: "Hattisar, Kathmandu, Nepal",
   },
   {
     icon: "i-lucide-instagram",
