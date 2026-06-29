@@ -90,6 +90,53 @@ async function handleUpdatePassword() {
   }
 }
 
+const profileSchema = z.object({
+  height: z.string().optional(),
+  weight: z.string().optional(),
+  injuryHistory: z.string().optional(),
+  preferences: z.string().optional(),
+});
+
+type ProfileSchema = z.output<typeof profileSchema>;
+const profileForm = reactive<Partial<ProfileSchema>>({
+  height: "",
+  weight: "",
+  injuryHistory: "",
+  preferences: "",
+});
+
+const profileFormRef = ref<InstanceType<typeof UForm> | null>(null);
+const loadingProfile = ref(false);
+
+async function handleUpdateProfile() {
+  try {
+    await profileFormRef.value?.validate();
+  }
+  catch {
+    return;
+  }
+
+  try {
+    loadingProfile.value = true;
+    const payload = {
+      height: profileForm.height,
+      weight: profileForm.weight,
+      injuryHistory: profileForm.injuryHistory,
+      preferences: profileForm.preferences,
+    };
+    await authStore.updateProfile(payload);
+    success({ message: "Profile updated successfully." });
+  }
+  catch (error: any) {
+    showError({
+      message: error?.data?.message || "Failed to update profile.",
+    });
+  }
+  finally {
+    loadingProfile.value = false;
+  }
+}
+
 const dashboardData = computed(() => memberStore.dashboardData);
 const profileData = computed(() => dashboardData.value?.profile);
 const summaryData = computed(() => dashboardData.value?.summary);
@@ -457,49 +504,51 @@ onMounted(async () => {
                 <UIcon name="i-lucide-file-text" class="w-4 h-4" />
                 PERSONAL DETAILS
               </h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div>
-                  <label
-                    class="block text-[10px] font-bold tracking-widest uppercase text-stone-400 mb-2"
-                  >HEIGHT</label>
-                  <input
+
+              <UForm
+                ref="profileFormRef"
+                :schema="profileSchema"
+                :state="profileForm"
+                class="mb-8"
+                @submit="handleUpdateProfile"
+              >
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                  <base-input
+                    v-model="profileForm.height"
+                    name="height"
                     type="text"
-                    class="w-full bg-[#18181A] border border-border rounded-sm px-4 py-3 text-sm text-foreground focus:outline-none focus:border-[#B59A6D]"
+                    label="HEIGHT"
                     placeholder="Enter height in feet"
-                  >
-                </div>
-                <div>
-                  <label
-                    class="block text-[10px] font-bold tracking-widest uppercase text-stone-400 mb-2"
-                  >WEIGHT</label>
-                  <input
+                  />
+
+                  <base-input
+                    v-model="profileForm.weight"
+                    name="weight"
                     type="text"
-                    class="w-full bg-[#18181A] border border-border rounded-sm px-4 py-3 text-sm text-foreground focus:outline-none focus:border-[#B59A6D]"
+                    label="WEIGHT"
                     placeholder="Enter weight in kg"
-                  >
-                </div>
-                <div>
-                  <label
-                    class="block text-[10px] font-bold tracking-widest uppercase text-stone-400 mb-2"
-                  >INJURY HISTORY</label>
-                  <input
+                  />
+
+                  <base-input
+                    v-model="profileForm.injuryHistory"
+                    name="injuryHistory"
                     type="text"
-                    class="w-full bg-[#18181A] border border-border rounded-sm px-4 py-3 text-sm text-foreground focus:outline-none focus:border-[#B59A6D]"
+                    label="INJURY HISTORY"
                     placeholder="Enter your injury history"
-                  >
-                </div>
-                <div>
-                  <label
-                    class="block text-[10px] font-bold tracking-widest uppercase text-stone-400 mb-2"
-                  >PREFERENCE</label>
-                  <input
+                  />
+
+                  <base-input
+                    v-model="profileForm.preferences"
+                    name="preferences"
                     type="text"
-                    class="w-full bg-[#18181A] border border-border rounded-sm px-4 py-3 text-sm text-foreground focus:outline-none focus:border-[#B59A6D]"
+                    label="PREFERENCE"
                     placeholder="Enter your preferences"
-                  >
+                  />
                 </div>
-              </div>
-              <base-button> UPDATE INFO </base-button>
+                <base-button type="submit" :loading="loadingProfile">
+                  UPDATE INFO
+                </base-button>
+              </UForm>
             </div>
           </div>
 
