@@ -25,7 +25,7 @@ useSeoMeta({
         :src="IMAGES.LEAF"
         alt="Kora foliage left"
         class="w-full h-full object-cover scale-x-[-1] -translate-x-12 -translate-y-12 rotate-12"
-      >
+      />
     </div>
 
     <!-- Premium absolute-positioned foliage watermark overlay (Right) -->
@@ -36,7 +36,7 @@ useSeoMeta({
         :src="IMAGES.LEAF"
         alt="Kora foliage right"
         class="w-full h-full object-cover translate-x-12 -translate-y-12 -rotate-12"
-      >
+      />
     </div>
 
     <div class="relative z-20 max-w-400 mx-auto text-center px-4 md:px-8">
@@ -49,29 +49,37 @@ useSeoMeta({
         <p
           class="text-xs md:text-base leading-relaxed text-secondary-500 dark:text-secondary-400 font-light max-w-3xl mx-auto"
         >
-          At Kora, we’re building more than a workplace. We’re creating a team
-          driven by creativity, craftsmanship, and meaningful experiences.
+          At KORA, we do not simply hire staff; we recruit artisans of human
+          experience. We are building a high-level team of dedicated
+          professionals committed to executing an invisible standard of premium
+          wellness hospitality in Kathmandu. We provide an egalitarian,
+          inclusive workplace environment that prioritizes deep professional
+          development, regular skill mastery workshops, and competitive
+          compensation frameworks.
         </p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-12  items-center py-24">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center py-24">
         <div class="flex flex-col gap-6 text-start">
           <h3 class="text-4xl font-serif font-semibold">
-            Be Part of Kora
+            Join the Standards of Hospitality
           </h3>
           <p
             class="text-xs md:text-base leading-relaxed text-foreground/75 dark:text-secondary-200 font-light max-w-3xl mx-auto"
           >
-            We’re always looking for passionate, thoughtful, and talented people
-            to grow with us. If you believe you’d be a great fit for Kora, we’d
-            love to hear your story. Send your CV, portfolio, or a short
-            introduction to our email, and our team will get in touch if there’s
-            a suitable opportunity.
+            If you are an experienced fitness leader, a somatic specialist, or a
+            hospitality professional passionate about redefining the luxury
+            service landscape, we invite your application. Please forward your
+            comprehensive professional curriculum vitae and cover letter
+            directly to our talent acquisition desk at.
           </p>
 
-          <div class="bg-primary/10 w-full  flex items-center  gap-2 p-6">
-            <UIcon :name="ICONS.EMAIL" class="text-primary-700" /> <p class="dark:text-secondary-50 text-secondary font-semibold text-[16px]">
-              Email: career@kora.com
+          <div class="bg-primary/10 w-full flex items-center gap-2 p-6">
+            <UIcon :name="ICONS.EMAIL" class="text-primary-700" />
+            <p
+              class="dark:text-secondary-50 text-secondary font-semibold text-[16px]"
+            >
+              Email: info@koranepal.com
             </p>
           </div>
         </div>
@@ -79,8 +87,8 @@ useSeoMeta({
           <img
             :src="IMAGES.RECOVERY_SWIMMING_POOL"
             alt="Kora foliage left"
-            class="w-full h-full object-cover scale-x-[-1] "
-          >
+            class="w-full h-full object-cover scale-x-[-1]"
+          />
         </div>
       </div>
     </div>
