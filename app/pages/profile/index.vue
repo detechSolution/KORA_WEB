@@ -27,6 +27,7 @@ const loading = ref(true);
 const activeTab = ref("TODAY");
 const isSignOutModalOpen = ref(false);
 const loadingSignOut = ref(false);
+const activeSidebarTab = ref<"info" | "bookings" | "password">("info");
 
 const dashboardData = computed(() => memberStore.dashboardData);
 const profileData = computed(() => dashboardData.value?.profile);
@@ -161,44 +162,51 @@ onMounted(async () => {
     <div class="relative z-10 max-w-400 mx-auto mb-20 px-4 md:px-8 lg:px-12">
       <!-- Top Header / User Info -->
       <div
-        class="flex flex-col md:flex-row items-start md:items-center gap-6 mb-12"
+        class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12"
       >
-        <!-- Avatar -->
-        <div
-          class="w-24 h-24 bg-[#B59A6D] text-white flex items-center justify-center text-3xl font-serif rounded-sm shadow-sm shrink-0"
-        >
-          {{ user.initials }}
+        <div class="flex items-center gap-6">
+          <!-- Avatar -->
+          <div
+            class="w-24 h-24 bg-[#B59A6D] text-white flex items-center justify-center text-3xl font-serif rounded-sm shadow-sm shrink-0"
+          >
+            {{ user.initials }}
+          </div>
+          <!-- Details -->
+          <div class="flex flex-col">
+            <div class="flex items-center gap-4 mb-2">
+              <h1
+                class="font-serif text-4xl md:text-5xl font-normal tracking-wide text-foreground"
+              >
+                {{ user.name }}
+              </h1>
+            </div>
+            <div
+              class="flex flex-wrap items-center gap-6 text-sm text-stone-400 font-light"
+            >
+              <div class="flex items-center gap-2">
+                <UIcon name="i-lucide-mail" class="w-4 h-4" />
+                {{ user.email }}
+              </div>
+              <div class="flex items-center gap-2">
+                <UIcon name="i-lucide-phone" class="w-4 h-4" />
+                {{ user.phone }}
+              </div>
+              <div class="flex items-center gap-2">
+                <UIcon name="i-lucide-calendar" class="w-4 h-4" />
+                Member Since: {{ user.memberSince }}
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- Details -->
-        <div class="flex flex-col">
-          <div class="flex items-center gap-4 mb-2">
-            <h1
-              class="font-serif text-4xl md:text-5xl font-normal tracking-wide text-foreground"
-            >
-              {{ user.name }}
-            </h1>
-            <span
-              v-if="user.isMember"
-              class="px-2.5 py-1 bg-[#C9A55A1A] text-primary-700 border border-[#C9A55A26] text-xs tracking-[0.15em] uppercase rounded-xs flex items-center gap-1.5"
-            >
-              <UIcon name="i-lucide-award" class="w-3 h-3" />
-              KORA MEMBER
-            </span>
-          </div>
-          <div
-            class="flex flex-wrap items-center gap-6 text-sm text-stone-400 font-light"
-          >
-            <div class="flex items-center gap-2">
-              <UIcon name="i-lucide-mail" class="w-4 h-4" />
-              {{ user.email }}
-            </div>
-            <div class="flex items-center gap-2">
-              <UIcon name="i-lucide-phone" class="w-4 h-4" />
-              {{ user.phone }}
-            </div>
-          </div>
-        </div>
+        <!-- Sign Out Button -->
+        <button
+          class="flex items-center justify-center gap-2 px-8 py-3 bg-[#FB2C361A] hover:bg-[#FB2C361A]/80 transition-colors border border-[#FB2C3626] rounded-xs text-[#E5484D] text-[11px] font-bold tracking-[0.15em] uppercase hover:cursor-pointer"
+          @click="isSignOutModalOpen = true"
+        >
+          SIGN OUT
+          <UIcon name="i-lucide-log-out" class="w-3.5 h-3.5" />
+        </button>
       </div>
 
       <!-- Stats Row -->
@@ -210,7 +218,10 @@ onMounted(async () => {
           <div
             class="flex items-center gap-2 text-[10px] font-normal tracking-widest uppercase text-stone-400"
           >
-            <UIcon name="i-lucide-calendar" class="w-3.5 h-3.5 bg-primary" />
+            <UIcon
+              name="i-lucide-calendar"
+              class="w-3.5 h-3.5 text-[#B59A6D]"
+            />
             TOTAL BOOKINGS
           </div>
           <div class="font-serif text-3xl text-foreground">
@@ -224,7 +235,7 @@ onMounted(async () => {
           <div
             class="flex items-center gap-2 text-[10px] font-normal tracking-widest uppercase text-stone-400"
           >
-            <UIcon name="i-lucide-clock" class="w-3.5 h-3.5 bg-primary" />
+            <UIcon name="i-lucide-clock" class="w-3.5 h-3.5 text-[#B59A6D]" />
             UPCOMING
           </div>
           <div class="font-serif text-3xl text-foreground">
@@ -238,8 +249,11 @@ onMounted(async () => {
           <div
             class="flex items-center gap-2 text-[10px] font-normal tracking-widest uppercase text-stone-400"
           >
-            <UIcon name="i-lucide-x-square" class="w-3.5 h-3.5 bg-primary" />
-            CANCELED BOOKINGS
+            <UIcon
+              name="i-lucide-x-square"
+              class="w-3.5 h-3.5 text-[#B59A6D]"
+            />
+            CANCEL REQUESTED
           </div>
           <div class="font-serif text-3xl text-foreground">
             {{ user.stats.canceled }}
@@ -247,75 +261,108 @@ onMounted(async () => {
         </div>
       </div>
 
-      <!-- Main Layout: 2 Columns -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-8">
-        <!-- Left Column -->
-        <div class="lg:col-span-2 flex flex-col gap-8">
-          <!-- Your Membership Section -->
-          <div>
-            <h3
-              class="flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-[#B59A6D] mb-6"
+      <!-- Main Layout: Sidebar + Content -->
+      <div class="flex flex-col lg:flex-row gap-5 lg:gap-8">
+        <!-- Sidebar -->
+        <div class="w-full lg:w-[280px] shrink-0">
+          <div class="bg-card border border-border rounded-sm p-4">
+            <button
+              class="w-full flex items-center justify-start px-6 py-3.5 text-xs font-bold tracking-widest uppercase transition-colors"
+              :class="
+                activeSidebarTab === 'info'
+                  ? 'bg-[#B59A6D] text-white'
+                  : 'text-stone-300 hover:bg-[#C9A55A1A]'
+              "
+              @click="activeSidebarTab = 'info'"
             >
-              <UIcon name="i-lucide-award" class="w-4 h-4" />
-              YOUR MEMBERSHIP
-            </h3>
+              MY INFO
+            </button>
+            <button
+              class="w-full flex items-center justify-start px-6 py-3.5 text-xs font-bold tracking-widest uppercase transition-colors"
+              :class="
+                activeSidebarTab === 'bookings'
+                  ? 'bg-[#B59A6D] text-white'
+                  : 'text-stone-300 hover:bg-[#C9A55A1A]'
+              "
+              @click="activeSidebarTab = 'bookings'"
+            >
+              MY BOOKINGS
+            </button>
+            <button
+              class="w-full flex items-center justify-start px-6 py-3.5 text-xs font-bold tracking-widest uppercase transition-colors"
+              :class="
+                activeSidebarTab === 'password'
+                  ? 'bg-[#B59A6D] text-white'
+                  : 'text-stone-300 hover:bg-[#C9A55A1A]'
+              "
+              @click="activeSidebarTab = 'password'"
+            >
+              UPDATE PASSWORD
+            </button>
+          </div>
+        </div>
 
+        <!-- Content -->
+        <div class="flex-1">
+          <!-- MY INFO CONTENT -->
+          <div v-if="activeSidebarTab === 'info'" class="flex flex-col gap-10">
+            <!-- Membership -->
             <div
               v-if="user.membership.hasPlan"
-              class="bg-[#C9A55A1A] border border-border rounded-sm p-8"
+              class="bg-[#262420] border border-border rounded-sm p-6"
             >
               <div
-                class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8"
+                class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4"
               >
                 <div class="flex items-center gap-4">
                   <div
-                    class="w-12 h-12 border border-primary-700 bg-[#C9A55A26] dark:bg-[#2A2722] flex items-center justify-center rounded-xs text-[#B59A6D]"
+                    class="w-10 h-10 border border-[#B59A6D] flex items-center justify-center rounded-xs text-[#B59A6D]"
                   >
                     <UIcon name="i-lucide-star" class="w-5 h-5" />
                   </div>
                   <div>
-                    <h4 class="font-serif text-3xl text-foreground font-normal">
+                    <h4 class="font-serif text-2xl text-foreground font-normal">
                       {{ user.membership.name }}
                     </h4>
                     <p
-                      class="text-[10px] font-bold tracking-widest uppercase text-primary-700 mt-1"
+                      class="text-[9px] font-bold tracking-widest uppercase text-stone-400 mt-1"
                     >
-                      {{ user.membership.subtitle }}
+                      {{ user.membership.subtitle || "DEEPEN THE PRACTICE" }}
                     </p>
                   </div>
                 </div>
                 <div
-                  class="border border-primary-700 text-primary-700 bg-[#C9A55A26] text-[10px] font-bold tracking-widest uppercase px-4 py-1.5 rounded-xs"
+                  class="border border-[#B59A6D] text-[#B59A6D] text-[10px] font-bold tracking-widest uppercase px-4 py-1.5 rounded-xs"
                 >
                   {{ user.membership.period }}
                 </div>
               </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
+              <div
+                class="flex justify-between items-end pt-2 border-t border-border mt-4"
+              >
                 <div>
                   <div
-                    class="text-[10px] font-bold tracking-widest uppercase text-secondary-400 mb-2"
+                    class="text-[9px] font-bold tracking-widest uppercase text-stone-500 mb-1"
                   >
                     MEMBER SINCE
                   </div>
-                  <div class="text-lg text-foreground font-serif">
+                  <div class="text-sm text-foreground font-serif">
                     {{ user.membership.tier }}
                   </div>
                 </div>
-                <div>
+                <div class="text-right">
                   <div
-                    class="text-[10px] font-bold tracking-widest uppercase text-secondary-400 mb-2"
+                    class="text-[9px] font-bold tracking-widest uppercase text-stone-500 mb-1"
                   >
                     BILLING
                   </div>
-                  <div class="text-lg text-foreground font-serif">
+                  <div class="text-sm text-foreground font-serif">
                     {{ user.membership.billing }}
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Empty State for Membership -->
             <div
               v-else
               class="bg-card border border-border rounded-sm p-8 flex flex-col items-center justify-center text-center"
@@ -340,10 +387,63 @@ onMounted(async () => {
                 Explore Memberships
               </base-button>
             </div>
+
+            <!-- Personal Details Form -->
+            <div>
+              <h3
+                class="flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-[#B59A6D] mb-6"
+              >
+                <UIcon name="i-lucide-file-text" class="w-4 h-4" />
+                PERSONAL DETAILS
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div>
+                  <label
+                    class="block text-[10px] font-bold tracking-widest uppercase text-stone-400 mb-2"
+                  >HEIGHT</label>
+                  <input
+                    type="text"
+                    class="w-full bg-[#18181A] border border-border rounded-sm px-4 py-3 text-sm text-foreground focus:outline-none focus:border-[#B59A6D]"
+                    placeholder="Enter height in feet"
+                  >
+                </div>
+                <div>
+                  <label
+                    class="block text-[10px] font-bold tracking-widest uppercase text-stone-400 mb-2"
+                  >WEIGHT</label>
+                  <input
+                    type="text"
+                    class="w-full bg-[#18181A] border border-border rounded-sm px-4 py-3 text-sm text-foreground focus:outline-none focus:border-[#B59A6D]"
+                    placeholder="Enter weight in kg"
+                  >
+                </div>
+                <div>
+                  <label
+                    class="block text-[10px] font-bold tracking-widest uppercase text-stone-400 mb-2"
+                  >INJURY HISTORY</label>
+                  <input
+                    type="text"
+                    class="w-full bg-[#18181A] border border-border rounded-sm px-4 py-3 text-sm text-foreground focus:outline-none focus:border-[#B59A6D]"
+                    placeholder="Enter your injury history"
+                  >
+                </div>
+                <div>
+                  <label
+                    class="block text-[10px] font-bold tracking-widest uppercase text-stone-400 mb-2"
+                  >PREFERENCE</label>
+                  <input
+                    type="text"
+                    class="w-full bg-[#18181A] border border-border rounded-sm px-4 py-3 text-sm text-foreground focus:outline-none focus:border-[#B59A6D]"
+                    placeholder="Enter your preferences"
+                  >
+                </div>
+              </div>
+              <base-button> UPDATE INFO </base-button>
+            </div>
           </div>
 
-          <!-- Bookings Section -->
-          <div>
+          <!-- MY BOOKINGS CONTENT -->
+          <div v-if="activeSidebarTab === 'bookings'">
             <div
               class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8"
             >
@@ -353,7 +453,6 @@ onMounted(async () => {
                 <UIcon name="i-lucide-calendar-days" class="w-4 h-4" />
                 BOOKINGS
               </h3>
-
               <div>
                 <ClassFilter
                   v-model="activeTab"
@@ -377,8 +476,6 @@ onMounted(async () => {
                   @fetch-bookings="fetchBookings"
                 />
               </div>
-
-              <!-- Empty State for Bookings -->
               <div
                 v-else
                 class="py-20 flex flex-col items-center justify-center text-center"
@@ -398,7 +495,7 @@ onMounted(async () => {
             </div>
             <base-pagination
               :page="pagination.page"
-              :total="memberStore.bookingsData.meta.total"
+              :total="memberStore.bookingsData?.meta?.total || 0"
               :items-per-page="pagination.pageSize"
               :disabled="memberStore.loading"
               @update:page="
@@ -409,76 +506,63 @@ onMounted(async () => {
               "
             />
           </div>
-        </div>
 
-        <!-- Right Column -->
-        <div>
-          <div class="bg-[#EDEAE7] dark:bg-card rounded-sm p-8">
+          <!-- UPDATE PASSWORD CONTENT -->
+          <div v-if="activeSidebarTab === 'password'">
             <h3
-              class="flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-[#B59A6D] mb-8"
+              class="flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-[#B59A6D] mb-6"
             >
-              <UIcon name="i-lucide-user" class="w-4 h-4" />
-              USER DETAILS
+              <UIcon name="i-lucide-lock" class="w-4 h-4" />
+              CHANGE PASSWORD
             </h3>
 
-            <div class="space-y-8 mb-12">
-              <div>
-                <div
-                  class="flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase text-secondary-400 mb-2"
-                >
-                  <UIcon name="i-lucide-user" class="w-3.5 h-3.5" />
-                  NAME
-                </div>
-                <div class="text-sm text-secondary-700 dark:text-secondary-200">
-                  {{ user.name }}
-                </div>
-              </div>
+            <div class="bg-[#262420] border border-border rounded-sm p-6 mb-8">
+              <h4 class="text-sm font-bold text-foreground mb-3">
+                Password Requirements
+              </h4>
+              <ul
+                class="text-xs text-stone-400 space-y-1.5 list-disc list-inside"
+              >
+                <li>At least 6 characters long</li>
+                <li>Use a combination of letters and numbers</li>
+                <li>Avoid using easily guessable passwords</li>
+              </ul>
+            </div>
 
+            <div class="space-y-6 mb-8 max-w-xl">
               <div>
-                <div
-                  class="flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase text-secondary-400 mb-2"
+                <label
+                  class="block text-[10px] font-bold tracking-widest uppercase text-stone-400 mb-2"
+                >CURRENT PASSWORD</label>
+                <input
+                  type="password"
+                  class="w-full bg-[#18181A] border border-border rounded-sm px-4 py-3 text-sm text-foreground focus:outline-none focus:border-[#B59A6D]"
+                  placeholder="Enter your current password"
                 >
-                  <UIcon name="i-lucide-mail" class="w-3.5 h-3.5" />
-                  EMAIL
-                </div>
-                <div class="text-sm text-secondary-700 dark:text-secondary-200">
-                  {{ user.email }}
-                </div>
               </div>
-
               <div>
-                <div
-                  class="flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase text-secondary-400 mb-2"
+                <label
+                  class="block text-[10px] font-bold tracking-widest uppercase text-stone-400 mb-2"
+                >NEW PASSWORD</label>
+                <input
+                  type="password"
+                  class="w-full bg-[#18181A] border border-border rounded-sm px-4 py-3 text-sm text-foreground focus:outline-none focus:border-[#B59A6D]"
+                  placeholder="Enter your new password"
                 >
-                  <UIcon name="i-lucide-phone" class="w-3.5 h-3.5" />
-                  PHONE
-                </div>
-                <div class="text-sm text-secondary-700 dark:text-secondary-200">
-                  {{ user.phone }}
-                </div>
               </div>
-
               <div>
-                <div
-                  class="flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase text-stone-500 mb-2"
+                <label
+                  class="block text-[10px] font-bold tracking-widest uppercase text-stone-400 mb-2"
+                >CONFIRM NEW PASSWORD</label>
+                <input
+                  type="password"
+                  class="w-full bg-[#18181A] border border-border rounded-sm px-4 py-3 text-sm text-foreground focus:outline-none focus:border-[#B59A6D]"
+                  placeholder="Confirm your new password"
                 >
-                  <UIcon name="i-lucide-calendar" class="w-3.5 h-3.5" />
-                  MEMBER SINCE
-                </div>
-                <div class="text-sm text-secondary-700 dark:text-secondary-200">
-                  {{ user.memberSince }}
-                </div>
               </div>
             </div>
 
-            <!-- Sign Out Button -->
-            <button
-              class="w-full flex items-center justify-center gap-2 py-3.5 bg-[#FB2C361A] hover:bg-[#FB2C361A]/80 transition-colors border border-[#FB2C3626] rounded-xs text-[#E5484D] text-[11px] font-bold tracking-[0.15em] uppercase hover:cursor-pointer"
-              @click="isSignOutModalOpen = true"
-            >
-              SIGN OUT
-              <UIcon name="i-lucide-log-out" class="w-3.5 h-3.5" />
-            </button>
+            <base-button> UPDATE INFO </base-button>
           </div>
         </div>
       </div>
