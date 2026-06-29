@@ -224,16 +224,16 @@ onUnmounted(() => {
             <div
               class="flex flex-wrap justify-center items-center gap-4 text-[10px] md:text-xs font-sans tracking-widest text-foreground/70 uppercase font-semibold order-1 md:order-2"
             >
-              <a href="#" class="hover:text-white transition-colors">Contact</a>
+              <a href="#" class="hover:text-foreground dark:hover:text-white transition-colors">Contact</a>
               <span class="text-border">•</span>
               <a
                 href="#"
-                class="hover:text-white transition-colors"
+                class="hover:text-foreground dark:hover:text-white transition-colors"
               >Location</a>
               <span class="text-border">•</span>
               <a
                 href="#"
-                class="hover:text-white transition-colors"
+                class="hover:text-foreground dark:hover:text-white transition-colors"
               >Instagram</a>
             </div>
 
