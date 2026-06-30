@@ -180,6 +180,7 @@ async function handleResetPassword(): Promise<void> {
     loading.value = true;
     resetApiError.value = null;
     await authStore.resetPassword({
+      email: submittedEmail.value,
       code: submittedCode.value,
       newPassword: resetFormState.newPassword,
     });

@@ -28,8 +28,6 @@ const { pagination } = usePagination(10);
 const loading = ref(true);
 const formRef = ref<InstanceType<typeof UForm> | null>(null);
 const activeTab = ref("TODAY");
-const isSignOutModalOpen = ref(false);
-const loadingSignOut = ref(false);
 const activeSidebarTab = ref<"info" | "bookings" | "password">("info");
 
 const { success, error: showError } = useNotification();
@@ -236,12 +234,6 @@ const tabs = computed(() => {
   ];
 });
 
-function handleLogout(): void {
-  authStore.logout();
-  isSignOutModalOpen.value = false;
-  router.push({ name: "login" });
-}
-
 watch(activeTab, async () => {
   await fetchBookings();
 });
@@ -324,15 +316,6 @@ onMounted(async () => {
             </div>
           </div>
         </div>
-
-        <!-- Sign Out Button -->
-        <button
-          class="flex items-center justify-center gap-2 px-8 py-3 bg-[#FB2C361A] hover:bg-[#FB2C361A]/80 transition-colors border border-[#FB2C3626] rounded-xs text-[#E5484D] text-[11px] font-bold tracking-[0.15em] uppercase hover:cursor-pointer"
-          @click="isSignOutModalOpen = true"
-        >
-          SIGN OUT
-          <UIcon name="i-lucide-log-out" class="w-3.5 h-3.5" />
-        </button>
       </div>
 
       <!-- Stats Row -->
@@ -700,12 +683,6 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-    <profile-signout-modal
-      :open="isSignOutModalOpen"
-      :loading="loadingSignOut"
-      @close="isSignOutModalOpen = false"
-      @confirm="handleLogout"
-    />
   </div>
 </template>
 

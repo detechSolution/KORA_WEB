@@ -25,7 +25,7 @@ useSeoMeta({
         :src="IMAGES.LEAF"
         alt="Kora foliage left"
         class="w-full h-full object-cover scale-x-[-1] -translate-x-12 -translate-y-12 rotate-12"
-      />
+      >
     </div>
 
     <!-- Premium absolute-positioned foliage watermark overlay (Right) -->
@@ -36,7 +36,7 @@ useSeoMeta({
         :src="IMAGES.LEAF"
         alt="Kora foliage right"
         class="w-full h-full object-cover translate-x-12 -translate-y-12 -rotate-12"
-      />
+      >
     </div>
 
     <div class="relative z-20 max-w-400 mx-auto text-center px-4 md:px-8">
@@ -88,7 +88,7 @@ useSeoMeta({
             :src="IMAGES.RECOVERY_SWIMMING_POOL"
             alt="Kora foliage left"
             class="w-full h-full object-cover scale-x-[-1]"
-          />
+          >
         </div>
       </div>
     </div>

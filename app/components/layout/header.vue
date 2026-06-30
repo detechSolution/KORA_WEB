@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import type { DropdownMenuItem } from "@nuxt/ui";
 import { computed, onMounted, onUnmounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import { ICONS } from "~/config/icons";
 
 const props = defineProps({
@@ -13,10 +15,10 @@ const props = defineProps({
   },
 });
 
+const router = useRouter();
 const authStore = useAuthStore();
-
-// Nuxt Color Mode
 const colorMode = useColorMode();
+
 const isDark = computed({
   get() {
     return colorMode.value === "dark";
@@ -31,13 +33,32 @@ function toggleColorMode() {
 }
 
 // Menu Modal and Cart visibility state
-// commented sidebar for now as replaced by menu modal dont remove this
+// commented sidebar for now as replaced by menu modal. dont remove this
 // const isSidebarOpen = ref(false);
 const isMenuModalOpen = ref(false);
 const isCartOpen = ref(false);
+const isSignOutModalOpen = ref(false);
+const loadingSignOut = ref(false);
 
 // Scroll listener to toggle header background color on scroll
 const isScrolled = ref(false);
+const items = ref<DropdownMenuItem[]>([
+  {
+    label: "My Profile",
+    icon: "i-lucide-user",
+    onSelect: () => {
+      router.push("/profile");
+    },
+  },
+  {
+    label: "Sign Out",
+    icon: "i-lucide-log-out",
+    onSelect: () => {
+      isSignOutModalOpen.value = true;
+    },
+  },
+]);
+
 function handleScroll() {
   isScrolled.value = window.scrollY > 20;
 }
@@ -80,6 +101,12 @@ const getColorClass = computed(() => {
     }
   }
 });
+
+function handleLogout(): void {
+  authStore.logout();
+  isSignOutModalOpen.value = false;
+  router.push({ name: "login" });
+}
 
 onMounted(() => {
   window.addEventListener("scroll", handleScroll);
@@ -181,17 +208,25 @@ onUnmounted(() => {
         </base-button>
 
         <!-- Profile Avatar with premium gold border -->
-        <NuxtLink
+        <UDropdownMenu
           v-if="authStore.isAuthenticated"
-          to="/profile"
-          class="hidden sm:inline-flex w-9 h-9 md:w-10 md:h-10 rounded-full border border-primary/40 overflow-hidden cursor-pointer active:scale-95 transition-transform duration-200 shadow-sm"
+          :modal="false"
+          :items="items"
+          :content="{
+            align: 'end',
+            side: 'bottom',
+            sideOffset: 8,
+          }"
+          :ui="{
+            content: 'w-48',
+          }"
         >
-          <img
+          <UAvatar
             src="/avatar.png"
-            alt="User Profile"
-            class="w-full h-full object-cover"
-          >
-        </NuxtLink>
+            size="xl"
+            loading="lazy"
+          />
+        </UDropdownMenu>
         <base-button
           v-else
           to="/login"
@@ -204,7 +239,16 @@ onUnmounted(() => {
     </div>
     <!-- commented sidebar for now as replaced by menu modal dont remove this -->
     <!-- <LayoutSidebar :is-open="isSidebarOpen" @close="isSidebarOpen = false" /> -->
-    <LayoutMenuModal :is-open="isMenuModalOpen" @close="isMenuModalOpen = false" />
+    <LayoutMenuModal
+      :is-open="isMenuModalOpen"
+      @close="isMenuModalOpen = false"
+    />
     <LayoutCartDrawer :is-open="isCartOpen" @close="isCartOpen = false" />
+    <profile-signout-modal
+      :open="isSignOutModalOpen"
+      :loading="loadingSignOut"
+      @close="isSignOutModalOpen = false"
+      @confirm="handleLogout"
+    />
   </header>
 </template>

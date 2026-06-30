@@ -41,6 +41,13 @@ export default defineAppConfig({
         body: "mt-4",
       },
     },
+    dropdownMenu: {
+      slots: {
+        content:
+          "bg-white dark:bg-[#212121] border border-border rounded-xs shadow-md p-1",
+        item: "rounded-xs transition-colors duration-0 hover:bg-gray-100 dark:hover:bg-primary-700 data-[highlighted]:bg-primary-700/50 outline-none",
+      },
+    },
   },
   safelist: [
     "min-w-[150px]",
