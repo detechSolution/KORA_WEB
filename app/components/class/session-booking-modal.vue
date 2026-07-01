@@ -308,8 +308,8 @@ function close() {
             <div
               class="border border-border p-8 flex flex-col items-center text-center cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors group"
               :class="{
-                'cursor-pointer hover:bg-black/5 dark:hover:bg-white/5': hasMembership,
-                'opacity-50 cursor-not-allowed pointer-events-none': !hasMembership,
+                'cursor-pointer hover:bg-black/5 dark:hover:bg-white/5': hasMembership || session.isGuestBookable,
+                'opacity-50 cursor-not-allowed pointer-events-none': !hasMembership || !session.isGuestBookable,
               }"
               @click="selectPreference('guest')"
             >
