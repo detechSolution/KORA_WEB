@@ -224,17 +224,33 @@ onUnmounted(() => {
             <div
               class="flex flex-wrap justify-center items-center gap-4 text-[10px] md:text-xs font-sans tracking-widest text-foreground/70 uppercase font-semibold order-1 md:order-2"
             >
-              <a href="#" class="hover:text-foreground dark:hover:text-white transition-colors">Contact</a>
-              <span class="text-border">•</span>
-              <a
-                href="#"
+              <NuxtLink
+                to="/inquire"
                 class="hover:text-foreground dark:hover:text-white transition-colors"
-              >Location</a>
+                @click="close"
+              >
+                Contact
+              </NuxtLink>
+
               <span class="text-border">•</span>
-              <a
-                href="#"
+
+              <NuxtLink
+                to="#"
                 class="hover:text-foreground dark:hover:text-white transition-colors"
-              >Instagram</a>
+              >
+                Location
+              </NuxtLink>
+
+              <span class="text-border">•</span>
+
+              <a
+                href="https://www.instagram.com/lifeatkora/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-foreground dark:hover:text-white transition-colors"
+              >
+                Instagram
+              </a>
             </div>
 
             <div

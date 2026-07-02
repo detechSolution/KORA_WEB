@@ -76,7 +76,7 @@ const contactItems = [
     icon: "i-lucide-instagram",
     label: "Instagram",
     value: "@lifeatkora",
-    href: "https://instagram.com",
+    href: "https://www.instagram.com/lifeatkora/",
     external: true,
   },
 ];
