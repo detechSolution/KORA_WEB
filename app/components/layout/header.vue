@@ -20,11 +20,9 @@ const authStore = useAuthStore();
 const colorMode = useColorMode();
 
 const isDark = computed({
-  get() {
-    return colorMode.value === "dark";
-  },
-  set(val) {
-    colorMode.preference = val ? "dark" : "light";
+  get: () => colorMode.value === "dark",
+  set: (value) => {
+    colorMode.preference = value ? "dark" : "light";
   },
 });
 
@@ -32,23 +30,38 @@ function toggleColorMode() {
   isDark.value = !isDark.value;
 }
 
-// Menu Modal and Cart visibility state
-// commented sidebar for now as replaced by menu modal. dont remove this
-// const isSidebarOpen = ref(false);
 const isMenuModalOpen = ref(false);
 const isCartOpen = ref(false);
 const isSignOutModalOpen = ref(false);
 const loadingSignOut = ref(false);
 
-// Scroll listener to toggle header background color on scroll
 const isScrolled = ref(false);
+
+const SCROLL_THRESHOLD = 30;
+let ticking = false;
+
+function updateScrollState() {
+  const scrolled = window.scrollY > SCROLL_THRESHOLD;
+
+  if (scrolled !== isScrolled.value) {
+    isScrolled.value = scrolled;
+  }
+
+  ticking = false;
+}
+
+function handleScroll() {
+  if (!ticking) {
+    window.requestAnimationFrame(updateScrollState);
+    ticking = true;
+  }
+}
+
 const items = ref<DropdownMenuItem[]>([
   {
     label: "My Profile",
     icon: "i-lucide-user",
-    onSelect: () => {
-      router.push("/profile");
-    },
+    onSelect: () => router.push("/profile"),
   },
   {
     label: "Sign Out",
@@ -59,58 +72,29 @@ const items = ref<DropdownMenuItem[]>([
   },
 ]);
 
-function handleScroll() {
-  isScrolled.value = window.scrollY > 20;
-}
-
 const getColorClass = computed(() => {
-  if (props.isHome) {
-    if (isScrolled.value) {
-      if (isDark.value) {
-        return {
-          text: "text-white",
-          image: "/logo/kora_white_logo.svg",
-        };
-      }
-      else {
-        return {
-          text: "text-dark",
-          image: "/logo/kora_black_logo.svg",
-        };
-      }
-    }
-    else {
-      return {
-        text: "text-white",
-        image: "/logo/kora_white_logo.svg",
-      };
-    }
-  }
-  else {
-    if (isDark.value) {
-      return {
-        text: "text-white",
-        image: "/logo/kora_white_logo.svg",
-      };
-    }
-    else {
-      return {
-        text: "text-dark",
-        image: "/logo/kora_black_logo.svg",
-      };
-    }
-  }
+  const useWhite = props.isHome
+    ? !isScrolled.value || isDark.value
+    : isDark.value;
+
+  return {
+    text: useWhite ? "text-white" : "text-dark",
+    image: useWhite ? "/logo/kora_white_logo.svg" : "/logo/kora_black_logo.svg",
+  };
 });
 
-function handleLogout(): void {
+function handleLogout() {
   authStore.logout();
   isSignOutModalOpen.value = false;
   router.push({ name: "login" });
 }
 
 onMounted(() => {
-  window.addEventListener("scroll", handleScroll);
-  handleScroll();
+  updateScrollState();
+
+  window.addEventListener("scroll", handleScroll, {
+    passive: true,
+  });
 });
 
 onUnmounted(() => {
@@ -120,18 +104,17 @@ onUnmounted(() => {
 
 <template>
   <header
-    class="w-full transition-all duration-300 px-4 md:px-8 lg:px-12 z-1000"
+    class="fixed inset-x-0 top-0 z-1000 w-full px-4 md:px-8 lg:px-12 transition-[padding,box-shadow,border-color] duration-300 ease-out"
     :class="[
       isScrolled
-        ? 'border-b border-border/80 shadow-sm py-1'
-        : 'border-b border-transparent py-3',
+        ? 'py-2 border-b border-border/80 shadow-lg'
+        : 'py-3 border-b border-transparent shadow-none',
 
-      // ✅ Background logic
       props.isHome && !isScrolled
         ? 'bg-transparent'
-        : !props.isHome && !isScrolled && isDark
-          ? 'bg-secondary-900'
-          : 'bg-background/90 backdrop-blur-md',
+        : isDark
+          ? 'bg-secondary-900/90 backdrop-blur-xl'
+          : 'bg-background/90 backdrop-blur-xl',
 
       props.class,
     ]"
