@@ -18,6 +18,7 @@ const props = defineProps({
 const router = useRouter();
 const authStore = useAuthStore();
 const colorMode = useColorMode();
+const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
 
 const isDark = computed({
   get: () => colorMode.value === "dark",
@@ -57,19 +58,31 @@ function handleScroll() {
   }
 }
 
-const items = ref<DropdownMenuItem[]>([
-  {
-    label: "My Profile",
-    icon: "i-lucide-user",
-    onSelect: () => router.push("/profile"),
-  },
-  {
-    label: "Sign Out",
-    icon: "i-lucide-log-out",
-    onSelect: () => {
-      isSignOutModalOpen.value = true;
+const items = ref<DropdownMenuItem[][]>([
+  [
+    {
+      label: userDetail.name || "Guest",
+      avatar: {
+        src: "https://github.com/benjamincanac.png",
+        loading: "lazy",
+      },
+      type: "label",
     },
-  },
+  ],
+  [
+    {
+      label: "My Profile",
+      icon: "i-lucide-user",
+      onSelect: () => router.push("/profile"),
+    },
+    {
+      label: "Sign Out",
+      icon: "i-lucide-log-out",
+      onSelect: () => {
+        isSignOutModalOpen.value = true;
+      },
+    },
+  ],
 ]);
 
 const getColorClass = computed(() => {
@@ -201,13 +214,14 @@ onUnmounted(() => {
             sideOffset: 8,
           }"
           :ui="{
-            content: 'w-48',
+            content: 'w-50',
           }"
         >
           <UAvatar
             src="/avatar.png"
             size="xl"
             loading="lazy"
+            class="hover:cursor-pointer"
           />
         </UDropdownMenu>
         <base-button

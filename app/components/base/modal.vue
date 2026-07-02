@@ -56,7 +56,7 @@ const ui = computed(() => {
     content: contentBase + contentHeight,
     header: "flex items-center justify-center sm:p-8 pb-0 shrink-0 border-none",
     close:
-      "hover:bg-muted hover:text-foreground text-muted-foreground cursor-pointer rounded-md p-2",
+      "hover:bg-muted dark:hover:bg-[#2C2C2C] hover:text-foreground text-muted-foreground cursor-pointer rounded-md p-2",
     title: "font-serif text-3xl text-center flex justify-center text-foreground dark:text-white",
     body: "sm:p-8 sm:pt-0",
     overlay: "bg-secondary/60 dark:bg-secondary/60",

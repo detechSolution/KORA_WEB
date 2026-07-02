@@ -45,7 +45,9 @@ export default defineAppConfig({
       slots: {
         content:
           "bg-white dark:bg-[#212121] border border-border rounded-xs shadow-md p-1",
-        item: "rounded-xs transition-colors duration-0 hover:bg-gray-100 dark:hover:bg-primary-700 data-[highlighted]:bg-primary-700/50 outline-none",
+        viewport: "divide-y divide-default dark:divide-secondary-700",
+        item: "rounded-xs outline-none bg-none hover:bg-gray-100 dark:hover:bg-[#2C2C2C]",
+        itemLeadingIcon: "!text-secondary-700 dark:!text-white",
       },
     },
   },
