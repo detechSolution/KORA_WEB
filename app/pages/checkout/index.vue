@@ -181,7 +181,7 @@ onUnmounted(() => {
                   class="flex gap-4 pb-6 border-b border-border/10"
                 >
                   <!-- Image / Icon -->
-                  <div
+                  <!-- <div
                     v-if="
                       item.type === 'class'
                         || item.type === 'event'
@@ -208,7 +208,7 @@ onUnmounted(() => {
                     class="w-20 h-20 border border-border flex items-center justify-center shrink-0 text-primary/60"
                   >
                     <UIcon name="i-lucide-star" class="w-6 h-6" />
-                  </div>
+                  </div> -->
 
                   <!-- Item Details -->
                   <div class="flex-1 flex flex-col">

@@ -80,11 +80,10 @@ async function handleCancelRequest() {
     <!-- Left side: Image and details -->
     <div class="flex flex-col sm:flex-row gap-6">
       <!-- Thumbnail (Image or Icon) -->
-      <div
+      <!-- <div
         v-if="booking.itemType === 'passes'"
         class="w-24 h-24 border border-border dark:bg-[#1A1A1A] flex flex-col items-center justify-center rounded-xs shrink-0"
       >
-        <!-- Pass Icon -->
         <UIcon
           name="i-lucide-id-card-lanyard"
           class="w-12 h-12 text-[#B59A6D]"
@@ -100,7 +99,7 @@ async function handleCancelRequest() {
           :alt="booking.title"
           class="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-300"
         >
-      </div>
+      </div> -->
 
       <!-- Details -->
       <div class="flex flex-col justify-center">
@@ -126,10 +125,10 @@ async function handleCancelRequest() {
             <UIcon name="i-lucide-calendar" class="w-3.5 h-3.5" />
             {{ booking.date }}
           </div>
-          <div v-if="booking.time" class="flex items-center gap-1.5">
+          <!-- <div v-if="booking.time" class="flex items-center gap-1.5">
             <UIcon name="i-lucide-clock" class="w-3.5 h-3.5" />
             {{ booking.time }}
-          </div>
+          </div> -->
           <div v-if="booking.location" class="flex items-center gap-1.5">
             <UIcon name="i-lucide-map-pin" class="w-3.5 h-3.5" />
             {{ booking.location }}
