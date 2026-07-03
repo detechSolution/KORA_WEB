@@ -59,9 +59,21 @@ const GUEST_DISCOUNT = benefits.guest.class || 0;
 const PASS_DISCOUNT = passesBenefits.class || 0;
 
 const activeDiscount = computed(() => {
-  return state.bookingPreference === "myself"
-    ? MEMBERSHIP_DISCOUNT || PASS_DISCOUNT
-    : GUEST_DISCOUNT;
+  if (state.bookingPreference !== "myself") {
+    return GUEST_DISCOUNT;
+  }
+
+  // Membership discount has the highest priority
+  if (MEMBERSHIP_DISCOUNT > 0) {
+    return MEMBERSHIP_DISCOUNT;
+  }
+
+  // Only apply pass discount for class sessions
+  if (props.session.type === "class" && PASS_DISCOUNT > 0) {
+    return PASS_DISCOUNT;
+  }
+
+  return 0;
 });
 
 const hasMembership = computed(() => {
@@ -150,11 +162,11 @@ const pricing = computed(() => {
   let discount = 0;
   if (state.bookingPreference === "myself") {
     count = 1;
-    discount = MEMBERSHIP_DISCOUNT || PASS_DISCOUNT;
+    discount = activeDiscount.value;
   }
   else if (state.bookingPreference === "guest") {
     count = state.guests.length;
-    discount = GUEST_DISCOUNT;
+    discount = activeDiscount.value;
   }
   else {
     count = state.guests.length + 1;
