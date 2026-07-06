@@ -109,8 +109,18 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
+  const clearCartItems = () => {
+    try {
+      localStorage.removeItem("cartItems");
+    }
+    catch {
+      // Ignore storage errors
+    }
+  };
+
   const clearData = () => {
     clearAuthData();
+    clearCartItems();
   };
 
   const logout = (): void => {
