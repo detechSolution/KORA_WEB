@@ -309,7 +309,10 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-    <div v-else-if="activePeriod === 'PASSES'" class="relative z-20 grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-400 mx-auto mt-16 px-4 md:px-8">
+    <div
+      v-else-if="activePeriod === 'PASSES' && membershipStore.passPlans.length > 0"
+      class="relative z-20 grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-400 mx-auto mt-16 px-4 md:px-8"
+    >
       <div
         v-for="pass in membershipStore.passPlans"
         :key="pass.id"
