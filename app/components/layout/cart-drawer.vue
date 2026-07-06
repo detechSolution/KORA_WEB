@@ -112,7 +112,7 @@ function handleRemoveItem() {
           :key="item.referenceId"
           class="flex gap-4 pb-6 border-b border-border"
         >
-          <div
+          <!-- <div
             v-if="
               item.type === 'class'
                 || item.type === 'event'
@@ -139,7 +139,7 @@ function handleRemoveItem() {
             class="w-24 h-24 border border-border/20 flex items-center justify-center shrink-0 text-primary/60"
           >
             <UIcon name="i-lucide-star" class="w-8 h-8" />
-          </div>
+          </div> -->
 
           <!-- Item Details -->
           <div class="flex-1 flex flex-col pt-1">
