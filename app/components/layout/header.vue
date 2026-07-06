@@ -62,10 +62,6 @@ const items = ref<DropdownMenuItem[][]>([
   [
     {
       label: userDetail.name || "Guest",
-      avatar: {
-        src: "https://github.com/benjamincanac.png",
-        loading: "lazy",
-      },
       type: "label",
     },
   ],
@@ -218,7 +214,7 @@ onUnmounted(() => {
           }"
         >
           <UAvatar
-            src="/avatar.png"
+            :alt="userDetail.name"
             size="xl"
             loading="lazy"
             class="hover:cursor-pointer"
