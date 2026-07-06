@@ -56,83 +56,103 @@ useSeoMeta({
 
       <div class="max-w-400 md:px-6 mx-auto py-24">
         <div class="space-y-8">
+          <!-- The Sensory Environment -->
           <div class="flex flex-col gap-6 border-b border-border pb-6">
-            <h3
-              class="font-serif text-secondary dark:text-white text-xl md:text-2xl font-normal"
-            >
-              A Philosophy Of Presence
+            <h3 class="font-serif text-secondary dark:text-white text-xl md:text-3xl font-normal">
+              The Sensory Environment
             </h3>
-            <p
-              class="text-xs md:text-base leading-relaxed text-secondary-700 dark:text-secondary-200 font-light"
-            >
-              Kora is built on the belief that true luxury feels calm,
-              intentional, and deeply human. Every detail within our spaces,
-              from the way guests are welcomed to the textures they touch, is
-              designed to create a sense of ease and quiet refinement.
-            </p>
-            <p
-              class="text-xs md:text-base leading-relaxed text-secondary-700 dark:text-secondary-200 font-light"
-            >
-              Our etiquettes are not rules. They are rituals that shape the Kora
-              experience through thoughtful hospitality, timeless design, and
-              mindful interaction.
+            <p class="text-xs md:text-base leading-relaxed text-secondary-700 dark:text-secondary-200 font-light">
+              To preserve the signature sensory environment, stillness, and mutual tranquility of KORA, all members and guests are requested to observe our foundational codes of conduct.
             </p>
           </div>
+
+          <!-- Arrival & Punctuality -->
           <div class="flex flex-col gap-6 border-b border-border pb-6">
-            <h3
-              class="font-serif text-secondary dark:text-white text-xl md:text-2xl font-normal"
-            >
-              The Greeting
+            <h3 class="font-serif text-secondary dark:text-white text-xl md:text-3xl font-normal">
+              Arrival &amp; Punctuality
             </h3>
-            <div
-              class="text-xs md:text-base leading-relaxed text-secondary-700 dark:text-secondary-200 font-light space-y-3"
-            >
-              <p>
-                Every guest should feel recognized, welcomed, and at peace from
-                the moment they arrive.
-              </p>
-              <div>
-                <p>At Kora, we do not ask:</p>
-                <p class="font-semibold text-secondary dark:text-white">
-                  "How can I help you?"
-                </p>
-              </div>
-              <div>
-                <p>Instead, we say:</p>
-                <p class="font-semibold text-secondary dark:text-white">
-                  "Welcome back. Your sanctuary is ready."
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="flex flex-col gap-6 border-b border-border pb-6">
-            <h3
-              class="font-serif text-secondary dark:text-white text-xl md:text-2xl font-normal"
-            >
-              NORI Cafe
-            </h3>
-            <p
-              class="text-xs md:text-base leading-relaxed text-secondary-700 dark:text-secondary-200 font-light"
-            >
-              NORI is the social heart of Kora. Rooted in minimalism and tactile
-              luxury, the space is designed to feel clean, grounded, and quietly
-              refined through thoughtful materials, ceramic tableware,
-              typography-led presentation, and calm, intentional hospitality.
+            <p class="text-xs md:text-base leading-relaxed text-secondary-700 dark:text-secondary-200 font-light">
+              Guests are required to reach their designated class at least 5 minutes before the start of the class, and are highly encouraged to arrive at the KORA premises 10 to 15 minutes prior to the class time. To preserve the stillness and sensory focus of our spaces, access will close automatically at the exact moment a session commences. Late entry is not permitted.
             </p>
           </div>
+
+          <!-- Waitlist Protocol -->
+          <div class="flex flex-col gap-6 border-b border-border pb-6">
+            <h3 class="font-serif text-secondary dark:text-white text-xl md:text-3xl font-normal">
+              Waitlist Protocol
+            </h3>
+            <p class="text-xs md:text-base leading-relaxed text-secondary-700 dark:text-secondary-200 font-light">
+              To accommodate our active waitlist community, reserved spots that remain unclaimed at the exact scheduled start time will be immediately released to waiting members present.
+            </p>
+          </div>
+
+          <!-- Personal Optimization & Commerce -->
+          <div class="flex flex-col gap-6 border-b border-border pb-6">
+            <h3 class="font-serif text-secondary dark:text-white text-xl md:text-3xl font-normal">
+              Personal Optimization &amp; Commerce
+            </h3>
+            <p class="text-xs md:text-base leading-relaxed text-secondary-700 dark:text-secondary-200 font-light">
+              KORA is a dedicated space for personal optimization, health rejuvenation, and shared community growth. The conduct of personal commerce, unauthorized commercial content creation, external personal training, or unsolicited professional marketing within the premises is strictly forbidden.
+            </p>
+          </div>
+
+          <!-- Mutual Respect -->
+          <div class="flex flex-col gap-6 border-b border-border pb-6">
+            <h3 class="font-serif text-secondary dark:text-white text-xl md:text-3xl font-normal">
+              Mutual Respect
+            </h3>
+            <p class="text-xs md:text-base leading-relaxed text-secondary-700 dark:text-secondary-200 font-light">
+              We maintain a rigorous standard of mutual respect, tranquility, and peace. Verbal aggression, discriminatory actions, loud or disruptive behavior, or harassment of any member, guest, or team artisan will result in immediate, temporary access suspension.
+            </p>
+          </div>
+
+          <!-- Digital Detox -->
+          <div class="flex flex-col gap-6 border-b border-border pb-6">
+            <h3 class="font-serif text-secondary dark:text-white text-xl md:text-3xl font-normal">
+              Digital Detox
+            </h3>
+            <p class="text-xs md:text-base leading-relaxed text-secondary-700 dark:text-secondary-200 font-light">
+              In alignment with our commitment to sensory luxury, cellular devices must be set to silent or do-not-disturb profiles immediately upon crossing our threshold. Voice calls, audio playbacks, or loudspeaker usage are prohibited across all movement floors, recovery zones, spa, and lounges.
+            </p>
+          </div>
+
+          <!-- Content Creation -->
+          <div class="flex flex-col gap-6 border-b border-border pb-6">
+            <h3 class="font-serif text-secondary dark:text-white text-xl md:text-3xl font-normal">
+              Content Creation
+            </h3>
+            <p class="text-xs md:text-base leading-relaxed text-secondary-700 dark:text-secondary-200 font-light">
+              While we appreciate the capturing of your personal aesthetic journey, content creation must be entirely localized, quiet, and unobtrusive to fellow guests. Photographing or recording other members without their explicit, prior verbal consent is an absolute breach of policy. Visual media recording of any nature is strictly prohibited inside the changing suites, locker chambers, saunas, and contrast thermal zones.
+            </p>
+          </div>
+
+          <!-- Dress Code & Attire -->
+          <div class="flex flex-col gap-6 border-b border-border pb-6">
+            <h3 class="font-serif text-secondary dark:text-white text-xl md:text-3xl font-normal">
+              Dress Code &amp; Attire
+            </h3>
+            <p class="text-xs md:text-base leading-relaxed text-secondary-700 dark:text-secondary-200 font-light">
+              Clean, professional athletic apparel and dedicated interior footwear are required on all movement floors. Clean, appropriate swimwear is mandatory at all times within the thermal recovery suites (saunas, Jacuzzi, and cold plunges).
+            </p>
+          </div>
+
+          <!-- Hygiene & Equipment Care -->
+          <div class="flex flex-col gap-6 border-b border-border pb-6">
+            <h3 class="font-serif text-secondary dark:text-white text-xl md:text-3xl font-normal">
+              Hygiene &amp; Equipment Care
+            </h3>
+            <p class="text-xs md:text-base leading-relaxed text-secondary-700 dark:text-secondary-200 font-light">
+              Guests are requested to practice elevated personal hygiene, utilize a clean towel across all active training surfaces, wipe down apparatus post-use with provided organic solutions, and return all training elements to their proper resting state.
+            </p>
+          </div>
+
+          <!-- A Safe Sanctuary -->
           <div class="flex flex-col gap-6 pb-6">
-            <h3
-              class="font-serif text-secondary dark:text-white text-xl md:text-2xl font-normal"
-            >
-              NUAD Standards
+            <h3 class="font-serif text-secondary dark:text-white text-xl md:text-3xl font-normal">
+              A Safe Sanctuary
             </h3>
-            <p
-              class="text-xs md:text-base leading-relaxed text-secondary-700 dark:text-secondary-200 font-light"
-            >
-              NUAD is the restorative soul of Kora. Designed to feel both
-              clinical and spiritual, the experience is shaped through silence,
-              seasonal scent rituals, warm natural elements, and mindful service
-              that encourages stillness, balance, and renewal.
+            <p class="text-xs md:text-base leading-relaxed text-secondary-700 dark:text-secondary-200 font-light">
+              Our environment is entirely weapon-free, drug-free, and smoke-free (including vaping). Accessing the training floors, saunas, or pools while under the influence of alcohol, drugs, or medications that impair safe physical participation is strictly prohibited. If alcohol is consumed at an authorized on-site event or vendor, users are strictly barred from re-entering the fitness or thermal recovery zones for the remainder of that day.
             </p>
           </div>
         </div>
