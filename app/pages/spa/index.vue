@@ -99,6 +99,9 @@ onMounted(() => {
             />
             <UAccordion
               :items="spa?.subTypes"
+              :ui="{
+                item: 'p-6',
+              }"
             >
               <template #default="{ item }">
                 <div class="flex flex-col">

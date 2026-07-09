@@ -36,7 +36,7 @@ export default defineAppConfig({
     accordion: {
       slots: {
         root: "w-full flex flex-col gap-4",
-        item: "border border-border last:border-b dark:bg-[#212121] p-6 dark:text-white font-serif rounded-xs",
+        item: "border border-border last:border-b dark:bg-[#212121] dark:text-white font-serif rounded-xs",
         label: "text-xl",
         body: "mt-4",
       },
