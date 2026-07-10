@@ -81,6 +81,7 @@ type MemberBooking = {
   paymentStatus: string | null;
   visitors: MemberBookingVisitor[];
   bannerUrl: string | null;
+  refundStatus: string | null;
 };
 
 export type MemberBookingsResponse = {

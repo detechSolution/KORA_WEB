@@ -13,4 +13,5 @@ export type Booking = {
   status: "UPCOMING" | "PAST" | "CANCELED";
   productId?: number;
   itemType: "session" | "spa" | "passes";
+  refundStatus?: string;
 };

@@ -218,6 +218,7 @@ const filteredBookings = computed<Booking[]>(() => {
       status: activeTab.value as "UPCOMING" | "PAST" | "CANCELED",
       productId: b.productId,
       itemType: b.itemType,
+      refundStatus: b.refundStatus,
     };
   });
 });
