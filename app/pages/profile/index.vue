@@ -38,7 +38,7 @@ const schema = z
     currentPassword: z.string().min(1, "Current password is required"),
     newPassword: z
       .string()
-      .min(6, "New password must be at least 6 characters"),
+      .min(8, "New password must be at least 8 characters"),
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .superRefine((data, ctx) => {
@@ -635,7 +635,7 @@ onMounted(async () => {
               <ul
                 class="text-xs text-stone-400 space-y-1.5 list-disc list-inside"
               >
-                <li>At least 6 characters long</li>
+                <li>At least 8 characters long</li>
                 <li>Use a combination of letters and numbers</li>
                 <li>Avoid using easily guessable passwords</li>
               </ul>

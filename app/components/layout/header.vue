@@ -218,6 +218,9 @@ onUnmounted(() => {
             size="xl"
             loading="lazy"
             class="hover:cursor-pointer"
+            :ui="{
+              fallback: 'text-secondary-700 dark:text-white',
+            }"
           />
         </UDropdownMenu>
         <base-button
