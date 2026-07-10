@@ -38,7 +38,7 @@ export default defineAppConfig({
         root: "w-full flex flex-col gap-4",
         item: "border border-border last:border-b dark:bg-[#212121] dark:text-white font-serif rounded-xs",
         label: "text-xl",
-        body: "mt-4",
+        body: "mt-4 font-sans",
       },
     },
     dropdownMenu: {
