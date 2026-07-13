@@ -7,7 +7,6 @@ export default defineNuxtConfig({
       meta: [
         { name: "description", content: "System" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
-        { name: "robots", content: "noindex, nofollow" },
       ],
       htmlAttrs: {
         lang: "en",
