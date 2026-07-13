@@ -30,7 +30,7 @@ const membershipPeriods = [
   "100 DAYS",
   "PASSES",
 ];
-const loading = ref(false);
+const loading = ref(true);
 const isPassModalOpen = ref(false);
 const selectedPass = ref<any>(null);
 const activePeriod = ref("MONTHLY");
@@ -222,7 +222,49 @@ onMounted(async () => {
     </div>
 
     <div
-      v-if="membershipPlans.length > 0"
+      v-if="loading"
+      class="relative z-20 grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-400 mx-auto mt-16 px-4 md:px-8 pb-12"
+    >
+      <div
+        v-for="i in 3"
+        :key="i"
+        class="border border-border/40 bg-card dark:bg-[#212121] rounded-xs p-6 md:p-8 flex flex-col justify-between"
+      >
+        <div>
+          <div class="flex items-center gap-4">
+            <USkeleton class="w-11 h-11 rounded-xs" />
+            <div class="flex flex-col gap-1">
+              <USkeleton class="h-6 w-32" />
+              <USkeleton class="h-3 w-12" />
+            </div>
+          </div>
+
+          <div class="mt-4 flex flex-col gap-2">
+            <USkeleton class="h-10 w-48" />
+            <USkeleton class="h-4 w-24" />
+          </div>
+
+          <div class="h-px bg-stone-300 dark:bg-stone-700 my-6 w-full" />
+
+          <ul class="space-y-4 my-8">
+            <li
+              v-for="j in 4"
+              :key="j"
+              class="flex items-start"
+            >
+              <USkeleton class="w-4 h-4 rounded-full mr-3 shrink-0" />
+              <USkeleton class="h-4 w-full" />
+            </li>
+          </ul>
+        </div>
+
+        <div class="mt-6 pt-4">
+          <USkeleton class="h-10 w-full rounded-xs" />
+        </div>
+      </div>
+    </div>
+    <div
+      v-else-if="membershipPlans.length > 0"
       class="relative z-20 grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-400 mx-auto mt-16 px-4 md:px-8 pb-12"
     >
       <div
@@ -310,7 +352,9 @@ onMounted(async () => {
       </div>
     </div>
     <div
-      v-else-if="activePeriod === 'PASSES' && membershipStore.passPlans.length > 0"
+      v-else-if="
+        activePeriod === 'PASSES' && membershipStore.passPlans.length > 0
+      "
       class="relative z-20 grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-400 mx-auto mt-16 px-4 md:px-8"
     >
       <div
