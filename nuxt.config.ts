@@ -45,4 +45,19 @@ export default defineNuxtConfig({
   experimental: {
     viteEnvironmentApi: true,
   },
+
+  nitro: {
+    compressPublicAssets: true,
+    routeRules: {
+      "/images/**": {
+        headers: { "cache-control": "public, max-age=31536000, immutable" },
+      },
+      "/logo/**": {
+        headers: { "cache-control": "public, max-age=31536000, immutable" },
+      },
+      "/fonts/**": {
+        headers: { "cache-control": "public, max-age=31536000, immutable" },
+      },
+    },
+  },
 });
