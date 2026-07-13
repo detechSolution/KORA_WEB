@@ -62,7 +62,7 @@ async function getSessionsList() {
 watch(
   activeFilter,
   (tab) => {
-    if (route.path !== "/class")
+    if (route.path !== "/session")
       return;
     router.replace({ query: { ...route.query, tab } });
     pagination.value.page = 1;
@@ -74,7 +74,7 @@ watch(
 watch(
   () => route.query.tab,
   (tab) => {
-    if (route.path !== "/class")
+    if (route.path !== "/session")
       return;
     const next = (tab as Tab) ?? "event";
     if (next !== activeFilter.value)

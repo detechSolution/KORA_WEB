@@ -61,15 +61,32 @@ useSeoMeta({
             <h3
               class="font-serif text-secondary dark:text-white text-xl md:text-2xl font-normal"
             >
-              Responsibility with Intention
+              Scaled for Collective Elevation
             </h3>
             <p
               class="text-xs md:text-base leading-relaxed text-secondary-700 dark:text-secondary-200 font-light"
             >
-              At Kora, we believe true hospitality extends beyond the spaces we
-              create. It lives in the way we care for people, respect our
-              environment, support local communities, and make conscious
-              decisions every day.
+              We firmly believe that individual luxury cannot exist
+              independently of community health. KORA operates on a deeply
+              integrated, regenerative business model where local impact is
+              built directly into our bottom-line architecture. Our core social
+              impact strategy is driven entirely through <span class="font-bold">Cali Nepal</span>, our
+              dedicated, registered non-profit organizational arm. A fixed
+              percentage of every membership generated within our sanctuary is
+              directly reinvested into Cali Nepal to fund community growth
+              initiatives, grassroots youth fitness outreach, and public health
+              education platforms. Looking ahead, our vision extends
+              purposefully beyond our internal walls. In strict adherence to
+              local government urban frameworks and spearheaded alongside Cali
+              Nepal, our long-term blueprint includes the development of curated
+              public outdoor movement spaces. Designed as inclusive, open-air
+              wellness parks for the broader society, these spaces will provide
+              the local community with free, high-tier infrastructure for
+              functional fitness and somatic health. Through this structured CSR
+              framework, our members actively participate in a continuous cycle
+              of regional empowerment and holistic development, ensuring that
+              our presence inside Kathmandu creates a lasting, measurable
+              benefit.
             </p>
             <p
               class="text-xs md:text-base leading-relaxed text-secondary-700 dark:text-secondary-200 font-light"
@@ -80,7 +97,7 @@ useSeoMeta({
               but also for the communities and environments connected to Kora.
             </p>
           </div>
-          <div class="flex flex-col gap-6 border-b border-border pb-6">
+          <!-- <div class="flex flex-col gap-6 border-b border-border pb-6">
             <h3
               class="font-serif text-secondary dark:text-white text-xl md:text-2xl font-normal"
             >
@@ -145,7 +162,7 @@ useSeoMeta({
               encourage sustainable growth, and create more meaningful
               experiences for our guests.
             </p>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>

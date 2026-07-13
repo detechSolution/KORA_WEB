@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { PaymentProvider } from "~/types/payment";
 import { computed, onUnmounted, ref } from "vue";
+import { useNotification } from "~/composables/use-notification";
 import { usePayment } from "~/composables/use-payment";
 import { useCartStore } from "~/stores/cart";
-import { calculatePrice } from "~/utils/helper";
+import { getApiErrorMessage } from "~/utils/error";
 
 definePageMeta({
   layout: "default",
@@ -13,42 +14,43 @@ useSeoMeta({
   title: "Kora | Checkout",
 });
 
-const step = ref(1);
-
-const inputPromoCode = ref("");
-const paymentMethod = ref<PaymentProvider>("stripe");
-const isRemoveItemModalOpen = ref(false);
-const selectedItemId = ref<string | "">("");
-const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
-
 const cartStore = useCartStore();
 const { loading, payNow } = usePayment();
+const { error: showError } = useNotification();
 
 const cartItems = computed(() => cartStore.cartItems);
 const subtotal = computed(() => {
   return cartItems.value.reduce((total, item) => total + item.finalPrice, 0);
 });
 
-const MEMBERSHIP_DISCOUNT = userDetail?.membership?.option?.memberBenefit || 0;
+const step = ref(1);
+const inputPromoCode = ref("");
+const paymentMethod = ref<PaymentProvider>("stripe");
+const isRemoveItemModalOpen = ref(false);
+const selectedItemId = ref<string | "">("");
 
-const pricing = computed(() =>
-  calculatePrice({
-    price: subtotal.value,
-    guests: 1,
-    discount: MEMBERSHIP_DISCOUNT,
-  }),
-);
+const discountValue = computed(() => {
+  if (!cartStore.discountAmount) {
+    return 0;
+  }
+
+  if (cartStore.discountType === "percent") {
+    return (subtotal.value * cartStore.discountAmount) / 100;
+  }
+
+  return cartStore.discountAmount;
+});
 
 const totalPrice = computed(() => {
-  return Math.max(0, pricing.value.finalPrice - cartStore.discountAmount);
+  return Math.max(0, subtotal.value - discountValue.value);
 });
 
 // Count the total number of items in the cart, including visitors for each item
 const totalItems = computed(() =>
   cartItems.value.reduce((total, item) => {
-    const visitorsCount = item.visitors?.length ?? 0;
+    const visitorsCount = item.visitors?.length > 0 ? item.visitors.length : 1;
 
-    return total + visitorsCount + 1;
+    return total + visitorsCount;
   }, 0),
 );
 
@@ -93,6 +95,11 @@ async function handlePayNowClick() {
           itemType: item.itemType,
 
           referenceId: item.referenceId,
+          bookingFor: item.bookingFor,
+
+          ...(item.itemType === "pass" && {
+            bookingDate: item.bookingDate,
+          }),
 
           ...(item.itemType === "spa" && {
             bookingDate: item.bookingDate,
@@ -115,6 +122,11 @@ async function handlePayNowClick() {
     }
     catch (error) {
       console.error("Payment failed:", error);
+      const message = getApiErrorMessage(
+        error,
+        "Something went wrong. Please try again.",
+      );
+      showError({ message });
     }
   }
 }
@@ -126,7 +138,7 @@ onUnmounted(() => {
 
 <template>
   <div
-    class="bg-background dark:bg-secondary-900 min-h-screen text-foreground pb-20 font-sans"
+    class="bg-background dark:bg-secondary-900 min-h-screen text-foreground pb-20"
   >
     <div class="max-w-400 mx-auto">
       <!-- Header Section -->
@@ -169,7 +181,7 @@ onUnmounted(() => {
                   class="flex gap-4 pb-6 border-b border-border/10"
                 >
                   <!-- Image / Icon -->
-                  <div
+                  <!-- <div
                     v-if="
                       item.type === 'class'
                         || item.type === 'event'
@@ -196,43 +208,56 @@ onUnmounted(() => {
                     class="w-20 h-20 border border-border flex items-center justify-center shrink-0 text-primary/60"
                   >
                     <UIcon name="i-lucide-star" class="w-6 h-6" />
-                  </div>
+                  </div> -->
 
                   <!-- Item Details -->
                   <div class="flex-1 flex flex-col">
+                    <span
+                      v-if="item.bookingFor === 'visitor'"
+                      class="text-[10px] uppercase text-primary-700"
+                    >
+                      {{ "Guest" }}
+                    </span>
                     <div class="flex justify-between items-start gap-4 mb-2">
                       <div class="flex flex-wrap items-start gap-2">
-                        <h4 class="text-sm font-serif text-foreground">
+                        <h4 class="text-base font-serif text-foreground">
                           {{ item.title }}
                           <br>
                           <span v-if="item.itemType !== 'membership'">
-                            (<span class="text-xl">{{ item.visitors.length + 1 }} x
-                              {{ formatPrice(item.price) }}</span>)
+                            (<span class="text-xl">{{
+                              item.visitors.length > 0
+                                ? item.visitors.length
+                                : 1
+                            }}
+                              x
+                              {{
+                                formatPrice(item.unitPriceAfterDiscount)
+                              }}</span>)
                           </span>
                         </h4>
                         <span
                           v-if="item.itemType === 'session'"
-                          class="text-[8px] px-1.5 py-0.5 bg-purple-900/40 text-purple-300 font-medium tracking-wide"
+                          class="text-[8px] px-1.5 py-0.5 bg-purple-900 dark:bg-purple-900/40 text-purple-300 font-medium tracking-wide"
                         >Session</span>
                         <span
                           v-if="item.itemType === 'spa'"
-                          class="text-[8px] px-1.5 py-0.5 bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
+                          class="text-[8px] px-1.5 py-0.5 bg-emerald-900 dark:bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
                         >Spa</span>
                         <span
                           v-if="item.itemType === 'pass'"
-                          class="text-[8px] px-1.5 py-0.5 bg-blue-900/40 text-blue-400 font-medium tracking-wide"
+                          class="text-[8px] px-1.5 py-0.5 bg-blue-900 dark:bg-blue-900/40 text-blue-400 font-medium tracking-wide"
                         >Pass</span>
                         <span
                           v-if="item.itemType === 'membership'"
-                          class="text-[8px] px-1.5 py-0.5 bg-[#B59A6D] text-white font-medium tracking-wide"
+                          class="text-[8px] px-1.5 py-0.5 bg-[#B59A6D] dark:bg-[#5D4A17] text-white font-medium tracking-wide"
                         >Membership</span>
                       </div>
                       <div>
-                        <span class="text-sm font-serif text-[#B59A6D]">Rs. {{ formatPrice(item.finalPrice) }}</span>
+                        <span class="text-2xl font-serif text-[#B59A6D]">Rs. {{ formatPrice(item.finalPrice) }}</span>
                       </div>
                     </div>
 
-                    <div class="flex flex-col gap-1.5 mt-auto">
+                    <div class="flex gap-1.5 mt-auto">
                       <div
                         v-if="item.bookingDate"
                         class="flex items-center gap-1.5 text-[9px] text-muted-foreground"
@@ -268,18 +293,6 @@ onUnmounted(() => {
                       </button>
                     </div>
                   </div>
-                </div>
-              </div>
-
-              <!-- Footer Totals -->
-              <div class="pt-6">
-                <div class="flex items-center justify-between">
-                  <span
-                    class="font-serif text-xl md:text-2xl text-foreground font-bold"
-                  >Total</span>
-                  <span
-                    class="font-serif text-xl md:text-2xl text-[#B59A6D] font-bold"
-                  >{{ formatPrice(subtotal) }}</span>
                 </div>
               </div>
             </div>
@@ -332,9 +345,11 @@ onUnmounted(() => {
                     <div
                       class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
                     >
-                      <span
-                        class="text-[#60B54F] font-bold text-lg leading-none"
-                      >eSewa</span>
+                      <img
+                        :src="IMAGES.ESEWA_LOGO"
+                        alt="eSewa"
+                        class="w-18 object-contain"
+                      >
                     </div>
                   </label>
 
@@ -364,9 +379,11 @@ onUnmounted(() => {
                     <div
                       class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
                     >
-                      <span
-                        class="text-[#E31E24] font-bold text-lg leading-none"
-                      >fonepay</span>
+                      <img
+                        :src="IMAGES.FONEPAY_LOGO"
+                        alt="Fonepay"
+                        class="w-18 object-contain"
+                      >
                     </div>
                   </label>
 
@@ -396,9 +413,11 @@ onUnmounted(() => {
                     <div
                       class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
                     >
-                      <span
-                        class="text-[#635BFF] font-bold text-lg leading-none"
-                      >stripe</span>
+                      <img
+                        :src="IMAGES.STRIPE_LOGO"
+                        alt="Stripe"
+                        class="w-18 object-contain"
+                      >
                     </div>
                   </label>
                 </div>
@@ -442,7 +461,46 @@ onUnmounted(() => {
           </p>
           <div key="step1" class="flex flex-col w-full">
             <!-- Promo Code -->
-            <div class="flex flex-col gap-2 w-full h-30">
+            <div class="border-y border-border flex flex-col gap-3 p-4">
+              <div
+                class="text-sm text-secondary dark:text-white font-normal flex justify-between"
+              >
+                <h2>Items Count ({{ totalItems }} items)</h2>
+                <p>Rs. {{ formatPrice(subtotal) }}</p>
+              </div>
+              <div
+                v-if="discountValue > 0"
+                class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between border-b border-border pb-2"
+              >
+                <h2>
+                  Promo Discount
+                  <span v-if="cartStore.promoCode">
+                    ({{ cartStore.promoCode }})
+                  </span>
+                </h2>
+
+                <p v-if="cartStore.discountType === 'percent'">
+                  - {{ cartStore.discountAmount }}%
+                </p>
+
+                <p v-else>
+                  - Rs. {{ formatPrice(discountValue) }}
+                </p>
+              </div>
+
+              <div
+                class="text-2xl text-secondary dark:text-white font-normal flex justify-between pt-1 font-serif"
+              >
+                <h2 class="font-bold">
+                  Total
+                </h2>
+                <p class="font-bold text-primary">
+                  Rs. {{ formatPrice(totalPrice) }}
+                </p>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-2 w-full mt-9">
               <div class="flex items-end w-full gap-4">
                 <div class="flex-1">
                   <base-input
@@ -480,43 +538,6 @@ onUnmounted(() => {
               <p v-else class="text-xs text-red-500">
                 {{ cartStore.promoError }}
               </p>
-            </div>
-
-            <div class="border-y border-border flex flex-col gap-3 p-4 mt-2">
-              <div
-                class="text-sm text-secondary dark:text-white font-normal flex justify-between"
-              >
-                <h2>Items Count ({{ totalItems }} items)</h2>
-                <p>Rs. {{ formatPrice(subtotal) }}</p>
-              </div>
-              <div
-                v-if="MEMBERSHIP_DISCOUNT > 0"
-                class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between"
-              >
-                <h2>Membership Discount ({{ MEMBERSHIP_DISCOUNT }}%)</h2>
-                <p>- Rs. {{ formatPrice(pricing.discountAmount) }}</p>
-              </div>
-              <div
-                v-if="cartStore.discountAmount > 0"
-                class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between border-b border-border pb-2"
-              >
-                <h2>
-                  Promo Discount
-                  <span v-if="cartStore.promoCode">({{ cartStore.promoCode }})</span>
-                </h2>
-                <p>- Rs. {{ formatPrice(cartStore.discountAmount) }}</p>
-              </div>
-
-              <div
-                class="text-sm text-secondary dark:text-white font-normal flex justify-between pt-1"
-              >
-                <h2 class="font-bold">
-                  Total
-                </h2>
-                <p class="font-bold text-primary">
-                  Rs. {{ formatPrice(totalPrice) }}
-                </p>
-              </div>
             </div>
           </div>
         </div>

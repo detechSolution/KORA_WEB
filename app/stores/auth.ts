@@ -22,19 +22,22 @@ export const useAuthStore = defineStore("auth", () => {
     id: number | null;
     email: string;
     name: string;
-    phone: string;
+    phoneNumber: string;
     avatar?: string;
     is_active?: boolean;
     role_id?: number | null;
     last_login_at?: string | null;
     membership?: Record<string, unknown> | null;
+    passes?: Record<string, unknown> | null;
+    profile?: Record<string, unknown> | null;
   }>({
     id: null,
     email: "",
     name: "",
-    phone: "",
+    phoneNumber: "",
     avatar: "",
     membership: null,
+    profile: null,
   });
 
   const permissions = ref<string[]>([]);
@@ -67,12 +70,14 @@ export const useAuthStore = defineStore("auth", () => {
           id: user.value.id,
           email: user.value.email,
           name: user.value.name,
-          phone: user.value.phone,
+          phone: user.value.phoneNumber,
           avatar: user.value.avatar,
           is_active: user.value.is_active,
           role_id: user.value.role_id,
           last_login_at: user.value.last_login_at,
           membership: user.value.membership,
+          passes: user.value.passes,
+          profile: user.value.profile,
         }),
       );
     }
@@ -92,7 +97,7 @@ export const useAuthStore = defineStore("auth", () => {
       id: null,
       email: "",
       name: "",
-      phone: "",
+      phoneNumber: "",
       avatar: "",
     };
     permissions.value = [];
@@ -104,8 +109,18 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
+  const clearCartItems = () => {
+    try {
+      localStorage.removeItem("cartItems");
+    }
+    catch {
+      // Ignore storage errors
+    }
+  };
+
   const clearData = () => {
     clearAuthData();
+    clearCartItems();
   };
 
   const logout = (): void => {
@@ -146,13 +161,15 @@ export const useAuthStore = defineStore("auth", () => {
         user.value.id = (u.id as number) ?? null;
         user.value.email = (u.email as string) ?? "";
         user.value.name = (u.fullName as string) ?? "";
-        // user.value.phone = (u.phone as string) ?? "";
+        user.value.phoneNumber = (u.phoneNumber as string) ?? "";
         // user.value.avatar = (u.avatar as string) ?? "";
         // user.value.is_active = u.is_active as boolean | undefined;
         user.value.role_id = (u?.adminRole?.id as number | null) ?? null;
         // user.value.last_login_at = (u.last_login_at as string | null) ?? null;
         user.value.membership
           = (u.membership as Record<string, unknown> | null) ?? null;
+        user.value.passes = (u.passes as Record<string, unknown> | null) ?? null;
+        user.value.profile = (u.profile as Record<string, unknown> | null) ?? null;
         permissions.value = Array.isArray(u?.permissions) ? u.permissions : [];
         saveUserToStorage();
         lastAuthCheck.value = now;
@@ -254,8 +271,12 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   const updateProfile = async (payload: {
-    fullName: string;
-    phone: string;
+    fullName?: string;
+    phone?: string;
+    height?: string;
+    weight?: string;
+    injuryHistory?: string;
+    preferences?: string;
   }): Promise<void> => {
     try {
       return (await http.patch(

@@ -112,7 +112,7 @@ function handleRemoveItem() {
           :key="item.referenceId"
           class="flex gap-4 pb-6 border-b border-border"
         >
-          <div
+          <!-- <div
             v-if="
               item.type === 'class'
                 || item.type === 'event'
@@ -139,41 +139,44 @@ function handleRemoveItem() {
             class="w-24 h-24 border border-border/20 flex items-center justify-center shrink-0 text-primary/60"
           >
             <UIcon name="i-lucide-star" class="w-8 h-8" />
-          </div>
+          </div> -->
 
           <!-- Item Details -->
           <div class="flex-1 flex flex-col pt-1">
+            <span v-if="item.bookingFor === 'visitor'" class="text-[10px] uppercase text-primary-700">
+              {{ "Guest" }}
+            </span>
             <div class="flex justify-between items-start gap-4">
               <div class="flex items-start gap-2">
-                <h4 class="text-sm font-serif text-foreground">
+                <h4 class="text-base font-serif text-foreground">
                   {{ item.title }}
                   <br>
                   <span v-if="item.itemType !== 'membership'">
-                    (<span class="text-xl">{{ item.visitors.length + 1 }} x
-                      {{ formatPrice(item.price) }}</span>)
+                    (<span class="text-xl">{{ item.visitors.length > 0 ? item.visitors.length : 1 }} x
+                      {{ formatPrice(item.unitPriceAfterDiscount) }}</span>)
                   </span>
                 </h4>
                 <span
                   v-if="item.itemType === 'session'"
-                  class="text-[9px] px-1.5 py-0.5 bg-purple-900/40 text-purple-300 font-medium tracking-wide"
+                  class="text-[9px] px-1.5 py-0.5 bg-purple-900 dark:bg-purple-900/40 text-purple-300 font-medium tracking-wide"
                 >Session</span>
                 <span
                   v-if="item.itemType === 'spa'"
-                  class="text-[9px] px-1.5 py-0.5 bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
+                  class="text-[9px] px-1.5 py-0.5 bg-emerald-900 dark:bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
                 >Spa</span>
                 <span
                   v-if="item.itemType === 'pass'"
-                  class="text-[9px] px-1.5 py-0.5 bg-blue-900/40 text-blue-400 font-medium tracking-wide"
+                  class="text-[9px] px-1.5 py-0.5 bg-blue-900 dark:bg-blue-900/40 text-blue-400 font-medium tracking-wide"
                 >Pass</span>
                 <span
                   v-if="item.itemType === 'membership'"
-                  class="text-[9px] px-1.5 py-0.5 bg-primary text-primary-foreground font-medium tracking-wide"
+                  class="text-[9px] px-1.5 py-0.5 bg-primary dark:bg-[#5D4A17] text-primary-foreground font-medium tracking-wide"
                 >Membership</span>
               </div>
-              <span class="text-sm font-serif text-[#B59A6D]">Rs. {{ formatPrice(item.finalPrice) }}</span>
+              <span class="text-lg font-serif text-[#B59A6D]">Rs. {{ formatPrice(item.finalPrice) }}</span>
             </div>
 
-            <div class="mt-2 flex flex-col gap-1.5">
+            <div class="mt-2 flex gap-1.5">
               <div
                 v-if="item.bookingDate"
                 class="flex items-center gap-1.5 text-[10px] text-muted-foreground"

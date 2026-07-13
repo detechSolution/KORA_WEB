@@ -13,6 +13,7 @@ type MemberProfile = {
 
 type MemberSummary = {
   totalBookings: number;
+  todayBookings: number;
   upcomingBookings: number;
   pastBookings: number;
   cancelledBookings: number;
@@ -68,7 +69,7 @@ type MemberBooking = {
   itemType: string;
   serviceOfferingName: string | null;
   serviceDuration: string | null;
-  sessionId: number | null;
+  productId: number | null;
   status: string;
   bookedAt: string;
   bookedFor: string;
@@ -80,6 +81,7 @@ type MemberBooking = {
   paymentStatus: string | null;
   visitors: MemberBookingVisitor[];
   bannerUrl: string | null;
+  refundStatus: string | null;
 };
 
 export type MemberBookingsResponse = {

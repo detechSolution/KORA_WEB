@@ -8,7 +8,9 @@ type PaymentMode
   = | "redirect_url"
     | "sdk"
     | "redirect_form"
-    | "embedded";
+    | "free"
+    | "embedded"
+    | "qr_websocket";
 
 export type PaymentInfo = {
   provider: PaymentProvider;
@@ -18,6 +20,9 @@ export type PaymentInfo = {
   url?: string;
   method?: string;
   fields?: Record<string, string>;
+  qrCode?: string;
+  merchantWebSocketUrl?: string;
+  statusCheckPath?: string;
 };
 
 export type CheckoutResponse = {

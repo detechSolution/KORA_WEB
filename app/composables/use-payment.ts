@@ -5,7 +5,7 @@ export function usePayment() {
 
   const payNow = async (payload: any) => {
     const response = await paymentStore.startPayment(payload) as CheckoutResponse;
-    redirectToPaymentProvider(response.payment);
+    redirectToPaymentProvider(response.payment, response.checkoutCode);
   };
 
   return {

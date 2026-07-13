@@ -11,22 +11,32 @@ const sessionStore = useSessionStore();
 const route = useRoute();
 const id = String(route.params.id || "");
 
-const { data: session, pending } = await useAsyncData(`session-${id}`, async () => {
-  const existing = sessionStore.getSessionById(id);
-  if (existing)
-    return existing;
-
+const {
+  data: session,
+  pending,
+  refresh,
+} = await useAsyncData(`session-${id}`, async () => {
   try {
     return await sessionStore.getSessionDetail(id);
   }
   catch (error) {
     console.error(`Failed to fetch session detail for ${id}:`, error);
-    throw createError({ statusCode: 404, statusMessage: "Session not found" });
+    throw createError({
+      statusCode: 404,
+      statusMessage: "Session not found",
+    });
   }
 });
 
 if (!session.value) {
-  throw createError({ statusCode: 404, statusMessage: "Session not found" });
+  throw createError({
+    statusCode: 404,
+    statusMessage: "Session not found",
+  });
+}
+
+async function fetchSessionDetail() {
+  await refresh();
 }
 
 useSeoMeta({
@@ -37,7 +47,15 @@ useSeoMeta({
 
 <template>
   <div v-if="pending" class="flex justify-center items-center min-h-[60vh]">
-    <UIcon name="i-lucide-loader-2" class="w-10 h-10 animate-spin text-primary/70" />
+    <UIcon
+      name="i-lucide-loader-2"
+      class="w-10 h-10 animate-spin text-primary/70"
+    />
   </div>
-  <ClassSessionDetailView v-else-if="session" :session="session" />
+
+  <ClassSessionDetailView
+    v-else-if="session"
+    :session="session"
+    @fetch-session-detail="fetchSessionDetail"
+  />
 </template>

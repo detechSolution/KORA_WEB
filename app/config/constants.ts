@@ -11,10 +11,13 @@ export const API_ENDPOINTS = {
     FORGOT_PASSWORD: "/api/v1/password-reset/forgot-password",
     VERIFY_OTP: "/api/v1/password-reset/verify-code",
     RESET_PASSWORD: "/api/v1/password-reset/reset-password",
+    REQUEST_CANCELLATION: (bookingId: number) =>
+      `/api/v1/members/me/bookings/${bookingId}/request-cancellation`,
   },
 
   SESSION: {
     GET: "/api/v1/sessions/website",
+    WAITLIST: (id: number) => `/api/v1/sessions/${id}/waitlist`,
   },
 
   INQUIRE: {
@@ -40,6 +43,8 @@ export const API_ENDPOINTS = {
 
   PAYMENT: {
     PAY_NOW: "/api/v1/commerce/checkout/pay-now",
+    VERIFY: "/api/v1/commerce/payments/verify",
+    FONEPAY_STATUS: "/api/v1/commerce/checkout/fonepay/status",
   },
 
   MEMBER: {

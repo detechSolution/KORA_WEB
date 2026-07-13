@@ -1,26 +1,15 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 
-const props = defineProps({
+defineProps({
   videoUrl: {
     type: String,
-    default: "https://youtu.be/VKSEG8Xr-RQ",
+    default:
+      "https://koranepal-storage.s3.ap-south-1.amazonaws.com/assets/prod/first2min.mp4",
   },
 });
 
 const isLoaded = ref(false);
-
-// Extract YouTube video ID
-function getYoutubeId(url: string) {
-  if (!url)
-    return null;
-  const regExp
-    = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-  const match = url.match(regExp);
-  return match && match[2].length === 11 ? match[2] : null;
-}
-
-const videoId = props.videoUrl ? getYoutubeId(props.videoUrl) : null;
 
 onMounted(() => {
   // Trigger the elegant fade-in entrance animation
@@ -39,18 +28,16 @@ onMounted(() => {
       class="absolute inset-0 w-full h-full transition-all duration-[2000ms] ease-out-quad"
       :class="isLoaded ? 'opacity-100' : 'opacity-0'"
     >
-      <div
-        v-if="videoId"
-        class="absolute inset-0 w-full h-full overflow-hidden pointer-events-none"
-      >
-        <iframe
-          class="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-[100vh] min-w-[177.77vh] -translate-x-1/2 -translate-y-1/2 pointer-events-none object-cover"
-          :src="`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&iv_load_policy=3&playsinline=1&enablejsapi=1`"
-          frameborder="0"
-          allow="autoplay; encrypted-media"
-          allowfullscreen
-        />
-      </div>
+      <video
+        v-if="videoUrl"
+        class="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        :src="videoUrl"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+      />
 
       <img
         v-else

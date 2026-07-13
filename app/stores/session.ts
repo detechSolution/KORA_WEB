@@ -22,11 +22,15 @@ export const useSessionStore = defineStore("session", () => {
 
   const loading = ref(false);
 
-  const getSessions = async (params: SessionQueryParams = {}): Promise<void> => {
+  const getSessions = async (
+    params: SessionQueryParams = {},
+  ): Promise<void> => {
     loading.value = true;
     try {
       const qs = buildQueryString(params);
-      const response = await http.get(`${API_ENDPOINTS.SESSION.GET}?${qs}`) as any;
+      const response = (await http.get(
+        `${API_ENDPOINTS.SESSION.GET}?${qs}`,
+      )) as any;
       sessions.value = response;
     }
     catch (error) {
@@ -45,11 +49,27 @@ export const useSessionStore = defineStore("session", () => {
   const getSessionDetail = async (id: string): Promise<Session> => {
     loading.value = true;
     try {
-      const response = await http.get(`${API_ENDPOINTS.SESSION.GET}/${id}`) as Session;
+      const response = (await http.get(
+        `${API_ENDPOINTS.SESSION.GET}/${id}`,
+      )) as Session;
       return response;
     }
     catch (error) {
       console.error(`Failed to fetch session detail for ${id}:`, error);
+      throw error;
+    }
+    finally {
+      loading.value = false;
+    }
+  };
+
+  const addToWaitlist = async (id: number): Promise<void> => {
+    loading.value = true;
+    try {
+      await http.post(`${API_ENDPOINTS.SESSION.WAITLIST(id)}`, {});
+    }
+    catch (error) {
+      console.error(`Failed to add session ${id} to waitlist:`, error);
       throw error;
     }
     finally {
@@ -63,5 +83,6 @@ export const useSessionStore = defineStore("session", () => {
     getSessions,
     getSessionById,
     getSessionDetail,
+    addToWaitlist,
   };
 });

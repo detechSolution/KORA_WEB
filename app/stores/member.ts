@@ -1,4 +1,7 @@
-import type { MemberBookingsResponse, MemberDashboardResponse } from "~/types/member";
+import type {
+  MemberBookingsResponse,
+  MemberDashboardResponse,
+} from "~/types/member";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { getHttp } from "~/composables/use-api";
@@ -8,7 +11,16 @@ export const useMemberStore = defineStore("member", () => {
   const http = getHttp();
 
   const dashboardData = ref<MemberDashboardResponse | null>(null);
-  const bookingsData = ref<MemberBookingsResponse | null>(null);
+  const bookingsData = ref<MemberBookingsResponse>({
+    status: "upcoming",
+    data: [],
+    meta: {
+      page: 1,
+      limit: 10,
+      total: 0,
+      totalPages: 0,
+    },
+  });
   const loading = ref(false);
   const bookingsLoading = ref(false);
 
@@ -27,7 +39,9 @@ export const useMemberStore = defineStore("member", () => {
     }
   };
 
-  const getBookings = async (params: Record<string, any> = {}): Promise<void> => {
+  const getBookings = async (
+    params: Record<string, any> = {},
+  ): Promise<void> => {
     bookingsLoading.value = true;
     try {
       const qs = buildQueryString(params);
@@ -43,6 +57,16 @@ export const useMemberStore = defineStore("member", () => {
     }
   };
 
+  const requestBookingCancellation = async (bookingId: number): Promise<void> => {
+    try {
+      await http.patch(API_ENDPOINTS.AUTH.REQUEST_CANCELLATION(bookingId));
+    }
+    catch (error: unknown) {
+      console.error(error, "Request Booking Cancellation Error");
+      throw error;
+    }
+  };
+
   return {
     dashboardData,
     bookingsData,
@@ -50,5 +74,6 @@ export const useMemberStore = defineStore("member", () => {
     bookingsLoading,
     getDashboard,
     getBookings,
+    requestBookingCancellation,
   };
 });

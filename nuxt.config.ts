@@ -7,7 +7,6 @@ export default defineNuxtConfig({
       meta: [
         { name: "description", content: "System" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
-        { name: "robots", content: "noindex, nofollow" },
       ],
       htmlAttrs: {
         lang: "en",
@@ -19,6 +18,11 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   modules: ["@nuxt/ui", "@pinia/nuxt", "@nuxt/eslint"],
   css: ["~/assets/css/main.css"],
+  colorMode: {
+    preference: "light",
+    fallback: "light",
+    storageKey: "kora-web-color-mode",
+  },
 
   icon: {
     provider: "iconify",
@@ -39,5 +43,20 @@ export default defineNuxtConfig({
 
   experimental: {
     viteEnvironmentApi: true,
+  },
+
+  nitro: {
+    compressPublicAssets: true,
+    routeRules: {
+      "/images/**": {
+        headers: { "cache-control": "public, max-age=31536000, immutable" },
+      },
+      "/logo/**": {
+        headers: { "cache-control": "public, max-age=31536000, immutable" },
+      },
+      "/fonts/**": {
+        headers: { "cache-control": "public, max-age=31536000, immutable" },
+      },
+    },
   },
 });

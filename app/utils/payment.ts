@@ -1,6 +1,7 @@
 import type { PaymentInfo } from "~/types/payment";
 
-export function redirectToPaymentProvider(payment: PaymentInfo) {
+export function redirectToPaymentProvider(payment: PaymentInfo, checkoutCode?: string) {
+  const router = useRouter();
   switch (payment.mode) {
     case "redirect_url": {
       if (!payment.redirectUrl) {
@@ -30,6 +31,20 @@ export function redirectToPaymentProvider(payment: PaymentInfo) {
 
       document.body.appendChild(form);
       form.submit();
+      break;
+    }
+    case "free": {
+      router.push({
+        path: "/checkout/success",
+        query: { checkout_code: checkoutCode || "" },
+      });
+      break;
+    }
+    case "qr_websocket": {
+      router.push({
+        path: "/checkout/fonepay",
+        query: { checkout_code: checkoutCode || "" },
+      });
       break;
     }
     default:

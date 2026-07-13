@@ -36,9 +36,18 @@ export default defineAppConfig({
     accordion: {
       slots: {
         root: "w-full flex flex-col gap-4",
-        item: "border border-border last:border-b dark:bg-[#212121] p-6 dark:text-white font-serif rounded-xs",
+        item: "border border-border last:border-b dark:bg-[#212121] dark:text-white font-serif rounded-xs",
         label: "text-xl",
-        body: "mt-4",
+        body: "mt-4 font-sans",
+      },
+    },
+    dropdownMenu: {
+      slots: {
+        content:
+          "bg-white dark:bg-[#212121] border border-border rounded-xs shadow-md p-1",
+        viewport: "divide-y divide-default dark:divide-secondary-700",
+        item: "rounded-xs outline-none bg-none hover:bg-gray-100 dark:hover:bg-[#2C2C2C]",
+        itemLeadingIcon: "!text-secondary-700 dark:!text-white",
       },
     },
   },

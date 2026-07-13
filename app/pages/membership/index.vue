@@ -23,27 +23,46 @@ const router = useRouter();
 const membershipStore = useMembershipStore();
 const { error: showError } = useNotification();
 
-const membershipPeriods = ["MONTHLY", "QUARTERLY", "YEARLY", "100 DAYS"];
-const loading = ref(false);
+const membershipPeriods = [
+  "MONTHLY",
+  "QUARTERLY",
+  "YEARLY",
+  "100 DAYS",
+  "PASSES",
+];
+const loading = ref(true);
 const isPassModalOpen = ref(false);
 const selectedPass = ref<any>(null);
 const activePeriod = ref("MONTHLY");
 const isMembershipModalOpen = ref(false);
 const selectedMembershipTier = ref<any>(null);
 const selectedMembershipPrice = ref<string>("");
+const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
+
+const hasMembership = computed(() => {
+  return !!userDetail?.membership?.membershipPlanId;
+});
+
+const hasActivePass = computed(() => {
+  return !!userDetail?.passes?.id;
+});
 
 const membershipPlans = computed(() => {
   const period = activePeriod.value.toLowerCase();
 
-  if (period === "100 days") {
-    return membershipStore.groupedMembershipPlans.custom;
-  }
+  const plans
+    = period === "100 days"
+      ? membershipStore.groupedMembershipPlans.custom
+      : membershipStore.groupedMembershipPlans[
+        period as "monthly" | "quarterly" | "yearly"
+      ] || [];
 
-  return (
-    membershipStore.groupedMembershipPlans[
-      period as "monthly" | "quarterly" | "yearly"
-    ] || []
-  );
+  return plans.map((tier: any) => ({
+    ...tier,
+    selectedOption: tier.options?.find(
+      (option: any) => option.frequency?.toUpperCase() === activePeriod.value,
+    ),
+  }));
 });
 
 function getIcon(index: number) {
@@ -119,15 +138,15 @@ async function getPassPlans() {
   }
 }
 
-onMounted(() => {
-  getMembershipPlans();
-  getPassPlans();
+onMounted(async () => {
+  await getMembershipPlans();
+  await getPassPlans();
 });
 </script>
 
 <template>
   <div
-    class="relative bg-background dark:bg-secondary-900 text-foreground dark:text-white transition-colors duration-300 w-full min-h-screen py-16 md:py-24 overflow-hidden"
+    class="relative bg-background dark:bg-secondary-900 text-foreground dark:text-white transition-colors duration-300 w-full min-h-screen overflow-hidden"
   >
     <div
       class="absolute top-0 left-0 w-64 h-64 md:w-96 md:h-96 xl:w-[480px] xl:h-[480px] pointer-events-none select-none z-10 opacity-30 md:opacity-40"
@@ -149,8 +168,14 @@ onMounted(() => {
       >
     </div>
 
+    <ClassHeader
+      label="Kora Membership"
+      title="Choose Your Ritual"
+      class="pt-6"
+    />
+
     <div class="relative z-20 max-w-400 mx-auto text-center px-4 md:px-8">
-      <span
+      <!-- <span
         class="font-sans font-bold text-xs uppercase tracking-[0.25em] text-primary mb-3 block"
       >
         Kora Membership
@@ -167,13 +192,13 @@ onMounted(() => {
         class="text-sm md:text-base leading-relaxed text-foreground/75 dark:text-secondary-400 font-light max-w-2xl mx-auto"
       >
         We do not sell memberships; we facilitate metamorphosis.
-      </p>
+      </p> -->
 
-      <base-section-label
+      <!-- <base-section-label
         label="KORA MEMBERSHIPS"
         align="center"
         class="my-12"
-      />
+      /> -->
 
       <div class="w-full overflow-x-auto sm:overflow-visible scrollbar-hide">
         <div
@@ -197,8 +222,50 @@ onMounted(() => {
     </div>
 
     <div
-      v-if="membershipPlans.length > 0"
-      class="relative z-20 grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-400 mx-auto mt-16 px-4 md:px-8"
+      v-if="loading"
+      class="relative z-20 grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-400 mx-auto mt-16 px-4 md:px-8 pb-12"
+    >
+      <div
+        v-for="i in 3"
+        :key="i"
+        class="border border-border/40 bg-card dark:bg-[#212121] rounded-xs p-6 md:p-8 flex flex-col justify-between"
+      >
+        <div>
+          <div class="flex items-center gap-4">
+            <USkeleton class="w-11 h-11 rounded-xs" />
+            <div class="flex flex-col gap-1">
+              <USkeleton class="h-6 w-32" />
+              <USkeleton class="h-3 w-12" />
+            </div>
+          </div>
+
+          <div class="mt-4 flex flex-col gap-2">
+            <USkeleton class="h-10 w-48" />
+            <USkeleton class="h-4 w-24" />
+          </div>
+
+          <div class="h-px bg-stone-300 dark:bg-stone-700 my-6 w-full" />
+
+          <ul class="space-y-4 my-8">
+            <li
+              v-for="j in 4"
+              :key="j"
+              class="flex items-start"
+            >
+              <USkeleton class="w-4 h-4 rounded-full mr-3 shrink-0" />
+              <USkeleton class="h-4 w-full" />
+            </li>
+          </ul>
+        </div>
+
+        <div class="mt-6 pt-4">
+          <USkeleton class="h-10 w-full rounded-xs" />
+        </div>
+      </div>
+    </div>
+    <div
+      v-else-if="membershipPlans.length > 0"
+      class="relative z-20 grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-400 mx-auto mt-16 px-4 md:px-8 pb-12"
     >
       <div
         v-for="(tier, index) in membershipPlans"
@@ -240,15 +307,15 @@ onMounted(() => {
             </div>
           </div>
 
-          <div v-if="tier.options?.length" class="mt-4">
+          <div v-if="tier.selectedOption" class="mt-4">
             <p
               class="font-serif text-4xl md:text-5xl text-foreground dark:text-white tracking-wide"
             >
-              Rs. {{ tier.options[0]?.price?.toLocaleString() }}
+              Rs. {{ tier.selectedOption.price?.toLocaleString() }}
             </p>
 
             <p class="text-xs text-muted-foreground mt-2 capitalize">
-              Per {{ tier.options[0]?.frequency }}
+              Per {{ tier.selectedOption.frequency }}
             </p>
           </div>
 
@@ -276,16 +343,58 @@ onMounted(() => {
           <base-button
             :variant="index === 1 ? 'solid' : 'outline'"
             class="w-full"
-            @click="
-              openMembershipModal({
-                ...tier,
-                selectedOption: tier.options[0],
-              })
-            "
+            :disabled="!tier.selectedOption || hasMembership"
+            @click="openMembershipModal(tier)"
           >
             BEGIN NOW
           </base-button>
         </div>
+      </div>
+    </div>
+    <div
+      v-else-if="
+        activePeriod === 'PASSES' && membershipStore.passPlans.length > 0
+      "
+      class="relative z-20 grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-400 mx-auto mt-16 px-4 md:px-8"
+    >
+      <div
+        v-for="pass in membershipStore.passPlans"
+        :key="pass.id"
+        class="border border-[#E9DEC8] dark:border-border bg-card rounded-xs p-6 md:p-8 flex flex-col justify-between transition-all duration-300 group"
+      >
+        <div>
+          <div class="flex justify-between items-baseline gap-2 mb-3">
+            <h4
+              class="font-serif text-xl md:text-2xl text-foreground dark:text-white"
+            >
+              {{ pass.name }}
+            </h4>
+
+            <span class="font-serif text-2xl text-primary font-normal shrink-0">
+              Rs. {{ pass.price?.toLocaleString() }}
+            </span>
+          </div>
+
+          <span
+            v-if="pass.discount"
+            class="inline-flex px-2 py-0.5 border border-primary/30 text-primary text-[9px] font-bold tracking-wider uppercase rounded-xs bg-primary/5 mb-4"
+          >
+            {{ pass.discount }}% DISCOUNT
+          </span>
+
+          <p
+            class="text-xs md:text-sm text-muted-foreground dark:text-white/60 leading-relaxed mb-8"
+            v-html="pass.description"
+          />
+        </div>
+
+        <base-button
+          variant="outline"
+          :disabled="hasMembership || hasActivePass"
+          @click="openPassModal(pass)"
+        >
+          BEGIN NOW
+        </base-button>
       </div>
     </div>
     <div v-else class="relative z-20 mt-16 text-center">
@@ -300,7 +409,7 @@ onMounted(() => {
     </div>
 
     <!-- Passes Section -->
-    <div
+    <!-- <div
       class="relative z-20 border-t border-border bg-[#F1EEEA] dark:bg-[#1D1D1E] py-28 mt-28"
     >
       <div class="relative z-20 text-center">
@@ -355,7 +464,7 @@ onMounted(() => {
           </base-button>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- Modals -->
 

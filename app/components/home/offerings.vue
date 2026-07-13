@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+</script>
+
 <template>
   <div
     class="bg-background dark:bg-secondary-900 text-foreground font-sans select-none"
@@ -24,7 +30,9 @@
       >
         <span
           class="font-serif text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
-        >01</span>
+        >
+          01
+        </span>
         <h3
           class="font-serif text-3xl md:text-4xl text-foreground font-normal leading-tight tracking-wide mb-6"
         >
@@ -41,7 +49,9 @@
           body, clear your mind, and maintain a sense of balance.
         </p>
         <div>
-          <base-button>View Memberships</base-button>
+          <base-button @click="router.push('/membership')">
+            View Memberships
+          </base-button>
         </div>
       </div>
     </section>
@@ -56,7 +66,9 @@
       >
         <span
           class="font-serif text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
-        >02</span>
+        >
+          02
+        </span>
         <h3
           class="font-serif text-3xl md:text-4xl text-foreground font-normal leading-tight tracking-wide mb-6"
         >
@@ -73,7 +85,9 @@
           leave feeling balanced.
         </p>
         <div>
-          <base-button>View All Sessions</base-button>
+          <base-button @click="router.push('/session')">
+            View All Sessions
+          </base-button>
         </div>
       </div>
 
@@ -141,10 +155,17 @@
           <div
             class="w-full sm:w-auto flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
-            <base-button class="w-full sm:w-auto">
+            <base-button
+              class="w-full sm:w-auto"
+              @click="router.push('/membership')"
+            >
               BEGIN YOUR JOURNEY
             </base-button>
-            <base-button variant="outline" class="w-full sm:w-auto">
+            <base-button
+              variant="outline"
+              class="w-full sm:w-auto"
+              @click="router.push('/session')"
+            >
               EXPLORE SESSIONS
             </base-button>
           </div>

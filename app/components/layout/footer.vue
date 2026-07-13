@@ -11,7 +11,7 @@ const navColumns = [
   {
     title: "Navigate",
     links: [
-      { label: "SESSIONS", to: "/class?tab=all" },
+      { label: "SESSIONS", to: "/session?tab=all" },
       { label: "SPA SANCTUARY", to: "/spa" },
       { label: "MEMBERSHIP", to: "/membership" },
       { label: "SCHEDULE", to: "/schedules" },
@@ -30,21 +30,16 @@ const navColumns = [
 ];
 
 const contacts = [
-  { label: "Email", value: "kora@gmail.com", href: "mailto:kora@gmail.com" },
+  { label: "Email", value: "info@koranepal.com", href: "mailto:info@koranepal.com" },
   { label: "Phone", value: "01-4785467, 9845787654" },
-  { label: "Address", value: "Golfutar, Budhanilkantha-08,\nKathmandu 44600" },
+  { label: "Address", value: "Hattisar, Kathmandu, Nepal" },
 ];
 
 const socials = [
   {
     icon: "i-lucide-instagram",
-    href: "https://instagram.com",
+    href: "https://www.instagram.com/lifeatkora",
     title: "Instagram",
-  },
-  {
-    icon: "i-lucide-facebook",
-    href: "https://facebook.com",
-    title: "Facebook",
   },
 ];
 </script>

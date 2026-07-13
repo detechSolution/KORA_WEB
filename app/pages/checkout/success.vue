@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useCartStore } from "~/stores/cart";
+import { useCheckoutStore } from "~/stores/checkout";
+// import { formatPrice } from "~/utils/format";
 
 const route = useRoute();
 const cartStore = useCartStore();
+const checkoutStore = useCheckoutStore();
 
 const checkoutCode = computed(() => {
   return String(route.query.checkout_code || "");
 });
 
 const sessionId = computed(() => String(route.query.session_id || ""));
-
-const loading = ref(true);
-const paymentStatus = ref("");
 
 onMounted(async () => {
   try {
@@ -22,16 +22,16 @@ onMounted(async () => {
       cartStore.removePromoCode();
     }
 
-    paymentStatus.value = "paid";
+    if (checkoutCode.value) {
+      await checkoutStore.verifyPayment(checkoutCode.value);
+    }
+    else {
+      checkoutStore.paymentStatus = "paid";
+      checkoutStore.loading = false;
+    }
   }
   catch (error) {
     console.error(error);
-    paymentStatus.value = "failed";
-  }
-  finally {
-    setTimeout(() => {
-      loading.value = false;
-    }, 800);
   }
 });
 </script>
@@ -40,7 +40,7 @@ onMounted(async () => {
   <div
     class="bg-background dark:bg-secondary-900 flex flex-col items-center justify-center px-4 pb-14 pt-6 font-sans"
   >
-    <div v-if="loading" class="flex flex-col items-center justify-center gap-6">
+    <div v-if="checkoutStore.loading" class="flex flex-col items-center justify-center gap-6">
       <div class="relative w-16 h-16 flex items-center justify-center">
         <div class="absolute inset-0 border-2 border-border rounded-full" />
         <div
@@ -56,7 +56,7 @@ onMounted(async () => {
     </div>
 
     <div
-      v-else-if="paymentStatus === 'paid'"
+      v-else-if="checkoutStore.paymentStatus === 'paid'"
       class="max-w-2xl w-full bg-card border border-border p-10 md:p-16 flex flex-col items-center text-center gap-8 relative overflow-hidden rounded-sm shadow-sm"
     >
       <!-- Decorative background glow -->
@@ -97,6 +97,34 @@ onMounted(async () => {
         </p>
       </div>
 
+      <!-- <div
+        v-if="checkoutStore.paymentDetails && checkoutStore.paymentDetails.items && checkoutStore.paymentDetails.items.length > 0"
+        class="w-full text-left mt-6 mb-2 border border-[#B59A6D]/20 bg-card p-6 shadow-sm z-10"
+      >
+        <h3 class="text-[10px] md:text-xs uppercase tracking-widest text-[#B59A6D] font-bold mb-4">
+          Order Summary
+        </h3>
+        <div
+          v-for="item in checkoutStore.paymentDetails.items"
+          :key="item.id"
+          class="flex justify-between items-start text-sm py-3 border-b border-border/40 last:border-0"
+        >
+          <div class="flex flex-col gap-1 pr-4">
+            <span class="font-serif text-foreground text-base">{{ item.title }}</span>
+            <span v-if="item.bookingDate" class="text-xs text-muted-foreground">
+              {{ item.bookingDate }} <span v-if="item.bookingTime">at {{ item.bookingTime }}</span>
+            </span>
+            <span v-if="item.type" class="text-[10px] uppercase text-[#B59A6D]">{{ item.type }}</span>
+          </div>
+          <span class="font-medium font-serif mt-1 whitespace-nowrap">Rs. {{ formatPrice(item.totalAmount) }}</span>
+        </div>
+
+        <div class="flex justify-between items-center pt-4 mt-2 border-t border-[#B59A6D]/30">
+          <span class="text-xs font-bold uppercase tracking-widest text-foreground">Total Paid</span>
+          <span class="text-lg font-serif font-bold text-[#B59A6D]">Rs. {{ formatPrice(checkoutStore.paymentDetails.summary?.total || 0) }}</span>
+        </div>
+      </div> -->
+
       <div
         v-if="checkoutCode || sessionId"
         class="w-full flex justify-center items-center gap-6 py-5 border-y border-border/40 mt-4 mb-2 z-10 text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest font-semibold"
@@ -116,7 +144,7 @@ onMounted(async () => {
           GO TO PROFILE
         </base-button>
         <base-button
-          to="/class"
+          to="/session"
           class="w-full text-[11px]"
         >
           BOOK MORE SERVICES

@@ -1,7 +1,7 @@
 type BookingType = "Session" | "Spa" | "Pass";
 
 export type Booking = {
-  id: string;
+  id: number;
   title: string;
   type: BookingType;
   date?: string;
@@ -11,6 +11,7 @@ export type Booking = {
   price: string;
   image?: string;
   status: "UPCOMING" | "PAST" | "CANCELED";
-  sessionId?: number;
+  productId?: number;
   itemType: "session" | "spa" | "passes";
+  refundStatus?: string;
 };
