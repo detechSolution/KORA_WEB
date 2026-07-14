@@ -9,7 +9,7 @@ const faqs = [
       "Yes, our ice bath is suitable for beginners. We provide guidance on how to safely start and gradually increase your exposure.",
   },
   {
-    label: "How much does recovery access cost at Kora Life Bali?",
+    label: "How much does recovery access cost at Kora Life ?",
     content:
       "Recovery access costs vary depending on the package. Please inquire with our team for detailed pricing options.",
   },
