@@ -219,6 +219,7 @@ const filteredBookings = computed<Booking[]>(() => {
       productId: b.productId,
       itemType: b.itemType,
       refundStatus: b.refundStatus,
+      visitors: b.visitors || [],
     };
   });
 });
