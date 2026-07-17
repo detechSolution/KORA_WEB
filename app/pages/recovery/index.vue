@@ -46,7 +46,7 @@ useSeoMeta({
 
 <template>
   <div
-    class="bg-background dark:bg-secondary-900 text-foreground font-sans select-none min-h-screen"
+    class="bg-background dark:bg-secondary-900 text-foreground font-sans min-h-screen"
   >
     <section
       class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden mb-16 lg:mb-0 bg-background dark:bg-secondary-900"
@@ -80,7 +80,7 @@ useSeoMeta({
           for advanced contrast therapy, active hydro-resistance, and sensory
           recovery.
         </p>
-        <div class="w-fit">
+        <div class="sm:w-fit">
           <base-button :to="{ path: '/membership', query: { tab: 'passes' } }">
             EXPLORE GUEST PASSES
           </base-button>
@@ -378,7 +378,7 @@ useSeoMeta({
       </div>
     </section>
 
-    <section class="py-20 px-28">
+    <section class="p-8 sm:py-20 sm:px-28">
       <h2
         class="text-center font-serif text-3xl md:text-4xl text-foreground font-normal leading-tight tracking-wide mb-12"
       >

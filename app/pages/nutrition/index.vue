@@ -1,33 +1,33 @@
 <script setup lang="ts">
 import { IMAGES } from "~/utils/images";
 
-const faqs = [
-  {
-    label: "Is the ice bath suitable for beginners?",
-    content:
-      "Yes, our ice bath is suitable for beginners. We provide guidance on how to safely start and gradually increase your exposure.",
-  },
-  {
-    label: "How much does recovery access cost at Kora Life ?",
-    content:
-      "Recovery access costs vary depending on the package. Please inquire with our team for detailed pricing options.",
-  },
-  {
-    label: "What is contrast therapy and how does Kora run it?",
-    content:
-      "Contrast therapy involves alternating between hot and cold treatments to improve circulation and reduce inflammation. Kora provides guided sessions to maximize the benefits.",
-  },
-  {
-    label: "Do I need a membership to access the recovery suite?",
-    content:
-      "While memberships offer the best value and ongoing access, we also offer casual drop-in sessions for non-members to experience our recovery suite.",
-  },
-  {
-    label: "What specialist recovery services are available?",
-    content:
-      "Our specialist recovery services include ice baths, traditional saunas, infrared saunas, and targeted contrast therapy protocols.",
-  },
-];
+// const faqs = [
+//   {
+//     label: "Is the ice bath suitable for beginners?",
+//     content:
+//       "Yes, our ice bath is suitable for beginners. We provide guidance on how to safely start and gradually increase your exposure.",
+//   },
+//   {
+//     label: "How much does recovery access cost at Kora Life ?",
+//     content:
+//       "Recovery access costs vary depending on the package. Please inquire with our team for detailed pricing options.",
+//   },
+//   {
+//     label: "What is contrast therapy and how does Kora run it?",
+//     content:
+//       "Contrast therapy involves alternating between hot and cold treatments to improve circulation and reduce inflammation. Kora provides guided sessions to maximize the benefits.",
+//   },
+//   {
+//     label: "Do I need a membership to access the recovery suite?",
+//     content:
+//       "While memberships offer the best value and ongoing access, we also offer casual drop-in sessions for non-members to experience our recovery suite.",
+//   },
+//   {
+//     label: "What specialist recovery services are available?",
+//     content:
+//       "Our specialist recovery services include ice baths, traditional saunas, infrared saunas, and targeted contrast therapy protocols.",
+//   },
+// ];
 
 definePageMeta({
   layout: "default",
@@ -42,7 +42,7 @@ useSeoMeta({
 
 <template>
   <div
-    class="bg-background dark:bg-secondary-900 text-foreground font-sans select-none min-h-screen"
+    class="bg-background dark:bg-secondary-900 text-foreground font-sans min-h-screen"
   >
     <!-- Hero Section -->
     <div class="relative mb-16">
@@ -123,7 +123,7 @@ useSeoMeta({
             authorized sanctuary guests, offering absolute privacy by the water.
           </li>
         </ul>
-        <div class="flex flex-col sm:flex-row gap-4 w-fit">
+        <div class="flex flex-col sm:flex-row gap-4">
           <base-button to="/membership">
             VIEW MEMBERSHIP
           </base-button>
@@ -178,8 +178,8 @@ useSeoMeta({
             maximize iron bioavailability and cellular repair.
           </li>
         </ul>
-        <div class="w-fit">
-          <base-button to="https://play.google.com/store/apps/details?id=com.ourbaha&hl=en-US&pli=1" target="_blank">
+        <div class="sm:w-fit">
+          <base-button to="#mobile_app_store_link" target="_blank">
             PRE-ORDER RECOVERY FUEL
           </base-button>
         </div>
@@ -271,7 +271,7 @@ useSeoMeta({
           <li>&bull; Last Order: 9:30 PM</li>
           <li>&bull; Sanctuary Closes: 10:00 PM</li>
         </ul>
-        <div class="w-fit">
+        <div class="sm:w-fit">
           <base-button to="tel:+9779818000015">
             BOOK CONSULTATION
           </base-button>
@@ -292,7 +292,7 @@ useSeoMeta({
     </section>
 
     <!-- FAQ Section -->
-    <section class="py-20 px-28">
+    <!-- <section class="p-8 sm:py-20 sm:px-28">
       <h2
         class="text-center font-serif text-3xl md:text-4xl text-foreground font-normal leading-tight tracking-wide mb-12"
       >
@@ -304,7 +304,7 @@ useSeoMeta({
           item: 'px-6',
         }"
       />
-    </section>
+    </section> -->
 
     <!-- Footer CTA Section -->
     <section
