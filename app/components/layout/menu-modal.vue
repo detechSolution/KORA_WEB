@@ -235,7 +235,8 @@ onUnmounted(() => {
               <span class="text-border">•</span>
 
               <NuxtLink
-                to="#"
+                to="https://maps.app.goo.gl/tdZ2HmcEsGvnTDLf9?g_st=ic"
+                target="_blank"
                 class="hover:text-foreground dark:hover:text-white transition-colors"
               >
                 Location
