@@ -14,6 +14,14 @@ useSeoMeta({
   title: "Kora | Fonepay Checkout",
 });
 
+const colorMode = useColorMode();
+const isDark = computed(() => colorMode.value === "dark");
+const logoSrc = computed(() => {
+  return isDark.value
+    ? "/images/logo/fonepay_dark.png"
+    : "/images/logo/fonepay_white.png";
+});
+
 const http = getHttp();
 const router = useRouter();
 const paymentStore = usePaymentStore();
@@ -162,7 +170,7 @@ function goBack() {
       >
         <div class="flex items-center gap-3">
           <img
-            src="/images/logo/fonepay.png"
+            :src="logoSrc"
             alt="Fonepay"
             class="w-30 object-contain"
           >
