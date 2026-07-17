@@ -136,21 +136,21 @@ function close() {
   emit("close");
 }
 
-function createGuest(): Guest {
-  return {
-    fullName: "",
-    phone: "",
-    email: "",
-  };
-}
+// function createGuest(): Guest {
+//   return {
+//     fullName: "",
+//     phone: "",
+//     email: "",
+//   };
+// }
 
 function resetGuests() {
   state.guests = [];
 }
 
-function addGuest() {
-  state.guests.push(createGuest());
-}
+// function addGuest() {
+//   state.guests.push(createGuest());
+// }
 
 function removeGuest(index: number) {
   if (state.guests.length > 0) {
@@ -309,13 +309,13 @@ function proceedToCheckout() {
                 </div>
               </div>
 
-              <base-button
+              <!-- <base-button
                 variant="outline"
                 class="w-full border-[#A08860] text-[#A08860] hover:bg-[#A08860]/10 uppercase text-[11px] tracking-widest font-bold h-12 mt-4"
                 @click="addGuest"
               >
                 ADD GUEST +
-              </base-button>
+              </base-button> -->
             </div>
 
             <div class="flex justify-end">

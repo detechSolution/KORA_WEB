@@ -128,8 +128,8 @@ function addGuest() {
     showError({
       message:
         remainingGuestSpots > 0
-          ? `You can only add up to ${remainingGuestSpots} guest${remainingGuestSpots > 1 ? "s" : ""} for this session.`
-          : "No guest spots are available for this session.",
+          ? `Your membership plan allows a maximum of  ${remainingGuestSpots} guest(s).`
+          : "Your membership plan has reached its maximum guest allowance.",
     });
 
     return;

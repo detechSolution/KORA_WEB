@@ -219,6 +219,7 @@ const filteredBookings = computed<Booking[]>(() => {
       productId: b.productId,
       itemType: b.itemType,
       refundStatus: b.refundStatus,
+      visitors: b.visitors || [],
     };
   });
 });
@@ -457,7 +458,7 @@ onMounted(async () => {
                     MEMBER SINCE
                   </div>
                   <div class="text-lg text-foreground font-serif">
-                    {{ user.membership.tier }}
+                    {{ user.memberSince }}
                   </div>
                 </div>
                 <div class="text-right">
@@ -466,7 +467,7 @@ onMounted(async () => {
                   >
                     BILLING
                   </div>
-                  <div class="text-lg text-foreground font-serif">
+                  <div class="text-xl text-foreground font-serif">
                     {{ user.membership.billing }}
                   </div>
                 </div>

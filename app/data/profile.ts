@@ -14,4 +14,5 @@ export type Booking = {
   productId?: number;
   itemType: "session" | "spa" | "passes";
   refundStatus?: string;
+  visitors?: any[];
 };

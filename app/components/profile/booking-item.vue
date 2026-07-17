@@ -102,42 +102,50 @@ async function handleCancelRequest() {
       </div> -->
 
       <!-- Details -->
-      <div class="flex flex-col justify-center">
-        <!-- Title and Badge -->
-        <div class="flex items-center gap-3 mb-3">
-          <h4 class="font-serif text-xl text-foreground font-normal">
-            {{ booking.title }}
-          </h4>
-          <span
-            class="px-2 py-0.5 text-[10px] font-bold rounded-sm capitalize"
-            :class="[badgeClass]"
-          >
-            {{ booking.itemType }}
-          </span>
-        </div>
-
-        <!-- Date / Time / Location -->
-        <div
-          v-if="booking.type !== 'Pass'"
-          class="flex flex-wrap items-center gap-4 text-xs text-stone-400 font-light"
+      <div>
+        <span
+          v-if="booking.visitors"
+          class="py-0.5 text-[10px] font-bold rounded-sm capitalize text-primary"
         >
-          <div v-if="booking.date" class="flex items-center gap-1.5">
-            <UIcon name="i-lucide-calendar" class="w-3.5 h-3.5" />
-            {{ booking.date }}
+          {{ booking.visitors.length > 0 ? `GUEST X ${booking.visitors.length}` : 'MYSELF`' }}
+        </span>
+        <div class="flex flex-col justify-center">
+          <!-- Title and Badge -->
+          <div class="flex items-center gap-3 mb-3">
+            <h4 class="font-serif text-xl text-foreground font-normal">
+              {{ booking.title }}
+            </h4>
+            <span
+              class="px-2 py-0.5 text-[10px] font-bold rounded-sm capitalize"
+              :class="[badgeClass]"
+            >
+              {{ booking.itemType }}
+            </span>
           </div>
-          <!-- <div v-if="booking.time" class="flex items-center gap-1.5">
+
+          <!-- Date / Time / Location -->
+          <div
+            v-if="booking.type !== 'Pass'"
+            class="flex flex-wrap items-center gap-4 text-xs text-stone-400 font-light"
+          >
+            <div v-if="booking.date" class="flex items-center gap-1.5">
+              <UIcon name="i-lucide-calendar" class="w-3.5 h-3.5" />
+              {{ booking.date }}
+            </div>
+            <!-- <div v-if="booking.time" class="flex items-center gap-1.5">
             <UIcon name="i-lucide-clock" class="w-3.5 h-3.5" />
             {{ booking.time }}
           </div> -->
-          <div v-if="booking.location" class="flex items-center gap-1.5">
-            <UIcon name="i-lucide-map-pin" class="w-3.5 h-3.5" />
-            {{ booking.location }}
+            <div v-if="booking.location" class="flex items-center gap-1.5">
+              <UIcon name="i-lucide-map-pin" class="w-3.5 h-3.5" />
+              {{ booking.location }}
+            </div>
           </div>
-        </div>
 
-        <!-- Description (For passes) -->
-        <div v-else class="text-xs text-stone-400 font-light">
-          {{ booking.description }}
+          <!-- Description (For passes) -->
+          <div v-else class="text-xs text-stone-400 font-light">
+            {{ booking.description }}
+          </div>
         </div>
       </div>
     </div>

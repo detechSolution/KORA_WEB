@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 import { useNotification } from "~/composables/use-notification";
 import { useAuthStore } from "~/stores/auth";
@@ -18,6 +18,7 @@ useSeoMeta({
     "Choose your ritual and join Kora. Explore our membership tiers and specialized passes.",
 });
 
+const route = useRoute();
 const authStore = useAuthStore();
 const router = useRouter();
 const membershipStore = useMembershipStore();
@@ -33,7 +34,7 @@ const membershipPeriods = [
 const loading = ref(true);
 const isPassModalOpen = ref(false);
 const selectedPass = ref<any>(null);
-const activePeriod = ref("MONTHLY");
+const activePeriod = ref((route.query.tab as string)?.toUpperCase() || "MONTHLY");
 const isMembershipModalOpen = ref(false);
 const selectedMembershipTier = ref<any>(null);
 const selectedMembershipPrice = ref<string>("");
