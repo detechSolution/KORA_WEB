@@ -231,6 +231,7 @@ function goBack() {
         <!-- Fallback Actions -->
         <div class="flex flex-col w-full gap-3 mt-4">
           <base-button
+            v-if="wsStatus === 'error' || wsStatus === 'disconnected'"
             variant="outline"
             class="w-full justify-center"
             @click="checkStatusFallback"
