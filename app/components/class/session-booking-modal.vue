@@ -407,6 +407,7 @@ function close() {
                     label="FULL NAME *"
                     type="text"
                     class="bg-white dark:bg-transparent"
+                    disabled
                   />
 
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -424,6 +425,7 @@ function close() {
                       label="EMAIL ADDRESS"
                       type="email"
                       class="bg-white dark:bg-transparent"
+                      disabled
                     />
                   </div>
                 </div>

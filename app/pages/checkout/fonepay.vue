@@ -117,17 +117,29 @@ function handlePaymentSuccess() {
   });
 }
 
+function handlePaymentFailure() {
+  if (ws) {
+    ws.close();
+  }
+  router.push({
+    path: "/checkout/failure",
+  });
+}
+
 async function checkStatusFallback() {
   if (!paymentInfo.value?.statusCheckPath || !checkoutData.value?.checkoutCode)
     return;
 
   try {
-    const res = await http.post(`${API_ENDPOINTS.PAYMENT.FONEPAY_STATUS}`, {
+    const res = (await http.post(`${API_ENDPOINTS.PAYMENT.FONEPAY_STATUS}`, {
       checkoutCode: checkoutData.value.checkoutCode,
-    });
+    })) as any;
 
-    if (res) {
+    if (res && res.payment.success === true) {
       handlePaymentSuccess();
+    }
+    else {
+      handlePaymentFailure();
     }
   }
   catch {
@@ -219,7 +231,6 @@ function goBack() {
         <!-- Fallback Actions -->
         <div class="flex flex-col w-full gap-3 mt-4">
           <base-button
-            v-if="wsStatus === 'error' || wsStatus === 'disconnected'"
             variant="outline"
             class="w-full justify-center"
             @click="checkStatusFallback"
