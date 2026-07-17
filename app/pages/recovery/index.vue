@@ -3,29 +3,33 @@ import { IMAGES } from "~/utils/images";
 
 const faqs = [
   {
-    label: "Is the ice bath suitable for beginners?",
+    label: "What is the age policy for the Recovery Axis?",
     content:
-      "Yes, our ice bath is suitable for beginners. We provide guidance on how to safely start and gradually increase your exposure.",
+      "To preserve an uncompromised atmosphere of sensory quiet, KORA operates under a strict <strong>16 years and above policy</strong>. The indoor shalas, treatment rooms, and recovery pools are reserved exclusively as an adult wellness sanctuary.",
   },
   {
-    label: "How much does recovery access cost at Kora Life ?",
+    label: "How does the wave-cresting pool function?",
     content:
-      "Recovery access costs vary depending on the package. Please inquire with our team for detailed pricing options.",
+      "Engineered with an adjustable hydro-resistance mechanism, the heated pool generates a smooth, continuous current. This allows competitive swimmers and triathletes to train dynamically against a controlled flow, perfecting stroke mechanics and building endurance without interruption.",
   },
   {
-    label: "What is contrast therapy and how does Kora run it?",
+    label: "What are the target temperatures of your thermal circuit?",
     content:
-      "Contrast therapy involves alternating between hot and cold treatments to improve circulation and reduce inflammation. Kora provides guided sessions to maximize the benefits.",
+      "<ul class='list-disc pl-5 space-y-2 mt-2'><li><strong>Cold Plunge:</strong> Calibrated strictly to <strong>10°C</strong> to trigger rapid vasoconstriction, reduce muscular inflammation, and accelerate central nervous system recovery.</li><li><strong>Heated Pool & Jacuzzi:</strong> Maintained at a therapeutic <strong>28°C to 38°C</strong> respectively to decompress the spine and ease myofascial tension.</li><li><strong>The Sauna:</strong> Set to high-heat dry standards to promote deep detoxification and metabolic flushing.</li></ul>",
   },
   {
-    label: "Do I need a membership to access the recovery suite?",
+    label: "Are wellness events like Sound Healing and Cinema Nights included in standard entry?",
     content:
-      "While memberships offer the best value and ongoing access, we also offer casual drop-in sessions for non-members to experience our recovery suite.",
+      "Our weekly Cinema Nights are entirely complimentary for all active members and valid day-pass holders. For specialized workshops like Floating Sound Healing, access may be complimentary or require a separate session fee depending on the scheduling cycle. Because all evening programming operates under strictly capped capacities to preserve our sanctuary environment, all guests must verify the session's specific status and secure their positions in advance via the KORA Sanctuary Calendar on our <strong>KORA mobile application</strong> or website.",
   },
   {
-    label: "What specialist recovery services are available?",
+    label: "Can I order food and drinks directly to my lounge bed?",
     content:
-      "Our specialist recovery services include ice baths, traditional saunas, infrared saunas, and targeted contrast therapy protocols.",
+      "Yes. The pooldeck and courtyard are fully integrated with <strong>Cafe NORI</strong>. Members and guests can order post-recovery protein blends, functional adaptogenic teas, and nutrient-dense plates to their lounge beds via QR codes or the KORA App.",
+    button: {
+      text: "VIEW MEMBERSHIP OPTIONS",
+      to: "/membership",
+    },
   },
 ];
 
@@ -385,7 +389,18 @@ useSeoMeta({
         :ui="{
           item: 'px-6',
         }"
-      />
+      >
+        <template #content="{ item }">
+          <div class="text-sm text-foreground/80 dark:text-secondary-500 font-light font-sans pb-4">
+            <div class="leading-relaxed" v-html="item.content" />
+            <div v-if="item.button" class="mt-6 w-fit">
+              <base-button :to="item.button.to" variant="outline">
+                {{ item.button.text }}
+              </base-button>
+            </div>
+          </div>
+        </template>
+      </UAccordion>
     </section>
 
     <section
