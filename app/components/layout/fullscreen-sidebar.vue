@@ -28,6 +28,7 @@ const logoSrc = computed(() => {
 
 const menuItems = computed(() => {
   const items = [
+    { name: "Profile", path: "/profile", requiresAuth: true },
     { name: "Class", path: "/session?tab=class", requiresAuth: false },
     { name: "Events", path: "/session?tab=event", requiresAuth: false },
     { name: "Workshops", path: "/session?tab=workshop", requiresAuth: false },
