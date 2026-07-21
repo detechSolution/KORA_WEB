@@ -393,8 +393,10 @@ watch(
             <div
               class="border border-border p-8 flex flex-col items-center text-center cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors group"
               :class="{
-                'cursor-pointer hover:bg-black/5 dark:hover:bg-white/5': hasMembership,
-                'opacity-50 cursor-not-allowed pointer-events-none': !hasMembership,
+                'cursor-pointer hover:bg-black/5 dark:hover:bg-white/5':
+                  hasMembership,
+                'opacity-50 cursor-not-allowed pointer-events-none':
+                  !hasMembership,
               }"
               @click="selectPreference('guest')"
             >
@@ -458,13 +460,14 @@ watch(
                   </p>
                 </div>
 
-                <UFormField
-                  name="selectedSpa"
-                >
+                <UFormField name="selectedSpa">
                   <UAccordion
                     :items="spa?.subTypes"
                     :default-value="defaultOpenSubtype"
                     class="mb-2"
+                    :ui="{
+                      item: 'px-[14px] pb-[14px]',
+                    }"
                   >
                     <template #default="{ item }">
                       <div class="flex flex-col">
