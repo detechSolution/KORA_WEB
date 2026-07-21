@@ -28,6 +28,7 @@ export const useAuthStore = defineStore("auth", () => {
     role_id?: number | null;
     last_login_at?: string | null;
     membership?: Record<string, unknown> | null;
+    membershipFreeze?: Record<string, unknown> | null;
     passes?: Record<string, unknown> | null;
     profile?: Record<string, unknown> | null;
   }>({
@@ -37,6 +38,7 @@ export const useAuthStore = defineStore("auth", () => {
     phoneNumber: "",
     avatar: "",
     membership: null,
+    membershipFreeze: null,
     profile: null,
   });
 
@@ -76,6 +78,7 @@ export const useAuthStore = defineStore("auth", () => {
           role_id: user.value.role_id,
           last_login_at: user.value.last_login_at,
           membership: user.value.membership,
+          membershipFreeze: user.value.membershipFreeze,
           passes: user.value.passes,
           profile: user.value.profile,
         }),
@@ -168,8 +171,12 @@ export const useAuthStore = defineStore("auth", () => {
         // user.value.last_login_at = (u.last_login_at as string | null) ?? null;
         user.value.membership
           = (u.membership as Record<string, unknown> | null) ?? null;
-        user.value.passes = (u.passes as Record<string, unknown> | null) ?? null;
-        user.value.profile = (u.profile as Record<string, unknown> | null) ?? null;
+        user.value.membershipFreeze
+          = (u.membershipFreeze as Record<string, unknown> | null) ?? null;
+        user.value.passes
+          = (u.passes as Record<string, unknown> | null) ?? null;
+        user.value.profile
+          = (u.profile as Record<string, unknown> | null) ?? null;
         permissions.value = Array.isArray(u?.permissions) ? u.permissions : [];
         saveUserToStorage();
         lastAuthCheck.value = now;
@@ -183,6 +190,21 @@ export const useAuthStore = defineStore("auth", () => {
     finally {
       isCheckingAuth.value = false;
     }
+  };
+
+  const isMembershipFrozen = (): boolean => {
+    if (!user.value.membershipFreeze)
+      return false;
+    const endsOn = user.value.membershipFreeze.endsOn as string;
+    if (!endsOn)
+      return false;
+
+    const endsOnDate = new Date(endsOn);
+    endsOnDate.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return endsOnDate >= today;
   };
 
   // Smart check: only checks if needed (cached)
@@ -338,6 +360,7 @@ export const useAuthStore = defineStore("auth", () => {
     unAuthorizedError,
     user,
     permissions,
+    isMembershipFrozen,
     checkAuth,
     checkAuthIfNeeded,
     login,

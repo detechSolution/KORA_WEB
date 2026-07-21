@@ -3,7 +3,8 @@ export const IMAGES = {
   WHITE_LOGO: "/logo/kora_white_logo.svg",
   BLACK_LOGO: "/logo/kora_black_logo.svg",
   ESEWA_LOGO: "/images/logo/esewa.png",
-  FONEPAY_LOGO: "/images/logo/fonepay.png",
+  FONEPAY_LOGO: "/images/logo/fonepay_white.png",
+  FONEPAY_DARK_LOGO: "/images/logo/fonepay_dark.png",
   STRIPE_LOGO: "/images/logo/stripe.png",
 
   // LOGIN

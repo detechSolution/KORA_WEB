@@ -31,7 +31,7 @@ function toggleColorMode() {
   isDark.value = !isDark.value;
 }
 
-const isMenuModalOpen = ref(false);
+const isSidebarOpen = ref(false);
 const isCartOpen = ref(false);
 const isSignOutModalOpen = ref(false);
 const loadingSignOut = ref(false);
@@ -133,7 +133,7 @@ onUnmounted(() => {
       <div class="flex-1 flex items-center" :class="getColorClass?.text">
         <button
           class="group flex items-center gap-2.5 hover:text-primary transition-colors duration-200 cursor-pointer py-1.5 focus:outline-none"
-          @click="isMenuModalOpen = true"
+          @click="isSidebarOpen = true"
         >
           <span class="flex flex-col gap-1 w-5">
             <span
@@ -235,10 +235,11 @@ onUnmounted(() => {
     </div>
     <!-- commented sidebar for now as replaced by menu modal dont remove this -->
     <!-- <LayoutSidebar :is-open="isSidebarOpen" @close="isSidebarOpen = false" /> -->
-    <LayoutMenuModal
+    <LayoutFullscreenSidebar :is-open="isSidebarOpen" @close="isSidebarOpen = false" />
+    <!-- <LayoutMenuModal
       :is-open="isMenuModalOpen"
       @close="isMenuModalOpen = false"
-    />
+    /> -->
     <LayoutCartDrawer :is-open="isCartOpen" @close="isCartOpen = false" />
     <profile-signout-modal
       :open="isSignOutModalOpen"

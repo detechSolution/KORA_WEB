@@ -17,6 +17,8 @@ useSeoMeta({
     "Experience true relaxation with our curated spa offerings including massages and therapies.",
 });
 
+const isPlayingVideo = ref(false);
+
 const router = useRouter();
 const authStore = useAuthStore();
 const spaStore = useSpaStore();
@@ -45,6 +47,12 @@ async function getSpaLists() {
 
 function handleBookingClick(spa: any) {
   if (authStore.isAuthenticated) {
+    if (authStore.isMembershipFrozen()) {
+      showError({
+        message: "Your membership is currently frozen. Booking is disabled.",
+      });
+      return;
+    }
     selectedSpa.value = spa;
     isBookingModalOpen.value = true;
   }
@@ -55,6 +63,12 @@ function handleBookingClick(spa: any) {
 
 function handleOpenBookingModal() {
   if (authStore.isAuthenticated) {
+    if (authStore.isMembershipFrozen()) {
+      showError({
+        message: "Your membership is currently frozen. Booking is disabled.",
+      });
+      return;
+    }
     isBookingModalOpen.value = true;
   }
   else {
@@ -71,7 +85,6 @@ onMounted(() => {
   <section
     class="relative bg-background dark:bg-secondary-900 text-foreground dark:text-white transition-colors duration-300 w-full"
   >
-    <!-- Premium absolute-positioned foliage watermark overlay -->
     <div
       class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 xl:w-50 aspect-square z-10 -translate-y-12"
     >
@@ -91,6 +104,63 @@ onMounted(() => {
             class="spa-description max-w-400 px-4 md:px-8 lg:px-12 py-10 md:py-7"
             v-html="spa?.description"
           />
+          <div class="max-w-400 px-4 md:px-8 lg:px-12 py-10 mb-5 md:py-7">
+            <base-section-label
+              label="Feature Video"
+              align="left"
+              class="mb-2"
+            />
+            <div
+              v-if="!isPlayingVideo"
+              class="relative overflow-hidden group cursor-pointer"
+              @click="isPlayingVideo = true"
+            >
+              <img
+                :src="spa?.bannerUrl"
+                :alt="spa?.name"
+                class="w-full h-[300px] md:h-[460px] object-cover transition-transform duration-700 group-hover:scale-105"
+              >
+
+              <div
+                class="absolute inset-0 bg-black/40 transition-opacity duration-300 group-hover:bg-black/50"
+              />
+
+              <div
+                class="absolute top-6 left-6 w-8 h-8 border-t border-l border-primary/70"
+              />
+              <div
+                class="absolute top-6 right-6 w-8 h-8 border-t border-r border-primary/70"
+              />
+              <div
+                class="absolute bottom-6 left-6 w-8 h-8 border-b border-l border-primary/70"
+              />
+              <div
+                class="absolute bottom-6 right-6 w-8 h-8 border-b border-r border-primary/70"
+              />
+
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div
+                  class="w-16 h-16 md:w-20 md:h-20 border border-primary/60 flex items-center justify-center bg-black/20 backdrop-blur-sm"
+                >
+                  <UIcon
+                    name="i-lucide-play"
+                    class="absolute inset-0 m-auto w-6 h-6 text-primary/80 transition-transform duration-300 group-hover:scale-110"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div v-else class="w-full h-[300px] md:h-[460px] bg-black">
+              <video
+                class="w-full h-full object-cover"
+                :src="spa?.videoUrl"
+                controls
+                autoplay
+                preload="metadata"
+                playsinline
+              />
+            </div>
+          </div>
           <div class="max-w-400 px-4 md:px-8 lg:px-12 py-10 mb-5 md:py-7">
             <base-section-label
               label="Available Offerings"

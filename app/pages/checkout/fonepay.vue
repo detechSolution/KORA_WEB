@@ -14,6 +14,14 @@ useSeoMeta({
   title: "Kora | Fonepay Checkout",
 });
 
+const colorMode = useColorMode();
+const isDark = computed(() => colorMode.value === "dark");
+const logoSrc = computed(() => {
+  return isDark.value
+    ? "/images/logo/fonepay_dark.png"
+    : "/images/logo/fonepay_white.png";
+});
+
 const http = getHttp();
 const router = useRouter();
 const paymentStore = usePaymentStore();
@@ -117,17 +125,29 @@ function handlePaymentSuccess() {
   });
 }
 
+function handlePaymentFailure() {
+  if (ws) {
+    ws.close();
+  }
+  router.push({
+    path: "/checkout/failure",
+  });
+}
+
 async function checkStatusFallback() {
   if (!paymentInfo.value?.statusCheckPath || !checkoutData.value?.checkoutCode)
     return;
 
   try {
-    const res = await http.post(`${API_ENDPOINTS.PAYMENT.FONEPAY_STATUS}`, {
+    const res = (await http.post(`${API_ENDPOINTS.PAYMENT.FONEPAY_STATUS}`, {
       checkoutCode: checkoutData.value.checkoutCode,
-    });
+    })) as any;
 
-    if (res) {
+    if (res && res.payment.success === true) {
       handlePaymentSuccess();
+    }
+    else {
+      handlePaymentFailure();
     }
   }
   catch {
@@ -150,7 +170,7 @@ function goBack() {
       >
         <div class="flex items-center gap-3">
           <img
-            src="/images/logo/fonepay.png"
+            :src="logoSrc"
             alt="Fonepay"
             class="w-30 object-contain"
           >
