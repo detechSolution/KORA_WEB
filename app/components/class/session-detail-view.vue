@@ -25,56 +25,6 @@ const isPlayingVideo = ref(false);
 const isBookingModalOpen = ref(false);
 const isAddingToWaitlist = ref(false);
 
-// const sessionStatus = computed(() => {
-//   if (!authStore.isAuthenticated) {
-//     return {
-//       title: "Logged In?",
-//       description: "Sign in to book this session or join the waitlist.",
-//       actionLabel: "Login Required",
-//     };
-//   }
-
-//   if (props.session.isBooked) {
-//     return {
-//       title: "Already Booked",
-//       description: "You already have a confirmed reservation for this session.",
-//       actionLabel: "Booked",
-//     };
-//   }
-
-//   if (props.session.isInWaitlist) {
-//     return {
-//       title: "Already Waitlisted",
-//       description: "You are already on the waitlist for this session.",
-//       actionLabel: "On Waitlist",
-//     };
-//   }
-
-//   if (props.session.isBookable && props.session.remainingSpots > 0) {
-//     return {
-//       title: "Spot Available",
-//       description: "A confirmed booking is available right now.",
-//       actionLabel: "Book Now",
-//     };
-//   }
-
-//   if (!props.session.isBookable && props.session.remainingSpots > 0) {
-//     return {
-//       title: "Member Reserved Spot Available",
-//       description:
-//         "General booking is closed, but a reserved spot may still be available.",
-//       actionLabel: "Request Spot",
-//     };
-//   }
-
-//   return {
-//     title: "Booking Closed",
-//     description:
-//       "This session is full. Join the waitlist to be notified if a spot opens.",
-//     actionLabel: "Show Waitlist",
-//   };
-// });
-
 const showWaitlistCta = computed(() => {
   return (
     !props.session.isBooked && !props.session.isInWaitlist && !props.session.isBookable
@@ -83,6 +33,12 @@ const showWaitlistCta = computed(() => {
 
 function handleOpenBookingModal() {
   if (authStore.isAuthenticated) {
+    if (authStore.isMembershipFrozen()) {
+      showError({
+        message: "Your membership is currently frozen. Booking is disabled.",
+      });
+      return;
+    }
     isBookingModalOpen.value = true;
   }
   else {
@@ -93,6 +49,12 @@ function handleOpenBookingModal() {
 async function handleAddToWaitlist() {
   if (!authStore.isAuthenticated) {
     router.push("/login");
+    return;
+  }
+  if (authStore.isMembershipFrozen()) {
+    showError({
+      message: "Your membership is currently frozen. You cannot join the waitlist.",
+    });
     return;
   }
 
@@ -134,26 +96,6 @@ async function handleAddToWaitlist() {
               class="session-description text-foreground dark:text-stone-50"
               v-html="session.description"
             />
-
-            <!-- <div class="mt-10">
-              <h2
-                class="font-sans font-bold text-sm uppercase tracking-[0.2em] mb-4"
-              >
-                What To Expect
-              </h2>
-              <ul class="space-y-2 text-sm md:text-[15px] leading-7">
-                <li
-                  v-for="expectation in session.expectations || []"
-                  :key="expectation"
-                  class="flex gap-3"
-                >
-                  <span
-                    class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-black dark:bg-white"
-                  ></span>
-                  <span>{{ expectation }}</span>
-                </li>
-              </ul>
-            </div> -->
 
             <div class="mt-10 text-foreground dark:text-stone-50">
               <h2
@@ -337,22 +279,6 @@ async function handleAddToWaitlist() {
                   </div>
                 </div>
               </div>
-
-              <!-- <div
-                class="w-full border border-border/60 bg-background/60 px-4 py-4 space-y-2"
-              >
-                <p
-                  class="text-[10px] uppercase tracking-[0.24em] text-primary/70"
-                >
-                  Session Status
-                </p>
-                <p class="text-sm font-semibold text-foreground">
-                  {{ sessionStatus.title }}
-                </p>
-                <p class="text-xs leading-6 text-secondary-400">
-                  {{ sessionStatus.description }}
-                </p>
-              </div> -->
 
               <base-button
                 v-if="session.isBooked && !session.isGuestBookable"
