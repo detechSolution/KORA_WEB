@@ -3,6 +3,7 @@ import type { PaymentProvider } from "~/types/payment";
 import { computed, onUnmounted, ref } from "vue";
 import { useNotification } from "~/composables/use-notification";
 import { usePayment } from "~/composables/use-payment";
+import { useAuthStore } from "~/stores/auth";
 import { useCartStore } from "~/stores/cart";
 import { getApiErrorMessage } from "~/utils/error";
 
@@ -14,6 +15,7 @@ useSeoMeta({
   title: "Kora | Checkout",
 });
 
+const authStore = useAuthStore();
 const cartStore = useCartStore();
 const { loading, payNow } = usePayment();
 const { error: showError } = useNotification();
@@ -84,6 +86,14 @@ function goBack() {
 }
 
 async function handlePayNowClick() {
+  if (authStore.isAuthenticated) {
+    if (authStore.isMembershipFrozen()) {
+      showError({
+        message: "Your membership is currently frozen. Booking is disabled.",
+      });
+    }
+  }
+
   if (step.value === 1) {
     step.value = 2;
   }

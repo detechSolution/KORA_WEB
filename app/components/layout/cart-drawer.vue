@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useNotification } from "~/composables/use-notification";
+import { useAuthStore } from "~/stores/auth";
 import { useCartStore } from "~/stores/cart";
 
 defineProps({
@@ -18,7 +21,11 @@ function close() {
 const isRemoveItemModalOpen = ref(false);
 const selectedItemId = ref<string | "">("");
 
+const router = useRouter();
+const authStore = useAuthStore();
 const cartStore = useCartStore();
+const { error: showError } = useNotification();
+
 const cartItems = computed(() => cartStore.cartItems);
 
 const totalPrice = computed(() => {
@@ -41,6 +48,20 @@ function handleRemoveItem() {
 
   isRemoveItemModalOpen.value = false;
   selectedItemId.value = "";
+}
+
+function handleProceedToCheckout() {
+  if (authStore.isAuthenticated) {
+    if (authStore.isMembershipFrozen()) {
+      showError({
+        message: "Your membership is currently frozen. Booking is disabled.",
+      });
+    }
+  }
+  else {
+    router.push("/checkout");
+    close();
+  }
 }
 </script>
 
@@ -203,9 +224,8 @@ function handleRemoveItem() {
           </div>
 
           <base-button
-            to="/checkout"
             class="w-full"
-            @click="close"
+            @click="handleProceedToCheckout"
           >
             Proceed to Checkout
           </base-button>
