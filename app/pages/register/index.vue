@@ -24,6 +24,7 @@ const loading = ref(false);
 const apiError = reactive({
   email: null as string | null,
   phone: null as string | null,
+  password: null as string | null,
 });
 const formRef = ref<InstanceType<typeof UForm> | null>(null);
 
@@ -50,6 +51,14 @@ const schema = z
         message: apiError.phone,
       });
     }
+
+    if (apiError.password) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["password"],
+        message: apiError.password,
+      });
+    }
   });
 
 type Schema = z.output<typeof schema>;
@@ -61,13 +70,14 @@ const registerFormState = reactive<Partial<Schema>>({
   password: "",
 });
 
-function setApiError(field: "email" | "phone", message: string): void {
+function setApiError(field: "email" | "phone" | "password", message: string): void {
   apiError[field] = message;
 }
 
 function clearApiError(): void {
   apiError.email = null;
   apiError.phone = null;
+  apiError.password = null;
 }
 
 async function handleGoogleLogin(): Promise<void> {
@@ -115,6 +125,9 @@ async function handleRegister(): Promise<void> {
       "Something went wrong. Please try again.",
     );
     if (message !== "Something went wrong. Please try again.") {
+      if (isApiError(error) && error.data.code === "auth.password.invalid") {
+        setApiError("password", message);
+      }
       if (isApiError(error) && error.data.code === "conflict.this_phone_number_is_already_linked_to_another_user") {
         setApiError("phone", message);
       }
@@ -213,7 +226,7 @@ async function handleRegister(): Promise<void> {
           <base-input
             v-model="registerFormState.phone"
             name="phone"
-            label="PHONE NUMBER"
+            label="PHONE NUMBER *"
             placeholder="Your phone number"
             type="tel"
             leading-icon="i-lucide-phone"
@@ -226,6 +239,7 @@ async function handleRegister(): Promise<void> {
             placeholder="Create a password"
             type="password"
             leading-icon="i-lucide-lock"
+            @input="clearApiError"
           />
 
           <base-button
