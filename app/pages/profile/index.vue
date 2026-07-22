@@ -28,7 +28,8 @@ const { pagination } = usePagination(10);
 const loading = ref(true);
 const formRef = ref<InstanceType<typeof UForm> | null>(null);
 const activeTab = ref("TODAY");
-const activeSidebarTab = ref<"info" | "bookings" | "password">("info");
+const activeSidebarTab = ref<"info" | "bookings" | "pass" | "password">("info");
+const activePassTab = ref("ACTIVE");
 
 const { success, error: showError } = useNotification();
 const loadingPassword = ref(false);
@@ -72,7 +73,9 @@ async function handleUpdatePassword() {
       currentPassword: passwordForm.currentPassword,
       newPassword: passwordForm.newPassword,
     };
-    await authStore.updatePassword(payload as { currentPassword: string; newPassword: string });
+    await authStore.updatePassword(
+      payload as { currentPassword: string; newPassword: string },
+    );
     success({ message: "Password updated successfully." });
     passwordForm.currentPassword = "";
     passwordForm.newPassword = "";
@@ -234,6 +237,11 @@ const tabs = computed(() => {
     { value: "PAST", label: `PAST (${pastCount})` },
     { value: "CANCELED", label: `CANCELED (${user.value.stats.canceled})` },
   ];
+});
+
+const filteredPasses = computed(() => {
+  const passes = dashboardData.value?.passes || [];
+  return passes.filter(p => p.status.toUpperCase() === activePassTab.value);
 });
 
 watch(activeTab, async () => {
@@ -402,6 +410,17 @@ onMounted(async () => {
             <button
               class="w-full flex items-center justify-start px-6 py-3.5 text-xs font-bold tracking-widest uppercase transition-colors"
               :class="
+                activeSidebarTab === 'pass'
+                  ? 'bg-[#B59A6D] text-white'
+                  : 'text-secondary-900 dark:text-stone-300 hover:bg-[#C9A55A1A]'
+              "
+              @click="activeSidebarTab = 'pass'"
+            >
+              MY PASS
+            </button>
+            <button
+              class="w-full flex items-center justify-start px-6 py-3.5 text-xs font-bold tracking-widest uppercase transition-colors"
+              :class="
                 activeSidebarTab === 'password'
                   ? 'bg-[#B59A6D] text-white'
                   : 'text-secondary-900 dark:text-stone-300 hover:bg-[#C9A55A1A]'
@@ -448,9 +467,7 @@ onMounted(async () => {
                   {{ user.membership.period }}
                 </div>
               </div>
-              <div
-                class="flex justify-between items-end pt-2 mt-4"
-              >
+              <div class="flex justify-between items-end pt-2 mt-4">
                 <div>
                   <div
                     class="text-[9px] font-bold tracking-widest uppercase text-stone-500 mb-1"
@@ -620,6 +637,185 @@ onMounted(async () => {
             />
           </div>
 
+          <!-- MY PASSES CONTENT -->
+          <div v-if="activeSidebarTab === 'pass'">
+            <div
+              class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8"
+            >
+              <div>
+                <h3
+                  class="flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-[#B59A6D] mb-2"
+                >
+                  <UIcon name="i-lucide-ticket" class="w-4 h-4" />
+                  MY PASSES
+                </h3>
+                <p class="text-sm text-stone-400 font-light">
+                  View and manage your active and past passes.
+                </p>
+              </div>
+              <base-button :to="{ path: '/membership', query: { tab: 'passes' } }">
+                PURCHASE NEW PASS
+              </base-button>
+            </div>
+
+            <div
+              v-if="filteredPasses.length > 0"
+              class="flex flex-col gap-6 mb-8"
+            >
+              <div
+                v-for="pass in filteredPasses"
+                :key="pass.id"
+                class="bg-card border border-border rounded-sm flex flex-col md:flex-row overflow-hidden"
+              >
+                <div
+                  class="bg-[#F3EFE9] dark:bg-[#2A2621] w-full md:w-[280px] p-6 flex flex-col justify-between shrink-0 relative"
+                >
+                  <div
+                    class="absolute top-0 right-0 w-full h-full pointer-events-none select-none opacity-20 dark:opacity-10"
+                  >
+                    <img
+                      :src="IMAGES.LEAF"
+                      class="w-full h-full object-cover"
+                    >
+                  </div>
+                  <div class="relative z-10 flex justify-end mb-8">
+                    <UIcon
+                      name="i-lucide-star"
+                      class="w-6 h-6 text-[#B59A6D]"
+                    />
+                  </div>
+                  <div class="relative z-10">
+                    <h3 class="font-serif text-3xl text-foreground mb-1">
+                      KORA
+                    </h3>
+                    <p
+                      class="text-sm font-light text-foreground mb-4 uppercase"
+                    >
+                      {{ pass.name }}
+                    </p>
+                  </div>
+                  <div class="relative z-10 mt-12">
+                    <p
+                      class="text-[9px] font-bold tracking-widest uppercase text-[#B59A6D]"
+                    >
+                      DEEPEN THE PRACTICE
+                    </p>
+                  </div>
+                </div>
+
+                <div class="p-6 md:p-8 flex-1 flex flex-col justify-between">
+                  <div>
+                    <div
+                      class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8 border-b border-border pb-8"
+                    >
+                      <div>
+                        <div
+                          class="text-[9px] font-bold tracking-widest uppercase text-stone-500 mb-1"
+                        >
+                          PASS TYPE
+                        </div>
+                        <div class="text-lg font-serif text-foreground">
+                          {{ pass.name }}
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          class="text-[9px] font-bold tracking-widest uppercase text-stone-500 mb-1"
+                        >
+                          PURCHASED ON
+                        </div>
+                        <div
+                          class="flex items-center gap-2 text-sm text-foreground"
+                        >
+                          <UIcon
+                            name="i-lucide-calendar"
+                            class="w-4 h-4 text-stone-400"
+                          />
+                          {{ formatDate(pass.startsOn) }}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      class="text-[10px] font-bold tracking-widest uppercase text-stone-500 mb-4"
+                    >
+                      PASS DETAILS
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                      <div>
+                        <div
+                          class="text-[9px] font-bold tracking-widest uppercase text-stone-500 mb-1"
+                        >
+                          Valid From
+                        </div>
+                        <div class="text-sm text-foreground">
+                          {{ formatDate(pass.startsOn) }}
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          class="text-[9px] font-bold tracking-widest uppercase text-stone-500 mb-1"
+                        >
+                          Valid Until
+                        </div>
+                        <div class="text-sm text-foreground">
+                          {{ formatDate(pass.endsOn) }}
+                        </div>
+                      </div>
+                      <div>
+                        <div
+                          class="text-[9px] font-bold tracking-widest uppercase text-stone-500 mb-1"
+                        >
+                          Total Price
+                        </div>
+                        <div class="text-sm text-foreground">
+                          {{ pass.currency }} {{ pass.price }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              v-else
+              class="py-12 flex flex-col items-center justify-center text-center bg-card border border-border rounded-sm mb-8"
+            >
+              <div
+                class="w-14 h-14 border border-border bg-[#C9A55A1A] flex items-center justify-center text-[#B59A6D] rounded-full mb-4"
+              >
+                <UIcon name="i-lucide-ticket" class="w-6 h-6" />
+              </div>
+              <h4 class="font-serif text-2xl text-foreground mb-2">
+                No Passes Found
+              </h4>
+              <p class="text-sm text-stone-400 font-light mb-6">
+                You do not have any {{ activePassTab.toLowerCase() }} passes.
+              </p>
+            </div>
+
+            <!-- About Passes Alert -->
+            <div
+              class="bg-card border border-border rounded-sm p-6 flex items-start gap-4"
+            >
+              <UIcon
+                name="i-lucide-alert-circle"
+                class="w-5 h-5 text-stone-500 shrink-0 mt-0.5"
+              />
+              <div>
+                <h4
+                  class="text-[10px] font-bold tracking-widest uppercase text-stone-500 mb-1"
+                >
+                  ABOUT PASSES
+                </h4>
+                <p class="text-xs text-stone-400">
+                  Passes allow you to book sessions based on the validity and
+                  usage limit. Make sure to check the details before booking.
+                </p>
+              </div>
+            </div>
+          </div>
+
           <!-- UPDATE PASSWORD CONTENT -->
           <div v-if="activeSidebarTab === 'password'">
             <h3
@@ -629,7 +825,9 @@ onMounted(async () => {
               CHANGE PASSWORD
             </h3>
 
-            <div class="bg-[#C9A55A1A] border border-border rounded-sm p-6 mb-8">
+            <div
+              class="bg-[#C9A55A1A] border border-border rounded-sm p-6 mb-8"
+            >
               <h4 class="text-sm font-bold text-foreground mb-3">
                 Password Requirements
               </h4>
