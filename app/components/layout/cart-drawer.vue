@@ -112,35 +112,6 @@ function handleRemoveItem() {
           :key="item.referenceId"
           class="flex gap-4 pb-6 border-b border-border"
         >
-          <!-- <div
-            v-if="
-              item.type === 'class'
-                || item.type === 'event'
-                || item.type === 'workshop'
-                || item.type === 'spa'
-            "
-            class="w-24 h-24 shrink-0 overflow-hidden relative"
-          >
-            <img
-              v-if="item.image"
-              :src="item.image"
-              :alt="item.title"
-              class="w-full h-full object-cover"
-            >
-          </div>
-          <div
-            v-else-if="item.itemType === 'pass'"
-            class="w-24 h-24 border border-border/20 flex items-center justify-center shrink-0 text-primary/60"
-          >
-            <UIcon name="i-lucide-badge" class="w-8 h-8" />
-          </div>
-          <div
-            v-else-if="item.itemType === 'membership'"
-            class="w-24 h-24 border border-border/20 flex items-center justify-center shrink-0 text-primary/60"
-          >
-            <UIcon name="i-lucide-star" class="w-8 h-8" />
-          </div> -->
-
           <!-- Item Details -->
           <div class="flex-1 flex flex-col pt-1">
             <span v-if="item.bookingFor === 'visitor'" class="text-[10px] uppercase text-primary-700">

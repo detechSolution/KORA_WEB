@@ -4,6 +4,7 @@ import { ref } from "vue";
 import { getHttp } from "~/composables/use-api";
 import { useStorage } from "~/composables/use-storage";
 import { API_ENDPOINTS } from "~/config/constants";
+import { useCartStore } from "./cart";
 
 // Cache duration: 5 minutes
 const AUTH_CHECK_INTERVAL = 5 * 60 * 1000;
@@ -114,6 +115,8 @@ export const useAuthStore = defineStore("auth", () => {
 
   const clearCartItems = () => {
     try {
+      const cartStore = useCartStore();
+      cartStore.clearCart();
       localStorage.removeItem("cartItems");
     }
     catch {

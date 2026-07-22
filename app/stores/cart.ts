@@ -75,6 +75,11 @@ export const useCartStore = defineStore("cart", () => {
     isPromoValid.value = false;
   };
 
+  const clearCart = () => {
+    cartItems.value = [];
+    removePromoCode();
+  };
+
   return {
     cartItems,
     promoCode,
@@ -87,5 +92,6 @@ export const useCartStore = defineStore("cart", () => {
     removeItem,
     applyPromoCode,
     removePromoCode,
+    clearCart,
   };
 });
