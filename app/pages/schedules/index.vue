@@ -65,7 +65,8 @@ const sessions = computed(() => {
     start: normalizeDateTime(session.startsAt),
     end: normalizeDateTime(session.endsAt),
     location: session.venue,
-    spotsLeft: session.capacity - session.remainingSpots,
+    spotsLeft: session.remainingSpots,
+    spotsFilled: session.capacity - session.remainingSpots,
     capacity: session.capacity,
     price: `Rs. ${session.price}`,
   }));
@@ -463,7 +464,7 @@ onMounted(() => {
 
                         <div>
                           <UProgress
-                            v-model="event.spotsLeft"
+                            v-model="event.spotsFilled"
                             :max="event.capacity"
                             class="my-4 bg-transparent h-0.5"
                             :color="getProgressColor(event.type)"
