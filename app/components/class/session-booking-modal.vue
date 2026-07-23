@@ -58,6 +58,18 @@ const MEMBERSHIP_DISCOUNT = benefits.member.class || 0;
 const GUEST_DISCOUNT = benefits.guest.class || 0;
 const PASS_DISCOUNT = passesBenefits.class || 0;
 
+const discountType = computed(() => {
+  if (MEMBERSHIP_DISCOUNT > 0) {
+    return "Membership Discount";
+  }
+
+  if (PASS_DISCOUNT > 0) {
+    return "Pass Discount";
+  }
+
+  return null;
+});
+
 const activeDiscount = computed(() => {
   if (state.bookingPreference !== "myself") {
     return GUEST_DISCOUNT;
@@ -558,7 +570,7 @@ function close() {
                       v-if="showDiscount"
                       class="flex justify-between text-sm font-normal text-secondary-500 dark:text-secondary-400"
                     >
-                      <h2>Membership Discount ({{ activeDiscount }}%)</h2>
+                      <h2>{{ discountType }} ({{ activeDiscount }}%)</h2>
                       <p>- Rs. {{ formatPrice(pricing.discountAmount) }}</p>
                     </div>
                   </div>

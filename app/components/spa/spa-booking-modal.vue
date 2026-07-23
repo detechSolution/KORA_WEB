@@ -81,6 +81,18 @@ const state = reactive({
   guests: [] as Guest[],
 });
 
+const discountType = computed(() => {
+  if (MEMBERSHIP_DISCOUNT > 0) {
+    return "Membership Discount";
+  }
+
+  if (PASS_DISCOUNT > 0) {
+    return "Pass Discount";
+  }
+
+  return null;
+});
+
 const activeDiscount = computed(() => {
   return state.bookingPreference === "myself"
     ? MEMBERSHIP_DISCOUNT || PASS_DISCOUNT
@@ -782,7 +794,7 @@ watch(
                       v-if="showDiscount"
                       class="flex justify-between text-sm font-normal text-secondary-500 dark:text-secondary-400"
                     >
-                      <h2>Membership Discount ({{ activeDiscount }}%)</h2>
+                      <h2>{{ discountType }} ({{ activeDiscount }}%)</h2>
                       <p>- Rs. {{ formatPrice(pricing.discountAmount) }}</p>
                     </div>
                   </div>
