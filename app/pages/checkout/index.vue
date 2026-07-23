@@ -86,12 +86,11 @@ function goBack() {
 }
 
 async function handlePayNowClick() {
-  if (authStore.isAuthenticated) {
-    if (authStore.isMembershipFrozen()) {
-      showError({
-        message: "Your membership is currently frozen. Booking is disabled.",
-      });
-    }
+  if (authStore.isAuthenticated && authStore.isMembershipFrozen()) {
+    showError({
+      message: "Your membership is currently frozen. Booking is disabled.",
+    });
+    return;
   }
 
   if (step.value === 1) {

@@ -51,17 +51,15 @@ function handleRemoveItem() {
 }
 
 function handleProceedToCheckout() {
-  if (authStore.isAuthenticated) {
-    if (authStore.isMembershipFrozen()) {
-      showError({
-        message: "Your membership is currently frozen. Booking is disabled.",
-      });
-    }
+  if (authStore.isAuthenticated && authStore.isMembershipFrozen()) {
+    showError({
+      message: "Your membership is currently frozen. Booking is disabled.",
+    });
+    return;
   }
-  else {
-    router.push("/checkout");
-    close();
-  }
+
+  router.push("/checkout");
+  close();
 }
 </script>
 
@@ -135,7 +133,10 @@ function handleProceedToCheckout() {
         >
           <!-- Item Details -->
           <div class="flex-1 flex flex-col pt-1">
-            <span v-if="item.bookingFor === 'visitor'" class="text-[10px] uppercase text-primary-700">
+            <span
+              v-if="item.bookingFor === 'visitor'"
+              class="text-[10px] uppercase text-primary-700"
+            >
               {{ "Guest" }}
             </span>
             <div class="flex justify-between items-start gap-4">
@@ -144,8 +145,10 @@ function handleProceedToCheckout() {
                   {{ item.title }}
                   <br>
                   <span v-if="item.itemType !== 'membership'">
-                    (<span class="text-xl">{{ item.visitors.length > 0 ? item.visitors.length : 1 }} x
-                      {{ formatPrice(item.unitPriceAfterDiscount) }}</span>)
+                    (<span class="text-xl">{{
+                      item.visitors.length > 0 ? item.visitors.length : 1
+                    }}
+                      x {{ formatPrice(item.unitPriceAfterDiscount) }}</span>)
                   </span>
                 </h4>
                 <span
@@ -223,10 +226,7 @@ function handleProceedToCheckout() {
             }}</span>
           </div>
 
-          <base-button
-            class="w-full"
-            @click="handleProceedToCheckout"
-          >
+          <base-button class="w-full" @click="handleProceedToCheckout">
             Proceed to Checkout
           </base-button>
         </div>
