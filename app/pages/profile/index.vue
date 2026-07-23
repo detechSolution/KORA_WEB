@@ -92,6 +92,9 @@ async function handleUpdatePassword() {
 }
 
 const profileSchema = z.object({
+  fullName: z.string().min(1, "Full name is required"),
+  phone: z.string().min(1, "Phone number is required"),
+  email: z.string().email("Invalid email address"),
   height: z.string().optional(),
   weight: z.string().optional(),
   injuryHistory: z.string().optional(),
@@ -100,6 +103,9 @@ const profileSchema = z.object({
 
 type ProfileSchema = z.output<typeof profileSchema>;
 const profileForm = reactive<Partial<ProfileSchema>>({
+  fullName: "",
+  phone: "",
+  email: "",
   height: "",
   weight: "",
   injuryHistory: "",
@@ -120,12 +126,15 @@ async function handleUpdateProfile() {
   try {
     loadingProfile.value = true;
     const payload = {
+      fullName: profileForm.fullName,
+      phoneNumber: profileForm.phone,
       height: profileForm.height,
       weight: profileForm.weight,
       injuryHistory: profileForm.injuryHistory,
       preferences: profileForm.preferences,
     };
     await authStore.updateProfile(payload);
+    await authStore.checkAuth(true);
     success({ message: "Profile updated successfully." });
   }
   catch (error: any) {
@@ -254,6 +263,11 @@ onMounted(async () => {
       const storedUserData = localStorage.getItem("user_data");
       if (storedUserData) {
         const parsed = JSON.parse(storedUserData);
+
+        profileForm.fullName = parsed.name || "";
+        profileForm.phone = parsed.phone || "";
+        profileForm.email = parsed.email || "";
+
         if (parsed?.profile) {
           profileForm.height = parsed.profile.height || "";
           profileForm.weight = parsed.profile.weight || "";
@@ -518,57 +532,118 @@ onMounted(async () => {
 
             <!-- Personal Details Form -->
             <div>
-              <h3
-                class="flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-[#B59A6D] mb-6"
-              >
-                <UIcon name="i-lucide-file-text" class="w-4 h-4" />
-                PERSONAL DETAILS
-              </h3>
+              <div class="flex flex-col mb-6">
+                <h3
+                  class="flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-[#B59A6D]"
+                >
+                  <UIcon name="i-lucide-file-text" class="w-4 h-4" />
+                  PERSONAL DETAILS
+                </h3>
+              </div>
 
-              <UForm
-                ref="profileFormRef"
-                :schema="profileSchema"
-                :state="profileForm"
-                class="mb-8"
-                @submit="handleUpdateProfile"
-              >
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                  <base-input
-                    v-model="profileForm.height"
-                    name="height"
-                    type="text"
-                    label="HEIGHT"
-                    placeholder="Enter height in feet"
-                  />
+              <div class="border-b border-border">
+                <UForm
+                  ref="profileFormRef"
+                  :schema="profileSchema"
+                  :state="profileForm"
+                >
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <base-input
+                      v-model="profileForm.fullName"
+                      name="fullName"
+                      type="text"
+                      label="FULL NAME"
+                      placeholder="Enter your full name"
+                    />
 
-                  <base-input
-                    v-model="profileForm.weight"
-                    name="weight"
-                    type="text"
-                    label="WEIGHT"
-                    placeholder="Enter weight in kg"
-                  />
+                    <base-input
+                      v-model="profileForm.phone"
+                      name="phone"
+                      type="text"
+                      label="PHONE NUMBER"
+                      placeholder="Enter your phone number"
+                    />
 
-                  <base-input
-                    v-model="profileForm.injuryHistory"
-                    name="injuryHistory"
-                    type="text"
-                    label="INJURY HISTORY"
-                    placeholder="Enter your injury history"
-                  />
+                    <base-input
+                      v-model="profileForm.email"
+                      name="email"
+                      type="email"
+                      label="EMAIL ADDRESS"
+                      placeholder="Enter your email"
+                      disabled
+                    />
+                  </div>
+                </UForm>
+              </div>
+            </div>
 
-                  <base-input
-                    v-model="profileForm.preferences"
-                    name="preferences"
-                    type="text"
-                    label="PREFERENCE"
-                    placeholder="Enter your preferences"
+            <!-- Health & Preferences Form -->
+            <div>
+              <div class="flex flex-col mb-6">
+                <h3
+                  class="flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-[#B59A6D]"
+                >
+                  <UIcon
+                    name="i-lucide-heart-pulse"
+                    class="w-4 h-4 text-[#B59A6D]"
                   />
-                </div>
-                <base-button type="submit" :loading="loadingProfile">
-                  UPDATE INFO
-                </base-button>
-              </UForm>
+                  HEALTH & PREFERENCES
+                </h3>
+              </div>
+
+              <div>
+                <UForm
+                  ref="profileFormRef"
+                  :schema="profileSchema"
+                  :state="profileForm"
+                  @submit="handleUpdateProfile"
+                >
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <base-input
+                      v-model="profileForm.height"
+                      name="height"
+                      type="text"
+                      label="HEIGHT"
+                      placeholder="Enter height in feet"
+                    />
+
+                    <base-input
+                      v-model="profileForm.weight"
+                      name="weight"
+                      type="text"
+                      label="WEIGHT"
+                      placeholder="Enter weight in kg"
+                    />
+
+                    <base-input
+                      v-model="profileForm.injuryHistory"
+                      name="injuryHistory"
+                      type="text"
+                      label="INJURY HISTORY"
+                      placeholder="Enter your injury history"
+                    />
+
+                    <base-input
+                      v-model="profileForm.preferences"
+                      name="preferences"
+                      type="text"
+                      label="PREFERENCE"
+                      placeholder="Enter your preferences"
+                    />
+                  </div>
+                  <div
+                    class="flex justify-end pt-6 border-t border-border mt-4"
+                  >
+                    <base-button
+                      type="submit"
+                      :loading="loadingProfile"
+                      class="px-6"
+                    >
+                      SAVE CHANGES
+                    </base-button>
+                  </div>
+                </UForm>
+              </div>
             </div>
           </div>
 
@@ -653,7 +728,9 @@ onMounted(async () => {
                   View and manage your active and past passes.
                 </p>
               </div>
-              <base-button :to="{ path: '/membership', query: { tab: 'passes' } }">
+              <base-button
+                :to="{ path: '/membership', query: { tab: 'passes' } }"
+              >
                 PURCHASE NEW PASS
               </base-button>
             </div>
@@ -792,27 +869,6 @@ onMounted(async () => {
               <p class="text-sm text-stone-400 font-light mb-6">
                 You do not have any {{ activePassTab.toLowerCase() }} passes.
               </p>
-            </div>
-
-            <!-- About Passes Alert -->
-            <div
-              class="bg-card border border-border rounded-sm p-6 flex items-start gap-4"
-            >
-              <UIcon
-                name="i-lucide-alert-circle"
-                class="w-5 h-5 text-stone-500 shrink-0 mt-0.5"
-              />
-              <div>
-                <h4
-                  class="text-[10px] font-bold tracking-widest uppercase text-stone-500 mb-1"
-                >
-                  ABOUT PASSES
-                </h4>
-                <p class="text-xs text-stone-400">
-                  Passes allow you to book sessions based on the validity and
-                  usage limit. Make sure to check the details before booking.
-                </p>
-              </div>
             </div>
           </div>
 
