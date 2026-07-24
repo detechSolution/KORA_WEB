@@ -344,7 +344,7 @@ onMounted(async () => {
           <base-button
             :variant="index === 1 ? 'solid' : 'outline'"
             class="w-full"
-            :disabled="!tier.selectedOption || hasMembership"
+            :disabled="!tier.selectedOption || hasMembership || hasActivePass"
             @click="openMembershipModal(tier)"
           >
             BEGIN NOW
