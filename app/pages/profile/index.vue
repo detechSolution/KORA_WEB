@@ -25,6 +25,7 @@ const authStore = useAuthStore();
 const memberStore = useMemberStore();
 const { pagination } = usePagination(10);
 
+const storedUserData = localStorage.getItem("user_data");
 const loading = ref(true);
 const formRef = ref<InstanceType<typeof UForm> | null>(null);
 const activeTab = ref("TODAY");
@@ -115,6 +116,20 @@ const profileForm = reactive<Partial<ProfileSchema>>({
 const profileFormRef = ref<InstanceType<typeof UForm> | null>(null);
 const loadingProfile = ref(false);
 
+function handleProfileTabClick(tab: "info" | "bookings" | "pass" | "password") {
+  activeSidebarTab.value = tab;
+
+  if (tab === "pass") {
+    if (!storedUserData) {
+      return;
+    }
+    const parsed = JSON.parse(storedUserData);
+
+    profileForm.fullName = parsed.name || "";
+    profileForm.phone = parsed.phone || "";
+    profileForm.email = parsed.email || "";
+  }
+}
 async function handleUpdateProfile() {
   try {
     await profileFormRef.value?.validate();
@@ -260,7 +275,6 @@ watch(activeTab, async () => {
 onMounted(async () => {
   if (import.meta.client) {
     try {
-      const storedUserData = localStorage.getItem("user_data");
       if (storedUserData) {
         const parsed = JSON.parse(storedUserData);
 
@@ -406,7 +420,7 @@ onMounted(async () => {
                   ? 'bg-[#B59A6D] text-white'
                   : 'text-secondary-900 dark:text-stone-300 hover:bg-[#C9A55A1A]'
               "
-              @click="activeSidebarTab = 'info'"
+              @click="handleProfileTabClick('info')"
             >
               MY INFO
             </button>
@@ -417,7 +431,7 @@ onMounted(async () => {
                   ? 'bg-[#B59A6D] text-white'
                   : 'text-secondary-900 dark:text-stone-300 hover:bg-[#C9A55A1A]'
               "
-              @click="activeSidebarTab = 'bookings'"
+              @click="handleProfileTabClick('bookings')"
             >
               MY BOOKINGS
             </button>
@@ -428,7 +442,7 @@ onMounted(async () => {
                   ? 'bg-[#B59A6D] text-white'
                   : 'text-secondary-900 dark:text-stone-300 hover:bg-[#C9A55A1A]'
               "
-              @click="activeSidebarTab = 'pass'"
+              @click="handleProfileTabClick('pass')"
             >
               MY PASS
             </button>
@@ -439,7 +453,7 @@ onMounted(async () => {
                   ? 'bg-[#B59A6D] text-white'
                   : 'text-secondary-900 dark:text-stone-300 hover:bg-[#C9A55A1A]'
               "
-              @click="activeSidebarTab = 'password'"
+              @click="handleProfileTabClick('password')"
             >
               UPDATE PASSWORD
             </button>
