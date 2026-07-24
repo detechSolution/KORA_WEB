@@ -8,6 +8,7 @@ import * as z from "zod";
 import { useNotification } from "~/composables/use-notification";
 
 import { useCartStore } from "~/stores/cart";
+import { useSessionStore } from "~/stores/session";
 import { useSpaStore } from "~/stores/spa";
 
 import { getApiErrorMessage } from "~/utils/error";
@@ -32,6 +33,7 @@ const emit = defineEmits<{
 const spaStore = useSpaStore();
 const { error: showError, success } = useNotification();
 const cartStore = useCartStore();
+const sessionStore = useSessionStore();
 const spa = computed(() => spaStore.spa);
 
 const steps = [
@@ -44,7 +46,7 @@ const steps = [
 const router = useRouter();
 const currentStep = ref(0);
 const formRef = ref<InstanceType<typeof UForm> | null>(null);
-const availableTimeSlots = ref<{ time: string; label: string }[]>([]);
+const availableTimeSlots = ref<{ time: string; label: string; availableCapacity?: number }[]>([]);
 const isTimeSlotLoading = ref(false);
 const selectedSpaModel = defineModel<any>("selectedSpa");
 
@@ -169,6 +171,27 @@ function resetGuests() {
 }
 
 function addGuest() {
+  const remainingGuestSpots = sessionStore.guestRemainingSpots;
+  const selectedTimeSlot = availableTimeSlots.value.find(slot => slot.time === state.selectedTime);
+  const availableCapacity = selectedTimeSlot?.availableCapacity ?? Infinity;
+
+  if (state.guests.length >= availableCapacity) {
+    showError({
+      message: `Only ${availableCapacity} spot(s) are available for this time.`,
+    });
+    return;
+  }
+
+  if (state.guests.length >= remainingGuestSpots) {
+    showError({
+      message:
+        remainingGuestSpots > 0
+          ? `You have ${remainingGuestSpots} guest spot(s) remaining on your membership.`
+          : "Your membership plan has reached its maximum guest allowance.",
+    });
+    return;
+  }
+
   state.guests.push(createGuest());
 }
 
@@ -322,8 +345,9 @@ async function fetchAvailableTimes() {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   try {
+    await sessionStore.fetchGuestRemainingSpots();
     const raw = localStorage.getItem("user_data");
     if (raw) {
       const user = JSON.parse(raw);
@@ -414,7 +438,7 @@ watch(
                 'cursor-pointer hover:bg-black/5 dark:hover:bg-white/5':
                   hasMembership,
                 'opacity-50 cursor-not-allowed pointer-events-none':
-                  !hasMembership,
+                  !hasMembership || sessionStore.guestRemainingSpots <= 0,
               }"
               @click="selectPreference('guest')"
             >

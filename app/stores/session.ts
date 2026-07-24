@@ -21,6 +21,7 @@ export const useSessionStore = defineStore("session", () => {
   });
 
   const loading = ref(false);
+  const guestRemainingSpots = ref<number>(0);
 
   const getSessions = async (
     params: SessionQueryParams = {},
@@ -76,13 +77,24 @@ export const useSessionStore = defineStore("session", () => {
       loading.value = false;
     }
   };
+  const fetchGuestRemainingSpots = async (): Promise<void> => {
+    try {
+      const response = (await http.get(`${API_ENDPOINTS.SESSION.REMAINING_GUEST}`)) as { guestRemainingSpots: number };
+      guestRemainingSpots.value = response?.guestRemainingSpots ?? 0;
+    }
+    catch (error) {
+      console.error("Failed to fetch remaining guest spots", error);
+    }
+  };
 
   return {
     sessions,
     loading,
+    guestRemainingSpots,
     getSessions,
     getSessionById,
     getSessionDetail,
     addToWaitlist,
+    fetchGuestRemainingSpots,
   };
 });

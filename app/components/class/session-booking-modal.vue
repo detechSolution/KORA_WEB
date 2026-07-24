@@ -140,7 +140,7 @@ function addGuest() {
     showError({
       message:
         remainingGuestSpots > 0
-          ? `Your membership plan allows a maximum of  ${remainingGuestSpots} guest(s).`
+          ? `You have ${remainingGuestSpots} guest spot(s) remaining on your membership.`
           : "Your membership plan has reached its maximum guest allowance.",
     });
 
