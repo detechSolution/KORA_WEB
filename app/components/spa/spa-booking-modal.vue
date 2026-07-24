@@ -48,8 +48,14 @@ const availableTimeSlots = ref<{ time: string; label: string }[]>([]);
 const isTimeSlotLoading = ref(false);
 const selectedSpaModel = defineModel<any>("selectedSpa");
 
+const dayMap = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 function isDateUnavailable(date: DateValue) {
-  return date.compare(today(getLocalTimeZone())) < 0;
+  if (date.compare(today(getLocalTimeZone())) < 0) {
+    return true;
+  }
+
+  const day = dayMap[date.toDate(getLocalTimeZone()).getDay()];
+  return !(spa.value?.availableDays ?? []).includes(day);
 }
 
 const defaultOpenSubtype = computed(() => {
