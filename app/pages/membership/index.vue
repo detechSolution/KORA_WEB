@@ -344,7 +344,7 @@ onMounted(async () => {
           <base-button
             :variant="index === 1 ? 'solid' : 'outline'"
             class="w-full"
-            :disabled="!tier.selectedOption || hasMembership"
+            :disabled="!tier.selectedOption || hasMembership || hasActivePass"
             @click="openMembershipModal(tier)"
           >
             BEGIN NOW
@@ -380,7 +380,7 @@ onMounted(async () => {
             v-if="pass.discount"
             class="inline-flex px-2 py-0.5 border border-primary/30 text-primary text-[9px] font-bold tracking-wider uppercase rounded-xs bg-primary/5 mb-4"
           >
-            {{ pass.discount }}% DISCOUNT
+            {{ pass.discount }}% DISCOUNT ON SPA / CAFE / SALON
           </span>
 
           <p
@@ -408,64 +408,6 @@ onMounted(async () => {
         membership durations.
       </p>
     </div>
-
-    <!-- Passes Section -->
-    <!-- <div
-      class="relative z-20 border-t border-border bg-[#F1EEEA] dark:bg-[#1D1D1E] py-28 mt-28"
-    >
-      <div class="relative z-20 text-center">
-        <base-section-label label="OUR PASSES" align="center" />
-
-        <p
-          class="text-sm md:text-base leading-relaxed text-secondary-500 dark:text-stone-400 font-light max-w-2xl mx-auto py-12"
-        >
-          Specialized passes curated by the KORA team for unique rituals and
-          focused pathways.
-        </p>
-      </div>
-
-      <div
-        class="relative z-20 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-400 mx-auto px-4 md:px-8"
-      >
-        <div
-          v-for="pass in membershipStore.passPlans"
-          :key="pass.id"
-          class="border border-[#E9DEC8] dark:border-border bg-card rounded-xs p-6 md:p-8 flex flex-col justify-between transition-all duration-300 group"
-        >
-          <div>
-            <div class="flex justify-between items-baseline gap-2 mb-3">
-              <h4
-                class="font-serif text-xl md:text-2xl text-foreground dark:text-white"
-              >
-                {{ pass.name }}
-              </h4>
-
-              <span
-                class="font-serif text-2xl text-primary font-normal shrink-0"
-              >
-                Rs. {{ pass.price?.toLocaleString() }}
-              </span>
-            </div>
-
-            <span
-              v-if="pass.discount"
-              class="inline-flex px-2 py-0.5 border border-primary/30 text-primary text-[9px] font-bold tracking-wider uppercase rounded-xs bg-primary/5 mb-4"
-            >
-              {{ pass.discount }}% DISCOUNT
-            </span>
-
-            <p
-              class="text-xs md:text-sm text-muted-foreground dark:text-white/60 leading-relaxed mb-8"
-              v-html="pass.description"
-            />
-          </div>
-
-          <base-button variant="outline" @click="openPassModal(pass)">
-            BEGIN NOW
-          </base-button>
-        </div>
-      </div>
-    </div> -->
 
     <!-- Modals -->
 

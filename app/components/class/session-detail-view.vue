@@ -224,10 +224,10 @@ async function handleAddToWaitlist() {
                 for="seats-left"
                 class="text-xs uppercase font-semibold block"
               >
-                Seats Left
+                Occupancy
               </span>
               <span class="text-primary text-xs">
-                {{ session.remainingSpots }} / {{ session.capacity }}
+                {{ session.remainingSpots }} spots left
               </span>
             </div>
             <UProgress
@@ -323,10 +323,6 @@ async function handleAddToWaitlist() {
               >
                 Add To Waitlist
               </base-button>
-
-              <span class="text-secondary-400 text-xs">
-                No instant payment required to reserve
-              </span>
             </div>
           </div>
         </aside>

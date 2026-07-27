@@ -10,4 +10,5 @@ export type ScheduleEvent = {
   spotsLeft: number;
   capacity: number;
   price: string;
+  spotsFilled?: number;
 };

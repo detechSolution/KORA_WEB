@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useNotification } from "~/composables/use-notification";
+import { useAuthStore } from "~/stores/auth";
 import { useCartStore } from "~/stores/cart";
 
 defineProps({
@@ -18,7 +21,11 @@ function close() {
 const isRemoveItemModalOpen = ref(false);
 const selectedItemId = ref<string | "">("");
 
+const router = useRouter();
+const authStore = useAuthStore();
 const cartStore = useCartStore();
+const { error: showError } = useNotification();
+
 const cartItems = computed(() => cartStore.cartItems);
 
 const totalPrice = computed(() => {
@@ -41,6 +48,18 @@ function handleRemoveItem() {
 
   isRemoveItemModalOpen.value = false;
   selectedItemId.value = "";
+}
+
+function handleProceedToCheckout() {
+  if (authStore.isAuthenticated && authStore.isMembershipFrozen()) {
+    showError({
+      message: "Your membership is currently frozen. Booking is disabled.",
+    });
+    return;
+  }
+
+  router.push("/checkout");
+  close();
 }
 </script>
 
@@ -112,38 +131,12 @@ function handleRemoveItem() {
           :key="item.referenceId"
           class="flex gap-4 pb-6 border-b border-border"
         >
-          <!-- <div
-            v-if="
-              item.type === 'class'
-                || item.type === 'event'
-                || item.type === 'workshop'
-                || item.type === 'spa'
-            "
-            class="w-24 h-24 shrink-0 overflow-hidden relative"
-          >
-            <img
-              v-if="item.image"
-              :src="item.image"
-              :alt="item.title"
-              class="w-full h-full object-cover"
-            >
-          </div>
-          <div
-            v-else-if="item.itemType === 'pass'"
-            class="w-24 h-24 border border-border/20 flex items-center justify-center shrink-0 text-primary/60"
-          >
-            <UIcon name="i-lucide-badge" class="w-8 h-8" />
-          </div>
-          <div
-            v-else-if="item.itemType === 'membership'"
-            class="w-24 h-24 border border-border/20 flex items-center justify-center shrink-0 text-primary/60"
-          >
-            <UIcon name="i-lucide-star" class="w-8 h-8" />
-          </div> -->
-
           <!-- Item Details -->
           <div class="flex-1 flex flex-col pt-1">
-            <span v-if="item.bookingFor === 'visitor'" class="text-[10px] uppercase text-primary-700">
+            <span
+              v-if="item.bookingFor === 'visitor'"
+              class="text-[10px] uppercase text-primary-700"
+            >
               {{ "Guest" }}
             </span>
             <div class="flex justify-between items-start gap-4">
@@ -152,8 +145,10 @@ function handleRemoveItem() {
                   {{ item.title }}
                   <br>
                   <span v-if="item.itemType !== 'membership'">
-                    (<span class="text-xl">{{ item.visitors.length > 0 ? item.visitors.length : 1 }} x
-                      {{ formatPrice(item.unitPriceAfterDiscount) }}</span>)
+                    (<span class="text-xl">{{
+                      item.visitors.length > 0 ? item.visitors.length : 1
+                    }}
+                      x {{ formatPrice(item.unitPriceAfterDiscount) }}</span>)
                   </span>
                 </h4>
                 <span
@@ -231,11 +226,7 @@ function handleRemoveItem() {
             }}</span>
           </div>
 
-          <base-button
-            to="/checkout"
-            class="w-full"
-            @click="close"
-          >
+          <base-button class="w-full" @click="handleProceedToCheckout">
             Proceed to Checkout
           </base-button>
         </div>

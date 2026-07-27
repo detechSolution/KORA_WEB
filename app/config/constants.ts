@@ -17,6 +17,7 @@ export const API_ENDPOINTS = {
 
   SESSION: {
     GET: "/api/v1/sessions/website",
+    REMAINING_GUEST: "/api/v1/sessions/remaining-guest",
     WAITLIST: (id: number) => `/api/v1/sessions/${id}/waitlist`,
   },
 

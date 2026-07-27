@@ -3,6 +3,7 @@ import type { PaymentProvider } from "~/types/payment";
 import { computed, onUnmounted, ref } from "vue";
 import { useNotification } from "~/composables/use-notification";
 import { usePayment } from "~/composables/use-payment";
+import { useAuthStore } from "~/stores/auth";
 import { useCartStore } from "~/stores/cart";
 import { getApiErrorMessage } from "~/utils/error";
 
@@ -14,6 +15,7 @@ useSeoMeta({
   title: "Kora | Checkout",
 });
 
+const authStore = useAuthStore();
 const cartStore = useCartStore();
 const { loading, payNow } = usePayment();
 const { error: showError } = useNotification();
@@ -24,7 +26,7 @@ const subtotal = computed(() => {
 });
 
 const step = ref(1);
-const inputPromoCode = ref("");
+// const inputPromoCode = ref("");
 const paymentMethod = ref<PaymentProvider>("stripe");
 const isRemoveItemModalOpen = ref(false);
 const selectedItemId = ref<string | "">("");
@@ -54,16 +56,16 @@ const totalItems = computed(() =>
   }, 0),
 );
 
-async function handleApplyPromo() {
-  if (inputPromoCode.value.trim()) {
-    await cartStore.applyPromoCode(inputPromoCode.value.trim());
-  }
-}
+// async function handleApplyPromo() {
+//   if (inputPromoCode.value.trim()) {
+//     await cartStore.applyPromoCode(inputPromoCode.value.trim());
+//   }
+// }
 
-function handleRemovePromo() {
-  cartStore.removePromoCode();
-  inputPromoCode.value = "";
-}
+// function handleRemovePromo() {
+//   cartStore.removePromoCode();
+//   inputPromoCode.value = "";
+// }
 
 function openRemoveModal(id: string) {
   selectedItemId.value = id;
@@ -84,6 +86,13 @@ function goBack() {
 }
 
 async function handlePayNowClick() {
+  if (authStore.isAuthenticated && authStore.isMembershipFrozen()) {
+    showError({
+      message: "Your membership is currently frozen. Booking is disabled.",
+    });
+    return;
+  }
+
   if (step.value === 1) {
     step.value = 2;
   }
@@ -115,7 +124,7 @@ async function handlePayNowClick() {
           }),
         })),
 
-        promoCode: cartStore.promoCode,
+        // promoCode: cartStore.promoCode,
       };
 
       await payNow(payload);
@@ -180,36 +189,6 @@ onUnmounted(() => {
                   :key="item.referenceId"
                   class="flex gap-4 pb-6 border-b border-border/10"
                 >
-                  <!-- Image / Icon -->
-                  <!-- <div
-                    v-if="
-                      item.type === 'class'
-                        || item.type === 'event'
-                        || item.type === 'workshop'
-                        || item.type === 'spa'
-                    "
-                    class="w-20 h-20 bg-muted shrink-0 overflow-hidden relative"
-                  >
-                    <img
-                      v-if="item.image"
-                      :src="item.image"
-                      :alt="item.title"
-                      class="w-full h-full object-cover"
-                    >
-                  </div>
-                  <div
-                    v-else-if="item.itemType === 'pass'"
-                    class="w-20 h-20 border border-border flex items-center justify-center shrink-0 text-primary/60"
-                  >
-                    <UIcon name="i-lucide-badge" class="w-6 h-6" />
-                  </div>
-                  <div
-                    v-else-if="item.itemType === 'membership'"
-                    class="w-20 h-20 border border-border flex items-center justify-center shrink-0 text-primary/60"
-                  >
-                    <UIcon name="i-lucide-star" class="w-6 h-6" />
-                  </div> -->
-
                   <!-- Item Details -->
                   <div class="flex-1 flex flex-col">
                     <span
@@ -468,7 +447,7 @@ onUnmounted(() => {
                 <h2>Items Count ({{ totalItems }} items)</h2>
                 <p>Rs. {{ formatPrice(subtotal) }}</p>
               </div>
-              <div
+              <!-- <div
                 v-if="discountValue > 0"
                 class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between border-b border-border pb-2"
               >
@@ -486,7 +465,7 @@ onUnmounted(() => {
                 <p v-else>
                   - Rs. {{ formatPrice(discountValue) }}
                 </p>
-              </div>
+              </div> -->
 
               <div
                 class="text-2xl text-secondary dark:text-white font-normal flex justify-between pt-1 font-serif"
@@ -500,7 +479,8 @@ onUnmounted(() => {
               </div>
             </div>
 
-            <div class="flex flex-col gap-2 w-full mt-9">
+            <!-- Commented for now as it can be needed later -->
+            <!-- <div class="flex flex-col gap-2 w-full mt-9">
               <div class="flex items-end w-full gap-4">
                 <div class="flex-1">
                   <base-input
@@ -538,7 +518,7 @@ onUnmounted(() => {
               <p v-else class="text-xs text-red-500">
                 {{ cartStore.promoError }}
               </p>
-            </div>
+            </div> -->
           </div>
         </div>
 
