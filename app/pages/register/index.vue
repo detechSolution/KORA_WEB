@@ -33,6 +33,13 @@ const schema = z
     fullName: z.string().min(1, "Full name is required"),
     email: z.string().min(1, "Email is required").email("Invalid email"),
     phone: z.string().min(1, "Phone number is required"),
+    // password: z
+    //   .string()
+    //   .min(8, "Password must be at least 8 characters long")
+    //   .regex(
+    //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
+    //     "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+    //   ),
     password: z.string().min(1, "Password is required"),
   })
   .superRefine((data, ctx) => {
@@ -70,7 +77,10 @@ const registerFormState = reactive<Partial<Schema>>({
   password: "",
 });
 
-function setApiError(field: "email" | "phone" | "password", message: string): void {
+function setApiError(
+  field: "email" | "phone" | "password",
+  message: string,
+): void {
   apiError[field] = message;
 }
 
@@ -125,13 +135,21 @@ async function handleRegister(): Promise<void> {
       "Something went wrong. Please try again.",
     );
     if (message !== "Something went wrong. Please try again.") {
-      if (isApiError(error) && error.data.code === "auth.password.invalid") {
+      if (isApiError(error) && (error.data.code === "auth.password.invalid" || error.data.code === "auth.password.too_short")) {
         setApiError("password", message);
       }
-      if (isApiError(error) && error.data.code === "conflict.this_phone_number_is_already_linked_to_another_user") {
+      if (
+        isApiError(error)
+        && error.data.code
+        === "conflict.this_phone_number_is_already_linked_to_another_user"
+      ) {
         setApiError("phone", message);
       }
-      if (isApiError(error) && error.data.code === "conflict.this_email_is_already_linked_to_another_phone_number") {
+      if (
+        isApiError(error)
+        && error.data.code
+        === "conflict.this_email_is_already_linked_to_another_phone_number"
+      ) {
         setApiError("email", message);
       }
       formRef.value?.validate();
