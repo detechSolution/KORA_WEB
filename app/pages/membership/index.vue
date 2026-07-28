@@ -34,7 +34,9 @@ const membershipPeriods = [
 const loading = ref(true);
 const isPassModalOpen = ref(false);
 const selectedPass = ref<any>(null);
-const activePeriod = ref((route.query.tab as string)?.toUpperCase() || "MONTHLY");
+const activePeriod = ref(
+  (route.query.tab as string)?.toUpperCase() || "MONTHLY",
+);
 const isMembershipModalOpen = ref(false);
 const selectedMembershipTier = ref<any>(null);
 const selectedMembershipPrice = ref<string>("");
@@ -356,7 +358,7 @@ onMounted(async () => {
       v-else-if="
         activePeriod === 'PASSES' && membershipStore.passPlans.length > 0
       "
-      class="relative z-20 grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-400 mx-auto mt-16 px-4 md:px-8"
+      class="relative z-20 grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-400 mx-auto mt-16 mb-12 px-4 md:px-8"
     >
       <div
         v-for="pass in membershipStore.passPlans"
@@ -371,7 +373,7 @@ onMounted(async () => {
               {{ pass.name }}
             </h4>
 
-            <span class="font-serif text-2xl text-primary font-normal shrink-0">
+            <span class="font-serif text-2xl font-normal shrink-0">
               Rs. {{ pass.price?.toLocaleString() }}
             </span>
           </div>
@@ -383,8 +385,25 @@ onMounted(async () => {
             {{ pass.discount }}% DISCOUNT ON SPA / CAFE / SALON
           </span>
 
-          <p
-            class="text-xs md:text-sm text-muted-foreground dark:text-white/60 leading-relaxed mb-8"
+          <div v-if="/<li[\s>]/i.test(pass.description)">
+            <ul class="space-y-2 my-8">
+              <li
+                v-for="(feature, idx) in getDescriptionItems(pass.description)"
+                :key="idx"
+                class="flex items-start text-sm text-foreground/80 dark:text-white/80"
+              >
+                <UIcon
+                  name="i-lucide-check"
+                  class="w-4 h-4 text-primary shrink-0 mr-3 mt-0.5"
+                />
+                <span>{{ feature }}</span>
+              </li>
+            </ul>
+          </div>
+
+          <div
+            v-else
+            class="my-4 text-sm text-foreground/80 dark:text-white/80 leading-7"
             v-html="pass.description"
           />
         </div>
