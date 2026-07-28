@@ -169,6 +169,7 @@ onMounted(() => {
             />
             <UAccordion
               :items="spa?.subTypes"
+              default-value="0"
               :ui="{
                 item: 'p-6 bg-card',
               }"

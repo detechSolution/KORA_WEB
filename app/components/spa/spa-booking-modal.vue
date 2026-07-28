@@ -62,11 +62,11 @@ function isDateUnavailable(date: DateValue) {
 
 const defaultOpenSubtype = computed(() => {
   if (!selectedSpaModel.value?.referenceId || !spa.value?.subTypes)
-    return undefined;
+    return "0";
   const index = spa.value.subTypes.findIndex(
     (st: any) => st.id === selectedSpaModel.value.referenceId,
   );
-  return index !== -1 ? String(index) : undefined;
+  return index !== -1 ? String(index) : "0";
 });
 
 const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");

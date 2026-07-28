@@ -182,7 +182,7 @@ async function handleAddToWaitlist() {
               </div>
               <div class="border border-border/60 bg-card/40 px-4 py-4">
                 <UIcon
-                  name="i-lucide-calendar-days"
+                  name="i-lucide-clock"
                   class="mt-0.5 h-3.5 w-3.5 text-primary"
                 />
                 <p class="text-xs uppercase text-secondary-500 mb-2">
@@ -195,11 +195,11 @@ async function handleAddToWaitlist() {
               </div>
               <div class="border border-border/60 bg-card/40 px-4 py-4">
                 <UIcon
-                  name="i-lucide-calendar-days"
+                  name="i-lucide-user"
                   class="mt-0.5 h-3.5 w-3.5 text-primary"
                 />
                 <p class="text-xs uppercase text-secondary-500 mb-2">
-                  Facilitator
+                  Instructor
                 </p>
                 <p class="text-sm text-foreground">
                   {{ session.instructorName }}
@@ -207,7 +207,7 @@ async function handleAddToWaitlist() {
               </div>
               <div class="border border-border/60 bg-card/40 px-4 py-4">
                 <UIcon
-                  name="i-lucide-calendar-days"
+                  name="i-lucide-map-pin"
                   class="mt-0.5 h-3.5 w-3.5 text-primary"
                 />
                 <p class="text-xs uppercase text-secondary-500 mb-2">

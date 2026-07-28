@@ -301,12 +301,6 @@ onMounted(async () => {
               >
                 {{ tier.name }}
               </h3>
-
-              <p
-                class="font-sans text-[10px] font-bold text-primary uppercase mt-0.5"
-              >
-                {{ tier.currency }}
-              </p>
             </div>
           </div>
 
