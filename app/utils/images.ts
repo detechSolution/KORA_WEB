@@ -43,6 +43,9 @@ export const IMAGES = {
   // WELLNESS SECTION
   WELLNESS_CLASS: "/images/wellness/classes.png",
   WELLNESS_SPACE: "/images/wellness/space.png",
+  WELLNESS_SAUNA: "/images/wellness/sauna.png",
+  WELLNESS_SPA: "/images/wellness/spa.png",
+  WELLNESS_DERMAL: "/images/wellness/dermal.png",
 
   // NUTRITION SECTION
   NUTRITION_FOOD: "/images/nutrition/nutrition.png",

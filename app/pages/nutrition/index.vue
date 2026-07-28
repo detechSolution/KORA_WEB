@@ -127,10 +127,7 @@ useSeoMeta({
           <base-button to="/membership">
             VIEW MEMBERSHIP
           </base-button>
-          <base-button
-            to="tel:+9779818000015"
-            variant="outline"
-          >
+          <base-button to="tel:+9779818000015" variant="outline">
             RESERVE MEETING ROOM
           </base-button>
         </div>
