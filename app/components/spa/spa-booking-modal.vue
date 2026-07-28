@@ -508,7 +508,7 @@ watch(
                     :default-value="defaultOpenSubtype"
                     class="mb-2"
                     :ui="{
-                      item: 'px-[14px] pb-[14px]',
+                      item: 'px-[14px] pb-[14px] bg-card',
                     }"
                   >
                     <template #default="{ item }">
