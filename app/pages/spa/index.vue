@@ -170,7 +170,7 @@ onMounted(() => {
             <UAccordion
               :items="spa?.subTypes"
               :ui="{
-                item: 'p-6',
+                item: 'p-6 bg-card',
               }"
             >
               <template #default="{ item }">
