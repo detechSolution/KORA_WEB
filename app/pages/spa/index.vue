@@ -178,7 +178,7 @@ onMounted(() => {
                 <div class="flex flex-col">
                   <span>{{ item.name }}</span>
                   <p
-                    class="text-sm text-foreground/80 dark:text-secondary-500 mt-4 font-sans"
+                    class="text-sm text-secondary-500 mt-4 font-sans"
                   >
                     {{ item.description }}
                   </p>

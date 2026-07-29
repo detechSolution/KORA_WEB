@@ -1,5 +1,8 @@
 export default defineAppConfig({
   ui: {
+    skeleton: {
+      base: "bg-secondary-100 dark:bg-secondary-800 text-secondary-900 dark:text-secondary-50",
+    },
     pagination: {
       slots: {
         root: "w-full",
