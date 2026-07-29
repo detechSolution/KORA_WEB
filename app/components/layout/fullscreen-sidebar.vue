@@ -105,7 +105,7 @@ onUnmounted(() => {
               <img
                 :src="logoSrc"
                 alt="KORA Logo"
-                class="w-12 h-12 md:w-32 md:h-8 object-contain group-hover:scale-105 transition-transform duration-200"
+                class="w-22 md:w-32 md:h-8 object-contain group-hover:scale-105 transition-transform duration-200"
               >
             </NuxtLink>
           </div>
