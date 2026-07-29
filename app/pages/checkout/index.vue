@@ -27,7 +27,7 @@ const subtotal = computed(() => {
 
 const step = ref(1);
 // const inputPromoCode = ref("");
-const paymentMethod = ref<PaymentProvider>("stripe");
+const paymentMethod = ref<PaymentProvider>("fonepay");
 const isRemoveItemModalOpen = ref(false);
 const selectedItemId = ref<string | "">("");
 
@@ -299,7 +299,7 @@ onUnmounted(() => {
               >
                 <div class="flex flex-col sm:flex-row gap-8 sm:gap-16">
                   <!-- eSewa -->
-                  <label class="flex items-center gap-3 cursor-pointer group">
+                  <!-- <label class="flex items-center gap-3 cursor-pointer group">
                     <div
                       class="w-4 h-4 rounded-sm border border-border/40 flex items-center justify-center transition-colors"
                       :class="
@@ -320,7 +320,6 @@ onUnmounted(() => {
                       value="esewa"
                       class="hidden"
                     >
-                    <!-- eSewa placeholder logo -->
                     <div
                       class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
                     >
@@ -330,7 +329,7 @@ onUnmounted(() => {
                         class="w-18 object-contain"
                       >
                     </div>
-                  </label>
+                  </label> -->
 
                   <!-- Fonepay -->
                   <label class="flex items-center gap-3 cursor-pointer group">
@@ -367,7 +366,7 @@ onUnmounted(() => {
                   </label>
 
                   <!-- Stripe -->
-                  <label class="flex items-center gap-3 cursor-pointer group">
+                  <!-- <label class="flex items-center gap-3 cursor-pointer group">
                     <div
                       class="w-4 h-4 rounded-sm border border-border/40 flex items-center justify-center transition-colors"
                       :class="
@@ -388,7 +387,6 @@ onUnmounted(() => {
                       value="stripe"
                       class="hidden"
                     >
-                    <!-- Stripe placeholder logo -->
                     <div
                       class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
                     >
@@ -398,7 +396,94 @@ onUnmounted(() => {
                         class="w-18 object-contain"
                       >
                     </div>
+                  </label> -->
+
+                  <!-- Card Payment -->
+                  <label class="flex items-center gap-3 cursor-pointer group">
+                    <div
+                      class="w-4 h-4 rounded-sm border border-border/40 flex items-center justify-center transition-colors"
+                      :class="
+                        paymentMethod === 'card'
+                          ? 'bg-[#B59A6D] border-[#B59A6D]'
+                          : 'group-hover:border-border'
+                      "
+                    >
+                      <UIcon
+                        v-if="paymentMethod === 'card'"
+                        name="i-lucide-check"
+                        class="w-3 h-3 text-white"
+                      />
+                    </div>
+                    <input
+                      v-model="paymentMethod"
+                      type="radio"
+                      value="card"
+                      class="hidden"
+                    >
+                    <div
+                      class="h-8 bg-white px-3 py-1 rounded flex items-center justify-center border border-border/10"
+                    >
+                      <UIcon name="i-lucide-credit-card" class="w-5 h-5 text-gray-800" />
+                      <span class="ml-2 text-gray-800 text-xs font-semibold uppercase tracking-wider">Credit/Debit Card</span>
+                    </div>
                   </label>
+                </div>
+
+                <!-- Card Details Form -->
+                <div v-if="paymentMethod === 'card'" class="mt-8 pt-8 border-t border-border">
+                  <div class="flex gap-4 mb-6 items-center">
+                    <span class="text-sm font-black text-blue-900 tracking-wider">VISA</span>
+                    <div class="flex items-center">
+                      <div class="w-4 h-4 rounded-full bg-red-600 opacity-90 mix-blend-multiply" />
+                      <div class="w-4 h-4 rounded-full bg-yellow-500 opacity-90 mix-blend-multiply -ml-1.5" />
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="col-span-1 sm:col-span-2">
+                      <base-input
+                        name="cardNumber"
+                        label="Card number"
+                        placeholder="0000 0000 0000 0000"
+                        type="text"
+                      />
+                    </div>
+                    <div class="col-span-1 sm:col-span-2">
+                      <base-input
+                        name="nameOnCard"
+                        label="Name on card"
+                        placeholder="Enter name on card"
+                        type="text"
+                      />
+                    </div>
+                    <div class="col-span-1">
+                      <base-input
+                        name="expiryDate"
+                        label="Expiry date"
+                        placeholder="MM/YY"
+                        type="text"
+                      />
+                    </div>
+                    <div class="col-span-1">
+                      <base-input
+                        name="cvv"
+                        label="CVV"
+                        placeholder="123"
+                        type="password"
+                      />
+                    </div>
+                  </div>
+                  <div class="mt-6 flex items-start gap-3">
+                    <input
+                      id="saveCard"
+                      type="checkbox"
+                      class="mt-1 accent-[#B59A6D] w-4 h-4 rounded-sm border-gray-300"
+                      checked
+                    >
+                    <label for="saveCard" class="text-sm text-foreground cursor-pointer select-none">
+                      <span class="font-semibold block mb-1">Save Card</span>
+                      <span class="text-xs text-muted-foreground leading-relaxed block max-w-xl">We will save this card for your convenience. If required, you can remove the card in the "Payment Options" section in the "Account" menu.</span>
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -423,6 +508,7 @@ onUnmounted(() => {
                 trailing-icon="i-lucide-arrow-right"
                 class="uppercase self-end flex tracking-widest font-bold px-8 rounded-none"
                 :loading="loading"
+                :disabled="paymentMethod === 'card'"
                 @click="handlePayNowClick"
               >
                 PAY NOW
@@ -541,6 +627,7 @@ onUnmounted(() => {
             <base-button
               trailing-icon="i-lucide-arrow-right"
               class="uppercase self-end flex tracking-widest font-bold px-8 rounded-none"
+              :disabled="paymentMethod === 'card'"
               @click="handlePayNowClick"
             >
               PAY NOW
