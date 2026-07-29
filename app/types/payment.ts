@@ -2,7 +2,8 @@ export type PaymentProvider
   = | "stripe"
     | "esewa"
     | "khalti"
-    | "fonepay";
+    | "fonepay"
+    | "card";
 
 type PaymentMode
   = | "redirect_url"

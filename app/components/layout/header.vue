@@ -157,12 +157,12 @@ onUnmounted(() => {
         <img
           :src="getColorClass?.image"
           alt="KORA Logo"
-          class="w-12 h-12 md:w-32 md:h-8 object-contain group-hover:scale-105 transition-transform duration-200"
+          class="w-22 md:w-32 md:h-8 object-contain group-hover:scale-105 transition-transform duration-200"
         >
       </NuxtLink>
 
       <!-- Right: Action items -->
-      <div class="flex-1 flex items-center justify-end gap-3 md:gap-4">
+      <div class="flex-1 flex items-center justify-end gap-1 md:gap-4">
         <!-- Wifi Status Button (Replacer of theme toggle) -->
         <!-- Dark Mode Toggle Button -->
         <button
@@ -194,7 +194,7 @@ onUnmounted(() => {
           to="/membership"
           variant="solid"
           color="primary"
-          class="hidden sm:inline-flex px-4 md:px-6 py-2 md:py-2.5 text-[10px] md:text-xs uppercase tracking-widest transition-all duration-200 focus:outline-none shadow-sm active:scale-95"
+          class="hidden md:inline-flex px-4 md:px-6 py-2 md:py-2.5 text-[10px] md:text-xs uppercase tracking-widest transition-all duration-200 focus:outline-none shadow-sm active:scale-95"
         >
           Membership
         </base-button>
@@ -228,9 +228,20 @@ onUnmounted(() => {
           to="/login"
           variant="ghost"
           color="primary"
+          class="hidden sm:flex"
         >
           Login
         </base-button>
+        <button
+          class="w-9 h-9 sm:hidden md:w-10 md:h-10 flex items-center justify-center border border-primary/40 text-primary hover:bg-primary/10 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
+          title="Log In"
+          @click="router.push('/login')"
+        >
+          <UIcon
+            name="i-lucide-log-in"
+            class="w-4 h-4 md:w-5 md:h-5"
+          />
+        </button>
       </div>
     </div>
     <!-- commented sidebar for now as replaced by menu modal dont remove this -->
