@@ -672,7 +672,7 @@ onMounted(async () => {
                 <UIcon name="i-lucide-calendar-days" class="w-4 h-4" />
                 BOOKINGS
               </h3>
-              <div>
+              <div class="w-full overflow-x-auto no-scrollbar">
                 <ClassFilter
                   v-model="activeTab"
                   :filters="tabs"
