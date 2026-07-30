@@ -153,7 +153,7 @@ onUnmounted(() => {
       </div>
 
       <!-- Center: Logo -->
-      <NuxtLink to="/" class="flex items-center gap-3 focus:outline-none group">
+      <NuxtLink to="/" class="items-center gap-3 focus:outline-none group hidden sm:flex">
         <img
           :src="getColorClass?.image"
           alt="KORA Logo"
