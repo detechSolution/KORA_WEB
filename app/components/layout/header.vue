@@ -147,7 +147,7 @@ onUnmounted(() => {
             />
           </span>
           <span
-            class="text-xs md:text-sm font-semibold uppercase tracking-widest font-sans"
+            class="text-xs md:text-sm font-semibold uppercase tracking-widest font-sans hidden sm:block"
           >Menu</span>
         </button>
       </div>
@@ -162,7 +162,7 @@ onUnmounted(() => {
       </NuxtLink>
 
       <!-- Right: Action items -->
-      <div class="flex-1 flex items-center justify-end gap-1 md:gap-4">
+      <div class="flex-1 flex items-center justify-end gap-2 md:gap-4">
         <!-- Wifi Status Button (Replacer of theme toggle) -->
         <!-- Dark Mode Toggle Button -->
         <button
@@ -223,30 +223,31 @@ onUnmounted(() => {
             }"
           />
         </UDropdownMenu>
-        <base-button
-          v-else
-          to="/login"
-          variant="ghost"
-          color="primary"
-          class="hidden sm:flex"
-        >
-          Login
-        </base-button>
-        <button
-          class="w-9 h-9 sm:hidden md:w-10 md:h-10 flex items-center justify-center border border-primary/40 text-primary hover:bg-primary/10 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
-          title="Log In"
-          @click="router.push('/login')"
-        >
-          <UIcon
-            name="i-lucide-log-in"
-            class="w-4 h-4 md:w-5 md:h-5"
-          />
-        </button>
+        <div v-else>
+          <base-button
+            to="/login"
+            variant="ghost"
+            color="primary"
+            class="hidden md:flex"
+          >
+            Login
+          </base-button>
+          <button
+            class="w-9 h-9 md:hidden md:w-10 md:h-10 flex items-center justify-center border border-primary/40 text-primary hover:bg-primary/10 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
+            title="Log In"
+            @click="router.push('/login')"
+          >
+            <UIcon name="i-lucide-log-in" class="w-4 h-4 md:w-5 md:h-5" />
+          </button>
+        </div>
       </div>
     </div>
     <!-- commented sidebar for now as replaced by menu modal dont remove this -->
     <!-- <LayoutSidebar :is-open="isSidebarOpen" @close="isSidebarOpen = false" /> -->
-    <LayoutFullscreenSidebar :is-open="isSidebarOpen" @close="isSidebarOpen = false" />
+    <LayoutFullscreenSidebar
+      :is-open="isSidebarOpen"
+      @close="isSidebarOpen = false"
+    />
     <!-- <LayoutMenuModal
       :is-open="isMenuModalOpen"
       @close="isMenuModalOpen = false"
