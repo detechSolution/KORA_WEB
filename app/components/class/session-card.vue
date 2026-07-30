@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 import type { Session } from "~/types/session";
+import { useRouter } from "vue-router";
 
 defineProps({
   session: {
@@ -8,6 +9,8 @@ defineProps({
     required: true,
   },
 });
+
+const router = useRouter();
 </script>
 
 <template>
@@ -15,7 +18,8 @@ defineProps({
     class="bg-transparent group flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-10 py-10 border-b border-border last:border-b-0 w-full"
   >
     <div
-      class="relative w-full sm:w-auto md:w-[260px] lg:w-[300px] shrink-0 aspect-[1.15] overflow-hidden border-primary bg-muted select-none z-10 shadow-lg"
+      class="relative w-full sm:w-auto md:w-[260px] lg:w-[300px] shrink-0 aspect-[1.15] overflow-hidden border-primary bg-muted select-none z-10 shadow-lg hover:cursor-pointer"
+      @click="router.push({ path: `/session/${session.id}`, query: {} })"
     >
       <img
         :src="session.bannerUrl"

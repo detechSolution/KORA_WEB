@@ -67,6 +67,7 @@ function handleProceedToCheckout() {
   <base-drawer
     :open="isOpen"
     :drawer-width="520"
+    class="pb-12 sm:pb-0"
     @close="close"
   >
     <template #header>

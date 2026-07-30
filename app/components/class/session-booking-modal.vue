@@ -589,7 +589,7 @@ function close() {
                 </div>
 
                 <div
-                  class="flex flex-col sm:flex-row justify-between gap-4 mt-auto"
+                  class="flex flex-col sm:flex-row justify-between gap-2 mt-auto"
                 >
                   <base-button variant="outline" @click="previousStep">
                     Back
@@ -604,7 +604,6 @@ function close() {
                     </base-button>
 
                     <base-button
-                      class="uppercase text-[11px] tracking-widest font-bold px-8 h-11 rounded-none bg-[#A08860] hover:bg-[#8c7550] text-white"
                       @click="proceedToCheckout"
                     >
                       PROCEED TO CHECKOUT
