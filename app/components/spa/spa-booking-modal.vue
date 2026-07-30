@@ -844,7 +844,7 @@ watch(
           </UForm>
 
           <div
-            class="flex flex-col sm:flex-row gap-4 mt-8"
+            class="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-8"
             :class="currentStep === 0 ? 'justify-end' : 'justify-between'"
           >
             <base-button variant="outline" @click="previousStep">
@@ -853,7 +853,7 @@ watch(
 
             <base-button
               v-if="currentStep < steps.length - 1"
-              class="uppercase text-[11px] tracking-widest font-bold px-8 h-11 rounded-none text-white"
+              class="uppercase text-[11px] tracking-widest font-bold px-8 h-11 rounded-none text-white w-full sm:w-auto"
               :class="
                 currentStep === 0
                   ? 'ml-auto bg-[#A08860] hover:bg-[#8c7550]'
@@ -864,7 +864,7 @@ watch(
               NEXT
             </base-button>
 
-            <div v-else class="flex gap-4">
+            <div v-else class="flex flex-col sm:flex-row gap-2 sm:gap-4">
               <base-button
                 class="bg-black dark:bg-black hover:bg-black/70"
                 @click="addToCart"
