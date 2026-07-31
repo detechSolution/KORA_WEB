@@ -21,8 +21,30 @@ const { loading, payNow } = usePayment();
 const { error: showError } = useNotification();
 
 const cartItems = computed(() => cartStore.cartItems);
+
+const selectedItemIds = ref<string[]>([]);
+
+const isAllSelected = computed({
+  get() {
+    return (
+      cartItems.value.length > 0
+      && selectedItemIds.value.length === cartItems.value.length
+    );
+  },
+  set(val: boolean) {
+    if (val) {
+      selectedItemIds.value = cartItems.value.map(item => item.cartId);
+    }
+    else {
+      selectedItemIds.value = [];
+    }
+  },
+});
+
 const subtotal = computed(() => {
-  return cartItems.value.reduce((total, item) => total + item.finalPrice, 0);
+  return cartItems.value
+    .filter(item => selectedItemIds.value.includes(item.cartId))
+    .reduce((total, item) => total + item.finalPrice, 0);
 });
 
 const step = ref(1);
@@ -49,11 +71,14 @@ const totalPrice = computed(() => {
 
 // Count the total number of items in the cart, including visitors for each item
 const totalItems = computed(() =>
-  cartItems.value.reduce((total, item) => {
-    const visitorsCount = item.visitors?.length > 0 ? item.visitors.length : 1;
+  cartItems.value
+    .filter(item => selectedItemIds.value.includes(item.cartId))
+    .reduce((total, item) => {
+      const visitorsCount
+        = item.visitors?.length > 0 ? item.visitors.length : 1;
 
-    return total + visitorsCount;
-  }, 0),
+      return total + visitorsCount;
+    }, 0),
 );
 
 // async function handleApplyPromo() {
@@ -93,6 +118,13 @@ async function handlePayNowClick() {
     return;
   }
 
+  if (selectedItemIds.value.length === 0) {
+    showError({
+      message: "Please select at least one service to proceed.",
+    });
+    return;
+  }
+
   if (step.value === 1) {
     step.value = 2;
   }
@@ -100,29 +132,31 @@ async function handlePayNowClick() {
     try {
       const payload = {
         provider: paymentMethod.value,
-        items: cartItems.value.map(item => ({
-          itemType: item.itemType,
+        items: cartItems.value
+          .filter(item => selectedItemIds.value.includes(item.cartId))
+          .map(item => ({
+            itemType: item.itemType,
 
-          referenceId: item.referenceId,
-          bookingFor: item.bookingFor,
+            referenceId: item.referenceId,
+            bookingFor: item.bookingFor,
 
-          ...(item.itemType === "pass" && {
-            bookingDate: item.bookingDate,
-          }),
+            ...(item.itemType === "pass" && {
+              bookingDate: item.bookingDate,
+            }),
 
-          ...(item.itemType === "spa" && {
-            bookingDate: item.bookingDate,
-            bookingTime: item.bookingTime,
-          }),
+            ...(item.itemType === "spa" && {
+              bookingDate: item.bookingDate,
+              bookingTime: item.bookingTime,
+            }),
 
-          ...(item.visitors?.length && {
-            visitors: item.visitors.map((visitor: any) => ({
-              fullName: visitor.fullName,
-              phoneNumber: visitor.phone || "",
-              email: visitor.email,
-            })),
-          }),
-        })),
+            ...(item.visitors?.length && {
+              visitors: item.visitors.map((visitor: any) => ({
+                fullName: visitor.fullName,
+                phoneNumber: visitor.phone || "",
+                email: visitor.email,
+              })),
+            }),
+          })),
 
         // promoCode: cartStore.promoCode,
       };
@@ -169,17 +203,33 @@ onUnmounted(() => {
               class="border border-border rounded-xs bg-card p-6 lg:p-8"
             >
               <div
-                class="flex items-center gap-3 border-b border-border/10 pb-6 mb-6"
+                class="flex items-center justify-between border-b border-border/10 pb-6 mb-6"
               >
-                <UIcon
-                  name="i-lucide-shopping-bag"
-                  class="w-4 h-4 text-[#B59A6D]"
-                />
-                <span
-                  class="text-[10px] text-[#B59A6D] font-bold tracking-widest uppercase"
-                >
-                  ORDER SUMMARY
-                </span>
+                <div class="flex items-center gap-3">
+                  <UIcon
+                    name="i-lucide-shopping-bag"
+                    class="w-4 h-4 text-[#B59A6D]"
+                  />
+                  <span
+                    class="text-[10px] text-[#B59A6D] font-bold tracking-widest uppercase"
+                  >
+                    ORDER SUMMARY
+                  </span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <input
+                    id="selectAll"
+                    v-model="isAllSelected"
+                    type="checkbox"
+                    class="w-4 h-4 accent-[#B59A6D] rounded border-border cursor-pointer"
+                  >
+                  <label
+                    for="selectAll"
+                    class="text-xs text-muted-foreground cursor-pointer select-none"
+                  >
+                    Select All
+                  </label>
+                </div>
               </div>
 
               <!-- Order Items -->
@@ -189,6 +239,14 @@ onUnmounted(() => {
                   :key="item.referenceId"
                   class="flex gap-4 pb-6 border-b border-border/10"
                 >
+                  <div class="pt-1 flex-shrink-0">
+                    <input
+                      v-model="selectedItemIds"
+                      type="checkbox"
+                      :value="item.cartId"
+                      class="w-5 h-5 accent-[#B59A6D] rounded border-border cursor-pointer"
+                    >
+                  </div>
                   <!-- Item Details -->
                   <div class="flex-1 flex flex-col">
                     <span
@@ -423,19 +481,33 @@ onUnmounted(() => {
                     <div
                       class="h-8 bg-white px-3 py-1 rounded flex items-center justify-center border border-border/10"
                     >
-                      <UIcon name="i-lucide-credit-card" class="w-5 h-5 text-gray-800" />
-                      <span class="ml-2 text-gray-800 text-xs font-semibold uppercase tracking-wider">Credit/Debit Card</span>
+                      <UIcon
+                        name="i-lucide-credit-card"
+                        class="w-5 h-5 text-gray-800"
+                      />
+                      <span
+                        class="ml-2 text-gray-800 text-xs font-semibold uppercase tracking-wider"
+                      >Credit/Debit Card</span>
                     </div>
                   </label>
                 </div>
 
                 <!-- Card Details Form -->
-                <div v-if="paymentMethod === 'card'" class="mt-8 pt-8 border-t border-border">
+                <div
+                  v-if="paymentMethod === 'card'"
+                  class="mt-8 pt-8 border-t border-border"
+                >
                   <div class="flex gap-4 mb-6 items-center">
-                    <span class="text-sm font-black text-blue-900 tracking-wider">VISA</span>
+                    <span
+                      class="text-sm font-black text-blue-900 tracking-wider"
+                    >VISA</span>
                     <div class="flex items-center">
-                      <div class="w-4 h-4 rounded-full bg-red-600 opacity-90 mix-blend-multiply" />
-                      <div class="w-4 h-4 rounded-full bg-yellow-500 opacity-90 mix-blend-multiply -ml-1.5" />
+                      <div
+                        class="w-4 h-4 rounded-full bg-red-600 opacity-90 mix-blend-multiply"
+                      />
+                      <div
+                        class="w-4 h-4 rounded-full bg-yellow-500 opacity-90 mix-blend-multiply -ml-1.5"
+                      />
                     </div>
                   </div>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -479,9 +551,16 @@ onUnmounted(() => {
                       class="mt-1 accent-[#B59A6D] w-4 h-4 rounded-sm border-gray-300"
                       checked
                     >
-                    <label for="saveCard" class="text-sm text-foreground cursor-pointer select-none">
+                    <label
+                      for="saveCard"
+                      class="text-sm text-foreground cursor-pointer select-none"
+                    >
                       <span class="font-semibold block mb-1">Save Card</span>
-                      <span class="text-xs text-muted-foreground leading-relaxed block max-w-xl">We will save this card for your convenience. If required, you can remove the card in the "Payment Options" section in the "Account" menu.</span>
+                      <span
+                        class="text-xs text-muted-foreground leading-relaxed block max-w-xl"
+                      >We will save this card for your convenience. If
+                        required, you can remove the card in the "Payment
+                        Options" section in the "Account" menu.</span>
                     </label>
                   </div>
                 </div>
@@ -508,7 +587,10 @@ onUnmounted(() => {
                 trailing-icon="i-lucide-arrow-right"
                 class="uppercase self-end flex tracking-widest font-bold px-8 rounded-none"
                 :loading="loading"
-                :disabled="paymentMethod === 'card'"
+                :disabled="
+                  (step === 2 && paymentMethod === 'card')
+                    || selectedItemIds.length === 0
+                "
                 @click="handlePayNowClick"
               >
                 PAY NOW
@@ -627,7 +709,10 @@ onUnmounted(() => {
             <base-button
               trailing-icon="i-lucide-arrow-right"
               class="uppercase self-end flex tracking-widest font-bold px-8 rounded-none"
-              :disabled="paymentMethod === 'card'"
+              :disabled="
+                (step === 2 && paymentMethod === 'card')
+                  || selectedItemIds.length === 0
+              "
               @click="handlePayNowClick"
             >
               PAY NOW
