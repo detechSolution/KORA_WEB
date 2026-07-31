@@ -17,17 +17,29 @@ const sessionId = computed(() => String(route.query.session_id || ""));
 
 onMounted(async () => {
   try {
-    if (cartStore.cartItems.length > 0) {
-      cartStore.cartItems = [];
-      cartStore.removePromoCode();
-    }
-
     if (checkoutCode.value) {
       await checkoutStore.verifyPayment(checkoutCode.value);
     }
     else {
       checkoutStore.paymentStatus = "paid";
       checkoutStore.loading = false;
+    }
+
+    if (checkoutStore.paymentStatus === "paid") {
+      const pendingIds = JSON.parse(sessionStorage.getItem("pendingPaymentItemIds") || "[]");
+      if (pendingIds.length > 0) {
+        pendingIds.forEach((cartId: string) => cartStore.removeItem(cartId));
+        sessionStorage.removeItem("pendingPaymentItemIds");
+      }
+      else {
+        if (cartStore.cartItems.length > 0) {
+          cartStore.cartItems = [];
+        }
+      }
+
+      if (cartStore.cartItems.length === 0) {
+        cartStore.removePromoCode();
+      }
     }
   }
   catch (error) {
