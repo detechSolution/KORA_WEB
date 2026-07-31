@@ -130,6 +130,7 @@ async function handlePayNowClick() {
   }
   else {
     try {
+      sessionStorage.setItem("pendingPaymentItemIds", JSON.stringify(selectedItemIds.value));
       const payload = {
         provider: paymentMethod.value,
         items: cartItems.value
@@ -424,7 +425,7 @@ onUnmounted(() => {
                   </label>
 
                   <!-- Stripe -->
-                  <!-- <label class="flex items-center gap-3 cursor-pointer group">
+                  <label class="flex items-center gap-3 cursor-pointer group">
                     <div
                       class="w-4 h-4 rounded-sm border border-border/40 flex items-center justify-center transition-colors"
                       :class="
@@ -454,7 +455,7 @@ onUnmounted(() => {
                         class="w-18 object-contain"
                       >
                     </div>
-                  </label> -->
+                  </label>
 
                   <!-- Card Payment -->
                   <label class="flex items-center gap-3 cursor-pointer group">
