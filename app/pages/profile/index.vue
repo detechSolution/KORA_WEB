@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Booking } from "~/data/profile";
 import { computed, onMounted, reactive, ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import z from "zod";
 import { useNotification } from "~/composables/use-notification";
 import { usePagination } from "~/composables/use-pagination";
@@ -21,6 +21,7 @@ useSeoMeta({
 });
 
 const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 const memberStore = useMemberStore();
 const { pagination } = usePagination(10);
@@ -117,6 +118,7 @@ const profileFormRef = ref<InstanceType<typeof UForm> | null>(null);
 const loadingProfile = ref(false);
 
 function handleProfileTabClick(tab: "info" | "bookings" | "pass" | "password") {
+  router.push({ query: { tab } });
   activeSidebarTab.value = tab;
 
   if (tab === "pass") {
@@ -271,6 +273,18 @@ const filteredPasses = computed(() => {
 watch(activeTab, async () => {
   await fetchBookings();
 });
+
+watch(
+  () => route.query.tab,
+  (tab) => {
+    const selectedTab = Array.isArray(tab) ? tab[0] : tab;
+
+    if (selectedTab === "bookings") {
+      activeSidebarTab.value = "bookings";
+    }
+  },
+  { immediate: true },
+);
 
 onMounted(async () => {
   if (import.meta.client) {
