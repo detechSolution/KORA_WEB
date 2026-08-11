@@ -52,10 +52,10 @@
             inner strength shaped our vision.
           </p>
           <p>
-            We brought these timeless values to life at Club Kora - a space
+            We brought these timeless values to life at Kora - a space
             where wellness meets community. Here, members come to move, recover,
             and grow, guided by the Himalayan principles of mind, body, and
-            spirit. That commitment to holistic well-being is why Club Kora
+            spirit. That commitment to holistic well-being is why Kora
             exists, and why we'll continue nurturing this sanctuary for years to
             come.
           </p>
