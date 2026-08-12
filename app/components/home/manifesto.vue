@@ -101,7 +101,7 @@
           class="text-stone-400 font-light text-sm md:text-base leading-relaxed max-w-[560px] mb-8 font-sans"
         >
           Kora is the bridge between the chaos of the city and the clarity of
-          the self. 250 individuals. One collective sanctuary. A journey from
+          the self. 350 individuals. One collective sanctuary. A journey from
           effort to elegance.
         </p>
 
