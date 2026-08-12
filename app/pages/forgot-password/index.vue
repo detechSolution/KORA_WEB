@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { onUnmounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import z from "zod";
 import { useNotification } from "~/composables/use-notification";
@@ -60,6 +60,7 @@ async function handleSubmitEmail(): Promise<void> {
     submittedEmail.value = emailFormState.email;
     showSuccess({ message: "OTP sent successfully. Please check your email." });
     step.value = "otp";
+    startTimer();
   }
   catch (error: unknown) {
     const message = getApiErrorMessage(
@@ -77,6 +78,36 @@ async function handleSubmitEmail(): Promise<void> {
     loading.value = false;
   }
 }
+
+const resendTimer = ref(0);
+let timerInterval: ReturnType<typeof setInterval> | null = null;
+
+function startTimer() {
+  resendTimer.value = 60;
+  if (timerInterval)
+    clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (resendTimer.value > 0) {
+      resendTimer.value--;
+    }
+    else {
+      if (timerInterval)
+        clearInterval(timerInterval);
+    }
+  }, 1000);
+}
+
+async function handleResend() {
+  if (resendTimer.value > 0 || loading.value)
+    return;
+  emailFormState.email = submittedEmail.value;
+  await handleSubmitEmail();
+}
+
+onUnmounted(() => {
+  if (timerInterval)
+    clearInterval(timerInterval);
+});
 
 const otpFormRef = ref<InstanceType<typeof UForm> | null>(null);
 const otpApiError = ref<string | null>(null);
@@ -274,43 +305,63 @@ async function handleResetPassword(): Promise<void> {
 
           <!-- Step 2: Enter OTP -->
           <template v-else-if="step === 'otp'">
-            <h1 class="font-serif text-4xl mb-3 text-white">
-              Enter OTP Code
-            </h1>
-            <p class="text-xs text-secondary-400 mb-6">
-              Enter OTP code sent to your email
-            </p>
+            <div class="flex flex-col">
+              <h1 class="font-serif text-3xl md:text-4xl mb-3 text-white">
+                Check your email
+              </h1>
+              <p class="text-sm text-secondary-400 mb-8 max-w-sm">
+                We've sent a 6-digit code to your email<br>
+                <span class="text-white font-medium mt-1 block">{{ submittedEmail }}</span>
+              </p>
+            </div>
 
             <UForm
               ref="otpFormRef"
               :state="otpFormState"
               :schema="otpSchema"
               :validate-on="['input', 'change', 'blur']"
-              class="mt-8 w-full space-y-4"
+              class="w-full space-y-6"
             >
-              <UFormField name="code">
+              <UFormField name="code" class="flex">
                 <UPinInput
                   v-model="otpCode"
                   name="code"
-                  label="OTP CODE"
                   type="text"
                   :length="6"
                   size="lg"
                   :ui="{
-                    root: 'flex items-center gap-4',
-                    base: `bg-white dark:bg-transparent text-xl ring-secondary-50 dark:ring-secondary-800 focus:ring-1 focus:outline-none placeholder:text-secondary-300 rounded-xs h-11 w-11`,
+                    root: 'flex items-center justify-center gap-4',
+                    base: `bg-white dark:bg-transparent text-xl ring-secondary-50 dark:ring-secondary-700 focus:ring-1 focus:outline-none placeholder:text-secondary-300 rounded-xs h-12 w-12 text-center`,
                   }"
                   @input="handleOtpInput"
                 />
               </UFormField>
 
               <base-button
-                class="w-full"
+                class="w-full mt-2"
                 :loading="loading"
                 @click="handleVerifyOtp"
               >
-                NEXT
+                Verify OTP
               </base-button>
+
+              <div class="mt-8 text-center text-sm text-secondary-400 flex flex-col items-center gap-2">
+                <p>
+                  Didn't receive the code?
+                  <button
+                    type="button"
+                    class="font-medium ml-1 transition-colors"
+                    :class="resendTimer > 0 ? 'text-secondary-500 cursor-not-allowed' : 'text-white hover:underline'"
+                    :disabled="resendTimer > 0"
+                    @click="handleResend"
+                  >
+                    Resend code
+                  </button>
+                </p>
+                <span v-if="resendTimer > 0" class="text-xs text-secondary-500">
+                  Wait 00:{{ resendTimer.toString().padStart(2, '0') }} before resending
+                </span>
+              </div>
             </UForm>
           </template>
 
