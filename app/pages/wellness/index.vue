@@ -19,7 +19,7 @@ useSeoMeta({
     <!-- Hero Section -->
     <div class="relative mb-16">
       <class-header label="" title="Wellness">
-        <div class="space-y-6 mt-8">
+        <div class="space-y-6">
           <p
             class="text-muted-foreground font-light text-sm md:text-base leading-relaxed text-justify"
           >
@@ -61,10 +61,10 @@ useSeoMeta({
 
     <!-- Philosophy Section -->
     <section
-      class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
+      class="w-full lg:h-[85vh] grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
     >
       <div
-        class="w-full h-[50vh] lg:h-full relative overflow-hidden group order-1"
+        class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:h-full relative overflow-hidden group order-1"
       >
         <img
           :src="IMAGES.WELLNESS_CLASS"
@@ -156,7 +156,7 @@ useSeoMeta({
 
     <!-- Pillar 01: Thermal Circuit -->
     <section
-      class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
+      class="w-full lg:h-[85vh] grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
     >
       <div
         class="w-full h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 lg:py-0 order-2 lg:order-1 relative overflow-hidden"
@@ -171,10 +171,15 @@ useSeoMeta({
           >
         </div>
         <div class="relative z-10">
+          <span
+            class="font-serif text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
+          >
+            01
+          </span>
           <h3
             class="font-serif text-3xl md:text-4xl text-foreground font-normal leading-tight tracking-wide mb-6"
           >
-            01. The Advanced Thermal<br>Circuit
+            The Advanced Thermal<br>Circuit
           </h3>
           <p
             class="text-muted-foreground font-light text-sm md:text-base leading-relaxed mb-8"
@@ -221,7 +226,7 @@ useSeoMeta({
         </div>
       </div>
       <div
-        class="w-full h-[50vh] lg:h-full relative overflow-hidden group order-1 lg:order-2"
+        class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:h-full relative overflow-hidden group order-1 lg:order-2"
       >
         <img
           :src="IMAGES.WELLNESS_SAUNA"
@@ -236,10 +241,10 @@ useSeoMeta({
 
     <!-- Pillar 02: Bodywork Lab -->
     <section
-      class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
+      class="w-full lg:h-[85vh] grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
     >
       <div
-        class="w-full h-[50vh] lg:h-full relative overflow-hidden group order-1"
+        class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:h-full relative overflow-hidden group order-1"
       >
         <img
           :src="IMAGES.WELLNESS_SPA"
@@ -253,10 +258,15 @@ useSeoMeta({
       <div
         class="w-full h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 lg:py-0 order-2"
       >
+        <span
+          class="font-serif text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
+        >
+          02
+        </span>
         <h3
           class="font-serif text-3xl md:text-4xl text-foreground font-normal leading-tight tracking-wide mb-6"
         >
-          02. The Bodywork Lab By<br>NUAD THAI
+          The Bodywork Lab By<br>NUAD THAI
         </h3>
         <p
           class="text-muted-foreground font-light text-sm md:text-base leading-relaxed mb-8"
@@ -319,15 +329,20 @@ useSeoMeta({
 
     <!-- Pillar 03: Dermal Artistry -->
     <section
-      class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
+      class="w-full lg:h-[85vh] grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
     >
       <div
         class="w-full h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 lg:py-0 order-2 lg:order-1"
       >
+        <span
+          class="font-serif text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
+        >
+          03
+        </span>
         <h3
           class="font-serif text-3xl md:text-4xl text-foreground font-normal leading-tight tracking-wide mb-6"
         >
-          03. Dermal Artistry & Botanical<br>Polishes
+          Dermal Artistry & Botanical<br>Polishes
         </h3>
         <p
           class="text-muted-foreground font-light text-sm md:text-base leading-relaxed mb-8"
@@ -373,7 +388,7 @@ useSeoMeta({
         </div>
       </div>
       <div
-        class="w-full h-[50vh] lg:h-full relative overflow-hidden group order-1 lg:order-2"
+        class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:h-full relative overflow-hidden group order-1 lg:order-2"
       >
         <img
           :src="IMAGES.WELLNESS_DERMAL"
