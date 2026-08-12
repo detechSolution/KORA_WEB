@@ -18,7 +18,8 @@ const faqs = [
       "<ul class='list-disc pl-5 space-y-2 mt-2'><li><strong>Cold Plunge:</strong> Calibrated strictly to <strong>10°C</strong> to trigger rapid vasoconstriction, reduce muscular inflammation, and accelerate central nervous system recovery.</li><li><strong>Heated Pool & Jacuzzi:</strong> Maintained at a therapeutic <strong>28°C to 38°C</strong> respectively to decompress the spine and ease myofascial tension.</li><li><strong>The Sauna:</strong> Set to high-heat dry standards to promote deep detoxification and metabolic flushing.</li></ul>",
   },
   {
-    label: "Are wellness events like Sound Healing and Cinema Nights included in standard entry?",
+    label:
+      "Are wellness events like Sound Healing and Cinema Nights included in standard entry?",
     content:
       "Our weekly Cinema Nights are entirely complimentary for all active members and valid day-pass holders. For specialized workshops like Floating Sound Healing, access may be complimentary or require a separate session fee depending on the scheduling cycle. Because all evening programming operates under strictly capped capacities to preserve our sanctuary environment, all guests must verify the session's specific status and secure their positions in advance via the KORA Sanctuary Calendar on our <strong>KORA mobile application</strong> or website.",
   },
@@ -48,6 +49,33 @@ useSeoMeta({
   <div
     class="bg-background dark:bg-secondary-900 text-foreground font-sans min-h-screen"
   >
+    <!-- Hero Section -->
+    <div class="relative mb-16">
+      <class-header label="" title="Recovery">
+        <p
+          class="text-muted-foreground font-light text-sm md:text-base leading-relaxed text-justify"
+        >
+          Kora’s recovery spaces are thoughtfully designed environments that
+          support rest, restoration, and overall well-being. Blending calming
+          aesthetics with evidence-based wellness practices, these spaces offer
+          services such as guided relaxation, therapeutic treatments, and
+          mindful recovery techniques. Each area is crafted to help individuals
+          disconnect from daily stress, recharge physically and mentally, and
+          return to their routines with renewed balance and energy.
+        </p>
+      </class-header>
+
+      <div
+        class="absolute top-0 right-0 w-64 h-64 md:w-76 md:h-76 xl:w-80 xl:h-80 aspect-square z-10 -translate-y-12"
+      >
+        <img
+          :src="IMAGES.LEAF"
+          alt="Kora foliage decoration"
+          class="w-full h-full object-cover"
+        >
+      </div>
+    </div>
+
     <section
       class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden mb-16 lg:mb-0 bg-background dark:bg-secondary-900"
     >
@@ -369,10 +397,7 @@ useSeoMeta({
         <base-button :to="{ path: '/membership', query: { tab: 'passes' } }">
           GET A DAY PASS
         </base-button>
-        <base-button
-          to="/membership"
-          variant="outline"
-        >
+        <base-button to="/membership" variant="outline">
           VIEW MEMBERSHIP
         </base-button>
       </div>
@@ -391,7 +416,9 @@ useSeoMeta({
         }"
       >
         <template #content="{ item }">
-          <div class="text-sm text-foreground/80 dark:text-secondary-500 font-light font-sans pb-4">
+          <div
+            class="text-sm text-foreground/80 dark:text-secondary-500 font-light font-sans pb-4"
+          >
             <div class="leading-relaxed" v-html="item.content" />
             <div v-if="item.button" class="mt-6 w-fit">
               <base-button :to="item.button.to" variant="outline">

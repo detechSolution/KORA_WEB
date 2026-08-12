@@ -132,7 +132,7 @@ const socials = [
     <!-- Bottom Bar -->
     <div class="border-t border-secondary-800 py-6">
       <div
-        class="max-w-400 mx-auto px-6 md:px-12 lg:px-20 flex flex-col sm:flex-row items-center justify-between gap-4"
+        class="max-w-400 mx-auto px-4 md:px-8 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-4"
       >
         <p class="text-white text-xs text-center sm:text-left">
           Kora &copy; 2026 All Rights Reserved

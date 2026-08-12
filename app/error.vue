@@ -28,7 +28,7 @@ useHead({
         </p>
         <p class="text-muted-foreground max-w-2xl mx-auto">
           The link you followed may be broken or the page may have been moved.
-          You can go back to the dashboard.
+          You can go back to the home page.
         </p>
 
         <!-- Action Buttons -->
@@ -40,7 +40,7 @@ useHead({
             to="/"
             @click="handleError"
           >
-            Back to Dashboard
+            Back to Home
           </base-button>
         </div>
       </div>

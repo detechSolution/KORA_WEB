@@ -153,7 +153,10 @@ onUnmounted(() => {
       </div>
 
       <!-- Center: Logo -->
-      <NuxtLink to="/" class="items-center gap-3 focus:outline-none group hidden sm:flex">
+      <NuxtLink
+        to="/"
+        class="items-center gap-3 focus:outline-none group hidden sm:flex"
+      >
         <img
           :src="getColorClass?.image"
           alt="KORA Logo"
@@ -213,15 +216,23 @@ onUnmounted(() => {
             content: 'w-50',
           }"
         >
-          <UAvatar
-            :alt="userDetail.name"
-            size="xl"
-            loading="lazy"
-            class="hover:cursor-pointer"
-            :ui="{
-              fallback: 'text-secondary-700 dark:text-white',
-            }"
-          />
+          <UButton
+            color="neutral"
+            variant="outline"
+            square
+            class="rounded-full p-0"
+          >
+            <UAvatar
+              :alt="userDetail.name"
+              :src="userDetail.avatar"
+              size="xl"
+              loading="lazy"
+              class="hover:cursor-pointer"
+              :ui="{
+                fallback: 'text-secondary-700 dark:text-white',
+              }"
+            />
+          </UButton>
         </UDropdownMenu>
         <div v-else>
           <base-button

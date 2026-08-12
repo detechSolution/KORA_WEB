@@ -32,7 +32,7 @@ const schema = z
   .object({
     fullName: z.string().min(1, "Full name is required"),
     email: z.string().min(1, "Email is required").email("Invalid email"),
-    phone: z.string().min(1, "Phone number is required"),
+    phone: z.string().optional(),
     // password: z
     //   .string()
     //   .min(8, "Password must be at least 8 characters long")
@@ -119,6 +119,9 @@ async function handleRegister(): Promise<void> {
       phoneNumber: registerFormState.phone,
       password: registerFormState.password,
     };
+    if (!payload.phoneNumber) {
+      delete payload.phoneNumber;
+    }
     await authStore.register(
       payload as {
         fullName: string;
@@ -244,7 +247,7 @@ async function handleRegister(): Promise<void> {
           <base-input
             v-model="registerFormState.phone"
             name="phone"
-            label="PHONE NUMBER *"
+            label="PHONE NUMBER (Optional)"
             placeholder="Your phone number"
             type="tel"
             leading-icon="i-lucide-phone"

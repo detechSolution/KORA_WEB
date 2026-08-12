@@ -19,7 +19,7 @@ useSeoMeta({
     <!-- Hero Section -->
     <div class="relative mb-16">
       <class-header label="" title="Wellness">
-        <div class="space-y-6 mt-8">
+        <div class="space-y-6">
           <p
             class="text-muted-foreground font-light text-sm md:text-base leading-relaxed text-justify"
           >
@@ -171,10 +171,15 @@ useSeoMeta({
           >
         </div>
         <div class="relative z-10">
+          <span
+            class="font-serif text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
+          >
+            01
+          </span>
           <h3
             class="font-serif text-3xl md:text-4xl text-foreground font-normal leading-tight tracking-wide mb-6"
           >
-            01. The Advanced Thermal<br>Circuit
+            The Advanced Thermal<br>Circuit
           </h3>
           <p
             class="text-muted-foreground font-light text-sm md:text-base leading-relaxed mb-8"
@@ -253,10 +258,15 @@ useSeoMeta({
       <div
         class="w-full h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 lg:py-0 order-2"
       >
+        <span
+          class="font-serif text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
+        >
+          02
+        </span>
         <h3
           class="font-serif text-3xl md:text-4xl text-foreground font-normal leading-tight tracking-wide mb-6"
         >
-          02. The Bodywork Lab By<br>NUAD THAI
+          The Bodywork Lab By<br>NUAD THAI
         </h3>
         <p
           class="text-muted-foreground font-light text-sm md:text-base leading-relaxed mb-8"
@@ -324,10 +334,15 @@ useSeoMeta({
       <div
         class="w-full h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 lg:py-0 order-2 lg:order-1"
       >
+        <span
+          class="font-serif text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
+        >
+          03
+        </span>
         <h3
           class="font-serif text-3xl md:text-4xl text-foreground font-normal leading-tight tracking-wide mb-6"
         >
-          03. Dermal Artistry & Botanical<br>Polishes
+          Dermal Artistry & Botanical<br>Polishes
         </h3>
         <p
           class="text-muted-foreground font-light text-sm md:text-base leading-relaxed mb-8"
