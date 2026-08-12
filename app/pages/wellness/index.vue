@@ -61,10 +61,10 @@ useSeoMeta({
 
     <!-- Philosophy Section -->
     <section
-      class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
+      class="w-full lg:h-[85vh] grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
     >
       <div
-        class="w-full h-[50vh] lg:h-full relative overflow-hidden group order-1"
+        class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:h-full relative overflow-hidden group order-1"
       >
         <img
           :src="IMAGES.WELLNESS_CLASS"
@@ -156,7 +156,7 @@ useSeoMeta({
 
     <!-- Pillar 01: Thermal Circuit -->
     <section
-      class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
+      class="w-full lg:h-[85vh] grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
     >
       <div
         class="w-full h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 lg:py-0 order-2 lg:order-1 relative overflow-hidden"
@@ -226,7 +226,7 @@ useSeoMeta({
         </div>
       </div>
       <div
-        class="w-full h-[50vh] lg:h-full relative overflow-hidden group order-1 lg:order-2"
+        class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:h-full relative overflow-hidden group order-1 lg:order-2"
       >
         <img
           :src="IMAGES.WELLNESS_SAUNA"
@@ -241,10 +241,10 @@ useSeoMeta({
 
     <!-- Pillar 02: Bodywork Lab -->
     <section
-      class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
+      class="w-full lg:h-[85vh] grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
     >
       <div
-        class="w-full h-[50vh] lg:h-full relative overflow-hidden group order-1"
+        class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:h-full relative overflow-hidden group order-1"
       >
         <img
           :src="IMAGES.WELLNESS_SPA"
@@ -329,7 +329,7 @@ useSeoMeta({
 
     <!-- Pillar 03: Dermal Artistry -->
     <section
-      class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
+      class="w-full lg:h-[85vh] grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
     >
       <div
         class="w-full h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 lg:py-0 order-2 lg:order-1"
@@ -388,7 +388,7 @@ useSeoMeta({
         </div>
       </div>
       <div
-        class="w-full h-[50vh] lg:h-full relative overflow-hidden group order-1 lg:order-2"
+        class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:h-full relative overflow-hidden group order-1 lg:order-2"
       >
         <img
           :src="IMAGES.WELLNESS_DERMAL"

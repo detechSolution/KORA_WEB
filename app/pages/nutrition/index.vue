@@ -73,10 +73,10 @@ useSeoMeta({
 
     <!-- Nutrition Sections -->
     <section
-      class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
+      class="w-full lg:h-[85vh] grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
     >
       <div
-        class="w-full h-[50vh] lg:h-full relative overflow-hidden group order-1"
+        class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:h-full relative overflow-hidden group order-1"
       >
         <img
           :src="IMAGES.NUTRITION_FOOD"
@@ -135,7 +135,7 @@ useSeoMeta({
     </section>
 
     <section
-      class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
+      class="w-full lg:h-[85vh] grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
     >
       <div
         class="w-full h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 lg:py-0 order-2 lg:order-1"
@@ -182,7 +182,7 @@ useSeoMeta({
         </div>
       </div>
       <div
-        class="w-full h-[50vh] lg:h-full relative overflow-hidden group order-1 lg:order-2"
+        class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:h-full relative overflow-hidden group order-1 lg:order-2"
       >
         <img
           :src="IMAGES.NUTRITION_PHILOSOPHY"
@@ -196,10 +196,10 @@ useSeoMeta({
     </section>
 
     <section
-      class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
+      class="w-full lg:h-[85vh] grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
     >
       <div
-        class="w-full h-[50vh] lg:h-full relative overflow-hidden group order-1"
+        class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:h-full relative overflow-hidden group order-1"
       >
         <img
           :src="IMAGES.NUTRITION_CAFE"
@@ -239,7 +239,7 @@ useSeoMeta({
     </section>
 
     <section
-      class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
+      class="w-full lg:h-[85vh] grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
     >
       <div
         class="w-full h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 lg:py-0 order-2 lg:order-1"
@@ -275,7 +275,7 @@ useSeoMeta({
         </div>
       </div>
       <div
-        class="w-full h-[50vh] lg:h-full relative overflow-hidden group order-1 lg:order-2"
+        class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:h-full relative overflow-hidden group order-1 lg:order-2"
       >
         <img
           :src="IMAGES.NUTRITION_FUNCTIONAL"

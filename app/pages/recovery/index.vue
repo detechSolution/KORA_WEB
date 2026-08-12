@@ -77,10 +77,10 @@ useSeoMeta({
     </div>
 
     <section
-      class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden mb-16 lg:mb-0 bg-background dark:bg-secondary-900"
+      class="w-full lg:h-[85vh] grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden mb-16 lg:mb-0 bg-background dark:bg-secondary-900"
     >
       <div
-        class="w-full h-[50vh] lg:h-full relative overflow-hidden group order-1"
+        class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:h-full relative overflow-hidden group order-1"
       >
         <img
           :src="IMAGES.RECOVERY_SAUNA"
@@ -117,7 +117,7 @@ useSeoMeta({
     </section>
 
     <section
-      class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
+      class="w-full lg:h-[85vh] grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
     >
       <div
         class="w-full h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 lg:py-0 order-2 lg:order-1"
@@ -158,7 +158,7 @@ useSeoMeta({
       </div>
 
       <div
-        class="w-full h-[50vh] lg:h-full relative overflow-hidden group order-1 lg:order-2"
+        class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:h-full relative overflow-hidden group order-1 lg:order-2"
       >
         <img
           :src="IMAGES.RECOVERY_COLD_PLUNGE"
@@ -172,10 +172,10 @@ useSeoMeta({
     </section>
 
     <section
-      class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
+      class="w-full lg:h-[85vh] grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
     >
       <div
-        class="w-full h-[50vh] lg:h-full relative overflow-hidden group order-1"
+        class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:h-full relative overflow-hidden group order-1"
       >
         <img
           :src="IMAGES.RECOVERY_JACUZZI"
@@ -221,7 +221,7 @@ useSeoMeta({
     </section>
 
     <section
-      class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
+      class="w-full lg:h-[85vh] grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden bg-background dark:bg-secondary-900"
     >
       <div
         class="w-full h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 lg:py-0 order-2 lg:order-1"
@@ -273,7 +273,7 @@ useSeoMeta({
       </div>
 
       <div
-        class="w-full h-[50vh] lg:h-full relative overflow-hidden group order-1 lg:order-2"
+        class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:h-full relative overflow-hidden group order-1 lg:order-2"
       >
         <img
           :src="IMAGES.RECOVERY_SWIMMING_POOL"
