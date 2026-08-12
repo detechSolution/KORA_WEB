@@ -342,6 +342,7 @@ export const useAuthStore = defineStore("auth", () => {
   };
 
   const resetPassword = async (payload: {
+    email: string;
     code: string;
     newPassword: string;
   }): Promise<void> => {

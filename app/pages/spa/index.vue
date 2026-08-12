@@ -174,11 +174,14 @@ onMounted(() => {
                 item: 'p-6 bg-card',
               }"
             >
-              <template #default="{ item }">
+              <template #default="{ item, open }">
                 <div class="flex flex-col">
                   <span>{{ item.name }}</span>
                   <p
                     class="text-sm text-secondary-500 mt-4 font-sans"
+                    :class="[
+                      !open && 'line-clamp-2',
+                    ]"
                   >
                     {{ item.description }}
                   </p>
