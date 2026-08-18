@@ -64,7 +64,7 @@ const getStyles = computed(() => {
     :color="color"
     :class="`cursor-pointer ${getStyles} flex items-center justify-center font-semibold px-8 text-xs tracking-widest uppercase`"
     :ui="{
-      base: 'rounded-xs h-[44px]',
+      base: 'rounded-xs h-[36px] sm:h-[44px]',
     }"
   >
     <slot />

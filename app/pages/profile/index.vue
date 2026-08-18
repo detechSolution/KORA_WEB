@@ -927,8 +927,9 @@ onMounted(async () => {
                 class="text-xs text-stone-400 space-y-1.5 list-disc list-inside"
               >
                 <li>At least 8 characters long</li>
-                <li>Use a combination of letters and numbers</li>
-                <li>Avoid using easily guessable passwords</li>
+                <li>At least one uppercase (capital) letter</li>
+                <li>At least one number</li>
+                <li>At least one special symbol</li>
               </ul>
             </div>
 

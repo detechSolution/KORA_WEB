@@ -33,7 +33,7 @@ onMounted(() => {
         class="w-12 h-12 md:w-16 md:h-16 object-contain"
       >
     </div>
-    <span class="text-6xl font-bold text-foreground">KORA</span>
+    <span class="text-6xl font-thin text-foreground">KORA</span>
   </div>
 </template>
 

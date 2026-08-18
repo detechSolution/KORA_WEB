@@ -20,7 +20,7 @@
       <!-- Left Column: Large meditative woman image -->
       <div class="lg:col-span-6 xl:col-span-6 flex justify-center">
         <div
-          class="w-full max-w-[550px] aspect-[4/5] rounded-[24px] overflow-hidden border border-border shadow-2xl relative group bg-muted"
+          class="w-full max-w-[590px] rounded-[24px] overflow-hidden border border-border shadow-2xl relative group bg-muted"
         >
           <img
             :src="IMAGES.EXPERIENCE_MAIN"

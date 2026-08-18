@@ -349,7 +349,7 @@ onMounted(() => {
           >
             <div class="grid grid-cols-[100px_repeat(7,minmax(0,1fr))]">
               <div
-                class="border-b border-r border-stone-300 dark:border-stone-800 px-4 py-5 text-[10px] font-bold tracking-[0.18em] uppercase text-stone-500 flex items-center justify-center"
+                class="sticky left-0 z-30 bg-background dark:bg-secondary-900 border-b border-r border-stone-300 dark:border-stone-800 px-4 py-5 text-[10px] font-bold tracking-[0.18em] uppercase text-stone-500 flex items-center justify-center "
               >
                 Time
               </div>
@@ -391,7 +391,7 @@ onMounted(() => {
               <template v-if="timeSlots.length">
                 <template v-for="timeKey in timeSlots" :key="timeKey">
                   <div
-                    class="border-b border-r border-stone-300 dark:border-stone-800 px-4 py-6 text-[10px] font-bold tracking-[0.14em] uppercase text-primary flex items-center justify-center"
+                    class="sticky left-0 z-20 bg-background dark:bg-secondary-900 border-b border-r border-stone-300 dark:border-stone-800 px-4 py-6 text-[10px] font-bold tracking-[0.14em] uppercase text-primary flex items-center justify-center"
                   >
                     {{ formatTime(`2000-01-01T${timeKey}:00`) }}
                   </div>

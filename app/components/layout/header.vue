@@ -150,6 +150,16 @@ onUnmounted(() => {
             class="text-xs md:text-sm font-semibold uppercase tracking-widest font-sans hidden sm:block"
           >Menu</span>
         </button>
+        <NuxtLink
+          to="/"
+          class="ml-3 items-center focus:outline-none group flex sm:hidden"
+        >
+          <img
+            :src="getColorClass?.image"
+            alt="KORA Logo"
+            class="w-22 md:w-32 md:h-8 object-contain group-hover:scale-105 transition-transform duration-200"
+          >
+        </NuxtLink>
       </div>
 
       <!-- Center: Logo -->
@@ -169,7 +179,7 @@ onUnmounted(() => {
         <!-- Wifi Status Button (Replacer of theme toggle) -->
         <!-- Dark Mode Toggle Button -->
         <button
-          class="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center border border-primary/40 text-primary hover:bg-primary/10 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
+          class="w-9 h-9 md:w-10 md:h-10 hidden sm:flex items-center justify-center border border-primary/40 text-primary hover:bg-primary/10 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
           title="Toggle Theme"
           @click="toggleColorMode"
         >
@@ -197,7 +207,7 @@ onUnmounted(() => {
           to="/membership"
           variant="solid"
           color="primary"
-          class="hidden md:inline-flex px-4 md:px-6 py-2 md:py-2.5 text-[10px] md:text-xs uppercase tracking-widest transition-all duration-200 focus:outline-none shadow-sm active:scale-95"
+          class="inline-flex px-4 md:px-6 py-2 md:py-2.5 text-[10px] md:text-xs uppercase tracking-widest transition-all duration-200 focus:outline-none shadow-sm active:scale-95"
         >
           Membership
         </base-button>

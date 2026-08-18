@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useNotification } from "~/composables/use-notification";
 import { useAuthStore } from "~/stores/auth";
 import { useSpaStore } from "~/stores/spa";
@@ -19,6 +19,7 @@ useSeoMeta({
 
 const isPlayingVideo = ref(false);
 
+const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 const spaStore = useSpaStore();
@@ -57,7 +58,7 @@ function handleBookingClick(spa: any) {
     isBookingModalOpen.value = true;
   }
   else {
-    router.push("/login");
+    router.push({ path: "/login", query: { redirect: route.fullPath } });
   }
 }
 
@@ -72,7 +73,7 @@ function handleOpenBookingModal() {
     isBookingModalOpen.value = true;
   }
   else {
-    router.push("/login");
+    router.push({ path: "/login", query: { redirect: route.fullPath } });
   }
 }
 

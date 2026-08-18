@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, watch } from "vue";
 import { useColorMode } from "#imports";
+import { ICONS } from "~/config/icons";
 import { useAuthStore } from "~/stores/auth";
 
 const props = defineProps({
@@ -18,7 +19,13 @@ function close() {
 
 const authStore = useAuthStore();
 const colorMode = useColorMode();
-const isDark = computed(() => colorMode.value === "dark");
+// const isDark = computed(() => colorMode.value === "dark");
+const isDark = computed({
+  get: () => colorMode.value === "dark",
+  set: (value) => {
+    colorMode.preference = value ? "dark" : "light";
+  },
+});
 
 const logoSrc = computed(() => {
   return isDark.value
@@ -53,6 +60,10 @@ function handleKeyDown(e: KeyboardEvent) {
   if (e.key === "Escape" && props.isOpen) {
     close();
   }
+}
+
+function toggleColorMode() {
+  isDark.value = !isDark.value;
 }
 
 watch(
@@ -95,7 +106,18 @@ onUnmounted(() => {
         <div
           class="w-full flex justify-between items-center px-6 py-6 md:px-12 md:py-8 relative"
         >
-          <div class="w-10" />
+          <!-- <div class="w-10" /> -->
+
+          <button
+            class="w-9 h-9 md:w-10 md:h-10 flex sm:hidden items-center justify-center border border-primary/40 text-primary hover:bg-primary/10 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
+            title="Toggle Theme"
+            @click="toggleColorMode"
+          >
+            <UIcon
+              :name="isDark ? ICONS.SUN : ICONS.MOON"
+              class="w-4 h-4 md:w-5 md:h-5"
+            />
+          </button>
 
           <div class="absolute left-1/2 -translate-x-1/2 translate-y-[10px]">
             <NuxtLink
@@ -109,6 +131,8 @@ onUnmounted(() => {
               >
             </NuxtLink>
           </div>
+
+          <div class="w-10" />
 
           <button
             class="w-10 h-10 flex items-center justify-center text-foreground/60 hover:text-foreground transition-colors focus:outline-none group cursor-pointer"

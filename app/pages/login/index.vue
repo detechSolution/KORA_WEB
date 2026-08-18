@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import z from "zod";
 import { useNotification } from "~/composables/use-notification";
 import { useAuthStore } from "~/stores/auth";
@@ -17,6 +17,7 @@ useSeoMeta({
 });
 
 const authStore = useAuthStore();
+const route = useRoute();
 const router = useRouter();
 const { error: showError } = useNotification();
 
@@ -82,7 +83,13 @@ async function handleLogin(): Promise<void> {
       password: loginFormState.password,
     };
     await authStore.login(payload as { email: string; password: string });
-    router.push({ name: "index" });
+    const redirect = route.query.redirect as string;
+    if (redirect) {
+      router.push(redirect);
+    }
+    else {
+      router.push("/");
+    }
   }
   catch (error: unknown) {
     const message = getApiErrorMessage(
