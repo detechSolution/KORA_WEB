@@ -238,14 +238,14 @@ onUnmounted(() => {
                 <div
                   v-for="item in cartItems"
                   :key="item.referenceId"
-                  class="flex gap-4 pb-6 border-b border-border/10"
+                  class="flex gap-4 pb-6 border-b border-border"
                 >
-                  <div class="pt-1 flex-shrink-0">
+                  <div class="pt-1 shrink-0">
                     <input
                       v-model="selectedItemIds"
                       type="checkbox"
                       :value="item.cartId"
-                      class="w-5 h-5 accent-[#B59A6D] rounded border-border cursor-pointer"
+                      class="w-4 h-4 accent-[#B59A6D] rounded border-border cursor-pointer"
                     >
                   </div>
                   <!-- Item Details -->
@@ -257,12 +257,12 @@ onUnmounted(() => {
                       {{ "Guest" }}
                     </span>
                     <div class="flex justify-between items-start gap-4 mb-2">
-                      <div class="flex flex-wrap items-start gap-2">
-                        <h4 class="text-base font-serif text-foreground">
+                      <div class="flex flex-wrap items-center gap-2">
+                        <h4 class="text-2xl font-semibold font-serif text-foreground">
                           {{ item.title }}
-                          <br>
+                          <!-- <br> -->
                           <span v-if="item.itemType !== 'membership'">
-                            (<span class="text-xl">{{
+                            (<span class="text-2xl font-semibold">{{
                               item.visitors.length > 0
                                 ? item.visitors.length
                                 : 1
@@ -275,19 +275,19 @@ onUnmounted(() => {
                         </h4>
                         <span
                           v-if="item.itemType === 'session'"
-                          class="text-[8px] px-1.5 py-0.5 bg-purple-900 dark:bg-purple-900/40 text-purple-300 font-medium tracking-wide"
+                          class="text-[10px] px-1.5 py-0.5 bg-purple-900 dark:bg-purple-900/40 text-purple-300 font-medium tracking-wide"
                         >Session</span>
                         <span
                           v-if="item.itemType === 'spa'"
-                          class="text-[8px] px-1.5 py-0.5 bg-emerald-900 dark:bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
+                          class="text-[10px] px-1.5 py-0.5 bg-emerald-900 dark:bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
                         >Spa</span>
                         <span
                           v-if="item.itemType === 'pass'"
-                          class="text-[8px] px-1.5 py-0.5 bg-blue-900 dark:bg-blue-900/40 text-blue-400 font-medium tracking-wide"
+                          class="text-[10px] px-1.5 py-0.5 bg-blue-900 dark:bg-blue-900/40 text-blue-400 font-medium tracking-wide"
                         >Pass</span>
                         <span
                           v-if="item.itemType === 'membership'"
-                          class="text-[8px] px-1.5 py-0.5 bg-[#B59A6D] dark:bg-[#5D4A17] text-white font-medium tracking-wide"
+                          class="text-[10px] px-1.5 py-0.5 bg-[#B59A6D] dark:bg-[#5D4A17] text-white font-medium tracking-wide"
                         >Membership</span>
                       </div>
                       <div>
@@ -298,21 +298,21 @@ onUnmounted(() => {
                     <div class="flex gap-1.5 mt-auto">
                       <div
                         v-if="item.bookingDate"
-                        class="flex items-center gap-1.5 text-[9px] text-muted-foreground"
+                        class="flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground"
                       >
                         <UIcon name="i-lucide-calendar" class="w-3 h-3" />
                         <span>{{ item.bookingDate }}</span>
                       </div>
                       <div
                         v-if="item.bookingTime"
-                        class="flex items-center gap-1.5 text-[9px] text-muted-foreground"
+                        class="flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground"
                       >
                         <UIcon name="i-lucide-clock" class="w-3 h-3" />
                         <span>{{ formatTime(item.bookingTime) }}</span>
                       </div>
                       <div
                         v-if="item.location"
-                        class="flex items-center gap-1.5 text-[9px] text-muted-foreground"
+                        class="flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground"
                       >
                         <UIcon name="i-lucide-map-pin" class="w-3 h-3" />
                         <span>{{ item.location }}</span>

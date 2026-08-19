@@ -28,7 +28,9 @@ const isAddingToWaitlist = ref(false);
 
 const showWaitlistCta = computed(() => {
   return (
-    !props.session.isBooked && !props.session.isInWaitlist && !props.session.isBookable
+    !props.session.isBooked
+    && !props.session.isInWaitlist
+    && !props.session.isBookable
   );
 });
 
@@ -54,7 +56,8 @@ async function handleAddToWaitlist() {
   }
   if (authStore.isMembershipFrozen()) {
     showError({
-      message: "Your membership is currently frozen. You cannot join the waitlist.",
+      message:
+        "Your membership is currently frozen. You cannot join the waitlist.",
     });
     return;
   }
@@ -240,18 +243,36 @@ async function handleAddToWaitlist() {
         </div>
 
         <!-- Book Your Spot Section -->
-        <aside class="sticky bottom-0 lg:top-28 lg:self-start px-0 md:px-8 lg:px-0">
+        <aside
+          class="sticky bottom-0 lg:top-28 lg:self-start px-0 md:px-8 lg:px-0"
+        >
           <div class="border border-border bg-card">
             <div class="px-5 pt-5 sm:py-5 md:px-6">
+              <div class="flex justify-between items-start">
+                <p
+                  class="text-[10px] uppercase tracking-[0.24em] text-primary/70 mb-3"
+                >
+                  Book Your Spot
+                </p>
+
+                <span
+                  v-if="showWaitlistCta"
+                  class="inline-flex items-center rounded-lg bg-red-900 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-sm"
+                >
+                  Sold Out
+                </span>
+              </div>
               <p
-                class="text-[10px] uppercase tracking-[0.24em] text-primary/70 mb-3"
-              >
-                Book Your Spot
-              </p>
-              <p
+                v-if="session.price > 0"
                 class="font-serif text-3xl md:text-4xl text-foreground leading-none"
               >
                 Rs. {{ session.price }}
+              </p>
+              <p
+                v-else
+                class="font-serif text-3xl md:text-4xl text-foreground leading-none"
+              >
+                Free
               </p>
               <p class="mt-2 text-xs text-secondary-400 hidden sm:block">
                 {{ formatTime(session.startTime) }} -
@@ -260,7 +281,7 @@ async function handleAddToWaitlist() {
               </p>
             </div>
 
-            <div class="px-5 py-5 md:px-6 space-y-4 flex flex-col items-center ">
+            <div class="px-5 py-5 md:px-6 space-y-4 flex flex-col items-center">
               <div
                 class="w-full border border-border bg-[#c9a55a]/10 dark:bg-[#2A2722] px-4 py-4 space-y-3 hidden sm:block"
               >
@@ -302,9 +323,7 @@ async function handleAddToWaitlist() {
               </base-button>
 
               <base-button
-                v-else-if="
-                  session.isBookable && session.remainingSpots > 0
-                "
+                v-else-if="session.isBookable && session.remainingSpots > 0"
                 variant="solid"
                 color="primary"
                 class="w-full text-sm uppercase"
