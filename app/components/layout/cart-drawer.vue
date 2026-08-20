@@ -75,7 +75,7 @@ function handleProceedToCheckout() {
         class="flex items-start justify-between p-8 pb-6 border-b border-border"
       >
         <div class="flex flex-col gap-2">
-          <h2 class="text-2xl font-serif text-foreground">
+          <h2 class="text-2xl font-semibold font-serif text-foreground">
             Your Cart
           </h2>
           <span
@@ -169,7 +169,7 @@ function handleProceedToCheckout() {
                   class="text-[10px] px-1.5 py-0.5 bg-primary dark:bg-[#5D4A17] text-primary-foreground font-medium tracking-wide"
                 >Membership</span>
               </div>
-              <span class="text-2xl font-serif text-[#B59A6D]">Rs. {{ formatPrice(item.finalPrice) }}</span>
+              <span class="text-2xl font-serif text-[#B59A6D]">{{ item.finalPrice > 0 ? `Rs. ${formatPrice(item.finalPrice)}` : 'Free' }}</span>
             </div>
 
             <div class="mt-2 flex gap-1.5">

@@ -107,7 +107,7 @@ async function handleCancelRequest() {
           v-if="booking.visitors"
           class="py-0.5 text-[10px] font-bold rounded-sm capitalize text-primary"
         >
-          {{ booking.visitors.length > 0 ? `GUEST X ${booking.visitors.length}` : 'MYSELF`' }}
+          {{ booking.visitors.length > 0 ? `GUEST X ${booking.visitors.length}` : 'MYSELF' }}
         </span>
         <div class="flex flex-col justify-center">
           <!-- Title and Badge -->

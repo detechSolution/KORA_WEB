@@ -291,7 +291,7 @@ onUnmounted(() => {
                         >Membership</span>
                       </div>
                       <div>
-                        <span class="text-2xl font-serif text-[#B59A6D]">Rs. {{ formatPrice(item.finalPrice) }}</span>
+                        <span class="text-2xl font-serif text-[#B59A6D]">{{ item.finalPrice > 0 ? `Rs. ${formatPrice(item.finalPrice)}` : 'Free' }}</span>
                       </div>
                     </div>
 
