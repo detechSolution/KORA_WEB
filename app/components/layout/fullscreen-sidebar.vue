@@ -45,7 +45,7 @@ const menuItems = computed(() => {
     { name: "Schedules", path: "/schedules", requiresAuth: false },
     { name: "Membership", path: "/membership", requiresAuth: false },
     { name: "Spa Sanctuary", path: "/spa", requiresAuth: false },
-    { name: "Inquire For Residency", path: "/inquire", requiresAuth: false },
+    { name: "Feedback & Inquiry", path: "/inquire", requiresAuth: false },
   ];
 
   return items.filter((item) => {

@@ -296,7 +296,7 @@ async function handleAddToWaitlist() {
                     </p>
                     <p class="text-foreground font-medium">
                       {{ formatDate(session.startsAt) }} •
-                      {{ formatTime(session.startTime) }} • {{ session.venue }}
+                      {{ formatTime(session.startTime) }}
                     </p>
                   </div>
                 </div>
