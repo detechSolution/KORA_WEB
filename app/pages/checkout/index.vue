@@ -125,7 +125,7 @@ async function handlePayNowClick() {
     return;
   }
 
-  if (step.value === 1) {
+  if (step.value === 1 && totalPrice.value > 0) {
     step.value = 2;
   }
   else {
