@@ -91,7 +91,7 @@ async function handleAddToWaitlist() {
       >
     </div>
 
-    <div class="relative z-10 max-w-400 mx-auto">
+    <div class="relative z-10 max-w-400 mx-auto py-12">
       <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-12">
         <div>
           <ClassHeader :title="session.name" />
@@ -244,7 +244,7 @@ async function handleAddToWaitlist() {
 
         <!-- Book Your Spot Section -->
         <aside
-          class="sticky bottom-0 lg:top-56 lg:self-start px-0 md:px-8 lg:px-0"
+          class="sticky bottom-0 lg:top-30 lg:self-start px-4 md:px-8 lg:px-0"
         >
           <div class="border border-border bg-card">
             <div class="px-5 pt-5 sm:py-5 md:px-6">

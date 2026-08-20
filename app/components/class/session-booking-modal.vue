@@ -253,6 +253,7 @@ const bookingItem = computed(() => ({
 function addToCart() {
   cartStore.addToCart(bookingItem.value);
   success({ message: "Item added to cart successfully!" });
+  close();
 }
 
 function proceedToCheckout() {

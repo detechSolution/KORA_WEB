@@ -242,7 +242,7 @@ onMounted(() => {
         </div>
 
         <!-- Right Column (Sidebar) -->
-        <aside class="sticky lg:top-28 lg:self-start px-4 md:px-8 lg:px-0">
+        <aside class="sticky bottom-0 lg:top-30 lg:self-start px-4 md:px-8 lg:px-0">
           <div class="border border-border bg-card px-5 py-5 md:px-6">
             <p class="text-[10px] uppercase text-primary mb-3">
               SPA MENU
