@@ -215,7 +215,7 @@ onUnmounted(() => {
                     class="w-4 h-4 text-[#B59A6D]"
                   />
                   <span
-                    class="text-[10px] text-[#B59A6D] font-bold tracking-widest uppercase"
+                    class="text-sm text-[#B59A6D] font-bold uppercase"
                   >
                     ORDER SUMMARY
                   </span>
@@ -604,7 +604,7 @@ onUnmounted(() => {
         <div
           class="col-span-5 lg:col-span-2 h-fit flex flex-col gap-9 bg-card p-8 border border-border"
         >
-          <p class="text-lg font-semibold uppercase text-primary-700">
+          <p class="text-sm font-semibold uppercase text-primary-700">
             PAYMENT OVERVIEW
           </p>
           <div key="step1" class="flex flex-col w-full">

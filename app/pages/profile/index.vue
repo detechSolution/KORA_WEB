@@ -105,8 +105,15 @@ const profileSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
   phone: z.string().min(1, "Phone number is required"),
   email: z.string().email("Invalid email address"),
-  height: z.string().optional(),
-  weight: z.string().optional(),
+  height: z
+    .string()
+    .transform(value => (value === "" ? undefined : Number(value)))
+    .optional(),
+
+  weight: z
+    .string()
+    .transform(value => (value === "" ? undefined : Number(value)))
+    .optional(),
   injuryHistory: z.string().optional(),
   preferences: z.string().optional(),
 });
@@ -116,8 +123,8 @@ const profileForm = reactive<Partial<ProfileSchema>>({
   fullName: "",
   phone: "",
   email: "",
-  height: "",
-  weight: "",
+  height: undefined,
+  weight: undefined,
   injuryHistory: "",
   preferences: "",
 });
@@ -638,15 +645,15 @@ onMounted(async () => {
                     <base-input
                       v-model="profileForm.height"
                       name="height"
-                      type="text"
+                      type="number"
                       label="HEIGHT"
-                      placeholder="Enter height in feet"
+                      placeholder="Enter height in centimeter"
                     />
 
                     <base-input
                       v-model="profileForm.weight"
                       name="weight"
-                      type="text"
+                      type="number"
                       label="WEIGHT"
                       placeholder="Enter weight in kg"
                     />

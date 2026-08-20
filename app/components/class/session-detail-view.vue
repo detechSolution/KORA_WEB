@@ -256,7 +256,7 @@ async function handleAddToWaitlist() {
                 </p>
 
                 <span
-                  v-if="showWaitlistCta"
+                  v-if="session.remainingSpots === 0"
                   class="inline-flex items-center rounded-lg bg-red-900 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-sm"
                 >
                   Sold Out
@@ -275,8 +275,7 @@ async function handleAddToWaitlist() {
                 Free
               </p>
               <p class="mt-2 text-xs text-secondary-400 hidden sm:block">
-                {{ formatTime(session.startTime) }} -
-                {{ formatTime(session.endTime) }} session with
+                {{ calculateDuration(session.startTime, session.endTime) }} session with
                 {{ session.instructorName }}
               </p>
             </div>

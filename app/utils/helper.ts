@@ -34,6 +34,61 @@ export function calculatePrice({
   };
 }
 
+export function calculateDuration(startTime: string, endTime: string): string {
+  const parseTime = (time: string): number => {
+    const [hour = "0", minute = "0"] = time.split(":");
+
+    return Number(hour) * 60 + Number(minute);
+  };
+
+  const start = parseTime(startTime);
+  let end = parseTime(endTime);
+
+  if (end < start) {
+    end += 24 * 60;
+  }
+
+  const diff = end - start;
+  const hours = Math.floor(diff / 60);
+  const minutes = diff % 60;
+
+  const parts: string[] = [];
+
+  if (hours > 0) {
+    parts.push(`${hours} ${hours === 1 ? "hour" : "hours"}`);
+  }
+
+  if (minutes > 0) {
+    parts.push(`${minutes} ${minutes === 1 ? "min" : "mins"}`);
+  }
+
+  return parts.join(" ") || "0 min";
+}
+
+export function getDisabledMessage(session: any) {
+  if (session.isBooked) {
+    return "You have already booked this session.";
+  }
+
+  return "";
+}
+
+export function getDisabledMessageForGuest(session: any) {
+  const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
+
+  const hasMembership = !!userDetail?.membership?.membershipPlanId;
+
+  if (!hasMembership) {
+    return "You need a membership plan to book this session for guest.";
+  }
+
+  if (!session.isGuestBookable) {
+    return "Membership plan reached maximum guest allowance.";
+  }
+
+  return "";
+}
+
 export function getProgressColor(type: string) {
   if (type === "event")
     return "emerald";

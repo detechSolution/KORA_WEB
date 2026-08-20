@@ -298,8 +298,8 @@ export const useAuthStore = defineStore("auth", () => {
   const updateProfile = async (payload: {
     fullName?: string;
     phoneNumber?: string;
-    height?: string;
-    weight?: string;
+    height?: number;
+    weight?: number;
     injuryHistory?: string;
     preferences?: string;
   }): Promise<void> => {

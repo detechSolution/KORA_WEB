@@ -157,9 +157,26 @@ function removeGuest(index: number) {
   state.guests.splice(index, 1);
 }
 
+const isGuestBookingDisabled = computed(() => {
+  return !hasMembership.value || !props.session.isGuestBookable;
+});
+
 function selectPreference(type: "myself" | "guest") {
-  state.bookingPreference = type;
-  if (type === "guest" && state.guests.length === 0) {
+  if (type === "myself") {
+    if (props.session.isBooked)
+      return;
+
+    state.bookingPreference = "myself";
+    return;
+  }
+
+  if (isGuestBookingDisabled.value) {
+    return;
+  }
+
+  state.bookingPreference = "guest";
+
+  if (state.guests.length === 0) {
     addGuest();
   }
 }
@@ -299,67 +316,87 @@ function close() {
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
             <!-- Book For Myself Card -->
-            <div
-              class="border border-border p-8 flex flex-col items-center text-center cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors group"
-              :class="{
-                'cursor-pointer hover:bg-black/5 dark:hover:bg-white/5': !session.isBooked,
-                'opacity-50 cursor-not-allowed pointer-events-none': session.isBooked,
-              }"
-              @click="selectPreference('myself')"
+            <UTooltip
+              :delay-duration="0"
+              :text="getDisabledMessage(session)"
+              :disabled="!session.isBooked"
             >
               <div
-                class="w-20 h-20 rounded-full bg-[#f4ebd9] dark:bg-[#A08860]/20 flex items-center justify-center mb-6"
+                class="border border-border p-8 flex flex-col items-center text-center cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors group"
+                :class="{
+                  'cursor-pointer hover:bg-black/5 dark:hover:bg-white/5':
+                    !session.isBooked,
+                  'opacity-50 cursor-not-allowed': session.isBooked,
+                }"
+                @click="selectPreference('myself')"
               >
-                <UIcon name="i-lucide-user" class="w-8 h-8 text-primary-700" />
+                <div
+                  class="w-20 h-20 rounded-full bg-[#f4ebd9] dark:bg-[#A08860]/20 flex items-center justify-center mb-6"
+                >
+                  <UIcon
+                    name="i-lucide-user"
+                    class="w-8 h-8 text-primary-700"
+                  />
+                </div>
+                <h3 class="text-2xl font-serif mb-4 text-foreground">
+                  Book For Myself
+                </h3>
+                <div
+                  class="w-12 h-px bg-border/40 mb-4 transition-all group-hover:w-20 group-hover:bg-[#A08860]"
+                />
+                <p class="text-sm text-muted-foreground mb-4">
+                  Manage your personal bookings & appointments
+                </p>
+                <button
+                  class="text-xs font-bold text-primary-700 tracking-widest uppercase flex items-center gap-2 mt-auto cursor-pointer"
+                >
+                  GET STARTED
+                  <UIcon name="i-lucide-arrow-right" class="w-4 h-4" />
+                </button>
               </div>
-              <h3 class="text-2xl font-serif mb-4 text-foreground">
-                Book For Myself
-              </h3>
-              <div
-                class="w-12 h-px bg-border/40 mb-4 transition-all group-hover:w-20 group-hover:bg-[#A08860]"
-              />
-              <p class="text-sm text-muted-foreground mb-4">
-                Manage your personal bookings & appointments
-              </p>
-              <button
-                class="text-xs font-bold text-primary-700 tracking-widest uppercase flex items-center gap-2 mt-auto cursor-pointer"
-              >
-                GET STARTED
-                <UIcon name="i-lucide-arrow-right" class="w-4 h-4" />
-              </button>
-            </div>
+            </UTooltip>
 
             <!-- Book For Guest Card -->
-            <div
-              class="border border-border p-8 flex flex-col items-center text-center cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors group"
-              :class="{
-                'cursor-pointer hover:bg-black/5 dark:hover:bg-white/5': hasMembership || session.isGuestBookable,
-                'opacity-50 cursor-not-allowed pointer-events-none': !hasMembership || !session.isGuestBookable,
-              }"
-              @click="selectPreference('guest')"
+            <UTooltip
+              :delay-duration="0"
+              :text="getDisabledMessageForGuest(session)"
+              :disabled="!isGuestBookingDisabled"
             >
               <div
-                class="w-20 h-20 rounded-full bg-[#f4ebd9] dark:bg-[#A08860]/20 flex items-center justify-center mb-6"
+                class="border border-border p-8 flex flex-col items-center text-center cursor-pointer hover:bg-black/5 dark:hover:bg-white/5 transition-colors group"
+                :class="{
+                  'cursor-pointer hover:bg-black/5 dark:hover:bg-white/5':
+                    !isGuestBookingDisabled,
+                  'opacity-50 cursor-not-allowed': isGuestBookingDisabled,
+                }"
+                @click="selectPreference('guest')"
               >
-                <UIcon name="i-lucide-users" class="w-8 h-8 text-primary-700" />
+                <div
+                  class="w-20 h-20 rounded-full bg-[#f4ebd9] dark:bg-[#A08860]/20 flex items-center justify-center mb-6"
+                >
+                  <UIcon
+                    name="i-lucide-users"
+                    class="w-8 h-8 text-primary-700"
+                  />
+                </div>
+                <h3 class="text-2xl font-serif mb-4 text-foreground">
+                  Book For Guest
+                </h3>
+                <div
+                  class="w-12 h-px bg-border/40 mb-4 transition-all group-hover:w-20 group-hover:bg-[#A08860]"
+                />
+                <p class="text-sm text-muted-foreground mb-4">
+                  Book on behalf of someone else such as friends or family
+                  members.
+                </p>
+                <button
+                  class="text-xs font-bold text-primary-700 tracking-widest uppercase flex items-center gap-2 mt-auto cursor-pointer"
+                >
+                  GET STARTED
+                  <UIcon name="i-lucide-arrow-right" class="w-4 h-4" />
+                </button>
               </div>
-              <h3 class="text-2xl font-serif mb-4 text-foreground">
-                Book For Guest
-              </h3>
-              <div
-                class="w-12 h-px bg-border/40 mb-4 transition-all group-hover:w-20 group-hover:bg-[#A08860]"
-              />
-              <p class="text-sm text-muted-foreground mb-4">
-                Book on behalf of someone else such as friends or family
-                members.
-              </p>
-              <button
-                class="text-xs font-bold text-primary-700 tracking-widest uppercase flex items-center gap-2 mt-auto cursor-pointer"
-              >
-                GET STARTED
-                <UIcon name="i-lucide-arrow-right" class="w-4 h-4" />
-              </button>
-            </div>
+            </UTooltip>
           </div>
         </div>
 
@@ -604,9 +641,7 @@ function close() {
                       ADD TO CART
                     </base-button>
 
-                    <base-button
-                      @click="proceedToCheckout"
-                    >
+                    <base-button @click="proceedToCheckout">
                       PROCEED TO CHECKOUT
                     </base-button>
                   </div>
