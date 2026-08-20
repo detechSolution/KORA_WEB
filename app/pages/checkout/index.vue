@@ -130,7 +130,10 @@ async function handlePayNowClick() {
   }
   else {
     try {
-      sessionStorage.setItem("pendingPaymentItemIds", JSON.stringify(selectedItemIds.value));
+      sessionStorage.setItem(
+        "pendingPaymentItemIds",
+        JSON.stringify(selectedItemIds.value),
+      );
       const payload = {
         provider: paymentMethod.value,
         items: cartItems.value
@@ -218,12 +221,7 @@ onUnmounted(() => {
                   </span>
                 </div>
                 <div class="flex items-center gap-2">
-                  <input
-                    id="selectAll"
-                    v-model="isAllSelected"
-                    type="checkbox"
-                    class="w-4 h-4 accent-[#B59A6D] rounded border-border cursor-pointer"
-                  >
+                  <UCheckbox id="selectAll" v-model="isAllSelected" />
                   <label
                     for="selectAll"
                     class="text-xs text-muted-foreground cursor-pointer select-none"
@@ -241,12 +239,21 @@ onUnmounted(() => {
                   class="flex gap-4 pb-6 border-b border-border"
                 >
                   <div class="pt-1 shrink-0">
-                    <input
-                      v-model="selectedItemIds"
-                      type="checkbox"
-                      :value="item.cartId"
-                      class="w-4 h-4 accent-[#B59A6D] rounded border-border cursor-pointer"
-                    >
+                    <UCheckbox
+                      :model-value="selectedItemIds.includes(item.cartId)"
+                      @update:model-value="
+                        (checked) => {
+                          if (checked) {
+                            selectedItemIds.push(item.cartId);
+                          }
+                          else {
+                            selectedItemIds = selectedItemIds.filter(
+                              (id) => id !== item.cartId,
+                            );
+                          }
+                        }
+                      "
+                    />
                   </div>
                   <!-- Item Details -->
                   <div class="flex-1 flex flex-col">
@@ -258,7 +265,9 @@ onUnmounted(() => {
                     </span>
                     <div class="flex justify-between items-start gap-4 mb-2">
                       <div class="flex flex-wrap items-center gap-2">
-                        <h4 class="text-2xl font-semibold font-serif text-foreground">
+                        <h4
+                          class="text-2xl font-semibold font-serif text-foreground"
+                        >
                           {{ item.title }}
                           <!-- <br> -->
                           <span v-if="item.itemType !== 'membership'">
@@ -291,7 +300,11 @@ onUnmounted(() => {
                         >Membership</span>
                       </div>
                       <div>
-                        <span class="text-2xl font-serif text-[#B59A6D]">{{ item.finalPrice > 0 ? `Rs. ${formatPrice(item.finalPrice)}` : 'Free' }}</span>
+                        <span class="text-2xl font-serif text-[#B59A6D]">{{
+                          item.finalPrice > 0
+                            ? `Rs. ${formatPrice(item.finalPrice)}`
+                            : "Free"
+                        }}</span>
                       </div>
                     </div>
 
@@ -392,20 +405,16 @@ onUnmounted(() => {
 
                   <!-- Fonepay -->
                   <label class="flex items-center gap-3 cursor-pointer group">
-                    <div
-                      class="w-4 h-4 rounded-sm border border-border/40 flex items-center justify-center transition-colors"
-                      :class="
-                        paymentMethod === 'fonepay'
-                          ? 'bg-[#B59A6D] border-[#B59A6D]'
-                          : 'group-hover:border-border'
+                    <UCheckbox
+                      :model-value="paymentMethod === 'fonepay'"
+                      @update:model-value="
+                        (checked) => {
+                          if (checked) {
+                            paymentMethod = 'fonepay';
+                          }
+                        }
                       "
-                    >
-                      <UIcon
-                        v-if="paymentMethod === 'fonepay'"
-                        name="i-lucide-check"
-                        class="w-3 h-3 text-white"
-                      />
-                    </div>
+                    />
                     <input
                       v-model="paymentMethod"
                       type="radio"
@@ -459,20 +468,16 @@ onUnmounted(() => {
 
                   <!-- Card Payment -->
                   <label class="flex items-center gap-3 cursor-pointer group">
-                    <div
-                      class="w-4 h-4 rounded-sm border border-border/40 flex items-center justify-center transition-colors"
-                      :class="
-                        paymentMethod === 'card'
-                          ? 'bg-[#B59A6D] border-[#B59A6D]'
-                          : 'group-hover:border-border'
+                    <UCheckbox
+                      :model-value="paymentMethod === 'card'"
+                      @update:model-value="
+                        (checked) => {
+                          if (checked) {
+                            paymentMethod = 'card';
+                          }
+                        }
                       "
-                    >
-                      <UIcon
-                        v-if="paymentMethod === 'card'"
-                        name="i-lucide-check"
-                        class="w-3 h-3 text-white"
-                      />
-                    </div>
+                    />
                     <input
                       v-model="paymentMethod"
                       type="radio"
@@ -546,12 +551,7 @@ onUnmounted(() => {
                     </div>
                   </div>
                   <div class="mt-6 flex items-start gap-3">
-                    <input
-                      id="saveCard"
-                      type="checkbox"
-                      class="mt-1 accent-[#B59A6D] w-4 h-4 rounded-sm border-gray-300"
-                      checked
-                    >
+                    <UCheckbox id="saveCard" default-value />
                     <label
                       for="saveCard"
                       class="text-sm text-foreground cursor-pointer select-none"

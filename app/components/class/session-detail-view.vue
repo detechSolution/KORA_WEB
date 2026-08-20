@@ -244,7 +244,7 @@ async function handleAddToWaitlist() {
 
         <!-- Book Your Spot Section -->
         <aside
-          class="sticky bottom-0 lg:top-28 lg:self-start px-0 md:px-8 lg:px-0"
+          class="sticky bottom-0 lg:top-56 lg:self-start px-0 md:px-8 lg:px-0"
         >
           <div class="border border-border bg-card">
             <div class="px-5 pt-5 sm:py-5 md:px-6">
