@@ -167,6 +167,7 @@ async function handleLogin(): Promise<void> {
           :schema="schema"
           :validate-on="['input', 'change', 'blur']"
           class="mt-8 w-full space-y-4"
+          @keypress.enter="handleLogin"
         >
           <base-input
             v-model="loginFormState.email"

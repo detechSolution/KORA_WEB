@@ -226,6 +226,7 @@ async function handleRegister(): Promise<void> {
           :schema="schema"
           :validate-on="['input', 'change', 'blur']"
           class="mt-8 w-full space-y-4"
+          @keypress.enter="handleRegister"
         >
           <base-input
             v-model="registerFormState.fullName"
