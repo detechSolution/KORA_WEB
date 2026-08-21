@@ -13,7 +13,7 @@ const checkoutCode = computed(() => {
   return String(route.query.checkout_code || "");
 });
 
-// const sessionId = computed(() => String(route.query.session_id || ""));
+const sessionId = computed(() => String(route.query.session_id || ""));
 
 onMounted(async () => {
   try {
@@ -26,7 +26,9 @@ onMounted(async () => {
     }
 
     if (checkoutStore.paymentStatus === "paid") {
-      const pendingIds = JSON.parse(sessionStorage.getItem("pendingPaymentItemIds") || "[]");
+      const pendingIds = JSON.parse(
+        sessionStorage.getItem("pendingPaymentItemIds") || "[]",
+      );
       if (pendingIds.length > 0) {
         pendingIds.forEach((cartId: string) => cartStore.removeItem(cartId));
         sessionStorage.removeItem("pendingPaymentItemIds");
@@ -52,7 +54,10 @@ onMounted(async () => {
   <div
     class="bg-background dark:bg-secondary-900 flex flex-col items-center justify-center px-4 pb-14 pt-6 font-sans"
   >
-    <div v-if="checkoutStore.loading" class="flex flex-col items-center justify-center gap-6">
+    <div
+      v-if="checkoutStore.loading"
+      class="flex flex-col items-center justify-center gap-6"
+    >
       <div class="relative w-16 h-16 flex items-center justify-center">
         <div class="absolute inset-0 border-2 border-border rounded-full" />
         <div
@@ -109,7 +114,7 @@ onMounted(async () => {
         </p>
       </div>
 
-      <!-- <div
+      <div
         v-if="checkoutCode || sessionId"
         class="w-full flex justify-center items-center gap-6 py-5 border-y border-border/40 mt-4 mb-2 z-10 text-[10px] md:text-xs text-muted-foreground uppercase tracking-widest font-semibold"
       >
@@ -117,7 +122,7 @@ onMounted(async () => {
           <span class="text-foreground/40">REFERENCE NUMBER</span>
           <span class="text-[#B59A6D] font-bold">{{ checkoutCode }}</span>
         </div>
-      </div> -->
+      </div>
 
       <div class="flex flex-col sm:flex-row gap-4 w-full z-10 mt-6">
         <base-button
@@ -127,10 +132,7 @@ onMounted(async () => {
         >
           GO TO PROFILE
         </base-button>
-        <base-button
-          to="/session"
-          class="w-full text-[11px]"
-        >
+        <base-button to="/session" class="w-full text-[11px]">
           BOOK MORE SERVICES
         </base-button>
       </div>

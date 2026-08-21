@@ -66,7 +66,7 @@ async function handleAddToWaitlist() {
     isAddingToWaitlist.value = true;
     await sessionStore.addToWaitlist(props.session.id);
     emit("fetchSessionDetail");
-    success({ message: "Added to waitlist" });
+    success({ message: "You've been added to the waitlist. You'll receive an email if a spot becomes available." });
   }
   catch (error: any) {
     showError({ message: error?.message || "Failed to add to waitlist" });
@@ -275,7 +275,7 @@ async function handleAddToWaitlist() {
                 Free
               </p>
               <p class="mt-2 text-xs text-secondary-400 hidden sm:block">
-                {{ calculateDuration(session.startTime, session.endTime) }} {{session.instructor ? `session with ${session.instructorName}` : 'session' }}
+                {{ calculateDuration(session.startTime, session.endTime) }} {{ session.instructor ? `session with ${session.instructorName}` : 'session' }}
               </p>
             </div>
 

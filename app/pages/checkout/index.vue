@@ -127,6 +127,10 @@ async function handlePayNowClick() {
 
   if (step.value === 1 && totalPrice.value > 0) {
     step.value = 2;
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }
   else {
     try {
@@ -214,9 +218,7 @@ onUnmounted(() => {
                     name="i-lucide-shopping-bag"
                     class="w-4 h-4 text-[#B59A6D]"
                   />
-                  <span
-                    class="text-sm text-[#B59A6D] font-bold uppercase"
-                  >
+                  <span class="text-sm text-[#B59A6D] font-bold uppercase">
                     ORDER SUMMARY
                   </span>
                 </div>
@@ -568,55 +570,26 @@ onUnmounted(() => {
               </div>
             </div>
           </Transition>
-          <div class="hidden lg:block col-span-5 lg:col-span-3">
-            <!-- Action Buttons -->
-            <div
-              class="flex"
-              :class="step === 2 ? 'justify-between' : 'justify-end'"
-            >
-              <base-button
-                v-if="step === 2"
-                variant="outline"
-                leading-icon="i-lucide-arrow-left"
-                class="uppercase text-[11px] tracking-widest font-bold px-8 rounded-none border-border hover:border-primary-700"
-                @click="goBack"
-              >
-                GO BACK
-              </base-button>
-
-              <base-button
-                trailing-icon="i-lucide-arrow-right"
-                class="uppercase self-end flex tracking-widest font-bold px-8 rounded-none"
-                :loading="loading"
-                :disabled="
-                  (step === 2 && paymentMethod === 'card')
-                    || selectedItemIds.length === 0
-                "
-                @click="handlePayNowClick"
-              >
-                PAY NOW
-              </base-button>
-            </div>
-          </div>
         </div>
 
         <!-- Right Column: Order Summary -->
         <div
-          class="col-span-5 lg:col-span-2 h-fit flex flex-col gap-9 bg-card p-8 border border-border"
+          class="sticky bottom-0 lg:shadow-none bg-background dark:bg-secondary-900 lg:top-30 lg:self-start col-span-5 lg:col-span-2 h-fit flex flex-col gap-4"
         >
-          <p class="text-sm font-semibold uppercase text-primary-700">
-            PAYMENT OVERVIEW
-          </p>
-          <div key="step1" class="flex flex-col w-full">
-            <!-- Promo Code -->
-            <div class="border-y border-border flex flex-col gap-3 p-4">
-              <div
-                class="text-sm text-secondary dark:text-white font-normal flex justify-between"
-              >
-                <h2>Items Count ({{ totalItems }} items)</h2>
-                <p>Rs. {{ formatPrice(subtotal) }}</p>
-              </div>
-              <!-- <div
+          <div class="flex flex-col gap-9 bg-card p-8 border border-border">
+            <p class="text-sm font-semibold uppercase text-primary-700">
+              PAYMENT OVERVIEW
+            </p>
+            <div key="step1" class="flex flex-col w-full">
+              <!-- Promo Code -->
+              <div class="border-y border-border flex flex-col gap-3 p-4">
+                <div
+                  class="text-sm text-secondary dark:text-white font-normal flex justify-between"
+                >
+                  <h2>Items Count ({{ totalItems }} items)</h2>
+                  <p>Rs. {{ formatPrice(subtotal) }}</p>
+                </div>
+                <!-- <div
                 v-if="discountValue > 0"
                 class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between border-b border-border pb-2"
               >
@@ -636,20 +609,20 @@ onUnmounted(() => {
                 </p>
               </div> -->
 
-              <div
-                class="text-2xl text-secondary dark:text-white font-normal flex justify-between pt-1 font-serif"
-              >
-                <h2 class="font-bold">
-                  Total
-                </h2>
-                <p class="font-bold text-primary">
-                  Rs. {{ formatPrice(totalPrice) }}
-                </p>
+                <div
+                  class="text-2xl text-secondary dark:text-white font-normal flex justify-between pt-1 font-serif"
+                >
+                  <h2 class="font-bold">
+                    Total
+                  </h2>
+                  <p class="font-bold text-primary">
+                    Rs. {{ formatPrice(totalPrice) }}
+                  </p>
+                </div>
               </div>
-            </div>
 
-            <!-- Commented for now as it can be needed later -->
-            <!-- <div class="flex flex-col gap-2 w-full mt-9">
+              <!-- Commented for now as it can be needed later -->
+              <!-- <div class="flex flex-col gap-2 w-full mt-9">
               <div class="flex items-end w-full gap-4">
                 <div class="flex-1">
                   <base-input
@@ -688,11 +661,39 @@ onUnmounted(() => {
                 {{ cartStore.promoError }}
               </p>
             </div> -->
+            </div>
+          </div>
+
+          <div
+            class="flex"
+            :class="step === 2 ? 'justify-between' : 'justify-end'"
+          >
+            <base-button
+              v-if="step === 2"
+              variant="outline"
+              leading-icon="i-lucide-arrow-left"
+              class="uppercase text-[11px] tracking-widest font-bold px-8 rounded-none border-border hover:border-primary-700"
+              @click="goBack"
+            >
+              GO BACK
+            </base-button>
+
+            <base-button
+              trailing-icon="i-lucide-arrow-right"
+              class="uppercase self-end flex tracking-widest font-bold px-8 rounded-none"
+              :loading="loading"
+              :disabled="
+                (step === 2 && paymentMethod === 'card')
+                  || selectedItemIds.length === 0
+              "
+              @click="handlePayNowClick"
+            >
+              PAY NOW
+            </base-button>
           </div>
         </div>
 
-        <div class="block lg:hidden col-span-5 lg:col-span-3">
-          <!-- Action Buttons -->
+        <!-- <div class="block lg:hidden col-span-5 lg:col-span-3">
           <div
             class="flex"
             :class="step === 2 ? 'justify-between' : 'justify-end'"
@@ -711,15 +712,15 @@ onUnmounted(() => {
               trailing-icon="i-lucide-arrow-right"
               class="uppercase self-end flex tracking-widest font-bold px-8 rounded-none"
               :disabled="
-                (step === 2 && paymentMethod === 'card')
-                  || selectedItemIds.length === 0
+                (step === 2 && paymentMethod === 'card') ||
+                selectedItemIds.length === 0
               "
               @click="handlePayNowClick"
             >
               PAY NOW
             </base-button>
           </div>
-        </div>
+        </div> -->
       </div>
       <div v-else class="text-center py-20 flex flex-col items-center gap-6">
         <UIcon

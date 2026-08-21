@@ -38,7 +38,7 @@ onMounted(() => {
       <h2
         class="text-4xl md:text-5xl lg:text-6xl font-serif font-semibold text-white max-w-4xl mb-7 md:mb-9 italic"
       >
-        Where Movement, Recovery And<br class="hidden md:block" />
+        Where Movement, Recovery And<br class="hidden md:block">
         Community Meet
       </h2>
 
@@ -81,7 +81,7 @@ onMounted(() => {
         alt="Kora Spa Sanctuary"
         class="absolute inset-0 w-full h-full object-cover transition-all duration-[8000ms] ease-out-quad"
         :class="isLoaded ? 'scale-100' : 'scale-110'"
-      />
+      >
     </div>
 
     <!-- Luxury Dark Overlay Layer 1: Top-to-Bottom Linear Gradient (Header Legibility) -->
