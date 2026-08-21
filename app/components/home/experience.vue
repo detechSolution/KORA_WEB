@@ -40,7 +40,7 @@
         <h2
           class="font-serif text-3xl md:text-5xl text-foreground font-semibold mb-8"
         >
-          The <span class="text-primary italic">Kora</span> Experience
+          The <span class="text-primary font-semibold italic">Kora</span> Experience
         </h2>
 
         <!-- Copywriting Blocks -->

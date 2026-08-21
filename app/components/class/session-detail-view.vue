@@ -101,7 +101,7 @@ async function handleAddToWaitlist() {
               v-html="session.description"
             />
 
-            <div class="mt-10 text-foreground dark:text-stone-50">
+            <div v-if="session.instructor" class="mt-10 text-foreground dark:text-stone-50">
               <h2
                 class="font-sans font-bold text-sm uppercase tracking-[0.2em] mb-3"
               >
@@ -206,7 +206,7 @@ async function handleAddToWaitlist() {
                   Instructor
                 </p>
                 <p class="text-sm text-foreground">
-                  {{ session.instructorName }}
+                  {{ session.instructor ?? "N/A" }}
                 </p>
               </div>
               <div class="border border-border/60 bg-card/40 px-4 py-4">
@@ -275,8 +275,7 @@ async function handleAddToWaitlist() {
                 Free
               </p>
               <p class="mt-2 text-xs text-secondary-400 hidden sm:block">
-                {{ calculateDuration(session.startTime, session.endTime) }} session with
-                {{ session.instructorName }}
+                {{ calculateDuration(session.startTime, session.endTime) }} {{session.instructor ? `session with ${session.instructorName}` : 'session' }}
               </p>
             </div>
 
