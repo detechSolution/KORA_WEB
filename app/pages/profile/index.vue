@@ -105,15 +105,15 @@ const profileSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
   phone: z.string().min(1, "Phone number is required"),
   email: z.string().email("Invalid email address"),
-  height: z
-    .string()
-    .transform(value => (value === "" ? undefined : Number(value)))
-    .optional(),
+  height: z.preprocess(
+    value => (value === "" ? undefined : value),
+    z.coerce.number().int().positive().optional(),
+  ),
 
-  weight: z
-    .string()
-    .transform(value => (value === "" ? undefined : Number(value)))
-    .optional(),
+  weight: z.preprocess(
+    value => (value === "" ? undefined : value),
+    z.coerce.number().int().positive().optional(),
+  ),
   injuryHistory: z.string().optional(),
   preferences: z.string().optional(),
 });
@@ -648,6 +648,7 @@ onMounted(async () => {
                       type="number"
                       label="HEIGHT"
                       placeholder="Enter height in centimeter"
+                      @keydown="preventInvalidNumberInput"
                     />
 
                     <base-input
@@ -656,6 +657,7 @@ onMounted(async () => {
                       type="number"
                       label="WEIGHT"
                       placeholder="Enter weight in kg"
+                      @keydown="preventInvalidNumberInput"
                     />
 
                     <base-input

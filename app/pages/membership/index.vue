@@ -156,6 +156,11 @@ function getFrequencyLabel(frequency: string) {
   }
 }
 
+function setActivePeriod(period: string) {
+  activePeriod.value = period;
+  router.replace({ query: { ...route.query, tab: period.toLowerCase() } });
+}
+
 onMounted(async () => {
   await getMembershipPlans();
   await getPassPlans();
@@ -231,7 +236,7 @@ onMounted(async () => {
                 ? 'bg-primary text-white shadow-sm'
                 : 'bg-transparent text-foreground hover:bg-white/[0.02]',
             ]"
-            @click="activePeriod = period"
+            @click="setActivePeriod(period)"
           >
             {{ period }}
           </button>

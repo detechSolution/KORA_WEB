@@ -89,6 +89,12 @@ export function getDisabledMessageForGuest(session: any) {
   return "";
 }
 
+export function preventInvalidNumberInput(e: KeyboardEvent) {
+  if (["e", "E", "+", "-", "."].includes(e.key)) {
+    e.preventDefault();
+  }
+}
+
 export function getProgressColor(type: string) {
   if (type === "event")
     return "emerald";

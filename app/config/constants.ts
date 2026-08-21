@@ -23,6 +23,7 @@ export const API_ENDPOINTS = {
 
   INQUIRE: {
     CREATE: "/api/v1/mails/inquiries",
+    CREATE_CORPORATE: "/api/v1/mails/kora-corporate",
   },
 
   SPA: {
