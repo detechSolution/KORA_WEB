@@ -10,14 +10,16 @@ const router = useRouter();
   >
     <!-- Block 01: Metamorphosis Crafted For You -->
     <section
-      class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden"
+      class="w-full lg:h-[85vh] grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden"
     >
       <!-- Left Column: Large Image -->
-      <div class="w-full h-[50vh] lg:h-full relative overflow-hidden group">
+      <div
+        class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:h-full relative overflow-hidden group"
+      >
         <img
           :src="IMAGES.OFFERINGS_MEMBERSHIP"
           alt="Metamorphosis crafted for you"
-          class="w-full h-full object-cover transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
+          class="w-full h-full object-cover object-top transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
         >
         <div
           class="absolute inset-0 ring-1 ring-inset ring-black/5 dark:ring-white/5 pointer-events-none"
@@ -39,7 +41,7 @@ const router = useRouter();
           Metamorphosis Crafted For You
         </h3>
         <p
-          class="text-muted-foreground font-light text-sm md:text-base leading-relaxed mb-8"
+          class="text-muted-foreground font-light text-sm md:text-base mb-8"
         >
           Each membership at Kora is thoughtfully designed to support your
           ongoing wellness journey. Whether you're building consistency,
@@ -58,7 +60,7 @@ const router = useRouter();
 
     <!-- Block 02: Sessions Designed For You -->
     <section
-      class="w-full lg:h-screen grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden"
+      class="w-full lg:h-[85vh] grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden"
     >
       <!-- Left Column: Text content -->
       <div
@@ -75,7 +77,7 @@ const router = useRouter();
           Sessions Designed For You
         </h3>
         <p
-          class="text-muted-foreground font-light text-sm md:text-base leading-relaxed mb-8"
+          class="text-muted-foreground font-light text-sm md:text-base mb-8"
         >
           Each session at Kora is thoughtfully crafted to support your
           individual journey. Whether you're seeking movement, recovery, or
@@ -93,7 +95,7 @@ const router = useRouter();
 
       <!-- Right Column: Large Image -->
       <div
-        class="w-full h-[50vh] lg:h-full relative overflow-hidden group order-1 lg:order-2"
+        class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:h-full relative overflow-hidden group order-1 lg:order-2"
       >
         <img
           :src="IMAGES.OFFERINGS_SESSIONS"
@@ -144,7 +146,7 @@ const router = useRouter();
           </h2>
 
           <p
-            class="text-muted-foreground font-light text-sm md:text-base leading-relaxed mb-10"
+            class="text-muted-foreground font-light text-sm md:text-base mb-10"
           >
             Step beyond routine and enter a space designed for deep alignment.
             Every session and retreat is a step toward clarity, presence, and

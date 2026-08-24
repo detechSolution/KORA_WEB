@@ -53,6 +53,11 @@ export default defineAppConfig({
         itemLeadingIcon: "!text-secondary-700 dark:!text-white",
       },
     },
+    checkbox: {
+      slots: {
+        base: "outline-none ring-1 ring-secondary-200 dark:ring-secondary-600 data-[state=checked]:bg-primary-700 data-[state=checked]:border-primary-700",
+      },
+    },
   },
   safelist: [
     "min-w-[150px]",

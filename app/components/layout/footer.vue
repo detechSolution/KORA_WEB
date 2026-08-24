@@ -22,6 +22,7 @@ const navColumns = [
     links: [
       { label: "CAREERS", to: "/careers" },
       { label: "FEEDBACK & INQUIRY", to: "/inquire" },
+      { label: "KORA CORPORATE", to: "/inquire-kora-corporate" },
       { label: "KORA ETIQUETTE", to: "/etiquette" },
       { label: "CSR", to: "/csr" },
       { label: "TERMS & POLICY", to: "/policy" },

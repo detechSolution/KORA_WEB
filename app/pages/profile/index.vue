@@ -105,8 +105,15 @@ const profileSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
   phone: z.string().min(1, "Phone number is required"),
   email: z.string().email("Invalid email address"),
-  height: z.string().optional(),
-  weight: z.string().optional(),
+  height: z.preprocess(
+    value => (value === "" ? undefined : value),
+    z.coerce.number().int().positive().optional(),
+  ),
+
+  weight: z.preprocess(
+    value => (value === "" ? undefined : value),
+    z.coerce.number().int().positive().optional(),
+  ),
   injuryHistory: z.string().optional(),
   preferences: z.string().optional(),
 });
@@ -116,8 +123,8 @@ const profileForm = reactive<Partial<ProfileSchema>>({
   fullName: "",
   phone: "",
   email: "",
-  height: "",
-  weight: "",
+  height: undefined,
+  weight: undefined,
   injuryHistory: "",
   preferences: "",
 });
@@ -638,17 +645,19 @@ onMounted(async () => {
                     <base-input
                       v-model="profileForm.height"
                       name="height"
-                      type="text"
+                      type="number"
                       label="HEIGHT"
-                      placeholder="Enter height in feet"
+                      placeholder="Enter height in centimeter"
+                      @keydown="preventInvalidNumberInput"
                     />
 
                     <base-input
                       v-model="profileForm.weight"
                       name="weight"
-                      type="text"
+                      type="number"
                       label="WEIGHT"
                       placeholder="Enter weight in kg"
+                      @keydown="preventInvalidNumberInput"
                     />
 
                     <base-input
@@ -927,8 +936,9 @@ onMounted(async () => {
                 class="text-xs text-stone-400 space-y-1.5 list-disc list-inside"
               >
                 <li>At least 8 characters long</li>
-                <li>Use a combination of letters and numbers</li>
-                <li>Avoid using easily guessable passwords</li>
+                <li>At least one uppercase (capital) letter</li>
+                <li>At least one number</li>
+                <li>At least one special symbol</li>
               </ul>
             </div>
 

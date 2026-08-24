@@ -264,7 +264,7 @@ useSeoMeta({
         </ul>
         <div class="flex flex-col sm:flex-row gap-4">
           <base-button to="/session">
-            BOOK AN SESSION
+            BOOK A SESSION
           </base-button>
           <base-button to="/schedules" variant="outline">
             VIEW WEEKLY CALENDAR

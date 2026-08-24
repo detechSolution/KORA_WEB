@@ -28,7 +28,7 @@ const membershipPeriods = [
   "MONTHLY",
   "QUARTERLY",
   "YEARLY",
-  "100 DAYS",
+  "CUSTOM",
   "PASSES",
 ];
 const loading = ref(true);
@@ -54,7 +54,7 @@ const membershipPlans = computed(() => {
   const period = activePeriod.value.toLowerCase();
 
   const plans
-    = period === "100 days"
+    = period === "custom"
       ? membershipStore.groupedMembershipPlans.custom
       : membershipStore.groupedMembershipPlans[
         period as "monthly" | "quarterly" | "yearly"
@@ -65,7 +65,7 @@ const membershipPlans = computed(() => {
     selectedOption: tier.options?.find(
       (option: any) => option.frequency?.toUpperCase() === activePeriod.value,
     ),
-  }));
+  })).reverse();
 });
 
 function getIcon(index: number) {
@@ -92,7 +92,7 @@ function openPassModal(pass: any) {
     isPassModalOpen.value = true;
   }
   else {
-    router.push("/login");
+    router.push({ path: "/login", query: { redirect: route.fullPath } });
   }
 }
 
@@ -105,7 +105,7 @@ function openMembershipModal(tier: any) {
     isMembershipModalOpen.value = true;
   }
   else {
-    router.push("/login");
+    router.push({ path: "/login", query: { redirect: route.fullPath } });
   }
 }
 
@@ -139,6 +139,26 @@ async function getPassPlans() {
   finally {
     loading.value = false;
   }
+}
+
+function getFrequencyLabel(frequency: string) {
+  switch (frequency.toUpperCase()) {
+    case "MONTHLY":
+      return "month";
+    case "QUARTERLY":
+      return "quarter";
+    case "YEARLY":
+      return "year";
+    case "CUSTOM":
+      return "custom";
+    default:
+      return frequency.toLowerCase();
+  }
+}
+
+function setActivePeriod(period: string) {
+  activePeriod.value = period;
+  router.replace({ query: { ...route.query, tab: period.toLowerCase() } });
 }
 
 onMounted(async () => {
@@ -210,13 +230,13 @@ onMounted(async () => {
           <button
             v-for="period in membershipPeriods"
             :key="period"
-            class="shrink-0 px-4 sm:px-5 py-2.5 text-xs font-semibold tracking-wider uppercase rounded-xs transition-all duration-200 cursor-pointer whitespace-nowrap"
+            class="shrink-0 px-4 sm:px-5 py-2.5 text-[10px] sm:text-xs font-semibold tracking-wider uppercase rounded-xs transition-all duration-200 cursor-pointer whitespace-nowrap"
             :class="[
               activePeriod === period
                 ? 'bg-primary text-white shadow-sm'
                 : 'bg-transparent text-foreground hover:bg-white/[0.02]',
             ]"
-            @click="activePeriod = period"
+            @click="setActivePeriod(period)"
           >
             {{ period }}
           </button>
@@ -273,19 +293,19 @@ onMounted(async () => {
       <div
         v-for="(tier, index) in membershipPlans"
         :key="tier.id"
-        class="relative backdrop-blur-md rounded-xs p-6 md:p-8 flex flex-col justify-between transition-all duration-500 group"
-        :class="[
+        class="relative backdrop-blur-md rounded-xs p-6 md:p-8 flex flex-col justify-between transition-all duration-500 group border border-border/40 bg-card dark:bg-[#212121]"
+      >
+        <!-- :class="[
           index === 1
             ? 'border border-primary-700 bg-[#EFEAE2] dark:bg-[#2A2722] lg:scale-[1.03] z-25'
             : 'border border-border/40 bg-card dark:bg-[#212121]',
-        ]"
-      >
-        <div
+        ]" -->
+        <!-- <div
           v-if="index === 1"
           class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] font-bold tracking-[0.2em] uppercase px-4 py-1 rounded-full shadow-sm z-30"
         >
           Most Chosen
-        </div>
+        </div> -->
 
         <div>
           <div class="flex items-center gap-4">
@@ -312,7 +332,7 @@ onMounted(async () => {
             </p>
 
             <p class="text-xs text-muted-foreground mt-2 capitalize">
-              Per {{ tier.selectedOption.frequency }}
+              Per {{ getFrequencyLabel(tier.selectedOption.frequency) }}
             </p>
           </div>
 
@@ -338,7 +358,7 @@ onMounted(async () => {
 
         <div class="mt-6 pt-4">
           <base-button
-            :variant="index === 1 ? 'solid' : 'outline'"
+            variant="outline"
             class="w-full"
             :disabled="!tier.selectedOption || hasMembership || hasActivePass"
             @click="openMembershipModal(tier)"

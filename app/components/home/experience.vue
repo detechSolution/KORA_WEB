@@ -20,7 +20,7 @@
       <!-- Left Column: Large meditative woman image -->
       <div class="lg:col-span-6 xl:col-span-6 flex justify-center">
         <div
-          class="w-full max-w-[550px] aspect-[4/5] rounded-[24px] overflow-hidden border border-border shadow-2xl relative group bg-muted"
+          class="w-full max-w-[590px] rounded-[24px] overflow-hidden border border-border shadow-2xl relative group bg-muted"
         >
           <img
             :src="IMAGES.EXPERIENCE_MAIN"
@@ -40,7 +40,7 @@
         <h2
           class="font-serif text-3xl md:text-5xl text-foreground font-semibold mb-8"
         >
-          The <span class="text-primary italic">Kora</span> Experience
+          The <span class="text-primary font-semibold italic">Kora</span> Experience
         </h2>
 
         <!-- Copywriting Blocks -->

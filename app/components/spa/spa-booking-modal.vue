@@ -46,7 +46,9 @@ const steps = [
 const router = useRouter();
 const currentStep = ref(0);
 const formRef = ref<InstanceType<typeof UForm> | null>(null);
-const availableTimeSlots = ref<{ time: string; label: string; availableCapacity?: number }[]>([]);
+const availableTimeSlots = ref<
+  { time: string; label: string; availableCapacity?: number }[]
+>([]);
 const isTimeSlotLoading = ref(false);
 const selectedSpaModel = defineModel<any>("selectedSpa");
 
@@ -172,7 +174,9 @@ function resetGuests() {
 
 function addGuest() {
   const remainingGuestSpots = sessionStore.guestRemainingSpots;
-  const selectedTimeSlot = availableTimeSlots.value.find(slot => slot.time === state.selectedTime);
+  const selectedTimeSlot = availableTimeSlots.value.find(
+    slot => slot.time === state.selectedTime,
+  );
   const availableCapacity = selectedTimeSlot?.availableCapacity ?? Infinity;
 
   if (state.guests.length >= availableCapacity) {
@@ -511,11 +515,14 @@ watch(
                       item: 'px-[14px] pb-[14px] bg-card',
                     }"
                   >
-                    <template #default="{ item }">
+                    <template #default="{ item, open }">
                       <div class="flex flex-col">
                         <span>{{ item.name }}</span>
                         <p
                           class="text-sm text-secondary-500 mt-4"
+                          :class="[
+                            !open && 'line-clamp-2',
+                          ]"
                         >
                           {{ item.description }}
                         </p>

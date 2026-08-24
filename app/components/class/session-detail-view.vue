@@ -2,7 +2,7 @@
 import type { PropType } from "vue";
 import type { Session } from "~/types/session";
 import { computed, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useNotification } from "~/composables/use-notification";
 import { useAuthStore } from "~/stores/auth";
 import { useSessionStore } from "~/stores/session";
@@ -18,6 +18,7 @@ const emit = defineEmits(["fetchSessionDetail"]);
 
 const authStore = useAuthStore();
 const router = useRouter();
+const route = useRoute();
 const sessionStore = useSessionStore();
 const { success, error: showError } = useNotification();
 
@@ -27,7 +28,9 @@ const isAddingToWaitlist = ref(false);
 
 const showWaitlistCta = computed(() => {
   return (
-    !props.session.isBooked && !props.session.isInWaitlist && !props.session.isBookable
+    !props.session.isBooked
+    && !props.session.isInWaitlist
+    && !props.session.isBookable
   );
 });
 
@@ -42,18 +45,19 @@ function handleOpenBookingModal() {
     isBookingModalOpen.value = true;
   }
   else {
-    router.push("/login");
+    router.push({ path: "/login", query: { redirect: route.fullPath } });
   }
 }
 
 async function handleAddToWaitlist() {
   if (!authStore.isAuthenticated) {
-    router.push("/login");
+    router.push({ path: "/login", query: { redirect: route.fullPath } });
     return;
   }
   if (authStore.isMembershipFrozen()) {
     showError({
-      message: "Your membership is currently frozen. You cannot join the waitlist.",
+      message:
+        "Your membership is currently frozen. You cannot join the waitlist.",
     });
     return;
   }
@@ -62,7 +66,7 @@ async function handleAddToWaitlist() {
     isAddingToWaitlist.value = true;
     await sessionStore.addToWaitlist(props.session.id);
     emit("fetchSessionDetail");
-    success({ message: "Added to waitlist" });
+    success({ message: "You've been added to the waitlist. You'll receive an email if a spot becomes available." });
   }
   catch (error: any) {
     showError({ message: error?.message || "Failed to add to waitlist" });
@@ -87,7 +91,7 @@ async function handleAddToWaitlist() {
       >
     </div>
 
-    <div class="relative z-10 max-w-400 mx-auto">
+    <div class="relative z-10 max-w-400 mx-auto py-12">
       <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-12">
         <div>
           <ClassHeader :title="session.name" />
@@ -97,7 +101,7 @@ async function handleAddToWaitlist() {
               v-html="session.description"
             />
 
-            <div class="mt-10 text-foreground dark:text-stone-50">
+            <div v-if="session.instructor" class="mt-10 text-foreground dark:text-stone-50">
               <h2
                 class="font-sans font-bold text-sm uppercase tracking-[0.2em] mb-3"
               >
@@ -167,7 +171,7 @@ async function handleAddToWaitlist() {
               </div>
             </div>
 
-            <div class="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div class="mt-8 grid gap-3 grid-cols-2 xl:grid-cols-4">
               <div class="border border-border/60 bg-card/40 px-4 py-4">
                 <UIcon
                   name="i-lucide-calendar-days"
@@ -202,7 +206,7 @@ async function handleAddToWaitlist() {
                   Instructor
                 </p>
                 <p class="text-sm text-foreground">
-                  {{ session.instructorName }}
+                  {{ session.instructor ?? "N/A" }}
                 </p>
               </div>
               <div class="border border-border/60 bg-card/40 px-4 py-4">
@@ -239,29 +243,45 @@ async function handleAddToWaitlist() {
         </div>
 
         <!-- Book Your Spot Section -->
-        <aside class="sticky lg:top-28 lg:self-start px-4 md:px-8 lg:px-0">
+        <aside
+          class="sticky bottom-0 lg:top-30 lg:self-start px-4 md:px-8 lg:px-0"
+        >
           <div class="border border-border bg-card">
-            <div class="px-5 py-5 md:px-6">
+            <div class="px-5 pt-5 sm:py-5 md:px-6">
+              <div class="flex justify-between items-start">
+                <p
+                  class="text-[10px] uppercase tracking-[0.24em] text-primary/70 mb-3"
+                >
+                  Book Your Spot
+                </p>
+
+                <span
+                  v-if="session.remainingSpots === 0"
+                  class="inline-flex items-center rounded-lg bg-red-900 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-sm"
+                >
+                  Sold Out
+                </span>
+              </div>
               <p
-                class="text-[10px] uppercase tracking-[0.24em] text-primary/70 mb-3"
-              >
-                Book Your Spot
-              </p>
-              <p
+                v-if="session.price > 0"
                 class="font-serif text-3xl md:text-4xl text-foreground leading-none"
               >
                 Rs. {{ session.price }}
               </p>
-              <p class="mt-2 text-xs text-secondary-400">
-                {{ formatTime(session.startTime) }} -
-                {{ formatTime(session.endTime) }} session with
-                {{ session.instructorName }}
+              <p
+                v-else
+                class="font-serif text-3xl md:text-4xl text-foreground leading-none"
+              >
+                Free
+              </p>
+              <p class="mt-2 text-xs text-secondary-400 hidden sm:block">
+                {{ calculateDuration(session.startTime, session.endTime) }} {{ session.instructor ? `session with ${session.instructorName}` : 'session' }}
               </p>
             </div>
 
             <div class="px-5 py-5 md:px-6 space-y-4 flex flex-col items-center">
               <div
-                class="w-full border border-border bg-[#c9a55a]/10 dark:bg-[#2A2722] px-4 py-4 space-y-3"
+                class="w-full border border-border bg-[#c9a55a]/10 dark:bg-[#2A2722] px-4 py-4 space-y-3 hidden sm:block"
               >
                 <div class="flex gap-3 text-sm">
                   <UIcon
@@ -274,7 +294,7 @@ async function handleAddToWaitlist() {
                     </p>
                     <p class="text-foreground font-medium">
                       {{ formatDate(session.startsAt) }} •
-                      {{ formatTime(session.startTime) }} • {{ session.venue }}
+                      {{ formatTime(session.startTime) }}
                     </p>
                   </div>
                 </div>
@@ -301,9 +321,7 @@ async function handleAddToWaitlist() {
               </base-button>
 
               <base-button
-                v-else-if="
-                  session.isBookable && session.remainingSpots > 0
-                "
+                v-else-if="session.isBookable && session.remainingSpots > 0"
                 variant="solid"
                 color="primary"
                 class="w-full text-sm uppercase"

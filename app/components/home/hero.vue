@@ -23,7 +23,43 @@ onMounted(() => {
   <div
     class="h-screen w-full relative overflow-hidden bg-stone-950 select-none"
   >
-    <!-- Immersive Background Video or Image with Premium Slow-Zoom & Fade Entrance Animation -->
+    <!-- Hero Content Overlay -->
+    <div
+      class="absolute bottom-20 inset-0 flex flex-col items-center justify-end text-center z-20 px-4 transition-all duration-[1500ms] delay-500 ease-out-quad pt-16"
+      :class="
+        isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+      "
+    >
+      <span
+        class="text-[10px] md:text-sm font-medium tracking-[0.6em] text-white/90 uppercase mb-4 md:mb-6"
+      >
+        Kora: A Frictionless Sanctuary
+      </span>
+      <h2
+        class="text-4xl md:text-5xl lg:text-6xl font-serif font-semibold text-white max-w-4xl mb-7 md:mb-9 italic"
+      >
+        Where Movement, Recovery And<br class="hidden md:block">
+        Community Meet
+      </h2>
+
+      <div class="flex flex-col sm:flex-row gap-4 sm:gap-6">
+        <base-button
+          variant="solid"
+          color="primary"
+          to="/membership"
+          class="min-w-[220px] text-[10px] md:text-xs font-bold tracking-[0.15em] uppercase py-3.5"
+        >
+          Explore Membership
+        </base-button>
+        <base-button
+          variant="outline"
+          to="/membership?tab=passes"
+          class="min-w-[220px] text-[10px] md:text-xs font-bold tracking-[0.15em] border-white/30 hover:bg-white/10 uppercase py-3.5"
+        >
+          Explore Kora Passes
+        </base-button>
+      </div>
+    </div>
     <div
       class="absolute inset-0 w-full h-full transition-all duration-[2000ms] ease-out-quad"
       :class="isLoaded ? 'opacity-100' : 'opacity-0'"

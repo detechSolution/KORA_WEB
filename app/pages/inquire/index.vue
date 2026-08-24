@@ -142,7 +142,7 @@ async function handleInquireSubmit() {
 
     <ClassHeader
       label="Inquiry Application"
-      title="Inquire For Residency"
+      title="Feedback & Inquiry"
       class=""
     />
     <div class="relative z-10 max-w-400 mx-auto px-4 md:px-8 lg:px-12">

@@ -75,7 +75,7 @@ function handleProceedToCheckout() {
         class="flex items-start justify-between p-8 pb-6 border-b border-border"
       >
         <div class="flex flex-col gap-2">
-          <h2 class="text-2xl font-serif text-foreground">
+          <h2 class="text-2xl font-semibold font-serif text-foreground">
             Your Cart
           </h2>
           <span
@@ -112,7 +112,7 @@ function handleProceedToCheckout() {
         <UIcon name="i-lucide-shopping-bag" class="w-6 h-6" />
       </div>
       <div class="flex flex-col gap-3">
-        <h3 class="text-xl font-serif text-foreground">
+        <h3 class="text-xl font-semibold font-serif text-foreground">
           Your Cart is Empty
         </h3>
         <p
@@ -141,12 +141,12 @@ function handleProceedToCheckout() {
               {{ "Guest" }}
             </span>
             <div class="flex justify-between items-start gap-4">
-              <div class="flex items-start gap-2">
-                <h4 class="text-base font-serif text-foreground">
+              <div class="flex items-center gap-2">
+                <h4 class="text-2xl font-semibold font-serif text-foreground">
                   {{ item.title }}
-                  <br>
+                  <!-- <br> -->
                   <span v-if="item.itemType !== 'membership'">
-                    (<span class="text-xl">{{
+                    (<span class="text-2xl font-semibold">{{
                       item.visitors.length > 0 ? item.visitors.length : 1
                     }}
                       x {{ formatPrice(item.unitPriceAfterDiscount) }}</span>)
@@ -154,22 +154,22 @@ function handleProceedToCheckout() {
                 </h4>
                 <span
                   v-if="item.itemType === 'session'"
-                  class="text-[9px] px-1.5 py-0.5 bg-purple-900 dark:bg-purple-900/40 text-purple-300 font-medium tracking-wide"
+                  class="text-[10px] px-1.5 py-0.5 bg-purple-900 dark:bg-purple-900/40 text-purple-300 font-medium tracking-wide"
                 >Session</span>
                 <span
                   v-if="item.itemType === 'spa'"
-                  class="text-[9px] px-1.5 py-0.5 bg-emerald-900 dark:bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
+                  class="text-[10px] px-1.5 py-0.5 bg-emerald-900 dark:bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
                 >Spa</span>
                 <span
                   v-if="item.itemType === 'pass'"
-                  class="text-[9px] px-1.5 py-0.5 bg-blue-900 dark:bg-blue-900/40 text-blue-400 font-medium tracking-wide"
+                  class="text-[10px] px-1.5 py-0.5 bg-blue-900 dark:bg-blue-900/40 text-blue-400 font-medium tracking-wide"
                 >Pass</span>
                 <span
                   v-if="item.itemType === 'membership'"
-                  class="text-[9px] px-1.5 py-0.5 bg-primary dark:bg-[#5D4A17] text-primary-foreground font-medium tracking-wide"
+                  class="text-[10px] px-1.5 py-0.5 bg-primary dark:bg-[#5D4A17] text-primary-foreground font-medium tracking-wide"
                 >Membership</span>
               </div>
-              <span class="text-lg font-serif text-[#B59A6D]">Rs. {{ formatPrice(item.finalPrice) }}</span>
+              <span class="text-2xl font-serif text-[#B59A6D]">{{ item.finalPrice > 0 ? `Rs. ${formatPrice(item.finalPrice)}` : 'Free' }}</span>
             </div>
 
             <div class="mt-2 flex gap-1.5">
@@ -221,8 +221,8 @@ function handleProceedToCheckout() {
           <div
             class="flex items-center justify-between border-t border-border/20 pt-6 mb-8"
           >
-            <span class="text-xl font-serif text-foreground">Total</span>
-            <span class="text-xl font-serif text-primary">{{
+            <span class="text-2xl font-semibold font-serif text-foreground">Total</span>
+            <span class="text-2xl font-semibold font-serif text-primary">{{
               formatPrice(totalPrice)
             }}</span>
           </div>

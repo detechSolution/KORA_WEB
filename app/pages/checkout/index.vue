@@ -125,12 +125,19 @@ async function handlePayNowClick() {
     return;
   }
 
-  if (step.value === 1) {
+  if (step.value === 1 && totalPrice.value > 0) {
     step.value = 2;
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   }
   else {
     try {
-      sessionStorage.setItem("pendingPaymentItemIds", JSON.stringify(selectedItemIds.value));
+      sessionStorage.setItem(
+        "pendingPaymentItemIds",
+        JSON.stringify(selectedItemIds.value),
+      );
       const payload = {
         provider: paymentMethod.value,
         items: cartItems.value
@@ -211,19 +218,12 @@ onUnmounted(() => {
                     name="i-lucide-shopping-bag"
                     class="w-4 h-4 text-[#B59A6D]"
                   />
-                  <span
-                    class="text-[10px] text-[#B59A6D] font-bold tracking-widest uppercase"
-                  >
+                  <span class="text-sm text-[#B59A6D] font-bold uppercase">
                     ORDER SUMMARY
                   </span>
                 </div>
                 <div class="flex items-center gap-2">
-                  <input
-                    id="selectAll"
-                    v-model="isAllSelected"
-                    type="checkbox"
-                    class="w-4 h-4 accent-[#B59A6D] rounded border-border cursor-pointer"
-                  >
+                  <UCheckbox id="selectAll" v-model="isAllSelected" />
                   <label
                     for="selectAll"
                     class="text-xs text-muted-foreground cursor-pointer select-none"
@@ -238,15 +238,24 @@ onUnmounted(() => {
                 <div
                   v-for="item in cartItems"
                   :key="item.referenceId"
-                  class="flex gap-4 pb-6 border-b border-border/10"
+                  class="flex gap-4 pb-6 border-b border-border"
                 >
-                  <div class="pt-1 flex-shrink-0">
-                    <input
-                      v-model="selectedItemIds"
-                      type="checkbox"
-                      :value="item.cartId"
-                      class="w-5 h-5 accent-[#B59A6D] rounded border-border cursor-pointer"
-                    >
+                  <div class="pt-1 shrink-0">
+                    <UCheckbox
+                      :model-value="selectedItemIds.includes(item.cartId)"
+                      @update:model-value="
+                        (checked) => {
+                          if (checked) {
+                            selectedItemIds.push(item.cartId);
+                          }
+                          else {
+                            selectedItemIds = selectedItemIds.filter(
+                              (id) => id !== item.cartId,
+                            );
+                          }
+                        }
+                      "
+                    />
                   </div>
                   <!-- Item Details -->
                   <div class="flex-1 flex flex-col">
@@ -257,12 +266,14 @@ onUnmounted(() => {
                       {{ "Guest" }}
                     </span>
                     <div class="flex justify-between items-start gap-4 mb-2">
-                      <div class="flex flex-wrap items-start gap-2">
-                        <h4 class="text-base font-serif text-foreground">
+                      <div class="flex flex-wrap items-center gap-2">
+                        <h4
+                          class="text-2xl font-semibold font-serif text-foreground"
+                        >
                           {{ item.title }}
-                          <br>
+                          <!-- <br> -->
                           <span v-if="item.itemType !== 'membership'">
-                            (<span class="text-xl">{{
+                            (<span class="text-2xl font-semibold">{{
                               item.visitors.length > 0
                                 ? item.visitors.length
                                 : 1
@@ -275,44 +286,48 @@ onUnmounted(() => {
                         </h4>
                         <span
                           v-if="item.itemType === 'session'"
-                          class="text-[8px] px-1.5 py-0.5 bg-purple-900 dark:bg-purple-900/40 text-purple-300 font-medium tracking-wide"
+                          class="text-[10px] px-1.5 py-0.5 bg-purple-900 dark:bg-purple-900/40 text-purple-300 font-medium tracking-wide"
                         >Session</span>
                         <span
                           v-if="item.itemType === 'spa'"
-                          class="text-[8px] px-1.5 py-0.5 bg-emerald-900 dark:bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
+                          class="text-[10px] px-1.5 py-0.5 bg-emerald-900 dark:bg-emerald-900/40 text-emerald-400 font-medium tracking-wide"
                         >Spa</span>
                         <span
                           v-if="item.itemType === 'pass'"
-                          class="text-[8px] px-1.5 py-0.5 bg-blue-900 dark:bg-blue-900/40 text-blue-400 font-medium tracking-wide"
+                          class="text-[10px] px-1.5 py-0.5 bg-blue-900 dark:bg-blue-900/40 text-blue-400 font-medium tracking-wide"
                         >Pass</span>
                         <span
                           v-if="item.itemType === 'membership'"
-                          class="text-[8px] px-1.5 py-0.5 bg-[#B59A6D] dark:bg-[#5D4A17] text-white font-medium tracking-wide"
+                          class="text-[10px] px-1.5 py-0.5 bg-[#B59A6D] dark:bg-[#5D4A17] text-white font-medium tracking-wide"
                         >Membership</span>
                       </div>
                       <div>
-                        <span class="text-2xl font-serif text-[#B59A6D]">Rs. {{ formatPrice(item.finalPrice) }}</span>
+                        <span class="text-2xl font-serif text-[#B59A6D]">{{
+                          item.finalPrice > 0
+                            ? `Rs. ${formatPrice(item.finalPrice)}`
+                            : "Free"
+                        }}</span>
                       </div>
                     </div>
 
                     <div class="flex gap-1.5 mt-auto">
                       <div
                         v-if="item.bookingDate"
-                        class="flex items-center gap-1.5 text-[9px] text-muted-foreground"
+                        class="flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground"
                       >
                         <UIcon name="i-lucide-calendar" class="w-3 h-3" />
                         <span>{{ item.bookingDate }}</span>
                       </div>
                       <div
                         v-if="item.bookingTime"
-                        class="flex items-center gap-1.5 text-[9px] text-muted-foreground"
+                        class="flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground"
                       >
                         <UIcon name="i-lucide-clock" class="w-3 h-3" />
                         <span>{{ formatTime(item.bookingTime) }}</span>
                       </div>
                       <div
                         v-if="item.location"
-                        class="flex items-center gap-1.5 text-[9px] text-muted-foreground"
+                        class="flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground"
                       >
                         <UIcon name="i-lucide-map-pin" class="w-3 h-3" />
                         <span>{{ item.location }}</span>
@@ -392,20 +407,16 @@ onUnmounted(() => {
 
                   <!-- Fonepay -->
                   <label class="flex items-center gap-3 cursor-pointer group">
-                    <div
-                      class="w-4 h-4 rounded-sm border border-border/40 flex items-center justify-center transition-colors"
-                      :class="
-                        paymentMethod === 'fonepay'
-                          ? 'bg-[#B59A6D] border-[#B59A6D]'
-                          : 'group-hover:border-border'
+                    <UCheckbox
+                      :model-value="paymentMethod === 'fonepay'"
+                      @update:model-value="
+                        (checked) => {
+                          if (checked) {
+                            paymentMethod = 'fonepay';
+                          }
+                        }
                       "
-                    >
-                      <UIcon
-                        v-if="paymentMethod === 'fonepay'"
-                        name="i-lucide-check"
-                        class="w-3 h-3 text-white"
-                      />
-                    </div>
+                    />
                     <input
                       v-model="paymentMethod"
                       type="radio"
@@ -459,20 +470,16 @@ onUnmounted(() => {
 
                   <!-- Card Payment -->
                   <label class="flex items-center gap-3 cursor-pointer group">
-                    <div
-                      class="w-4 h-4 rounded-sm border border-border/40 flex items-center justify-center transition-colors"
-                      :class="
-                        paymentMethod === 'card'
-                          ? 'bg-[#B59A6D] border-[#B59A6D]'
-                          : 'group-hover:border-border'
+                    <UCheckbox
+                      :model-value="paymentMethod === 'card'"
+                      @update:model-value="
+                        (checked) => {
+                          if (checked) {
+                            paymentMethod = 'card';
+                          }
+                        }
                       "
-                    >
-                      <UIcon
-                        v-if="paymentMethod === 'card'"
-                        name="i-lucide-check"
-                        class="w-3 h-3 text-white"
-                      />
-                    </div>
+                    />
                     <input
                       v-model="paymentMethod"
                       type="radio"
@@ -546,12 +553,7 @@ onUnmounted(() => {
                     </div>
                   </div>
                   <div class="mt-6 flex items-start gap-3">
-                    <input
-                      id="saveCard"
-                      type="checkbox"
-                      class="mt-1 accent-[#B59A6D] w-4 h-4 rounded-sm border-gray-300"
-                      checked
-                    >
+                    <UCheckbox id="saveCard" default-value />
                     <label
                       for="saveCard"
                       class="text-sm text-foreground cursor-pointer select-none"
@@ -568,55 +570,26 @@ onUnmounted(() => {
               </div>
             </div>
           </Transition>
-          <div class="hidden lg:block col-span-5 lg:col-span-3">
-            <!-- Action Buttons -->
-            <div
-              class="flex"
-              :class="step === 2 ? 'justify-between' : 'justify-end'"
-            >
-              <base-button
-                v-if="step === 2"
-                variant="outline"
-                leading-icon="i-lucide-arrow-left"
-                class="uppercase text-[11px] tracking-widest font-bold px-8 rounded-none border-border hover:border-primary-700"
-                @click="goBack"
-              >
-                GO BACK
-              </base-button>
-
-              <base-button
-                trailing-icon="i-lucide-arrow-right"
-                class="uppercase self-end flex tracking-widest font-bold px-8 rounded-none"
-                :loading="loading"
-                :disabled="
-                  (step === 2 && paymentMethod === 'card')
-                    || selectedItemIds.length === 0
-                "
-                @click="handlePayNowClick"
-              >
-                PAY NOW
-              </base-button>
-            </div>
-          </div>
         </div>
 
         <!-- Right Column: Order Summary -->
         <div
-          class="col-span-5 lg:col-span-2 h-fit flex flex-col gap-9 bg-card p-8 border border-border"
+          class="sticky bottom-0 lg:shadow-none bg-background dark:bg-secondary-900 lg:top-30 lg:self-start col-span-5 lg:col-span-2 h-fit flex flex-col gap-4"
         >
-          <p class="text-lg font-semibold uppercase text-primary-700">
-            PAYMENT OVERVIEW
-          </p>
-          <div key="step1" class="flex flex-col w-full">
-            <!-- Promo Code -->
-            <div class="border-y border-border flex flex-col gap-3 p-4">
-              <div
-                class="text-sm text-secondary dark:text-white font-normal flex justify-between"
-              >
-                <h2>Items Count ({{ totalItems }} items)</h2>
-                <p>Rs. {{ formatPrice(subtotal) }}</p>
-              </div>
-              <!-- <div
+          <div class="flex flex-col gap-9 bg-card p-8 border border-border">
+            <p class="text-sm font-semibold uppercase text-primary-700">
+              PAYMENT OVERVIEW
+            </p>
+            <div key="step1" class="flex flex-col w-full">
+              <!-- Promo Code -->
+              <div class="border-y border-border flex flex-col gap-3 p-4">
+                <div
+                  class="text-sm text-secondary dark:text-white font-normal flex justify-between"
+                >
+                  <h2>Items Count ({{ totalItems }} items)</h2>
+                  <p>Rs. {{ formatPrice(subtotal) }}</p>
+                </div>
+                <!-- <div
                 v-if="discountValue > 0"
                 class="text-sm text-secondary-500 dark:text-secondary-400 font-normal flex justify-between border-b border-border pb-2"
               >
@@ -636,20 +609,20 @@ onUnmounted(() => {
                 </p>
               </div> -->
 
-              <div
-                class="text-2xl text-secondary dark:text-white font-normal flex justify-between pt-1 font-serif"
-              >
-                <h2 class="font-bold">
-                  Total
-                </h2>
-                <p class="font-bold text-primary">
-                  Rs. {{ formatPrice(totalPrice) }}
-                </p>
+                <div
+                  class="text-2xl text-secondary dark:text-white font-normal flex justify-between pt-1 font-serif"
+                >
+                  <h2 class="font-bold">
+                    Total
+                  </h2>
+                  <p class="font-bold text-primary">
+                    Rs. {{ formatPrice(totalPrice) }}
+                  </p>
+                </div>
               </div>
-            </div>
 
-            <!-- Commented for now as it can be needed later -->
-            <!-- <div class="flex flex-col gap-2 w-full mt-9">
+              <!-- Commented for now as it can be needed later -->
+              <!-- <div class="flex flex-col gap-2 w-full mt-9">
               <div class="flex items-end w-full gap-4">
                 <div class="flex-1">
                   <base-input
@@ -688,11 +661,39 @@ onUnmounted(() => {
                 {{ cartStore.promoError }}
               </p>
             </div> -->
+            </div>
+          </div>
+
+          <div
+            class="flex"
+            :class="step === 2 ? 'justify-between' : 'justify-end'"
+          >
+            <base-button
+              v-if="step === 2"
+              variant="outline"
+              leading-icon="i-lucide-arrow-left"
+              class="uppercase text-[11px] tracking-widest font-bold px-8 rounded-none border-border hover:border-primary-700"
+              @click="goBack"
+            >
+              GO BACK
+            </base-button>
+
+            <base-button
+              trailing-icon="i-lucide-arrow-right"
+              class="uppercase self-end flex tracking-widest font-bold px-8 rounded-none"
+              :loading="loading"
+              :disabled="
+                (step === 2 && paymentMethod === 'card')
+                  || selectedItemIds.length === 0
+              "
+              @click="handlePayNowClick"
+            >
+              PAY NOW
+            </base-button>
           </div>
         </div>
 
-        <div class="block lg:hidden col-span-5 lg:col-span-3">
-          <!-- Action Buttons -->
+        <!-- <div class="block lg:hidden col-span-5 lg:col-span-3">
           <div
             class="flex"
             :class="step === 2 ? 'justify-between' : 'justify-end'"
@@ -711,15 +712,15 @@ onUnmounted(() => {
               trailing-icon="i-lucide-arrow-right"
               class="uppercase self-end flex tracking-widest font-bold px-8 rounded-none"
               :disabled="
-                (step === 2 && paymentMethod === 'card')
-                  || selectedItemIds.length === 0
+                (step === 2 && paymentMethod === 'card') ||
+                selectedItemIds.length === 0
               "
               @click="handlePayNowClick"
             >
               PAY NOW
             </base-button>
           </div>
-        </div>
+        </div> -->
       </div>
       <div v-else class="text-center py-20 flex flex-col items-center gap-6">
         <UIcon

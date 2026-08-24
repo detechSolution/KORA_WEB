@@ -37,9 +37,9 @@ const getStyles = computed(() => {
       case "solid":
         return "bg-primary-700 dark:bg-primary-700 hover:bg-primary-700/75 active:bg-primary-700/75 disabled:bg-primary-700 disabled:dark:bg-primary-700 text-white";
       case "outline":
-        return "border border-primary-700 dark:border-primary-700 text-primary-700 dark:text-primary-700 bg-[#C9A55A1A] dark:bg-transparent hover:bg-[#C9A55A1A]/50 dark:hover:text-primary-700 disabled:bg-transparent";
+        return "border border-primary-700 text-primary-700 dark:text-primary-700 bg-[#C9A55A1A] hover:bg-[#C9A55A1A]/50 dark:hover:text-primary-700 disabled:bg-transparent";
       case "ghost":
-        return "bg-transparent hover:bg-primary/10 disabled:bg-transparent";
+        return "bg-transparent text-primary-700 hover:bg-primary/10 disabled:bg-transparent";
       case "link":
         return "text-foreground hover:text-primary";
       default:
@@ -64,7 +64,7 @@ const getStyles = computed(() => {
     :color="color"
     :class="`cursor-pointer ${getStyles} flex items-center justify-center font-semibold px-8 text-xs tracking-widest uppercase`"
     :ui="{
-      base: 'rounded-xs h-[44px]',
+      base: 'rounded-xs h-[36px] sm:h-[44px]',
     }"
   >
     <slot />

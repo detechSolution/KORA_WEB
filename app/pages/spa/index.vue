@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useNotification } from "~/composables/use-notification";
 import { useAuthStore } from "~/stores/auth";
 import { useSpaStore } from "~/stores/spa";
@@ -19,6 +19,7 @@ useSeoMeta({
 
 const isPlayingVideo = ref(false);
 
+const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 const spaStore = useSpaStore();
@@ -57,7 +58,7 @@ function handleBookingClick(spa: any) {
     isBookingModalOpen.value = true;
   }
   else {
-    router.push("/login");
+    router.push({ path: "/login", query: { redirect: route.fullPath } });
   }
 }
 
@@ -72,7 +73,7 @@ function handleOpenBookingModal() {
     isBookingModalOpen.value = true;
   }
   else {
-    router.push("/login");
+    router.push({ path: "/login", query: { redirect: route.fullPath } });
   }
 }
 
@@ -241,7 +242,7 @@ onMounted(() => {
         </div>
 
         <!-- Right Column (Sidebar) -->
-        <aside class="sticky lg:top-28 lg:self-start px-4 md:px-8 lg:px-0">
+        <aside class="sticky bottom-0 lg:top-30 lg:self-start px-4 md:px-8 lg:px-0">
           <div class="border border-border bg-card px-5 py-5 md:px-6">
             <p class="text-[10px] uppercase text-primary mb-3">
               SPA MENU
@@ -252,7 +253,7 @@ onMounted(() => {
               {{ spa?.subTypes.length || 0 }} Offerings Available
             </h3>
 
-            <div v-if="spa?.subTypes.length" class="space-y-6">
+            <div v-if="spa?.subTypes.length" class="hidden lg:block space-y-6">
               <div v-for="subType in spa.subTypes" :key="subType.id">
                 <div class="flex justify-between items-center gap-4">
                   <span
@@ -287,7 +288,7 @@ onMounted(() => {
             </div>
 
             <div
-              class="mt-6 w-full border border-border bg-[#c9a55a]/10 dark:bg-[#2A2722] px-4 py-4 space-y-3 text-center"
+              class="hidden lg:block mt-6 w-full border border-border bg-[#c9a55a]/10 dark:bg-[#2A2722] px-4 py-4 space-y-3 text-center"
             >
               <p
                 class="text-xs text-start text-secondary-500 dark:text-white/80 leading-relaxed"

@@ -1,5 +1,5 @@
 import type { ApiResponse } from "~/types/api";
-import type { Inquire } from "~/types/inquire";
+import type { CorporateInquire, Inquire } from "~/types/inquire";
 
 import { defineStore } from "pinia";
 import { getHttp } from "~/composables/use-api";
@@ -22,7 +22,22 @@ export const useInquireStore = defineStore("inquire", () => {
     }
   };
 
+  const createCorporateInquire = async (inquire: CorporateInquire) => {
+    try {
+      const response = await http.post<ApiResponse<CorporateInquire>>(
+        API_ENDPOINTS.INQUIRE.CREATE_CORPORATE,
+        inquire,
+      );
+      return response.data;
+    }
+    catch (error) {
+      console.error("Failed to create inquire", error);
+      throw error;
+    }
+  };
+
   return {
     createInquire,
+    createCorporateInquire,
   };
 });
