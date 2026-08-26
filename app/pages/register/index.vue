@@ -33,14 +33,15 @@ const schema = z
     fullName: z.string().min(1, "Full name is required"),
     email: z.string().min(1, "Email is required").email("Invalid email"),
     phone: z.string().optional(),
-    // password: z
-    //   .string()
-    //   .min(8, "Password must be at least 8 characters long")
-    //   .regex(
-    //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
-    //     "Password must contain at least one uppercase letter, one lowercase letter, and one number",
-    //   ),
-    password: z.string().min(1, "Password is required"),
+    password: z
+      .string()
+      .min(8, "New password must be at least 8 characters")
+      .regex(/[A-Z]/, "New password must contain at least one uppercase letter")
+      .regex(/\d/, "New password must contain at least one number")
+      .regex(
+        /[!@#$%^&*(),.?":{}|<>_\-\\[\]/+=~`';]/,
+        "New password must contain at least one special character",
+      ),
   })
   .superRefine((data, ctx) => {
     if (apiError.email) {
@@ -137,27 +138,29 @@ async function handleRegister(): Promise<void> {
       error,
       "Something went wrong. Please try again.",
     );
-    if (message !== "Something went wrong. Please try again.") {
-      if (isApiError(error) && (error.data.code === "auth.password.invalid" || error.data.code === "auth.password.too_short")) {
-        setApiError("password", message);
+
+    if (isApiError(error)) {
+      switch (error.data.code) {
+        case "auth.password.invalid":
+        case "auth.password.too_short":
+          setApiError("password", message);
+          formRef.value?.validate();
+          return;
+
+        case "conflict.this_phone_number_is_already_linked_to_another_user":
+        case "auth.phone_number.invalid":
+          setApiError("phone", message);
+          formRef.value?.validate();
+          return;
+
+        case "conflict.this_email_is_already_linked_to_another_phone_number":
+        case "conflict.a_member_account_already_exists_for_this_email":
+          setApiError("email", message);
+          formRef.value?.validate();
+          return;
       }
-      if (
-        isApiError(error)
-        && error.data.code
-        === "conflict.this_phone_number_is_already_linked_to_another_user"
-      ) {
-        setApiError("phone", message);
-      }
-      if (
-        isApiError(error)
-        && error.data.code
-        === "conflict.this_email_is_already_linked_to_another_phone_number"
-      ) {
-        setApiError("email", message);
-      }
-      formRef.value?.validate();
-      return;
     }
+
     showError({ message });
   }
   finally {
