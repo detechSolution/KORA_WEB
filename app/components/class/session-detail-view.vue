@@ -206,7 +206,7 @@ async function handleAddToWaitlist() {
                   Instructor
                 </p>
                 <p class="text-sm text-foreground">
-                  {{ session.instructor ?? "N/A" }}
+                  {{ session.instructor ? session.instructorName : "N/A" }}
                 </p>
               </div>
               <div class="border border-border/60 bg-card/40 px-4 py-4">

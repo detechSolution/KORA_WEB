@@ -43,6 +43,22 @@ export const useSessionStore = defineStore("session", () => {
     }
   };
 
+  const getSessionsForPeriod = async (params: SessionQueryParams = {}): Promise<void> => {
+    try {
+      const qs = buildQueryString(params);
+      const response = (await http.get(
+        `${API_ENDPOINTS.SESSION.GET}?${qs}`,
+      )) as any;
+      return response;
+    }
+    catch (error) {
+      console.error("Failed to fetch sessions:", error);
+      throw error;
+    }
+  };
+  const getSessionsByDay = getSessionsForPeriod;
+  const getSessionsByMonth = getSessionsForPeriod;
+
   const getSessionById = (id: string): Session | undefined => {
     return sessions.value.data.find(session => session.id === Number(id));
   };
@@ -92,6 +108,8 @@ export const useSessionStore = defineStore("session", () => {
     loading,
     guestRemainingSpots,
     getSessions,
+    getSessionsByDay,
+    getSessionsByMonth,
     getSessionById,
     getSessionDetail,
     addToWaitlist,

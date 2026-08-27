@@ -4,9 +4,11 @@ import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useNotification } from "~/composables/use-notification";
 import { usePagination } from "~/composables/use-pagination";
+import useScreen from "~/composables/use-screen.js";
 import { useSessionStore } from "~/stores/session";
 import { getApiErrorMessage } from "~/utils/error";
 import { formatDate, normalizeDateTime } from "~/utils/format";
+import MobileSchedule from "./mobile.vue";
 
 definePageMeta({
   layout: "default",
@@ -21,6 +23,7 @@ const sessionStore = useSessionStore();
 const { pagination } = usePagination(100);
 const { error: showError } = useNotification();
 const router = useRouter();
+const { isMobile } = useScreen();
 
 const loading = ref(false);
 const weekOffset = ref(0);
@@ -86,9 +89,11 @@ function addDays(date: Date, days: number) {
 }
 
 function isSameDay(left: Date, right: Date) {
-  return left.getFullYear() === right.getFullYear()
+  return (
+    left.getFullYear() === right.getFullYear()
     && left.getMonth() === right.getMonth()
-    && left.getDate() === right.getDate();
+    && left.getDate() === right.getDate()
+  );
 }
 
 function getTimeKey(date: Date) {
@@ -192,7 +197,9 @@ function prevWeek() {
 }
 
 function getEventsForCell(day: Date, timeKey: string) {
-  return scheduleByDayAndTime.value.get(`${day.toDateString()}__${timeKey}`) ?? [];
+  return (
+    scheduleByDayAndTime.value.get(`${day.toDateString()}__${timeKey}`) ?? []
+  );
 }
 
 function formatTime(value: string | Date) {
@@ -248,261 +255,262 @@ onMounted(() => {
 </script>
 
 <template>
-  <div
-    class="bg-background dark:bg-secondary-900 min-h-screen text-foreground dark:text-white pt-24 pb-20 font-sans select-none"
-  >
-    <div class="max-w-400 mx-auto px-6">
-      <div
-        class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-12 border-b border-border pb-8"
-      >
-        <div>
-          <h2
-            class="text-[#B59A6D] text-[11px] font-bold tracking-[0.3em] uppercase mb-4"
-          >
-            WEEKLY SESSIONS
-          </h2>
-          <h1
-            class="font-serif text-5xl md:text-6xl text-foreground font-normal tracking-wide"
-          >
-            Schedules
-          </h1>
-        </div>
-        <!-- <ClassHeader label="WEEKLY SESSIONS" title="Schedules"/> -->
-
+  <div>
+    <!-- Desktop View -->
+    <div
+      v-if="!isMobile"
+      class="bg-background dark:bg-secondary-900 min-h-screen text-foreground dark:text-white pt-24 pb-20 font-sans select-none"
+    >
+      <div class="max-w-400 mx-auto px-6">
         <div
-          class="flex flex-col items-start gap-6 text-[10px] font-bold tracking-widest uppercase"
+          class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-12 border-b border-border pb-8"
         >
-          <div class="flex items-center gap-4">
-            <div class="flex items-center gap-1.5">
-              <span
-                class="w-2 h-2 bg-emerald-800 rounded-full inline-block"
-              />
-              <span class="text-stone-400">EVENTS - {{ sessionCounts.Event }}</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-              <span
-                class="w-2 h-2 bg-blue-800 rounded-full inline-block"
-              />
-              <span class="text-stone-400">CLASSES - {{ sessionCounts.Class }}</span>
-            </div>
-            <div class="flex items-center gap-1.5">
-              <span
-                class="w-2 h-2 bg-purple-800 rounded-full inline-block"
-              />
-              <span class="text-stone-400">WORKSHOPS - {{ sessionCounts.Workshop }}</span>
-            </div>
+          <div>
+            <h2
+              class="text-[#B59A6D] text-[11px] font-bold tracking-[0.3em] uppercase mb-4"
+            >
+              WEEKLY SESSIONS
+            </h2>
+            <h1
+              class="font-serif text-5xl md:text-6xl text-foreground font-normal tracking-wide"
+            >
+              Schedules
+            </h1>
           </div>
+          <!-- <ClassHeader label="WEEKLY SESSIONS" title="Schedules"/> -->
 
-          <div class="flex items-center gap-3">
-            <base-select
-              v-model="search.session"
-              name="session"
-              placeholder="Select session"
-              :options="sessionOptions"
-              class="w-52"
-            />
-            <!-- <base-select
+          <div
+            class="flex flex-col items-start gap-6 text-[10px] font-bold tracking-widest uppercase"
+          >
+            <div class="flex items-center gap-4">
+              <div class="flex items-center gap-1.5">
+                <span
+                  class="w-2 h-2 bg-emerald-800 rounded-full inline-block"
+                />
+                <span class="text-stone-400">EVENTS - {{ sessionCounts.Event }}</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-2 h-2 bg-blue-800 rounded-full inline-block" />
+                <span class="text-stone-400">CLASSES - {{ sessionCounts.Class }}</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-2 h-2 bg-purple-800 rounded-full inline-block" />
+                <span class="text-stone-400">WORKSHOPS - {{ sessionCounts.Workshop }}</span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <base-select
+                v-model="search.session"
+                name="session"
+                placeholder="Select session"
+                :options="sessionOptions"
+                class="w-52"
+              />
+              <!-- <base-select
               v-model="search.venue"
               name="venue"
               placeholder="Select venue"
               :options="venueOptions"
               class="w-52"
             /> -->
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="bg-background dark:bg-transparent rounded-sm">
-        <div class="flex items-center gap-4 mb-6">
-          <button
-            class="w-9 h-9 border border-stone-300 dark:border-stone-800 flex items-center justify-center rounded-xs text-foreground dark:text-stone-400 hover:text-white hover:bg-[#212121] transition-colors"
-            @click="prevWeek"
-          >
-            <UIcon name="i-lucide-chevron-left" class="w-4 h-4" />
-          </button>
-          <div
-            class="min-w-50 flex justify-center px-5 py-2.5 border border-stone-300 dark:border-stone-800 text-[10px] font-bold tracking-widest uppercase text-foreground dark:text-stone-300 rounded-xs"
-          >
-            {{ currentRange.title }}
+        <div class="bg-background dark:bg-transparent rounded-sm">
+          <div class="flex items-center gap-4 mb-6">
+            <button
+              class="w-9 h-9 border border-stone-300 dark:border-stone-800 flex items-center justify-center rounded-xs text-foreground dark:text-stone-400 hover:text-white hover:bg-[#212121] transition-colors"
+              @click="prevWeek"
+            >
+              <UIcon name="i-lucide-chevron-left" class="w-4 h-4" />
+            </button>
+            <div
+              class="min-w-50 flex justify-center px-5 py-2.5 border border-stone-300 dark:border-stone-800 text-[10px] font-bold tracking-widest uppercase text-foreground dark:text-stone-300 rounded-xs"
+            >
+              {{ currentRange.title }}
+            </div>
+            <button
+              class="w-9 h-9 border border-stone-300 dark:border-stone-800 flex items-center justify-center rounded-xs text-foreground dark:text-stone-400 hover:text-white hover:bg-[#212121] transition-colors"
+              @click="nextWeek"
+            >
+              <UIcon name="i-lucide-chevron-right" class="w-4 h-4" />
+            </button>
           </div>
-          <button
-            class="w-9 h-9 border border-stone-300 dark:border-stone-800 flex items-center justify-center rounded-xs text-foreground dark:text-stone-400 hover:text-white hover:bg-[#212121] transition-colors"
-            @click="nextWeek"
-          >
-            <UIcon name="i-lucide-chevron-right" class="w-4 h-4" />
-          </button>
-        </div>
 
-        <div
-          v-if="loading"
-          class="flex flex-col items-center justify-center py-32 text-stone-400 gap-4"
-        >
-          <UIcon
-            name="i-lucide-loader-2"
-            class="w-8 h-8 animate-spin text-[#B59A6D]"
-          />
-          <span class="text-sm tracking-widest uppercase font-bold">Loading Schedules...</span>
-        </div>
-        <div v-else class="overflow-x-auto">
           <div
-            class="min-w-[1400px] border border-stone-300 dark:border-stone-800 xl:min-w-0"
+            v-if="loading"
+            class="flex flex-col items-center justify-center py-32 text-stone-400 gap-4"
           >
-            <div class="grid grid-cols-[100px_repeat(7,minmax(0,1fr))]">
-              <div
-                class="sticky left-0 z-30 bg-background dark:bg-secondary-900 border-b border-r border-stone-300 dark:border-stone-800 px-4 py-5 text-[10px] font-bold tracking-[0.18em] uppercase text-stone-500 flex items-center justify-center "
-              >
-                Time
-              </div>
-
-              <div
-                v-for="day in weekDates"
-                :key="day.toISOString()"
-                class="border-b border-r last:border-r-0 border-stone-300 dark:border-stone-800"
-              >
+            <UIcon
+              name="i-lucide-loader-2"
+              class="w-8 h-8 animate-spin text-[#B59A6D]"
+            />
+            <span class="text-sm tracking-widest uppercase font-bold">Loading Schedules...</span>
+          </div>
+          <div v-else class="overflow-x-auto">
+            <div
+              class="min-w-[1400px] border border-stone-300 dark:border-stone-800 xl:min-w-0"
+            >
+              <div class="grid grid-cols-[100px_repeat(7,minmax(0,1fr))]">
                 <div
-                  class="flex flex-col items-center justify-center py-4 text-stone-400 gap-1.5"
+                  class="sticky left-0 z-30 bg-background dark:bg-secondary-900 border-b border-r border-stone-300 dark:border-stone-800 px-4 py-5 text-[10px] font-bold tracking-[0.18em] uppercase text-stone-500 flex items-center justify-center"
                 >
-                  <span
-                    class="text-[10px] font-bold tracking-[0.2em] uppercase"
-                  >
-                    {{
-                      day
-                        .toLocaleDateString("en-US", { weekday: "short" })
-                        .toUpperCase()
-                    }}
-                  </span>
-                  <span
-                    class="font-serif text-3xl text-foreground font-normal leading-none"
-                  >
-                    {{ day.getDate() }}
-                  </span>
-                  <span
-                    class="text-[9px] font-bold tracking-[0.2em] uppercase text-stone-500"
-                  >
-                    {{
-                      day
-                        .toLocaleDateString("en-US", { month: "short" })
-                        .toUpperCase()
-                    }}
-                  </span>
+                  Time
                 </div>
-              </div>
 
-              <template v-if="timeSlots.length">
-                <template v-for="timeKey in timeSlots" :key="timeKey">
+                <div
+                  v-for="day in weekDates"
+                  :key="day.toISOString()"
+                  class="border-b border-r last:border-r-0 border-stone-300 dark:border-stone-800"
+                >
                   <div
-                    class="sticky left-0 z-20 bg-background dark:bg-secondary-900 border-b border-r border-stone-300 dark:border-stone-800 px-4 py-6 text-[10px] font-bold tracking-[0.14em] uppercase text-primary flex items-center justify-center"
+                    class="flex flex-col items-center justify-center py-4 text-stone-400 gap-1.5"
                   >
-                    {{ formatTime(`2000-01-01T${timeKey}:00`) }}
+                    <span
+                      class="text-[10px] font-bold tracking-[0.2em] uppercase"
+                    >
+                      {{
+                        day
+                          .toLocaleDateString("en-US", { weekday: "short" })
+                          .toUpperCase()
+                      }}
+                    </span>
+                    <span
+                      class="font-serif text-3xl text-foreground font-normal leading-none"
+                    >
+                      {{ day.getDate() }}
+                    </span>
+                    <span
+                      class="text-[9px] font-bold tracking-[0.2em] uppercase text-stone-500"
+                    >
+                      {{
+                        day
+                          .toLocaleDateString("en-US", { month: "short" })
+                          .toUpperCase()
+                      }}
+                    </span>
                   </div>
+                </div>
 
-                  <div
-                    v-for="day in weekDates"
-                    :key="`${day.toISOString()}-${timeKey}`"
-                    class="border-b border-r last:border-r-0 border-stone-300 dark:border-stone-800 bg-background dark:bg-secondary-900 align-top"
-                    :class="{ 'bg-[#1D1D1D]': isSameDay(day, new Date()) }"
-                  >
+                <template v-if="timeSlots.length">
+                  <template v-for="timeKey in timeSlots" :key="timeKey">
                     <div
-                      v-if="getEventsForCell(day, timeKey).length"
-                      class="flex h-full flex-col gap-3 p-1.5"
+                      class="sticky left-0 z-20 bg-background dark:bg-secondary-900 border-b border-r border-stone-300 dark:border-stone-800 px-4 py-6 text-[10px] font-bold tracking-[0.14em] uppercase text-primary flex items-center justify-center"
+                    >
+                      {{ formatTime(`2000-01-01T${timeKey}:00`) }}
+                    </div>
+
+                    <div
+                      v-for="day in weekDates"
+                      :key="`${day.toISOString()}-${timeKey}`"
+                      class="border-b border-r last:border-r-0 border-stone-300 dark:border-stone-800 bg-background dark:bg-secondary-900 align-top"
+                      :class="{ 'bg-[#1D1D1D]': isSameDay(day, new Date()) }"
                     >
                       <div
-                        v-for="event in getEventsForCell(day, timeKey)"
-                        :key="event.id"
-                        class="group relative min-h-[180px] w-full flex flex-col p-3 border-t-4 transition-colors rounded-xs hover:cursor-pointer"
-                        :class="[
-                          getBorderClass(event.type),
-                          getCardClass(event.type),
-                        ]"
-                        @click="handleDetailSessionView(event.id)"
+                        v-if="getEventsForCell(day, timeKey).length"
+                        class="flex h-full flex-col gap-3 p-1.5"
                       >
-                        <UIcon
-                          name="i-lucide-arrow-up-right"
-                          class="pointer-events-none absolute right-3 top-3 h-5 w-5 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
+                        <div
+                          v-for="event in getEventsForCell(day, timeKey)"
+                          :key="event.id"
+                          class="group relative min-h-[180px] w-full flex flex-col p-3 border-t-4 transition-colors rounded-xs hover:cursor-pointer"
                           :class="[
-                            `bg-${getProgressColor(event.type)}-800`,
+                            getBorderClass(event.type),
+                            getCardClass(event.type),
                           ]"
-                        />
-                        <div class="mb-2.5">
-                          <span
-                            class="px-1.5 py-0.5 text-[8px] font-bold tracking-wider uppercase rounded-xs inline-block"
-                            :class="[
-                              getBadgeClass(event.type),
-                            ]"
-                          >
-                            {{ event.type }}
-                          </span>
-                        </div>
-
-                        <div
-                          class="font-serif text-lg text-foreground font-normal mb-3 leading-tight"
+                          @click="handleDetailSessionView(event.id)"
                         >
-                          {{ event.title }}
-                        </div>
-
-                        <div
-                          class="flex flex-col gap-2 text-[10px] font-light text-secondary-500 dark:text-secondary-200 mb-auto"
-                        >
-                          <div class="flex items-center gap-2">
-                            <UIcon
-                              name="i-lucide-clock"
-                              class="w-3.5 h-3.5 shrink-0"
-                            />
-                            <span class="truncate">
-                              {{ formatTime(event.start) }} -
-                              {{ formatTime(event.end) }}
+                          <UIcon
+                            name="i-lucide-arrow-up-right"
+                            class="pointer-events-none absolute right-3 top-3 h-5 w-5 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
+                            :class="[`bg-${getProgressColor(event.type)}-800`]"
+                          />
+                          <div class="mb-2.5">
+                            <span
+                              class="px-1.5 py-0.5 text-[8px] font-bold tracking-wider uppercase rounded-xs inline-block"
+                              :class="[getBadgeClass(event.type)]"
+                            >
+                              {{ event.type }}
                             </span>
                           </div>
-                          <div class="flex items-center gap-2">
-                            <UIcon
-                              name="i-lucide-map-pin"
-                              class="w-3.5 h-3.5 shrink-0"
-                            />
-                            <span class="truncate">{{ event.location }}</span>
-                          </div>
-                        </div>
 
-                        <div>
-                          <UProgress
-                            v-model="event.spotsFilled"
-                            :max="event.capacity"
-                            class="my-4 bg-transparent h-0.5"
-                            :color="getProgressColor(event.type)"
-                          />
                           <div
-                            class="flex items-center justify-between dark:border-stone-800/60 text-[10px]"
+                            class="font-serif text-lg text-foreground font-normal mb-3 leading-tight"
                           >
-                            <div
-                              class="flex items-center gap-1.5 text-secondary-500 dark:text-secondary-200"
-                            >
+                            {{ event.title }}
+                          </div>
+
+                          <div
+                            class="flex flex-col gap-2 text-[10px] font-light text-secondary-500 dark:text-secondary-200 mb-auto"
+                          >
+                            <div class="flex items-center gap-2">
                               <UIcon
-                                name="i-lucide-users"
-                                class="w-3.5 h-3.5"
+                                name="i-lucide-clock"
+                                class="w-3.5 h-3.5 shrink-0"
                               />
-                              {{ event.spotsLeft }} spots left
+                              <span class="truncate">
+                                {{ formatTime(event.start) }} -
+                                {{ formatTime(event.end) }}
+                              </span>
                             </div>
-                            <div class="text-foreground font-serif text-xs">
-                              {{ event.price }}
+                            <div class="flex items-center gap-2">
+                              <UIcon
+                                name="i-lucide-map-pin"
+                                class="w-3.5 h-3.5 shrink-0"
+                              />
+                              <span class="truncate">{{ event.location }}</span>
+                            </div>
+                          </div>
+
+                          <div>
+                            <UProgress
+                              v-model="event.spotsFilled"
+                              :max="event.capacity"
+                              class="my-4 bg-transparent h-0.5"
+                              :color="getProgressColor(event.type)"
+                            />
+                            <div
+                              class="flex items-center justify-between dark:border-stone-800/60 text-[10px]"
+                            >
+                              <div
+                                class="flex items-center gap-1.5 text-secondary-500 dark:text-secondary-200"
+                              >
+                                <UIcon
+                                  name="i-lucide-users"
+                                  class="w-3.5 h-3.5"
+                                />
+                                {{ event.spotsLeft }} spots left
+                              </div>
+                              <div class="text-foreground font-serif text-xs">
+                                {{ event.price }}
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
+                  </template>
+                </template>
+
+                <template v-else>
+                  <div
+                    class="col-span-8 px-6 py-16 text-center text-sm text-stone-500 uppercase tracking-[0.2em]"
+                  >
+                    No sessions scheduled for this week.
                   </div>
                 </template>
-              </template>
-
-              <template v-else>
-                <div
-                  class="col-span-8 px-6 py-16 text-center text-sm text-stone-500 uppercase tracking-[0.2em]"
-                >
-                  No sessions scheduled for this week.
-                </div>
-              </template>
+              </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Mobile View -->
+    <div v-else class="block md:hidden">
+      <MobileSchedule />
     </div>
   </div>
 </template>
