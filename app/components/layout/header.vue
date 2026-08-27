@@ -19,6 +19,9 @@ const router = useRouter();
 const authStore = useAuthStore();
 const colorMode = useColorMode();
 const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
+const hasNotMembership = computed(() => {
+  return !userDetail?.membership?.membershipPlanId;
+});
 
 const isDark = computed({
   get: () => colorMode.value === "dark",
@@ -204,6 +207,7 @@ onUnmounted(() => {
 
         <!-- Membership CTA Button -->
         <base-button
+          v-if="hasNotMembership"
           to="/membership"
           variant="solid"
           color="primary"

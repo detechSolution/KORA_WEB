@@ -174,7 +174,15 @@ const resetApiError = ref<string | null>(null);
 
 const resetSchema = z
   .object({
-    newPassword: z.string().min(8, "Password must be at least 8 characters"),
+    newPassword: z
+      .string()
+      .min(8, "New password must be at least 8 characters")
+      .regex(/[A-Z]/, "New password must contain at least one uppercase letter")
+      .regex(/\d/, "New password must contain at least one number")
+      .regex(
+        /[!@#$%^&*(),.?":{}|<>_\-\\[\]/+=~`';]/,
+        "New password must contain at least one special character",
+      ),
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .superRefine((data, ctx) => {
@@ -281,6 +289,7 @@ async function handleResetPassword(): Promise<void> {
               :schema="emailSchema"
               :validate-on="['input', 'change', 'blur']"
               class="mt-8 w-full space-y-4"
+              @keypress.enter="handleSubmitEmail"
             >
               <base-input
                 v-model="emailFormState.email"
@@ -311,7 +320,9 @@ async function handleResetPassword(): Promise<void> {
               </h1>
               <p class="text-sm text-secondary-400 mb-8 max-w-sm">
                 We've sent a 6-digit code to your email<br>
-                <span class="text-white font-medium mt-1 block">{{ submittedEmail }}</span>
+                <span class="text-white font-medium mt-1 block">{{
+                  submittedEmail
+                }}</span>
               </p>
             </div>
 
@@ -321,6 +332,7 @@ async function handleResetPassword(): Promise<void> {
               :schema="otpSchema"
               :validate-on="['input', 'change', 'blur']"
               class="w-full space-y-6"
+              @keypress.enter="handleVerifyOtp"
             >
               <UFormField name="code" class="flex">
                 <UPinInput
@@ -345,13 +357,19 @@ async function handleResetPassword(): Promise<void> {
                 Verify OTP
               </base-button>
 
-              <div class="mt-8 text-center text-sm text-secondary-400 flex flex-col items-center gap-2">
+              <div
+                class="mt-8 text-center text-sm text-secondary-400 flex flex-col items-center gap-2"
+              >
                 <p>
                   Didn't receive the code?
                   <button
                     type="button"
                     class="font-medium ml-1 transition-colors"
-                    :class="resendTimer > 0 ? 'text-secondary-500 cursor-not-allowed' : 'text-white hover:underline'"
+                    :class="
+                      resendTimer > 0
+                        ? 'text-secondary-500 cursor-not-allowed'
+                        : 'text-white hover:underline'
+                    "
                     :disabled="resendTimer > 0"
                     @click="handleResend"
                   >
@@ -359,7 +377,8 @@ async function handleResetPassword(): Promise<void> {
                   </button>
                 </p>
                 <span v-if="resendTimer > 0" class="text-xs text-secondary-500">
-                  Wait 00:{{ resendTimer.toString().padStart(2, '0') }} before resending
+                  Wait 00:{{ resendTimer.toString().padStart(2, "0") }} before
+                  resending
                 </span>
               </div>
             </UForm>
@@ -380,6 +399,7 @@ async function handleResetPassword(): Promise<void> {
               :schema="resetSchema"
               :validate-on="['input', 'change', 'blur']"
               class="mt-8 w-full space-y-4"
+              @keypress.enter="handleResetPassword"
             >
               <base-input
                 v-model="resetFormState.newPassword"
