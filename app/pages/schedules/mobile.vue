@@ -7,6 +7,7 @@ import { usePagination } from "~/composables/use-pagination";
 import { useSessionStore } from "~/stores/session";
 import { getApiErrorMessage } from "~/utils/error";
 import { formatDate } from "~/utils/format";
+import { getSessionPath } from "~/utils/session";
 
 type SessionType = "event" | "class" | "workshop";
 
@@ -117,8 +118,8 @@ async function getSessionsList() {
   }
 }
 
-function handleDetailSessionView(id: string | number) {
-  router.push(`/session/${id}`);
+function handleDetailSessionView(session: Session) {
+  router.push(getSessionPath(session.name || session.title || "session", session.id));
 }
 
 const calendarDays = computed<Record<string, CalendarDay>>(() => {
@@ -358,7 +359,7 @@ onMounted(async () => {
           :key="session.id"
           class="group relative border-t-4 p-4 overflow-hidden shadow-sm"
           :class="[getBorderClass(session.type), getCardClass(session.type)]"
-          @click="handleDetailSessionView(session.id)"
+          @click="handleDetailSessionView(session)"
         >
           <UIcon
             name="i-lucide-arrow-up-right"

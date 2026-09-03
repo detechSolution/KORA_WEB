@@ -2,6 +2,7 @@
 import type { PropType } from "vue";
 import type { Session } from "~/types/session";
 import { useRouter } from "vue-router";
+import { getSessionPath } from "~/utils/session";
 
 defineProps({
   session: {
@@ -19,7 +20,7 @@ const router = useRouter();
   >
     <div
       class="relative w-full sm:w-auto md:w-[260px] lg:w-[300px] shrink-0 aspect-[1.15] overflow-hidden border-primary bg-muted select-none z-10 shadow-lg hover:cursor-pointer"
-      @click="router.push({ path: `/session/${session.id}`, query: {} })"
+      @click="router.push({ path: getSessionPath(session.name, session.id), query: {} })"
     >
       <img
         :src="session.bannerUrl"
@@ -98,7 +99,7 @@ const router = useRouter();
       <base-button
         variant="outline"
         color="primary"
-        :to="{ path: `/session/${session.id}`, query: {} }"
+        :to="{ path: getSessionPath(session.name, session.id), query: {} }"
       >
         View Detail
         <UIcon
