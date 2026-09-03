@@ -8,6 +8,7 @@ import useScreen from "~/composables/use-screen.js";
 import { useSessionStore } from "~/stores/session";
 import { getApiErrorMessage } from "~/utils/error";
 import { formatDate, normalizeDateTime } from "~/utils/format";
+import { getSessionPath } from "~/utils/session";
 import MobileSchedule from "./mobile.vue";
 
 definePageMeta({
@@ -232,8 +233,8 @@ async function getSessionsList() {
   }
 }
 
-function handleDetailSessionView(id: string | number) {
-  router.push(`/session/${id}`);
+function handleDetailSessionView(session: ScheduleEvent) {
+  router.push(getSessionPath(session.title, session.id));
 }
 
 watch(
@@ -420,7 +421,7 @@ onMounted(() => {
                             getBorderClass(event.type),
                             getCardClass(event.type),
                           ]"
-                          @click="handleDetailSessionView(event.id)"
+                          @click="handleDetailSessionView(event)"
                         >
                           <UIcon
                             name="i-lucide-arrow-up-right"

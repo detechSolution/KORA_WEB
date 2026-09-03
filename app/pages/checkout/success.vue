@@ -33,14 +33,8 @@ onMounted(async () => {
         pendingIds.forEach((cartId: string) => cartStore.removeItem(cartId));
         sessionStorage.removeItem("pendingPaymentItemIds");
       }
-      else {
-        if (cartStore.cartItems.length > 0) {
-          cartStore.cartItems = [];
-        }
-      }
-
-      if (cartStore.cartItems.length === 0) {
-        cartStore.removePromoCode();
+      else if (cartStore.cartItems.length > 0) {
+        cartStore.clearCart();
       }
     }
   }

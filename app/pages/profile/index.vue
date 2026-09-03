@@ -376,7 +376,7 @@ onMounted(async () => {
                 <UIcon name="i-lucide-phone" class="w-4 h-4" />
                 {{ user.phone }}
               </div>
-              <div class="flex items-center gap-2">
+              <div v-if="user.membership.hasPlan" class="flex items-center gap-2">
                 <UIcon name="i-lucide-calendar" class="w-4 h-4" />
                 Member Since: {{ user.memberSince }}
               </div>

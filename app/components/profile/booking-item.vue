@@ -5,6 +5,7 @@ import { useRouter } from "vue-router";
 import { useNotification } from "~/composables/use-notification";
 import { useMemberStore } from "~/stores/member";
 import { getApiErrorMessage } from "~/utils/error";
+import { getSessionPath } from "~/utils/session";
 
 const props = defineProps<{
   booking: Booking;
@@ -38,7 +39,10 @@ function handleViewDetail(booking: Booking) {
     router.push({ path: `/spa` });
   }
   else if (booking.itemType === "session") {
-    router.push({ path: `/session/${booking.productId}` });
+    if (!booking.productId)
+      return;
+
+    router.push({ path: getSessionPath(booking.title, booking.productId) });
   }
   else if (booking.itemType === "passes") {
     router.push({ path: `/membership` });
