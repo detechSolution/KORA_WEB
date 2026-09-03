@@ -244,7 +244,12 @@ onMounted(() => {
         <!-- Right Column (Sidebar) -->
         <aside class="sticky bottom-0 lg:top-30 lg:self-start px-4 md:px-8 lg:px-0">
           <div class="border border-border bg-card px-5 py-5 md:px-6">
-            <p class="text-[10px] uppercase text-primary mb-3">
+            <h3
+              class="font-serif text-3xl text-foreground dark:text-white mb-8"
+            >
+              Spa Offerings
+            </h3>
+            <!-- <p class="text-[10px] uppercase text-primary mb-3">
               SPA MENU
             </p>
             <h3
@@ -270,7 +275,7 @@ onMounted(() => {
                 </div>
                 <div class="h-px w-full border-b border-border mt-2" />
               </div>
-            </div>
+            </div> -->
 
             <div class="mt-6">
               <p class="text-[10px] uppercase text-primary mb-3">
