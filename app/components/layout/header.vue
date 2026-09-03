@@ -3,6 +3,7 @@ import type { DropdownMenuItem } from "@nuxt/ui";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { ICONS } from "~/config/icons";
+import { useCartStore } from "~/stores/cart";
 
 const props = defineProps({
   isHome: {
@@ -17,8 +18,10 @@ const props = defineProps({
 
 const router = useRouter();
 const authStore = useAuthStore();
+const cartStore = useCartStore();
 const colorMode = useColorMode();
 const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
+const cartCount = computed(() => cartStore.cartCount);
 const hasNotMembership = computed(() => {
   return !userDetail?.membership?.membershipPlanId;
 });
@@ -195,7 +198,7 @@ onUnmounted(() => {
         <!-- Cart Button -->
         <button
           v-if="authStore.isAuthenticated"
-          class="flex w-9 h-9 md:w-10 md:h-10 items-center justify-center border border-primary/40 text-primary hover:bg-primary/10 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
+          class="relative flex w-9 h-9 md:w-10 md:h-10 items-center justify-center border border-primary/40 text-primary hover:bg-primary/10 active:scale-95 transition-all duration-200 cursor-pointer focus:outline-none"
           title="Cart"
           @click="isCartOpen = true"
         >
@@ -203,6 +206,12 @@ onUnmounted(() => {
             :name="ICONS.HANDBAG"
             class="w-4 h-4 md:w-5 md:h-5 text-primary"
           />
+          <span
+            v-if="cartCount > 0"
+            class="absolute -right-1.5 -top-1.5 min-w-5 h-5 px-1 flex items-center justify-center rounded-full bg-red-700 text-[10px] font-bold leading-none text-white"
+          >
+            {{ cartCount }}
+          </span>
         </button>
 
         <!-- Membership CTA Button -->

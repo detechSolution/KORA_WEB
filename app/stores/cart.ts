@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { API_ENDPOINTS } from "~/config/constants";
 
 export const useCartStore = defineStore("cart", () => {
@@ -11,6 +11,13 @@ export const useCartStore = defineStore("cart", () => {
   const isApplyingPromo = ref<boolean>(false);
   const promoError = ref<string | null>(null);
   const isPromoValid = ref<boolean>(false);
+  // const cartCount = computed(() =>
+  //   cartItems.value.reduce((total, item) => {
+  //     const visitorsCount = item.visitors?.length > 0 ? item.visitors.length : 1;
+  //     return total + visitorsCount;
+  //   }, 0),
+  // );
+  const cartCount = computed(() => cartItems.value.length);
 
   if (import.meta.client) {
     const saved = localStorage.getItem("cartItems");
@@ -40,8 +47,19 @@ export const useCartStore = defineStore("cart", () => {
     cartItems.value.push(cartItem);
   };
 
+  const removePromoCode = () => {
+    promoCode.value = null;
+    discountAmount.value = 0;
+    promoError.value = null;
+    isPromoValid.value = false;
+  };
+
   const removeItem = (cartId: string | number) => {
     cartItems.value = cartItems.value.filter(item => item.cartId !== cartId && item.id !== cartId);
+
+    if (cartItems.value.length === 0) {
+      removePromoCode();
+    }
   };
 
   const applyPromoCode = async (code: string) => {
@@ -68,13 +86,6 @@ export const useCartStore = defineStore("cart", () => {
     }
   };
 
-  const removePromoCode = () => {
-    promoCode.value = null;
-    discountAmount.value = 0;
-    promoError.value = null;
-    isPromoValid.value = false;
-  };
-
   const clearCart = () => {
     cartItems.value = [];
     removePromoCode();
@@ -82,6 +93,7 @@ export const useCartStore = defineStore("cart", () => {
 
   return {
     cartItems,
+    cartCount,
     promoCode,
     discountAmount,
     discountType,

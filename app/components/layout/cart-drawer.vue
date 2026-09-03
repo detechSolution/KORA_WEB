@@ -27,6 +27,7 @@ const cartStore = useCartStore();
 const { error: showError } = useNotification();
 
 const cartItems = computed(() => cartStore.cartItems);
+const cartCount = computed(() => cartStore.cartCount);
 
 const totalPrice = computed(() => {
   return cartItems.value.reduce((total, item) => total + item.finalPrice, 0);
@@ -81,7 +82,7 @@ function handleProceedToCheckout() {
           <span
             class="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold"
           >
-            {{ cartItems.length }} ITEMS ADDED
+            {{ cartCount }} ITEMS ADDED
           </span>
         </div>
 
