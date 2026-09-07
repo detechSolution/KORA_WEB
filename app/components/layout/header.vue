@@ -138,6 +138,10 @@ onUnmounted(() => {
       <!-- Left: Menu Trigger -->
       <div class="flex-1 flex items-center" :class="getColorClass?.text">
         <button
+          aria-label="Open menu"
+          aria-haspopup="dialog"
+          aria-controls="main-menu"
+          :aria-expanded="isSidebarOpen"
           class="group flex items-center gap-2.5 hover:text-primary transition-colors duration-200 cursor-pointer py-1.5 focus:outline-none"
           @click="isSidebarOpen = true"
         >
