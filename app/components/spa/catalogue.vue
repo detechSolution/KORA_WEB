@@ -275,7 +275,7 @@ onMounted(() => {
                       class="whitespace-nowrap"
                     >
                       <span class="text-primary">{{ price.duration }} {{ price.timeUnit }}</span>
-                      <span class="ml-1.5">{{ item.currency === 'NPR' ? 'Rs.' : item.currency }} {{ formatPrice(price.price) }}</span>
+                      <span class="ml-1.5 text-sm">{{ item.currency === 'NPR' ? 'Rs.' : item.currency }} {{ formatPrice(price.price) }}</span>
                     </span>
                   </span>
                 </template>
