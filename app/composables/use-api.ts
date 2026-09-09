@@ -28,7 +28,7 @@ type HttpClientConfig = {
 
 function createHttpClient(config: HttpClientConfig) {
   const { baseURL, storage } = config;
-  const timeout = config.timeout ?? 10000;
+  const timeout = config.timeout ?? 100000;
 
   function getAccessToken(): string | null {
     return storage.getAccessToken();
