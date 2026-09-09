@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useNotification } from "~/composables/use-notification";
 import { useAuthStore } from "~/stores/auth";
 import { useSpaStore } from "~/stores/spa";
 import { getApiErrorMessage } from "~/utils/error";
+import { formatPrice } from "~/utils/format";
 import { IMAGES } from "~/utils/images";
 
 definePageMeta({
@@ -25,7 +27,21 @@ const authStore = useAuthStore();
 const spaStore = useSpaStore();
 const { error: showError } = useNotification();
 
-const spa = computed(() => spaStore.spa);
+const {
+  spa,
+  categories,
+  selectedCategoryId,
+  selectedCategory,
+  categoryServices,
+  categoriesLoading,
+  categoryLoading,
+  categoriesError,
+  categoryError,
+} = storeToRefs(spaStore);
+const categoryItems = computed(() => categoryServices.value.map(item => ({
+  ...item,
+  value: String(item.id),
+})));
 
 const selectedSpa = ref(null);
 const isBookingModalOpen = ref(false);
@@ -46,22 +62,6 @@ async function getSpaLists() {
   }
 }
 
-function handleBookingClick(spa: any) {
-  if (authStore.isAuthenticated) {
-    if (authStore.isMembershipFrozen()) {
-      showError({
-        message: "Your membership is currently frozen. Booking is disabled.",
-      });
-      return;
-    }
-    selectedSpa.value = spa;
-    isBookingModalOpen.value = true;
-  }
-  else {
-    router.push({ path: "/login", query: { redirect: route.fullPath } });
-  }
-}
-
 function handleOpenBookingModal() {
   if (authStore.isAuthenticated) {
     if (authStore.isMembershipFrozen()) {
@@ -79,6 +79,7 @@ function handleOpenBookingModal() {
 
 onMounted(() => {
   getSpaLists();
+  spaStore.getCategories();
 });
 </script>
 
@@ -87,7 +88,7 @@ onMounted(() => {
     class="relative bg-background dark:bg-secondary-900 text-foreground dark:text-white transition-colors duration-300 w-full"
   >
     <div
-      class="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 xl:w-50 aspect-square z-10 -translate-y-12"
+      class="pointer-events-none absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 xl:w-50 aspect-square z-10 -translate-y-12"
     >
       <img
         :src="IMAGES.LEAF"
@@ -97,15 +98,19 @@ onMounted(() => {
     </div>
 
     <div class="relative z-10 max-w-400 mx-auto py-12">
-      <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-12">
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-0">
         <!-- Left Column -->
         <div>
           <ClassHeader title="Spa Sanctuary" />
           <div
+            v-if="spa?.description"
             class="spa-description max-w-400 px-4 md:px-8 lg:px-12 py-10 md:py-7"
             v-html="spa?.description"
           />
-          <div class="max-w-400 px-4 md:px-8 lg:px-12 py-10 mb-5 md:py-7">
+          <p v-if="!spa?.description" class="px-4 md:px-8 lg:px-12 pt-7 text-sm text-secondary-500 leading-relaxed">
+            Discover a quieter pace at Spa Sanctuary. Explore our massages, facials and body rituals, thoughtfully designed to help you relax and feel refreshed.
+          </p>
+          <div class="max-w-400 px-4 md:px-8 lg:px-12 pt-7 pb-8">
             <base-section-label
               label="Feature Video"
               align="left"
@@ -113,13 +118,12 @@ onMounted(() => {
             />
             <div
               v-if="!isPlayingVideo"
-              class="relative overflow-hidden group cursor-pointer"
-              @click="isPlayingVideo = true"
+              class="relative overflow-hidden group"
             >
               <img
-                :src="spa?.bannerUrl"
-                :alt="spa?.name"
-                class="w-full h-[300px] md:h-[460px] object-cover transition-transform duration-700 group-hover:scale-105"
+                :src="spa?.bannerUrl || IMAGES.WELLNESS_SPA"
+                :alt="spa?.name || 'Spa Sanctuary'"
+                class="w-full aspect-[1.93/1] object-cover transition-transform duration-700 group-hover:scale-105"
               >
 
               <div
@@ -139,19 +143,25 @@ onMounted(() => {
                 class="absolute bottom-6 right-6 w-8 h-8 border-b border-r border-primary/70"
               />
 
-              <div class="absolute inset-0 flex items-center justify-center">
-                <div
+              <button
+                v-if="spa?.videoUrl"
+                type="button"
+                aria-label="Play spa feature video"
+                class="absolute inset-0 flex items-center justify-center cursor-pointer focus-visible:outline-2 focus-visible:outline-primary focus-visible:-outline-offset-2"
+                @click="isPlayingVideo = true"
+              >
+                <span
                   class="w-16 h-16 md:w-20 md:h-20 border border-primary/60 flex items-center justify-center bg-black/20 backdrop-blur-sm"
                 >
                   <UIcon
                     name="i-lucide-play"
                     class="absolute inset-0 m-auto w-6 h-6 text-primary/80 transition-transform duration-300 group-hover:scale-110"
                   />
-                </div>
-              </div>
+                </span>
+              </button>
             </div>
 
-            <div v-else class="w-full h-[300px] md:h-[460px] bg-black">
+            <div v-else class="w-full aspect-[1.93/1] bg-black">
               <video
                 class="w-full h-full object-cover"
                 :src="spa?.videoUrl"
@@ -162,128 +172,143 @@ onMounted(() => {
               />
             </div>
           </div>
-          <div class="max-w-400 px-4 md:px-8 lg:px-12 py-10 mb-5 md:py-7">
+          <div class="max-w-400 px-4 md:px-8 lg:px-12 pb-8">
             <base-section-label
               label="Available Offerings"
               align="left"
               class="mb-4"
             />
-            <UAccordion
-              :items="spa?.subTypes"
-              default-value="0"
-              :ui="{
-                item: 'p-6 bg-card',
-              }"
+            <p
+              v-if="categoriesLoading && !categories.length"
+              role="status"
+              class="py-5 text-sm text-secondary-500"
             >
-              <template #default="{ item, open }">
-                <div class="flex flex-col">
-                  <span>{{ item.name }}</span>
-                  <p
-                    class="text-sm text-secondary-500 mt-4 font-sans"
-                    :class="[
-                      !open && 'line-clamp-2',
-                    ]"
-                  >
+              Loading spa categories...
+            </p>
+            <div
+              v-else-if="categoriesError"
+              role="alert"
+              class="py-5 space-y-3"
+            >
+              <p class="text-sm text-secondary-500">
+                {{ categoriesError }}
+              </p>
+              <base-button variant="outline" @click="spaStore.getCategories()">
+                Retry categories
+              </base-button>
+            </div>
+            <p v-else-if="!categories.length" class="py-5 text-sm text-secondary-500">
+              No spa categories are currently available.
+            </p>
+            <div
+              v-if="categories.length"
+              class="grid grid-cols-2 sm:grid-cols-3 gap-3"
+              role="group"
+              aria-label="Spa categories"
+            >
+              <button
+                v-for="category in categories"
+                :key="category.id"
+                type="button"
+                :aria-pressed="selectedCategoryId === category.id"
+                aria-controls="spa-category-offerings"
+                class="border bg-card px-3 py-3 text-center transition-colors cursor-pointer hover:border-primary focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
+                :class="selectedCategoryId === category.id ? 'border-primary bg-primary/5' : 'border-border'"
+                @click="spaStore.selectCategory(category.id)"
+              >
+                <span class="block font-serif text-base">{{ category.name }}</span>
+                <span class="block mt-1 font-sans text-xs text-secondary-500">
+                  {{ category.servicesCount }} {{ category.servicesCount === 1 ? 'Service' : 'Services' }}
+                </span>
+              </button>
+            </div>
+
+            <section
+              v-if="selectedCategory"
+              id="spa-category-offerings"
+              aria-labelledby="spa-category-title"
+              :aria-busy="categoryLoading"
+              class="mt-7 border-t border-border pt-7"
+            >
+              <h2
+                id="spa-category-title"
+                class="font-serif text-2xl mb-4"
+                aria-live="polite"
+              >
+                {{ selectedCategory?.name || 'Spa Offerings' }}
+              </h2>
+              <p
+                v-if="categoryLoading"
+                role="status"
+                class="py-5 text-sm text-secondary-500"
+              >
+                Loading treatments...
+              </p>
+              <div
+                v-else-if="categoryError"
+                role="alert"
+                class="py-5 space-y-3"
+              >
+                <p class="text-sm text-secondary-500">
+                  {{ categoryError }}
+                </p>
+                <base-button variant="outline" @click="spaStore.selectCategory(selectedCategory.id)">
+                  Retry treatments
+                </base-button>
+              </div>
+              <UAccordion
+                v-else-if="categoryItems.length"
+                :key="selectedCategoryId"
+                :items="categoryItems"
+                label-key="name"
+                :ui="{
+                  root: 'space-y-3',
+                  item: 'border-0 bg-card px-5 md:px-6',
+                  trigger: 'py-5 cursor-pointer hover:no-underline focus-visible:outline-primary',
+                  trailingIcon: 'text-primary size-4 self-start mt-1',
+                }"
+              >
+                <template #default="{ item }">
+                  <span class="block font-serif text-lg">{{ item.name }}</span>
+                  <span class="flex flex-wrap gap-x-6 gap-y-2 mt-2 font-sans text-xs font-normal text-secondary-500">
+                    <span
+                      v-for="price in item.prices"
+                      :key="price.id"
+                      class="whitespace-nowrap"
+                    >
+                      <span class="text-primary">{{ price.duration }} {{ price.timeUnit }}</span>
+                      <span class="ml-1.5">{{ item.currency === 'NPR' ? 'Rs.' : item.currency }} {{ formatPrice(price.price) }}</span>
+                    </span>
+                  </span>
+                </template>
+                <template #content="{ item }">
+                  <p class="pb-5 text-sm font-sans text-secondary-500 leading-relaxed">
                     {{ item.description }}
                   </p>
-                </div>
-              </template>
-              <template #content="{ item }">
-                <!-- Pricing Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                  <div
-                    v-for="(price, index) in item.prices"
-                    :key="index"
-                    class="group relative border border-white/10 dark:border-white/10 bg-[#c9a55a]/10 dark:bg-[#2A2722] rounded-xs p-4 flex flex-col justify-between transition-all duration-300"
-                  >
-                    <div>
-                      <div
-                        class="flex items-center gap-2 text-xs uppercase text-secondary-500"
-                      >
-                        <UIcon
-                          name="i-lucide-clock"
-                          class="h-3.5 w-3.5 text-primary"
-                        />
-                        <span class="text-primary text-sm">{{
-                          `${price.duration} ${price.timeUnit}`
-                        }}</span>
-                      </div>
-
-                      <p class="text-3xl font-medium text-foreground mt-3">
-                        {{ price.price }}
-                      </p>
-                    </div>
-
-                    <div class="mt-3 flex items-center justify-between">
-                      <base-button
-                        variant="link"
-                        class="text-primary p-0"
-                        @click="
-                          handleBookingClick({
-                            ...price,
-                            name: item.name,
-                            referenceId: item.id,
-                            image: spa?.bannerUrl,
-                          })
-                        "
-                      >
-                        Tap to Book
-                        <UIcon
-                          name="i-lucide-arrow-right"
-                          class="h-4 w-4 transition-transform group-hover:translate-x-1"
-                        />
-                      </base-button>
-                    </div>
-                  </div>
-                </div>
-              </template>
-            </UAccordion>
+                </template>
+              </UAccordion>
+              <p v-else class="text-sm text-secondary-500 py-5">
+                No treatments are currently available in this category.
+              </p>
+            </section>
           </div>
         </div>
 
         <!-- Right Column (Sidebar) -->
-        <aside class="sticky bottom-0 lg:top-30 lg:self-start px-4 md:px-8 lg:px-0">
+        <aside class="lg:sticky lg:top-30 lg:self-start px-4 md:px-8 lg:px-0">
           <div class="border border-border bg-card px-5 py-5 md:px-6">
             <h3
               class="font-serif text-3xl text-foreground dark:text-white mb-8"
             >
               Spa Offerings
             </h3>
-            <!-- <p class="text-[10px] uppercase text-primary mb-3">
-              SPA MENU
-            </p>
-            <h3
-              class="font-serif text-3xl text-foreground dark:text-white mb-8"
-            >
-              {{ spa?.subTypes.length || 0 }} Offerings Available
-            </h3>
-
-            <div v-if="spa?.subTypes.length" class="hidden lg:block space-y-6">
-              <div v-for="subType in spa.subTypes" :key="subType.id">
-                <div class="flex justify-between items-center gap-4">
-                  <span
-                    class="font-serif text-foreground dark:text-white text-base"
-                  >{{ subType.name }}</span>
-                  <div
-                    class="text-right text-[10px] text-secondary-500 font-normal dark:text-white/70 space-y-1 mt-1"
-                  >
-                    <div v-for="price in subType.prices" :key="price.duration">
-                      {{ price.duration }} {{ price.timeUnit }} -
-                      {{ price.price }}
-                    </div>
-                  </div>
-                </div>
-                <div class="h-px w-full border-b border-border mt-2" />
-              </div>
-            </div> -->
-
             <div class="mt-6">
               <p class="text-[10px] uppercase text-primary mb-3">
                 Available Days
               </p>
               <div class="flex flex-wrap gap-2">
                 <span
-                  v-for="day in spa?.availableDays"
+                  v-for="day in spa?.availableDays ?? ['mon', 'tue', 'wed', 'thu', 'fri', 'sat']"
                   :key="day"
                   class="border border-primary uppercase px-2.5 py-1 text-[10px] text-foreground dark:text-white font-semibold"
                 >
@@ -298,8 +323,7 @@ onMounted(() => {
               <p
                 class="text-xs text-start text-secondary-500 dark:text-white/80 leading-relaxed"
               >
-                Experience any treatment on the left to view details and select
-                your preferred duration.
+                Expand any treatment to view its description, and explore the available durations and prices.
               </p>
             </div>
 
@@ -307,16 +331,11 @@ onMounted(() => {
               variant="solid"
               color="primary"
               class="w-full text-sm font-semibold uppercase mt-6"
+              :disabled="loading || !spa?.subTypes?.length"
               @click="handleOpenBookingModal()"
             >
-              Book This Service
+              Book Spa Service
             </base-button>
-
-            <p
-              class="text-[10px] text-center text-foreground/50 dark:text-white/50 mt-4"
-            >
-              We'll confirm your preferred date within 24h.
-            </p>
           </div>
         </aside>
       </div>
