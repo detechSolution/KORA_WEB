@@ -28,6 +28,8 @@ export const API_ENDPOINTS = {
 
   SPA: {
     GET: "/api/v1/spa/website",
+    CATEGORIES: "/api/v1/spa/categories/summary",
+    CATEGORY: (id: number) => `/api/v1/spa/categories/${id}`,
     TIME_AVAILABILITY: "/api/v1/bookings/website/spa-time-availability",
   },
 

@@ -34,7 +34,7 @@ const menuItems: MenuItem[] = [
   },
   { name: "Schedules", path: "/schedules", image: "/images/wellness/classes.png" },
   { name: "Guest Pass", path: "#", image: "/images/hero/offerings_memberships.png" },
-  { name: "Gift Card", path: "#", image: "/images/hero/experience_aroma.png" },
+  { name: "Gift Card", path: "/gift-card", image: "/images/hero/experience_aroma.png" },
 ];
 
 const previewImages = [...new Set(menuItems.map(item => item.image))];

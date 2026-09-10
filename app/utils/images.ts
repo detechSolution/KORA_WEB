@@ -13,6 +13,7 @@ export const IMAGES = {
 
   LEAF: "/images/hero/plant_hero.png",
   MANIFESTO_BG: "/images/hero/manifesto_background.png",
+  GIFT: "/images/gift.png",
 
   // HOME SECTION
   HOME_HERO: "/images/hero/home_hero.png",

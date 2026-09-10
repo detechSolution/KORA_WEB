@@ -8,13 +8,14 @@ import { useAuthStore } from "~/stores/auth";
 import { useSessionStore } from "~/stores/session";
 
 const props = defineProps({
+  gifting: { type: Boolean, default: false },
   session: {
     type: Object as PropType<Session>,
     required: true,
   },
 });
 
-const emit = defineEmits(["fetchSessionDetail"]);
+const emit = defineEmits(["fetchSessionDetail", "gift"]);
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -35,6 +36,10 @@ const showWaitlistCta = computed(() => {
 });
 
 function handleOpenBookingModal() {
+  if (props.gifting) {
+    emit("gift", props.session);
+    return;
+  }
   if (authStore.isAuthenticated) {
     if (authStore.isMembershipFrozen()) {
       showError({
@@ -50,6 +55,8 @@ function handleOpenBookingModal() {
 }
 
 async function handleAddToWaitlist() {
+  if (props.gifting)
+    return;
   if (!authStore.isAuthenticated) {
     router.push({ path: "/login", query: { redirect: route.fullPath } });
     return;
@@ -82,6 +89,7 @@ async function handleAddToWaitlist() {
     class="relative bg-background dark:bg-secondary-900 transition-colors duration-300 w-full"
   >
     <div
+      v-if="!gifting"
       class="absolute top-0 right-0 w-50 h-50 md:w-60 md:h-70 xl:w-80 aspect-square z-100 lg:z-10 -translate-y-12"
     >
       <img
@@ -252,7 +260,7 @@ async function handleAddToWaitlist() {
                 <p
                   class="text-[10px] uppercase tracking-[0.24em] text-primary/70 mb-3"
                 >
-                  Book Your Spot
+                  {{ gifting ? 'Gift This Session' : 'Book Your Spot' }}
                 </p>
 
                 <span
@@ -301,7 +309,15 @@ async function handleAddToWaitlist() {
               </div>
 
               <base-button
-                v-if="session.isBooked && !session.isGuestBookable"
+                v-if="gifting"
+                variant="solid"
+                class="w-full text-sm uppercase"
+                @click="emit('gift', session)"
+              >
+                Gift This Session
+              </base-button>
+              <base-button
+                v-else-if="session.isBooked && !session.isGuestBookable"
                 variant="outline"
                 color="primary"
                 class="w-full text-sm uppercase"
@@ -348,6 +364,7 @@ async function handleAddToWaitlist() {
     </div>
 
     <ClassSessionBookingModal
+      v-if="!gifting"
       :is-open="isBookingModalOpen"
       :session="session"
       @close="isBookingModalOpen = false"

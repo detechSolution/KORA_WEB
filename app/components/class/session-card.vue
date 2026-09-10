@@ -4,23 +4,32 @@ import type { Session } from "~/types/session";
 import { useRouter } from "vue-router";
 import { getSessionPath } from "~/utils/session";
 
-defineProps({
+const props = defineProps({
+  gifting: { type: Boolean, default: false },
   session: {
     type: Object as PropType<Session>,
     required: true,
   },
 });
 
+const emit = defineEmits<{ viewGift: [session: Session] }>();
 const router = useRouter();
+function viewDetail() {
+  if (props.gifting)
+    emit("viewGift", props.session);
+  else router.push({ path: getSessionPath(props.session.name, props.session.id), query: {} });
+}
 </script>
 
 <template>
   <div
     class="bg-transparent group flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-10 py-10 border-b border-border last:border-b-0 w-full"
   >
-    <div
+    <button
+      type="button"
+      :aria-label="`View ${session.name}`"
       class="relative w-full sm:w-auto md:w-[260px] lg:w-[300px] shrink-0 aspect-[1.15] overflow-hidden border-primary bg-muted select-none z-10 shadow-lg hover:cursor-pointer"
-      @click="router.push({ path: getSessionPath(session.name, session.id), query: {} })"
+      @click="viewDetail"
     >
       <img
         :src="session.bannerUrl"
@@ -30,7 +39,7 @@ const router = useRouter();
       <div
         class="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/15 opacity-70 group-hover:opacity-40 transition-opacity duration-500"
       />
-    </div>
+    </button>
 
     <div class="grow flex flex-col items-start gap-1 py-1">
       <base-badge
@@ -99,7 +108,8 @@ const router = useRouter();
       <base-button
         variant="outline"
         color="primary"
-        :to="{ path: getSessionPath(session.name, session.id), query: {} }"
+        :to="gifting ? undefined : { path: getSessionPath(session.name, session.id), query: {} }"
+        @click="gifting && emit('viewGift', session)"
       >
         View Detail
         <UIcon
