@@ -95,7 +95,7 @@ function viewDetail() {
           v-if="session.price > 0"
           class="font-serif text-2xl md:text-3xl text-black dark:text-white font-normal leading-none tracking-wide"
         >
-          Rs. {{ session.price }}
+          <span class="text-[27px]">Rs.</span> {{ session.price }}
         </span>
         <span
           v-else

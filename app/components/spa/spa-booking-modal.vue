@@ -530,7 +530,7 @@ watch(
                     </template>
 
                     <template #content="{ item }">
-                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                         <div
                           v-for="duration in item.prices"
                           :key="duration.id"
@@ -563,7 +563,7 @@ watch(
                             </span>
                           </div>
                           <p class="text-3xl font-medium text-foreground mt-3">
-                            {{ duration.price }}
+                            <span class="text-2xl">Rs. </span>{{ duration.price }}
                           </p>
                         </div>
                       </div>

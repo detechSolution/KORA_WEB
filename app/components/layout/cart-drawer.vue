@@ -170,7 +170,8 @@ function handleProceedToCheckout() {
                   class="text-[10px] px-1.5 py-0.5 bg-primary dark:bg-[#5D4A17] text-primary-foreground font-medium tracking-wide"
                 >Membership</span>
               </div>
-              <span class="text-2xl font-serif text-[#B59A6D]">{{ item.finalPrice > 0 ? `Rs. ${formatPrice(item.finalPrice)}` : 'Free' }}</span>
+              <span v-if="item.finalPrice > 0" class="text-2xl font-serif text-primary-900"><span class="text-[22px]">Rs.</span> {{ formatPrice(item.finalPrice) }}</span>
+              <span v-else class="font-serif text-2xl text-primary-900">Free</span>
             </div>
 
             <div class="mt-2 flex gap-1.5">
@@ -223,9 +224,9 @@ function handleProceedToCheckout() {
             class="flex items-center justify-between border-t border-border/20 pt-6 mb-8"
           >
             <span class="text-2xl font-semibold font-serif text-foreground">Total</span>
-            <span class="text-2xl font-semibold font-serif text-primary">{{
-              formatPrice(totalPrice)
-            }}</span>
+            <span class="text-2xl font-semibold font-serif text-primary">
+              <span class="text-[22px]">Rs. </span>{{ formatPrice(totalPrice) }}
+            </span>
           </div>
 
           <base-button class="w-full" @click="handleProceedToCheckout">
