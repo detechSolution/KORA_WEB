@@ -27,9 +27,9 @@
       <div
         class="flex flex-col justify-center items-start md:items-end gap-3 min-w-[160px] pt-4 md:pt-0 shrink-0 w-full md:w-auto"
       >
-        <div class="h-2 w-20 rounded" />
-        <div class="h-7 w-16 rounded" />
-        <div class="h-10 w-32 rounded mt-2" />
+        <USkeleton class="h-2 w-20 rounded" />
+        <USkeleton class="h-7 w-16 rounded" />
+        <USkeleton class="h-10 w-32 rounded mt-2" />
       </div>
     </div>
   </div>

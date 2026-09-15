@@ -15,7 +15,7 @@ export const useGiftStore = defineStore("gift", () => {
   const page = ref(1);
   const pageSize = 10;
   const total = ref(0);
-  const loading = ref(false);
+  const loading = ref(true);
   const error = ref("");
   const selectedSession = ref<Session | null>(null);
   const selectedSessionId = ref<number | null>(null);

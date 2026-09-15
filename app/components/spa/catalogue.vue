@@ -2,6 +2,7 @@
 import { storeToRefs } from "pinia";
 import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import SpaGiftBookingModal from "~/components/spa/gift-booking-modal.vue";
 import { useNotification } from "~/composables/use-notification";
 import { useAuthStore } from "~/stores/auth";
 import { useSpaStore } from "~/stores/spa";
@@ -12,8 +13,6 @@ import { IMAGES } from "~/utils/images";
 const props = withDefaults(defineProps<{ gifting?: boolean }>(), {
   gifting: false,
 });
-const emit = defineEmits<{ gift: [] }>();
-
 const isPlayingVideo = ref(false);
 
 const route = useRoute();
@@ -42,6 +41,7 @@ const categoryItems = computed(() =>
 
 const selectedSpa = ref(null);
 const isBookingModalOpen = ref(false);
+const isGiftBookingModalOpen = ref(false);
 const loading = ref(false);
 
 async function getSpaLists() {
@@ -61,7 +61,7 @@ async function getSpaLists() {
 
 function handleOpenBookingModal() {
   if (props.gifting) {
-    emit("gift");
+    isGiftBookingModalOpen.value = true;
     return;
   }
   if (authStore.isAuthenticated) {
@@ -370,11 +370,7 @@ onMounted(() => {
               variant="solid"
               color="primary"
               class="w-full text-sm font-semibold uppercase mt-6"
-              :disabled="
-                gifting
-                  ? categoryLoading || !categoryServices.length
-                  : loading || !spa?.subTypes?.length
-              "
+              :disabled="loading || !spa?.subTypes?.length"
               @click="handleOpenBookingModal()"
             >
               {{ gifting ? "Gift Spa Service" : "Book Spa Service" }}
@@ -389,6 +385,12 @@ onMounted(() => {
       v-model:selected-spa="selectedSpa"
       :is-open="isBookingModalOpen"
       @close="isBookingModalOpen = false"
+    />
+
+    <SpaGiftBookingModal
+      v-if="gifting && isGiftBookingModalOpen"
+      :is-open="isGiftBookingModalOpen"
+      @close="isGiftBookingModalOpen = false"
     />
   </section>
 </template>

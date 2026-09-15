@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { GiftCategory } from "~/stores/gift";
+import type { MembershipPlans } from "~/types/membership";
 import { storeToRefs } from "pinia";
+import { ref } from "vue";
 import { useGiftStore } from "~/stores/gift";
 import { IMAGES } from "~/utils/images";
 
@@ -12,11 +14,29 @@ useSeoMeta({
 
 const giftStore = useGiftStore();
 const { activeCategory } = storeToRefs(giftStore);
+const isGiftMembershipModalOpen = ref(false);
+const selectedMembership = ref<MembershipPlans | null>(null);
+const selectedMembershipOption = ref<MembershipPlans["options"][number] | null>(null);
 const categories: { id: GiftCategory; name: string; description: string }[] = [
   { id: "membership", name: "Gift Membership & Pass", description: "Gift membership plans & passes" },
   { id: "spa", name: "Gift Spa Services", description: "Gift multiple spa offerings" },
   { id: "classes", name: "Gift Kora Classes", description: "Gift various Kora classes" },
 ];
+
+function openGiftMembershipModal(
+  membership: MembershipPlans,
+  option: MembershipPlans["options"][number],
+) {
+  selectedMembership.value = membership;
+  selectedMembershipOption.value = option;
+  isGiftMembershipModalOpen.value = true;
+}
+
+function closeGiftMembershipModal() {
+  isGiftMembershipModalOpen.value = false;
+  selectedMembership.value = null;
+  selectedMembershipOption.value = null;
+}
 </script>
 
 <template>
@@ -82,11 +102,23 @@ const categories: { id: GiftCategory; name: string; description: string }[] = [
 
       <section id="gift-catalogue" :aria-label="categories.find(category => category.id === activeCategory)?.name">
         <KeepAlive>
-          <MembershipCatalogue v-if="activeCategory === 'membership'" gifting />
+          <MembershipCatalogue
+            v-if="activeCategory === 'membership'"
+            gifting
+            @gift-membership="openGiftMembershipModal"
+          />
           <SpaCatalogue v-else-if="activeCategory === 'spa'" gifting />
           <GiftClasses v-else />
         </KeepAlive>
       </section>
     </div>
+
+    <MembershipGiftMembershipBookingModal
+      v-if="selectedMembership && selectedMembershipOption"
+      :is-open="isGiftMembershipModalOpen"
+      :membership="selectedMembership"
+      :option="selectedMembershipOption"
+      @close="closeGiftMembershipModal"
+    />
   </div>
 </template>

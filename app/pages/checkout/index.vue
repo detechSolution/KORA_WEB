@@ -148,6 +148,15 @@ async function handlePayNowClick() {
             referenceId: item.referenceId,
             bookingFor: item.bookingFor,
 
+            ...(item.isGift && {
+              isGift: true,
+              recipient: {
+                fullName: item.recipient.fullName,
+                phoneNumber: item.recipient.phone || "",
+                email: item.recipient.email,
+              },
+            }),
+
             ...(item.itemType === "pass" && {
               bookingDate: item.bookingDate,
             }),
@@ -274,7 +283,7 @@ onUnmounted(() => {
                           <!-- <br> -->
                           <span v-if="item.itemType !== 'membership'">
                             (<span class="text-2xl font-semibold">{{
-                              item.visitors.length > 0
+                              item.visitors?.length > 0
                                 ? item.visitors.length
                                 : 1
                             }}
@@ -300,6 +309,13 @@ onUnmounted(() => {
                           v-if="item.itemType === 'membership'"
                           class="text-[10px] px-1.5 py-0.5 bg-[#B59A6D] dark:bg-[#5D4A17] text-white font-medium tracking-wide"
                         >Membership</span>
+                        <span
+                          v-if="item.isGift"
+                          class="inline-flex items-center gap-1 text-[10px] font-medium tracking-wide text-primary-700"
+                        >
+                          <UIcon name="i-lucide-gift" class="w-3.5 h-3.5" />
+                          GIFT
+                        </span>
                       </div>
                       <div>
                         <span class="text-2xl font-serif text-[#B59A6D]">{{

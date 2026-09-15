@@ -1,12 +1,23 @@
 <script setup lang="ts">
+import type { Session } from "~/types/session";
 import { storeToRefs } from "pinia";
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
+import ClassGiftSessionBookingModal from "~/components/class/gift-session-booking-modal.vue";
 import { useGiftStore } from "~/stores/gift";
 
 const giftStore = useGiftStore();
 const { sessions, loading, error, page, total, selectedSession, selectedSessionId, detailLoading, detailError } = storeToRefs(giftStore);
+const selectedGiftSession = ref<Session | null>(null);
 
 onMounted(() => giftStore.getClasses(page.value));
+
+function openGiftSessionModal(session: Session) {
+  selectedGiftSession.value = session;
+}
+
+function closeGiftSessionModal() {
+  selectedGiftSession.value = null;
+}
 </script>
 
 <template>
@@ -41,6 +52,7 @@ onMounted(() => giftStore.getClasses(page.value));
         v-else-if="selectedSession"
         :session="selectedSession"
         gifting
+        @gift="openGiftSessionModal"
       />
     </template>
     <template v-else>
@@ -87,5 +99,12 @@ onMounted(() => giftStore.getClasses(page.value));
         </p>
       </div>
     </template>
+
+    <ClassGiftSessionBookingModal
+      v-if="selectedGiftSession"
+      :is-open="true"
+      :session="selectedGiftSession"
+      @close="closeGiftSessionModal"
+    />
   </div>
 </template>
