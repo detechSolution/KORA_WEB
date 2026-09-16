@@ -301,7 +301,7 @@ onMounted(() => {
                       <span v-if="index > 0" class="mx-1 text-primary-400">|</span>
 
                       <span class="whitespace-nowrap">
-                        <span class="text-primary">{{ price.duration }} {{ price.timeUnit }}</span>
+                        <span class="text-primary">{{ price.duration }} {{ getShortTimeUnit(price.timeUnit) }}</span>
                         <span class="ml-1.5 text-sm">
                           {{ item.currency === "NPR" ? "Rs." : item.currency }}
                           {{ formatPrice(price.price) }}

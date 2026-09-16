@@ -89,6 +89,19 @@ export function getDisabledMessageForGuest(session: any) {
   return "";
 }
 
+export function getShortTimeUnit(unit: string): string {
+  const units: Record<string, string> = {
+    hour: "hr",
+    hours: "hrs",
+    minute: "min",
+    minutes: "mins",
+    second: "sec",
+    seconds: "secs",
+  };
+
+  return units[unit.toLowerCase()] ?? unit;
+};
+
 export function preventInvalidNumberInput(e: KeyboardEvent) {
   if (["e", "E", "+", "-", "."].includes(e.key)) {
     e.preventDefault();
