@@ -9,9 +9,14 @@ import { useMembershipStore } from "~/stores/membership";
 import { getApiErrorMessage } from "~/utils/error";
 import { IMAGES } from "~/utils/images";
 
-const props = withDefaults(defineProps<{ gifting?: boolean }>(), { gifting: false });
+const props = withDefaults(defineProps<{ gifting?: boolean }>(), {
+  gifting: false,
+});
 const emit = defineEmits<{
-  giftMembership: [tier: MembershipPlans, option: MembershipPlans["options"][number]];
+  giftMembership: [
+    tier: MembershipPlans,
+    option: MembershipPlans["options"][number],
+  ];
   giftPass: [pass: Passes];
 }>();
 
@@ -32,14 +37,18 @@ const loading = ref(true);
 const isPassModalOpen = ref(false);
 const selectedPass = ref<any>(null);
 const activePeriod = ref(
-  props.gifting ? "MONTHLY" : (route.query.tab as string)?.toUpperCase() || "MONTHLY",
+  props.gifting
+    ? "MONTHLY"
+    : (route.query.tab as string)?.toUpperCase() || "MONTHLY",
 );
 const isMembershipModalOpen = ref(false);
 const selectedMembershipTier = ref<any>(null);
 const selectedMembershipPrice = ref<string>("");
-const catalogueError = computed(() => activePeriod.value === "PASSES"
-  ? membershipStore.passError
-  : membershipStore.membershipError);
+const catalogueError = computed(() =>
+  activePeriod.value === "PASSES"
+    ? membershipStore.passError
+    : membershipStore.membershipError,
+);
 const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
 
 const hasMembership = computed(() => {
@@ -60,12 +69,14 @@ const membershipPlans = computed(() => {
         period as "monthly" | "quarterly" | "yearly"
       ] || [];
 
-  return plans.map((tier: any) => ({
-    ...tier,
-    selectedOption: tier.options?.find(
-      (option: any) => option.frequency?.toUpperCase() === activePeriod.value,
-    ),
-  })).reverse();
+  return plans
+    .map((tier: any) => ({
+      ...tier,
+      selectedOption: tier.options?.find(
+        (option: any) => option.frequency?.toUpperCase() === activePeriod.value,
+      ),
+    }))
+    .reverse();
 });
 
 function getIcon(index: number) {
@@ -313,7 +324,9 @@ onMounted(async () => {
       <base-button
         variant="outline"
         class="mx-auto"
-        @click="activePeriod === 'PASSES' ? getPassPlans() : getMembershipPlans()"
+        @click="
+          activePeriod === 'PASSES' ? getPassPlans() : getMembershipPlans()
+        "
       >
         Try again
       </base-button>
@@ -360,7 +373,8 @@ onMounted(async () => {
             <p
               class="font-serif text-4xl md:text-5xl text-foreground dark:text-white tracking-wide"
             >
-              Rs. {{ tier.selectedOption.price?.toLocaleString() }}
+              <span class="text-[40px]">Rs.</span>
+              {{ tier.selectedOption.price?.toLocaleString() }}
             </p>
 
             <p class="text-xs text-muted-foreground mt-2 capitalize">
@@ -392,10 +406,13 @@ onMounted(async () => {
           <base-button
             variant="outline"
             class="w-full"
-            :disabled="!tier.selectedOption || (!gifting && (hasMembership || hasActivePass))"
+            :disabled="
+              !tier.selectedOption
+                || (!gifting && (hasMembership || hasActivePass))
+            "
             @click="openMembershipModal(tier)"
           >
-            {{ gifting ? 'Gift This Membership' : 'BEGIN NOW' }}
+            {{ gifting ? "Gift This Membership" : "BEGIN NOW" }}
           </base-button>
         </div>
       </div>
@@ -420,7 +437,7 @@ onMounted(async () => {
             </h4>
 
             <span class="font-serif text-2xl font-normal shrink-0">
-              Rs. {{ pass.price?.toLocaleString() }}
+              <span class="text-[22px]">Rs.</span> {{ pass.price?.toLocaleString() }}
             </span>
           </div>
 
@@ -459,7 +476,7 @@ onMounted(async () => {
           :disabled="!gifting && (hasMembership || hasActivePass)"
           @click="openPassModal(pass)"
         >
-          {{ gifting ? 'Gift This Pass' : 'BEGIN NOW' }}
+          {{ gifting ? "Gift This Pass" : "BEGIN NOW" }}
         </base-button>
       </div>
     </div>

@@ -39,7 +39,6 @@ const membershipItem = computed(() => ({
   finalPrice: props.membership.selectedOption.price,
   itemType: "membership",
   memberBenefit: props.membership.selectedOption.memberBenefit,
-  bookingFor: "self",
 }));
 
 function close() {

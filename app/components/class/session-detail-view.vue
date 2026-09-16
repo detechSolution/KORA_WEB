@@ -274,7 +274,7 @@ async function handleAddToWaitlist() {
                 v-if="session.price > 0"
                 class="font-serif text-3xl md:text-4xl text-foreground leading-none"
               >
-                Rs. {{ session.price }}
+                <span class=" md:text-[31px]">Rs.</span> {{ session.price }}
               </p>
               <p
                 v-else

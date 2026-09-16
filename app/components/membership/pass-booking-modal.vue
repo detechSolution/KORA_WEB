@@ -66,7 +66,6 @@ const passItem = computed(() => ({
   finalPrice: pricing.value.finalPrice,
   memberBenefit: props.pass.discountTag,
   bookingDate: formatDate(state.date, "YYYY-MM-DD"),
-  bookingFor: "self",
 }));
 
 const schema = [
