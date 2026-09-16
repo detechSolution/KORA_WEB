@@ -107,7 +107,6 @@ const spaItem = computed(() => ({
   subtotal: pricing.value.subtotal,
   discountAmount: pricing.value.discountAmount,
   finalPrice: pricing.value.finalPrice,
-  bookingFor: "recipient",
   isGift: true,
   recipient: { ...state.recipient },
 }));

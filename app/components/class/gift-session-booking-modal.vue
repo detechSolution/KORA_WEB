@@ -84,7 +84,6 @@ const bookingItem = computed(() => ({
   discountAmount: pricing.value.discountAmount,
   finalPrice: pricing.value.finalPrice,
   itemType: "session",
-  bookingFor: "recipient",
   isGift: true,
   recipient: { ...state.recipient },
 }));

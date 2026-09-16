@@ -129,12 +129,6 @@ function nextStep() {
   });
 }
 
-function previousStep() {
-  if (currentStep.value > 0) {
-    currentStep.value -= 1;
-  }
-}
-
 const bookingItem = computed(() => ({
   referenceId: props.session.id,
   title: props.session.name,
@@ -152,7 +146,6 @@ const bookingItem = computed(() => ({
   discountAmount: pricing.value.discountAmount,
   finalPrice: pricing.value.finalPrice,
   itemType: "session",
-  bookingFor: "self",
 }));
 
 function addToCart() {

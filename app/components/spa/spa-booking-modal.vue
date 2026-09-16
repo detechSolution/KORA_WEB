@@ -31,7 +31,7 @@ const spa = computed(() => spaStore.spa);
 const steps = [
   { label: "Select Sub-Type" },
   { label: "Date & Time" },
-  { label: "Attendees" },
+  { label: "Room Preference" },
   { label: "Overview" },
 ];
 
@@ -73,11 +73,7 @@ const state = reactive({
   selectedSpa: null as any,
   selectedDate: null as any,
   selectedTime: undefined as string | undefined,
-  currentUser: {
-    fullName: userDetail?.fullName || userDetail?.name || "You",
-    phone: userDetail?.phone || "",
-    email: userDetail?.email || "",
-  },
+  roomPreference: "" as "private" | "shared" | "",
 });
 
 const discountType = computed(() => {
@@ -99,7 +95,7 @@ const activeDiscount = computed(() => {
 const showDiscount = computed(() => activeDiscount.value > 0);
 
 const schema = computed(() => [
-  // Step 0
+  // Step 0: Select Sub-Type
   z.object({
     selectedSpa: z.object(
       { id: z.number() },
@@ -108,22 +104,18 @@ const schema = computed(() => [
       },
     ),
   }),
-  // Step 1
+  // Step 1: Date & Time
   z.object({
     selectedDate: z.any().refine(v => !!v, "Please select a date"),
     selectedTime: z
       .string({ message: "Please select a time" })
       .min(1, "Please select a time"),
   }),
-  // Step 2
+  // Step 2: Room Preference
   z.object({
-    currentUser: z.object({
-      fullName: z.string().min(1, "Full name is required"),
-      phone: z.string().optional(),
-      email: z.string().email("Invalid email").optional(),
-    }),
+    roomPreference: z.string().min(1, "Please select a room preference"),
   }),
-  // Step 3
+  // Step 3: Overview
   z.object({}),
 ]);
 
@@ -176,15 +168,20 @@ function close() {
   state.selectedSpa = null;
   state.selectedDate = null;
   state.selectedTime = undefined;
+  state.roomPreference = "";
   selectedSpaModel.value = null;
   currentStep.value = 0;
   emit("close");
 }
 
+const guestCount = computed(() =>
+  state.roomPreference === "shared" ? 2 : 1,
+);
+
 const pricing = computed(() => {
   return calculatePrice({
     price: state.selectedSpa?.price,
-    guests: 1,
+    guests: guestCount.value,
     discount: activeDiscount.value,
   });
 });
@@ -197,6 +194,8 @@ const spaItem = computed(() => ({
   timeUnit: state.selectedSpa?.timeUnit,
   bookingDate: formatDate(state.selectedDate, "YYYY-MM-DD"),
   bookingTime: state.selectedTime,
+  roomPreference: state.roomPreference,
+  guests: guestCount.value,
   visitors: [],
   referenceId: state.selectedSpa?.id,
   itemType: "spa",
@@ -207,7 +206,6 @@ const spaItem = computed(() => ({
   subtotal: pricing.value.subtotal,
   discountAmount: pricing.value.discountAmount,
   finalPrice: pricing.value.finalPrice,
-  bookingFor: "self",
 }));
 
 function addToCart() {
@@ -246,21 +244,6 @@ async function fetchAvailableTimes() {
 }
 
 onMounted(async () => {
-  try {
-    const raw = localStorage.getItem("user_data");
-    if (raw) {
-      const user = JSON.parse(raw);
-      state.currentUser = {
-        fullName: user.name ?? "",
-        phone: user.phone ?? "",
-        email: user.email ?? "",
-      };
-    }
-  }
-  catch (error) {
-    console.error(error);
-  }
-
   if (selectedSpaModel.value) {
     state.selectedSpa = selectedSpaModel.value;
   }
@@ -470,7 +453,7 @@ watch(
               </div>
             </div>
 
-            <!-- Step 2: Attendees -->
+            <!-- Step 2: Room Preference -->
             <div
               v-else-if="currentStep === 2"
               key="step2"
@@ -478,43 +461,107 @@ watch(
             >
               <div class="mb-8">
                 <h2 class="text-3xl font-serif text-foreground mb-3">
-                  Your Details
+                  Room Preference
                 </h2>
                 <p class="text-xs text-[#A08860]">
-                  Please confirm your details for the booking.
+                  Choose your preferred spa environment
                 </p>
               </div>
               <div class="w-full h-px bg-border/40 mb-8" />
 
-              <div class="flex flex-col gap-6 mb-8">
-                <base-input
-                  v-model="state.currentUser.fullName"
-                  name="currentUser.fullName"
-                  label="FULL NAME *"
-                  type="text"
-                  class="bg-white dark:bg-transparent"
-                  disabled
-                />
-
+              <UFormField name="roomPreference">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <base-input
-                    v-model="state.currentUser.phone"
-                    name="currentUser.phone"
-                    label="PHONE NUMBER"
-                    type="text"
-                    class="bg-white dark:bg-transparent"
-                  />
+                  <!-- Private Room Card -->
+                  <div
+                    class="group relative border rounded-xs p-6 flex flex-col gap-4 transition-all duration-300 cursor-pointer"
+                    :class="
+                      state.roomPreference === 'private'
+                        ? 'border-primary-500 bg-primary-500/10'
+                        : 'border-border bg-card hover:border-primary-400'
+                    "
+                    @click="state.roomPreference = 'private'"
+                  >
+                    <div class="flex items-center justify-between">
+                      <div
+                        class="flex items-center justify-center w-10 h-10 rounded-full"
+                        :class="
+                          state.roomPreference === 'private'
+                            ? 'bg-primary-500 text-white'
+                            : 'bg-[#c9a55a]/10 text-primary-700'
+                        "
+                      >
+                        <UIcon name="i-lucide-door-closed" class="w-5 h-5" />
+                      </div>
+                      <div
+                        class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors"
+                        :class="
+                          state.roomPreference === 'private'
+                            ? 'border-primary-500 bg-primary-500'
+                            : 'border-border'
+                        "
+                      >
+                        <div
+                          v-if="state.roomPreference === 'private'"
+                          class="w-2 h-2 rounded-full bg-white"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <h3 class="font-serif text-lg font-medium text-foreground mb-1">
+                        Private Room
+                      </h3>
+                      <p class="text-sm text-secondary-500">
+                        Enjoy your treatment in an exclusive private room for a fully personalized experience.
+                      </p>
+                    </div>
+                  </div>
 
-                  <base-input
-                    v-model="state.currentUser.email"
-                    name="currentUser.email"
-                    label="EMAIL ADDRESS"
-                    type="email"
-                    class="bg-white dark:bg-transparent"
-                    disabled
-                  />
+                  <!-- Shared Spa Card -->
+                  <div
+                    class="group relative border rounded-xs p-6 flex flex-col gap-4 transition-all duration-300 cursor-pointer"
+                    :class="
+                      state.roomPreference === 'shared'
+                        ? 'border-primary-500 bg-primary-500/10'
+                        : 'border-border bg-card hover:border-primary-400'
+                    "
+                    @click="state.roomPreference = 'shared'"
+                  >
+                    <div class="flex items-center justify-between">
+                      <div
+                        class="flex items-center justify-center w-10 h-10 rounded-full"
+                        :class="
+                          state.roomPreference === 'shared'
+                            ? 'bg-primary-500 text-white'
+                            : 'bg-[#c9a55a]/10 text-primary-700'
+                        "
+                      >
+                        <UIcon name="i-lucide-users" class="w-5 h-5" />
+                      </div>
+                      <div
+                        class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors"
+                        :class="
+                          state.roomPreference === 'shared'
+                            ? 'border-primary-500 bg-primary-500'
+                            : 'border-border'
+                        "
+                      >
+                        <div
+                          v-if="state.roomPreference === 'shared'"
+                          class="w-2 h-2 rounded-full bg-white"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <h3 class="font-serif text-lg font-medium text-foreground mb-1">
+                        Shared Spa
+                      </h3>
+                      <p class="text-sm text-secondary-500">
+                        Relax in our communal spa area, perfect for a social wellness experience.
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </UFormField>
             </div>
 
             <!-- Step 3: Overview -->
@@ -550,7 +597,7 @@ watch(
                   >
                     <span>
                       {{ state.selectedSpa?.name }} (Rs.
-                      {{ state.selectedSpa?.price }} × 1)
+                      {{ state.selectedSpa?.price }} &times; {{ guestCount }})
                     </span>
                     <span>Rs. {{ formatPrice(pricing.subtotal) }}</span>
                   </div>

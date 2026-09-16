@@ -146,11 +146,10 @@ async function handlePayNowClick() {
             itemType: item.itemType,
 
             referenceId: item.referenceId,
-            bookingFor: item.bookingFor,
 
             ...(item.isGift && {
               isGift: true,
-              recipient: {
+              giftRecipient: {
                 fullName: item.recipient.fullName,
                 phoneNumber: item.recipient.phone || "",
                 email: item.recipient.email,

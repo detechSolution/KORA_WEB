@@ -76,7 +76,6 @@ const membershipItem = computed(() => ({
   finalPrice: price.value,
   itemType: "membership",
   memberBenefit: props.option.memberBenefit,
-  bookingFor: "recipient",
   isGift: true,
   recipient: { ...state.recipient },
 }));
