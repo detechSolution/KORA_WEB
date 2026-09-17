@@ -9,7 +9,7 @@ import { IMAGES } from "~/utils/images";
 definePageMeta({ layout: "default" });
 useSeoMeta({
   title: "Kora | Gift Card",
-  description: "Share the Kora ritual. Explore memberships, spa services and classes for someone special.",
+  description: "Gift the Kora ritual. Explore memberships, spa services and classes for someone special.",
 });
 
 const giftStore = useGiftStore();
@@ -66,12 +66,12 @@ function closeGiftPassModal() {
       aria-hidden="true"
     >
 
-    <header class="relative max-w-4xl mx-auto px-6 pt-12 md:pt-20 pb-12 md:pb-20 text-center">
+    <header class="relative max-w-4xl mx-auto px-6 pt-12 md:py-24 text-center">
       <p class="text-[10px] md:text-xs text-primary uppercase tracking-widest mb-6">
         Kora Gift Card
       </p>
       <h1 class="font-serif text-5xl sm:text-7xl lg:text-8xl font-normal leading-[1.05]">
-        Share The Kora
+        Gift The Kora
         <span class="block text-primary italic mt-2">Ritual</span>
       </h1>
       <p class="max-w-xl mx-auto mt-8 text-sm text-secondary-500 leading-relaxed">
