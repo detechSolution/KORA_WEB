@@ -394,9 +394,26 @@ watch(
             <h3 class="text-[10px] font-bold tracking-widest uppercase text-[#A08860] mb-2">
               GIFT BOOKING OVERVIEW
             </h3>
-            <p class="text-xs text-foreground mb-4">
-              Recipient: {{ state.recipient.fullName }}
-            </p>
+            <div class="flex gap-2 text-secondary-500">
+              <div class="flex gap-1">
+                <UIcon name="i-lucide-user" class="w-3.5 h-3.5" />
+                <p class="text-xs text-secondary-500 mb-4">
+                  {{ state.recipient.fullName }}
+                </p>
+              </div>
+              <div class="flex gap-1">
+                <UIcon name="i-lucide-user" class="w-3.5 h-3.5" />
+                <p class="text-xs text-secondary-500 mb-4">
+                  {{ state.recipient.email }}
+                </p>
+              </div>
+              <div class="flex gap-1">
+                <UIcon name="i-lucide-user" class="w-3.5 h-3.5" />
+                <p class="text-xs text-secondary-500 mb-4">
+                  {{ state.recipient.phone }}
+                </p>
+              </div>
+            </div>
             <div class="border-y border-border/40 py-4">
               <h4 class="font-serif text-lg font-medium text-foreground mb-5">
                 Overview

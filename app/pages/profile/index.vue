@@ -257,8 +257,8 @@ const filteredBookings = computed<Booking[]>(() => {
             : item.itemType === "pass"
               ? "Pass"
               : "Session") as "Session" | "Spa" | "Pass",
-        date: formatDate(item.scheduledAt || b.bookedFor),
-        time: (item.scheduledAt || b.bookedFor) ? formatDate(new Date(item.scheduledAt || b.bookedFor), "hh:mm a") : "",
+        date: formatDate(item.bookingDate),
+        time: (item.bookingTime),
         location: "",
         description: item.description ? item.description.replace(/<[^>]*>?/g, "") : "",
         price: `${item.currency} ${item.totalAmount !== undefined ? item.totalAmount : b.amount}`,
