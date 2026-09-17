@@ -146,12 +146,12 @@ function handleProceedToCheckout() {
                 <h4 class="text-2xl font-semibold font-serif text-foreground">
                   {{ item.title }}
                   <!-- Only show quantity x unit price for session/spa items which carry unitPriceAfterDiscount -->
-                  <span v-if="item.itemType === 'session' || item.itemType === 'spa'">
+                  <!-- <span v-if="item.itemType === 'session' || item.itemType === 'spa'">
                     (<span class="text-2xl font-semibold">{{
                       item.visitors?.length > 0 ? item.visitors.length : 1
                     }}
                       x {{ formatPrice(item.unitPriceAfterDiscount) }}</span>)
-                  </span>
+                  </span> -->
                 </h4>
                 <span
                   v-if="item.itemType === 'session'"

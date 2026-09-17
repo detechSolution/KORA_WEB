@@ -280,7 +280,7 @@ onUnmounted(() => {
                         >
                           {{ item.title }}
                           <!-- <br> -->
-                          <span v-if="item.itemType === 'session' || item.itemType === 'spa'">
+                          <!-- <span v-if="item.itemType === 'session' || item.itemType === 'spa'">
                             (<span class="text-2xl font-semibold">{{
                               item.visitors?.length > 0
                                 ? item.visitors.length
@@ -290,7 +290,7 @@ onUnmounted(() => {
                               {{
                                 formatPrice(item.unitPriceAfterDiscount)
                               }}</span>)
-                          </span>
+                          </span> -->
                         </h4>
                         <span
                           v-if="item.itemType === 'session'"
