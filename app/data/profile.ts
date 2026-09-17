@@ -2,6 +2,8 @@ type BookingType = "Session" | "Spa" | "Pass";
 
 export type Booking = {
   id: number;
+  bookingId?: number;
+  uniqueId?: string;
   title: string;
   type: BookingType;
   date?: string;
