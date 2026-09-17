@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { GiftCategory } from "~/stores/gift";
-import type { MembershipPlans } from "~/types/membership";
+import type { MembershipPlans, Passes } from "~/types/membership";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
 import { useGiftStore } from "~/stores/gift";
@@ -17,6 +17,8 @@ const { activeCategory } = storeToRefs(giftStore);
 const isGiftMembershipModalOpen = ref(false);
 const selectedMembership = ref<MembershipPlans | null>(null);
 const selectedMembershipOption = ref<MembershipPlans["options"][number] | null>(null);
+const isGiftPassModalOpen = ref(false);
+const selectedPass = ref<Passes | null>(null);
 const categories: { id: GiftCategory; name: string; description: string }[] = [
   { id: "membership", name: "Gift Membership & Pass", description: "Gift membership plans & passes" },
   { id: "spa", name: "Gift Spa Services", description: "Gift multiple spa offerings" },
@@ -36,6 +38,16 @@ function closeGiftMembershipModal() {
   isGiftMembershipModalOpen.value = false;
   selectedMembership.value = null;
   selectedMembershipOption.value = null;
+}
+
+function openGiftPassModal(pass: Passes) {
+  selectedPass.value = pass;
+  isGiftPassModalOpen.value = true;
+}
+
+function closeGiftPassModal() {
+  isGiftPassModalOpen.value = false;
+  selectedPass.value = null;
 }
 </script>
 
@@ -106,6 +118,7 @@ function closeGiftMembershipModal() {
             v-if="activeCategory === 'membership'"
             gifting
             @gift-membership="openGiftMembershipModal"
+            @gift-pass="openGiftPassModal"
           />
           <SpaCatalogue v-else-if="activeCategory === 'spa'" gifting />
           <GiftClasses v-else />
@@ -119,6 +132,13 @@ function closeGiftMembershipModal() {
       :membership="selectedMembership"
       :option="selectedMembershipOption"
       @close="closeGiftMembershipModal"
+    />
+
+    <MembershipGiftPassBookingModal
+      v-if="selectedPass"
+      :is-open="isGiftPassModalOpen"
+      :pass="selectedPass"
+      @close="closeGiftPassModal"
     />
   </div>
 </template>

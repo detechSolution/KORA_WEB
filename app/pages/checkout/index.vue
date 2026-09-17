@@ -44,7 +44,7 @@ const isAllSelected = computed({
 const subtotal = computed(() => {
   return cartItems.value
     .filter(item => selectedItemIds.value.includes(item.cartId))
-    .reduce((total, item) => total + item.finalPrice, 0);
+    .reduce((total, item) => total + (Number(item.finalPrice) || 0), 0);
 });
 
 const step = ref(1);
@@ -280,7 +280,7 @@ onUnmounted(() => {
                         >
                           {{ item.title }}
                           <!-- <br> -->
-                          <span v-if="item.itemType !== 'membership'">
+                          <span v-if="item.itemType === 'session' || item.itemType === 'spa'">
                             (<span class="text-2xl font-semibold">{{
                               item.visitors?.length > 0
                                 ? item.visitors.length

@@ -30,7 +30,7 @@ const cartItems = computed(() => cartStore.cartItems);
 const cartCount = computed(() => cartStore.cartCount);
 
 const totalPrice = computed(() => {
-  return cartItems.value.reduce((total, item) => total + item.finalPrice, 0);
+  return cartItems.value.reduce((total, item) => total + (Number(item.finalPrice) || 0), 0);
 });
 
 function formatPrice(price: number) {
@@ -119,7 +119,7 @@ function handleProceedToCheckout() {
         <p
           class="text-xs text-muted-foreground max-w-[240px] mx-auto leading-relaxed"
         >
-          Book sessions & spa or purchase membership & passes to begin your
+          Book sessions &amp; spa or purchase membership &amp; passes to begin your
           ritual
         </p>
       </div>
@@ -142,11 +142,11 @@ function handleProceedToCheckout() {
               {{ "Guest" }}
             </span>
             <div class="flex justify-between items-start gap-4">
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
                 <h4 class="text-2xl font-semibold font-serif text-foreground">
                   {{ item.title }}
-                  <!-- <br> -->
-                  <span v-if="item.itemType !== 'membership'">
+                  <!-- Only show quantity x unit price for session/spa items which carry unitPriceAfterDiscount -->
+                  <span v-if="item.itemType === 'session' || item.itemType === 'spa'">
                     (<span class="text-2xl font-semibold">{{
                       item.visitors?.length > 0 ? item.visitors.length : 1
                     }}
@@ -177,11 +177,11 @@ function handleProceedToCheckout() {
                   GIFT
                 </span>
               </div>
-              <span v-if="item.finalPrice > 0" class="text-2xl font-serif text-primary-900"><span class="text-[22px]">Rs.</span> {{ formatPrice(item.finalPrice) }}</span>
-              <span v-else class="font-serif text-2xl text-primary-900">Free</span>
+              <span v-if="item.finalPrice > 0" class="text-2xl font-serif text-primary-900 shrink-0"><span class="text-[22px]">Rs.</span> {{ formatPrice(item.finalPrice) }}</span>
+              <span v-else class="font-serif text-2xl text-primary-900 shrink-0">Free</span>
             </div>
 
-            <div class="mt-2 flex gap-1.5">
+            <div class="mt-2 flex gap-1.5 flex-wrap">
               <div
                 v-if="item.bookingDate"
                 class="flex items-center gap-1.5 text-[10px] text-muted-foreground"
