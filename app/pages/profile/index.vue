@@ -243,9 +243,37 @@ const user = computed(() => {
 
 const filteredBookings = computed<Booking[]>(() => {
   const data = memberStore.bookingsData?.data || [];
-  return data.map((b) => {
-    return {
-      id: b.id.toString(),
+  return data.flatMap((b) => {
+    if (b.items && b.items.length > 0) {
+      return b.items.map((item: any) => ({
+        id: item.id,
+        bookingId: b.id,
+        uniqueId: `${b.id}-${item.id}`,
+        title: item.title,
+        type: (item.itemType === "session"
+          ? "Session"
+          : item.itemType === "spa"
+            ? "Spa"
+            : item.itemType === "pass"
+              ? "Pass"
+              : "Session") as "Session" | "Spa" | "Pass",
+        date: formatDate(item.bookingDate),
+        time: (item.bookingTime),
+        location: "",
+        description: item.description ? item.description.replace(/<[^>]*>?/g, "") : "",
+        price: `${item.currency} ${item.totalAmount !== undefined ? item.totalAmount : b.amount}`,
+        image: b.bannerUrl,
+        status: activeTab.value as "UPCOMING" | "PAST" | "CANCELED",
+        productId: item.referenceId || b.productId,
+        itemType: item.itemType,
+        refundStatus: b.refundStatus,
+        visitors: b.visitors || [],
+      }));
+    }
+
+    return [{
+      id: b.id,
+      uniqueId: b.id.toString(),
       title: b.itemName,
       type: (b.itemType === "session"
         ? "Session"
@@ -264,7 +292,7 @@ const filteredBookings = computed<Booking[]>(() => {
       itemType: b.itemType,
       refundStatus: b.refundStatus,
       visitors: b.visitors || [],
-    };
+    }];
   });
 });
 
@@ -720,7 +748,7 @@ onMounted(async () => {
               <div v-if="filteredBookings.length > 0" class="flex flex-col">
                 <ProfileBookingItem
                   v-for="booking in filteredBookings"
-                  :key="booking.id"
+                  :key="booking.uniqueId || booking.id"
                   :booking="booking"
                   :active-tab="activeTab"
                   @fetch-bookings="fetchBookings"

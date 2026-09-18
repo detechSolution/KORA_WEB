@@ -56,7 +56,7 @@ async function handleCancelRequest() {
   try {
     loadingCancelRequest.value = true;
 
-    await memberstore.requestBookingCancellation(props.booking.id);
+    await memberstore.requestBookingCancellation(props.booking.bookingId || props.booking.id);
 
     success({ message: "Cancellation requested successfully" });
 
@@ -107,12 +107,12 @@ async function handleCancelRequest() {
 
       <!-- Details -->
       <div>
-        <span
+        <!-- <span
           v-if="booking.visitors"
           class="py-0.5 text-[10px] font-bold rounded-sm capitalize text-primary"
         >
           {{ booking.visitors.length > 0 ? `GUEST X ${booking.visitors.length}` : 'MYSELF' }}
-        </span>
+        </span> -->
         <div class="flex flex-col justify-center">
           <!-- Title and Badge -->
           <div class="flex items-center gap-3 mb-3">
@@ -135,6 +135,10 @@ async function handleCancelRequest() {
             <div v-if="booking.date" class="flex items-center gap-1.5">
               <UIcon name="i-lucide-calendar" class="w-3.5 h-3.5" />
               {{ booking.date }}
+            </div>
+            <div v-if="booking.date" class="flex items-center gap-1.5">
+              <UIcon name="i-lucide-clock" class="w-3.5 h-3.5" />
+              {{ booking.time }}
             </div>
             <!-- <div v-if="booking.time" class="flex items-center gap-1.5">
             <UIcon name="i-lucide-clock" class="w-3.5 h-3.5" />

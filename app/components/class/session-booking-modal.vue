@@ -32,6 +32,7 @@ const cartStore = useCartStore();
 const { success } = useNotification();
 
 const currentStep = ref(0);
+const quantity = ref(1);
 const steps = [{ label: "Attendees" }, { label: "Overview" }];
 
 const formRef = ref<InstanceType<typeof UForm> | null>(null);
@@ -87,13 +88,41 @@ const schema = computed(() => [
   }),
 ]);
 
-const pricing = computed(() => {
+const singlePricing = computed(() => {
   return calculatePrice({
     price: props.session.price,
-    guests: 1,
+    quantity: 1,
     discount: activeDiscount.value,
   });
 });
+
+const pricing = computed(() => {
+  return calculatePrice({
+    price: props.session.price,
+    quantity: quantity.value,
+    discount: activeDiscount.value,
+  });
+});
+
+const isEventOrWorkshop = computed(() => {
+  return props.session.type === "event" || props.session.type === "workshop";
+});
+
+const maxQuantity = computed(() => {
+  return Math.min(props.session.remainingSpots || 10, 10);
+});
+
+function incrementQuantity() {
+  if (quantity.value < maxQuantity.value) {
+    quantity.value++;
+  }
+}
+
+function decrementQuantity() {
+  if (quantity.value > 1) {
+    quantity.value--;
+  }
+}
 
 function goToStep(step: number) {
   if (step > currentStep.value) {
@@ -133,35 +162,38 @@ const bookingItem = computed(() => ({
   referenceId: props.session.id,
   title: props.session.name,
   type: props.session.type,
-  unitPrice: pricing.value.unitPrice,
-  unitPriceAfterDiscount: pricing.value.unitPriceAfterDiscount,
+  unitPrice: singlePricing.value.unitPrice,
+  unitPriceAfterDiscount: singlePricing.value.unitPriceAfterDiscount,
   bookingDate: props.session.sessionDate,
   bookingTime: props.session.startTime,
   location: props.session.venue,
   image: props.session.bannerUrl,
   visitors: [],
-  subtotal: pricing.value.subtotal,
-  // membershipDiscount: MEMBERSHIP_DISCOUNT,
-  // promoDiscount: PROMO_DISCOUNT,
-  discountAmount: pricing.value.discountAmount,
-  finalPrice: pricing.value.finalPrice,
+  subtotal: singlePricing.value.subtotal,
+  discountAmount: singlePricing.value.discountAmount,
+  finalPrice: singlePricing.value.finalPrice,
   itemType: "session",
 }));
 
 function addToCart() {
-  cartStore.addToCart(bookingItem.value);
+  for (let i = 0; i < quantity.value; i++) {
+    cartStore.addToCart(bookingItem.value);
+  }
   success({ message: "Item added to cart successfully!" });
   close();
 }
 
 function proceedToCheckout() {
-  cartStore.addToCart(bookingItem.value);
+  for (let i = 0; i < quantity.value; i++) {
+    cartStore.addToCart(bookingItem.value);
+  }
   router.push("/checkout");
   close();
 }
 
 function close() {
   currentStep.value = 0;
+  quantity.value = 1;
   emit("close");
 }
 </script>
@@ -285,8 +317,28 @@ function close() {
                     class="flex justify-between items-center text-sm text-foreground"
                   >
                     <span>
-                      {{ session.name }} (Rs. {{ session.price }} × 1)
+                      {{ session.name }}
                     </span>
+
+                    <div v-if="isEventOrWorkshop" class="flex items-center gap-3 mt-2">
+                      <button
+                        type="button"
+                        class="w-7 h-7 flex items-center justify-center border border-border text-foreground hover:bg-border/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                        :disabled="quantity <= 1"
+                        @click="decrementQuantity"
+                      >
+                        <UIcon name="i-lucide-minus" class="w-3.5 h-3.5" />
+                      </button>
+                      <span class="text-sm font-semibold text-foreground min-w-[1.5rem] text-center">{{ quantity }}</span>
+                      <button
+                        type="button"
+                        class="w-7 h-7 flex items-center justify-center border border-border text-foreground hover:bg-border/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                        :disabled="quantity >= maxQuantity"
+                        @click="incrementQuantity"
+                      >
+                        <UIcon name="i-lucide-plus" class="w-3.5 h-3.5" />
+                      </button>
+                    </div>
 
                     <span> Rs. {{ formatPrice(pricing.subtotal) }} </span>
                   </div>

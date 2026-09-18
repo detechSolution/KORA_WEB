@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
+import type { Passes } from "~/types/membership";
 import { computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import * as z from "zod";
@@ -17,12 +18,8 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
-  membership: {
-    type: Object as PropType<any>,
-    required: true,
-  },
-  option: {
-    type: Object as PropType<any>,
+  pass: {
+    type: Object as PropType<Passes>,
     required: true,
   },
 });
@@ -57,25 +54,17 @@ const recipientSchema = z.object({
   }),
 });
 
-const frequency = computed(() => {
-  const value = props.option?.frequency || "";
-  return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
-});
-
-const price = computed(() => Number(props.option?.price ?? 0));
+const price = computed(() => Number(props.pass?.price ?? 0));
 const formattedPrice = computed(() =>
   new Intl.NumberFormat("en-IN").format(price.value),
 );
 
-const membershipItem = computed(() => ({
-  referenceId: props.option.id,
-  membershipPlanId: props.option.membershipPlanId,
-  title: props.membership.name,
-  frequency: props.option.frequency,
+const passItem = computed(() => ({
+  referenceId: props.pass.id,
+  title: props.pass.name,
   price: price.value,
   finalPrice: price.value,
-  itemType: "membership",
-  memberBenefit: props.option.memberBenefit,
+  itemType: "pass",
   isGift: true,
   recipient: { ...state.recipient },
 }));
@@ -122,13 +111,13 @@ function nextStep() {
 }
 
 function addToCart() {
-  cartStore.addToCart(membershipItem.value);
-  success({ message: "Gift membership added to cart successfully!" });
+  cartStore.addToCart(passItem.value);
+  success({ message: "Gift pass added to cart successfully!" });
   close();
 }
 
 function proceedToCheckout() {
-  cartStore.addToCart(membershipItem.value);
+  cartStore.addToCart(passItem.value);
   close();
   router.push("/checkout");
 }
@@ -159,13 +148,14 @@ function proceedToCheckout() {
         :state="state"
       >
         <Transition name="fade" mode="out-in">
+          <!-- Step 1: Recipient Details -->
           <div v-if="currentStep === 0" key="recipient">
             <div class="mb-8">
               <h2 class="text-3xl font-serif text-foreground mb-3">
                 Who Is This Gift For?
               </h2>
               <p class="text-xs text-[#A08860]">
-                Enter the details of the person receiving this gifted membership package.
+                Enter the details of the person receiving this gifted pass.
               </p>
             </div>
 
@@ -211,13 +201,14 @@ function proceedToCheckout() {
             </div>
           </div>
 
+          <!-- Step 2: Overview -->
           <div v-else key="overview">
             <div class="mb-8">
               <h2 class="text-3xl font-serif text-foreground mb-3">
-                Gift A Membership
+                Gift A Pass
               </h2>
               <p class="text-xs text-[#A08860]">
-                Give the gift of metamorphosis
+                Give the gift of wellness
               </p>
             </div>
 
@@ -250,8 +241,15 @@ function proceedToCheckout() {
                 Overview
               </h4>
               <div class="flex justify-between items-center text-sm text-foreground">
-                <span>{{ membership.name }} - {{ frequency }}</span>
+                <span>{{ pass.name }}</span>
                 <span>Rs. {{ formattedPrice }}</span>
+              </div>
+              <div
+                v-if="pass.discount"
+                class="flex justify-between items-center text-sm text-muted-foreground mt-2"
+              >
+                <span>Discount</span>
+                <span>{{ pass.discount }}% off on Spa / Cafe / Salon</span>
               </div>
               <div class="flex justify-between items-center border-t border-border/40 pt-4 mt-4 text-foreground">
                 <span class="font-serif font-bold text-2xl">Total</span>

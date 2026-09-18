@@ -39,6 +39,7 @@ export const API_ENDPOINTS = {
 
   PASS: {
     GET: "/api/v1/passes/website",
+    CREATE_GUEST: "/api/v1/passes/me/guest",
   },
 
   PROMO_CODE: {
@@ -55,6 +56,7 @@ export const API_ENDPOINTS = {
     DASHBOARD: "/api/v1/members/me/dashboard",
     BOOKINGS: "/api/v1/members/me/bookings",
   },
+
   NEWSLETTER: {
     CREATE: "/api/v1/mails/newsletter-signups",
   },
