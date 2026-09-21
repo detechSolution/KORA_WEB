@@ -56,7 +56,7 @@ async function handleCancelRequest() {
   try {
     loadingCancelRequest.value = true;
 
-    await memberstore.requestBookingCancellation(props.booking.bookingId || props.booking.id);
+    await memberstore.requestBookingCancellation(props.booking.id);
 
     success({ message: "Cancellation requested successfully" });
 
