@@ -1,11 +1,14 @@
 <script setup lang="ts">
+import type { DateValue } from "@internationalized/date";
 import type { PropType } from "vue";
 import type { Passes } from "~/types/membership";
+import { getLocalTimeZone, today } from "@internationalized/date";
 import { computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import * as z from "zod";
 import { useNotification } from "~/composables/use-notification";
 import { useCartStore } from "~/stores/cart";
+import { formatDate } from "~/utils/format";
 
 type Recipient = {
   fullName: string;
@@ -39,20 +42,29 @@ const state = reactive({
     phone: "",
     email: "",
   } as Recipient,
+  date: null as any,
 });
 
 const steps = [
   { label: "Recipient Detail" },
+  { label: "Date" },
   { label: "Overview" },
 ];
 
-const recipientSchema = z.object({
-  recipient: z.object({
-    fullName: z.string().trim().min(1, "Full name is required"),
-    phone: z.string().trim().optional(),
-    email: z.string().trim().email("Please enter a valid email address"),
+const schemas = [
+  // Step 0 — Recipient
+  z.object({
+    recipient: z.object({
+      fullName: z.string().trim().min(1, "Full name is required"),
+      phone: z.string().trim().optional(),
+      email: z.string().trim().email("Please enter a valid email address"),
+    }),
   }),
-});
+  // Step 1 — Date
+  z.object({
+    date: z.any().refine(v => !!v, "Please select a date"),
+  }),
+];
 
 const price = computed(() => Number(props.pass?.price ?? 0));
 const formattedPrice = computed(() =>
@@ -67,9 +79,14 @@ const passItem = computed(() => ({
   itemType: "pass",
   isGift: true,
   recipient: { ...state.recipient },
+  bookingDate: formatDate(state.date, "YYYY-MM-DD"),
 }));
 
-async function validateRecipient(): Promise<boolean> {
+function isDateUnavailable(date: DateValue) {
+  return date.compare(today(getLocalTimeZone())) < 0;
+}
+
+async function validateCurrentStep(): Promise<boolean> {
   try {
     await formRef.value?.validate();
     return true;
@@ -84,6 +101,7 @@ function reset() {
   state.recipient.fullName = "";
   state.recipient.phone = "";
   state.recipient.email = "";
+  state.date = null;
 }
 
 function close() {
@@ -97,17 +115,22 @@ function goToStep(step: number) {
     return;
   }
 
-  void validateRecipient().then((isValid) => {
+  void validateCurrentStep().then((isValid) => {
     if (isValid)
       currentStep.value = step;
   });
 }
 
 function nextStep() {
-  void validateRecipient().then((isValid) => {
-    if (isValid)
-      currentStep.value = 1;
+  void validateCurrentStep().then((isValid) => {
+    if (isValid && currentStep.value < steps.length - 1)
+      currentStep.value += 1;
   });
+}
+
+function previousStep() {
+  if (currentStep.value > 0)
+    currentStep.value -= 1;
 }
 
 function addToCart() {
@@ -144,7 +167,7 @@ function proceedToCheckout() {
 
       <UForm
         ref="formRef"
-        :schema="currentStep === 0 ? recipientSchema : undefined"
+        :schema="schemas[currentStep]"
         :state="state"
       >
         <Transition name="fade" mode="out-in">
@@ -201,7 +224,51 @@ function proceedToCheckout() {
             </div>
           </div>
 
-          <!-- Step 2: Overview -->
+          <!-- Step 2: Date -->
+          <div
+            v-else-if="currentStep === 1"
+            key="date"
+            class="flex flex-col gap-8"
+          >
+            <div>
+              <h2 class="text-3xl font-serif text-foreground mb-3">
+                Choose Start Date
+              </h2>
+              <p class="text-xs text-[#A08860]">
+                Access to this pass begins on the date you select.
+              </p>
+            </div>
+
+            <UFormField name="date" class="flex flex-col gap-4 pb-6">
+              <p class="text-primary-700 font-medium text-sm capitalize">
+                Select Date
+              </p>
+              <UCalendar
+                v-model="state.date"
+                :is-date-unavailable="isDateUnavailable"
+                :ui="{
+                  headCell: 'text-xs font-normal',
+                  gridBody: 'grid gap-2 sm:gap-4',
+                  cellTrigger:
+                    'w-full rounded-none flex flex-col h-8 w-8 p-1 sm:h-12 sm:w-12 sm:p-2 border border-border',
+                }"
+              />
+            </UFormField>
+
+            <div class="flex flex-col sm:flex-row justify-between gap-4 mt-auto">
+              <base-button variant="outline" @click="previousStep">
+                Back
+              </base-button>
+              <base-button
+                class="uppercase text-[11px] tracking-widest font-bold px-10 h-11 rounded-none bg-[#A08860] hover:bg-[#8c7550] text-white"
+                @click="nextStep"
+              >
+                Next
+              </base-button>
+            </div>
+          </div>
+
+          <!-- Step 3: Overview -->
           <div v-else key="overview">
             <div class="mb-8">
               <h2 class="text-3xl font-serif text-foreground mb-3">
@@ -251,14 +318,14 @@ function proceedToCheckout() {
                 <span>Discount</span>
                 <span>{{ pass.discount }}% off on Spa / Cafe / Salon</span>
               </div>
-              <div class="flex justify-between items-center border-t border-border/40 pt-4 mt-4 text-foreground">
-                <span class="font-serif font-bold text-2xl">Total</span>
-                <span class="font-serif font-bold text-2xl">Rs. {{ formattedPrice }}</span>
+              <div class="flex justify-between items-center border-t border-border/40 pt-4 mt-4 text-foreground text-2xl">
+                <span class="font-serif font-bold">Total</span>
+                <span class="font-serif font-bold">Rs. {{ formattedPrice }}</span>
               </div>
             </div>
 
             <div class="flex flex-col sm:flex-row justify-between gap-4 mt-8">
-              <base-button variant="outline" @click="currentStep = 0">
+              <base-button variant="outline" @click="previousStep">
                 Back
               </base-button>
               <div class="flex flex-col sm:flex-row gap-2 sm:gap-4">
