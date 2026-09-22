@@ -98,10 +98,13 @@ function clearPreviewTimers() {
   previewHideTimer = null;
 }
 
-function leaveItem() {
+function leaveItem(event?: PointerEvent) {
+  if (event && event.pointerType === "touch")
+    return;
   clearPreviewTimers();
   // Bridge the gap between rows without fading the whole preview out and in.
   previewHideTimer = setTimeout(hidePreview, 140);
+  expanded.value = null;
 }
 
 function hoverItem(event: PointerEvent, item: MenuItem) {
@@ -110,6 +113,7 @@ function hoverItem(event: PointerEvent, item: MenuItem) {
   clearPreviewTimers();
   previewPointerY = event.clientY;
   activeItem.value = item.name;
+  expanded.value = item.name;
   const delay = previewVisible.value && !window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 180 : 0;
   previewSwitchTimer = setTimeout(() => {
     previewImage.value = item.image;
@@ -484,6 +488,7 @@ onBeforeUnmount(() => {
   max-width: 100%;
   animation: menu-rise 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: var(--item-delay);
+  position: relative;
 }
 .menu-row {
   display: flex;
@@ -574,28 +579,29 @@ onBeforeUnmount(() => {
   transform: rotate(-90deg);
 }
 .submenu {
-  display: grid;
-  grid-template-rows: 0fr;
+  position: absolute;
+  top: 16px;
+  left: 100%;
+  margin-left: 32px;
   opacity: 0;
   visibility: hidden;
+  transform: translateX(-15px);
   transition:
-    grid-template-rows 450ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 450ms cubic-bezier(0.22, 1, 0.36, 1),
     opacity 250ms ease,
     visibility 450ms;
 }
 .submenu.is-expanded {
-  grid-template-rows: 1fr;
   opacity: 1;
   visibility: visible;
+  transform: translateX(0);
 }
 .submenu-clip {
-  overflow: hidden;
-  min-height: 0;
 }
 .submenu-links {
   list-style: none;
-  margin: 10px 0 12px 24px;
-  padding: 0 0 0 12px;
+  margin: 0;
+  padding: 0 0 0 16px;
   border-left: 1px solid var(--sidebar-border);
 }
 .submenu-links a {
