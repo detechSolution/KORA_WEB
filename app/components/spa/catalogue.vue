@@ -40,6 +40,7 @@ const categoryItems = computed(() =>
 );
 
 const selectedSpa = ref(null);
+const selectedSubTypeId = ref<number | string | null>(null);
 const isBookingModalOpen = ref(false);
 const isGiftBookingModalOpen = ref(false);
 const loading = ref(false);
@@ -59,7 +60,9 @@ async function getSpaLists() {
   }
 }
 
-function handleOpenBookingModal() {
+function handleOpenBookingModal(subTypeId?: number | string) {
+  selectedSubTypeId.value = subTypeId || null;
+
   if (props.gifting) {
     isGiftBookingModalOpen.value = true;
     return;
@@ -285,31 +288,51 @@ onMounted(() => {
                   root: 'space-y-3',
                   item: 'border-0 bg-card px-5 md:px-6',
                   trigger:
-                    'py-5 cursor-pointer hover:no-underline focus-visible:outline-primary',
-                  trailingIcon: 'text-primary size-4 self-start mt-1',
+                    'py-5 cursor-pointer hover:no-underline focus-visible:outline-primary justify-between',
+                  trailingIcon: 'text-primary size-4',
                 }"
               >
                 <template #default="{ item }">
                   <span class="block font-serif text-lg">{{ item.name }}</span>
-                  <span
-                    class="flex flex-wrap gap-x-6 gap-y-2 mt-2 font-sans text-xs font-normal text-secondary-500"
+                  <div
+                    class="flex flex-wrap items-center gap-x-6 gap-y-2 font-sans text-xs font-normal text-secondary-500 mt-2"
                   >
                     <template
                       v-for="(price, index) in item.prices"
                       :key="price.id"
                     >
                       <span v-if="index > 0" class="mx-1 text-primary-400">|</span>
-
                       <span class="whitespace-nowrap">
-                        <span class="text-primary">{{ price.duration }} {{ getShortTimeUnit(price.timeUnit) }}</span>
+                        <span class="text-primary">{{ price.duration }}
+                          {{ getShortTimeUnit(price.timeUnit) }}</span>
                         <span class="ml-1.5 text-sm">
                           {{ item.currency === "NPR" ? "Rs." : item.currency }}
                           {{ formatPrice(price.price) }}
                         </span>
                       </span>
                     </template>
-                  </span>
+                  </div>
                 </template>
+
+                <template #trailing="{ item, open }">
+                  <div class="flex flex-col justify-start items-end gap-2">
+                    <UIcon
+                      name="i-lucide-chevron-down"
+                      class="size-4 transition-transform duration-200"
+                      :class="open && 'rotate-180'"
+                    />
+                    <UButton
+                      as="span"
+                      variant="ghost"
+                      size="xs"
+                      class="text-xs font-medium font-sans text-primary-700 uppercase hover:text-primary-600 hover:bg-transparent whitespace-nowrap"
+                      @click.stop="handleOpenBookingModal(item.id)"
+                    >
+                      Book Now
+                    </UButton>
+                  </div>
+                </template>
+
                 <template #content="{ item }">
                   <p
                     class="pb-5 text-sm font-sans text-secondary-500 leading-relaxed"
@@ -384,12 +407,14 @@ onMounted(() => {
       v-if="!gifting && isBookingModalOpen"
       v-model:selected-spa="selectedSpa"
       :is-open="isBookingModalOpen"
+      :sub-type-id="selectedSubTypeId"
       @close="isBookingModalOpen = false"
     />
 
     <SpaGiftBookingModal
       v-if="gifting && isGiftBookingModalOpen"
       :is-open="isGiftBookingModalOpen"
+      :sub-type-id="selectedSubTypeId"
       @close="isGiftBookingModalOpen = false"
     />
   </section>

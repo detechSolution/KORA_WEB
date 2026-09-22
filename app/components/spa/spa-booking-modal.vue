@@ -15,8 +15,9 @@ import { formatDate, formatPrice } from "~/utils/format";
 import { calculatePrice } from "~/utils/helper";
 import { getMembershipBenefits, getPassesBenefits } from "~/utils/membership";
 
-defineProps<{
+const props = defineProps<{
   isOpen: boolean;
+  subTypeId?: number | string | null;
 }>();
 
 const emit = defineEmits<{
@@ -27,6 +28,17 @@ const spaStore = useSpaStore();
 const { error: showError, success } = useNotification();
 const cartStore = useCartStore();
 const spa = computed(() => spaStore.spa);
+
+const displaySubTypes = computed(() => {
+  if (!spa.value?.subTypes)
+    return [];
+  if (props.subTypeId) {
+    return spa.value.subTypes.filter(
+      (st: any) => String(st.id) === String(props.subTypeId),
+    );
+  }
+  return spa.value.subTypes;
+});
 
 const steps = [
   { label: "Select Sub-Type" },
@@ -174,9 +186,7 @@ function close() {
   emit("close");
 }
 
-const guestCount = computed(() =>
-  state.roomPreference === "shared" ? 2 : 1,
-);
+const guestCount = computed(() => (state.roomPreference === "shared" ? 2 : 1));
 
 const pricing = computed(() => {
   return calculatePrice({
@@ -302,11 +312,13 @@ watch(
 
               <UFormField name="selectedSpa">
                 <UAccordion
-                  :items="spa?.subTypes"
+                  :items="displaySubTypes"
                   :default-value="defaultOpenSubtype"
                   class="mb-2"
                   :ui="{
                     item: 'px-[14px] pb-[14px] bg-card',
+                    trigger: 'items-start',
+                    trailingIcon: 'mt-1 self-start',
                   }"
                 >
                   <template #default="{ item, open }">
@@ -314,9 +326,7 @@ watch(
                       <span>{{ item.name }}</span>
                       <p
                         class="text-sm text-secondary-500 mt-4"
-                        :class="[
-                          !open && 'line-clamp-2',
-                        ]"
+                        :class="[!open && 'line-clamp-2']"
                       >
                         {{ item.description }}
                       </p>
@@ -402,10 +412,7 @@ watch(
 
               <div>
                 <!-- Loading skeleton -->
-                <div
-                  v-if="isTimeSlotLoading"
-                  class="flex flex-col gap-4 mb-6"
-                >
+                <div v-if="isTimeSlotLoading" class="flex flex-col gap-4 mb-6">
                   <p
                     class="text-primary-700 font-medium mb-2 text-sm capitalize"
                   >
@@ -507,11 +514,14 @@ watch(
                       </div>
                     </div>
                     <div>
-                      <h3 class="font-serif text-lg font-medium text-foreground mb-1">
+                      <h3
+                        class="font-serif text-lg font-medium text-foreground mb-1"
+                      >
                         Private Room
                       </h3>
                       <p class="text-sm text-secondary-500">
-                        Enjoy your treatment in an exclusive private room for a fully personalized experience.
+                        Enjoy your treatment in an exclusive private room for a
+                        fully personalized experience.
                       </p>
                     </div>
                   </div>
@@ -552,11 +562,14 @@ watch(
                       </div>
                     </div>
                     <div>
-                      <h3 class="font-serif text-lg font-medium text-foreground mb-1">
+                      <h3
+                        class="font-serif text-lg font-medium text-foreground mb-1"
+                      >
                         Shared Spa
                       </h3>
                       <p class="text-sm text-secondary-500">
-                        Relax in our communal spa area, perfect for a social wellness experience.
+                        Relax in our communal spa area, perfect for a social
+                        wellness experience.
                       </p>
                     </div>
                   </div>
@@ -585,9 +598,7 @@ watch(
               </h3>
 
               <div class="border-t border-border/40 pt-6">
-                <h4
-                  class="font-serif text-lg font-medium text-foreground mb-6"
-                >
+                <h4 class="font-serif text-lg font-medium text-foreground mb-6">
                   Overview
                 </h4>
 
