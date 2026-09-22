@@ -18,8 +18,9 @@ type Recipient = {
   email: string;
 };
 
-defineProps<{
+const props = defineProps<{
   isOpen: boolean;
+  subTypeId?: number | string | null;
 }>();
 
 const emit = defineEmits<{
@@ -43,6 +44,15 @@ const passesBenefits = getPassesBenefits(userDetail);
 const activeDiscount = computed(() =>
   benefits.member.spa || passesBenefits.spa || 0,
 );
+
+const displaySubTypes = computed(() => {
+  if (!spa.value?.subTypes)
+    return [];
+  if (props.subTypeId) {
+    return spa.value.subTypes.filter((st: any) => String(st.id) === String(props.subTypeId));
+  }
+  return spa.value.subTypes;
+});
 
 const state = reactive({
   recipient: {
@@ -123,6 +133,15 @@ function isDateUnavailable(date: DateValue) {
 function selectSpa(spaData: any) {
   state.selectedSpa = spaData;
 }
+
+const defaultOpenSubtype = computed(() => {
+  if (!state.selectedSpa?.referenceId || !spa.value?.subTypes)
+    return "0";
+  const index = spa.value.subTypes.findIndex(
+    (st: any) => st.id === state.selectedSpa.referenceId,
+  );
+  return index !== -1 ? String(index) : "0";
+});
 
 function selectTime(time: string) {
   state.selectedTime = time;
@@ -297,7 +316,8 @@ watch(
             </div>
             <UFormField name="selectedSpa">
               <UAccordion
-                :items="spa?.subTypes"
+                :items="displaySubTypes"
+                :default-value="defaultOpenSubtype"
                 class="mb-2"
                 :ui="{ item: 'px-[14px] pb-[14px] bg-card' }"
               >
