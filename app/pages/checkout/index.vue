@@ -23,6 +23,13 @@ const { error: showError } = useNotification();
 const cartItems = computed(() => cartStore.cartItems);
 
 const selectedItemIds = ref<string[]>([]);
+const colorMode = useColorMode();
+const isDark = computed(() => colorMode.value === "dark");
+const logoSrc = computed(() =>
+  isDark.value
+    ? "/images/logo/fonepay_dark.png"
+    : "/images/logo/fonepay_white.png",
+);
 
 const isAllSelected = computed({
   get() {
@@ -49,9 +56,10 @@ const subtotal = computed(() => {
 
 const step = ref(1);
 // const inputPromoCode = ref("");
-const paymentMethod = ref<PaymentProvider>("fonepay");
+const paymentMethod = ref<PaymentProvider | null>(null);
 const isRemoveItemModalOpen = ref(false);
 const selectedItemId = ref<string | "">("");
+const isFonepayModalOpen = ref(false);
 
 const discountValue = computed(() => {
   if (!cartStore.discountAmount) {
@@ -133,6 +141,13 @@ async function handlePayNowClick() {
     });
   }
   else {
+    if (totalPrice.value > 0 && !paymentMethod.value) {
+      showError({
+        message: "Please select a payment method to proceed.",
+      });
+      return;
+    }
+
     try {
       sessionStorage.setItem(
         "pendingPaymentItemIds",
@@ -177,7 +192,11 @@ async function handlePayNowClick() {
         // promoCode: cartStore.promoCode,
       };
 
-      await payNow(payload);
+      await payNow(payload).then((signal) => {
+        if (signal === "qr_modal") {
+          isFonepayModalOpen.value = true;
+        }
+      });
     }
     catch (error) {
       console.error("Payment failed:", error);
@@ -440,12 +459,12 @@ onUnmounted(() => {
                     >
                     <!-- Fonepay placeholder logo -->
                     <div
-                      class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
+                      class="h-8 px-2 py-1 rounded flex items-center justify-center"
                     >
                       <img
-                        :src="IMAGES.FONEPAY_LOGO"
+                        :src="logoSrc"
                         alt="Fonepay"
-                        class="w-18 object-contain"
+                        class="w-20 object-contain"
                       >
                     </div>
                   </label>
@@ -502,14 +521,14 @@ onUnmounted(() => {
                       class="hidden"
                     >
                     <div
-                      class="h-8 bg-white px-3 py-1 rounded flex items-center justify-center border border-border/10"
+                      class="h-8 px-3 py-1 rounded flex items-center justify-center border border-border/10"
                     >
                       <UIcon
                         name="i-lucide-credit-card"
-                        class="w-5 h-5 text-gray-800"
+                        class="w-5 h-5 text-gray-800 dark:text-gray-200"
                       />
                       <span
-                        class="ml-2 text-gray-800 text-xs font-semibold uppercase tracking-wider"
+                        class="ml-2 text-gray-800 dark:text-gray-200 text-xs font-semibold uppercase tracking-wider"
                       >Credit/Debit Card</span>
                     </div>
                   </label>
@@ -751,6 +770,10 @@ onUnmounted(() => {
       :open="isRemoveItemModalOpen"
       @close="isRemoveItemModalOpen = false"
       @confirm="handleRemoveItem"
+    />
+    <checkout-fonepay-modal
+      :is-open="isFonepayModalOpen"
+      @close="isFonepayModalOpen = false"
     />
   </div>
 </template>

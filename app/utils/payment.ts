@@ -1,6 +1,11 @@
 import type { PaymentInfo } from "~/types/payment";
 
-export function redirectToPaymentProvider(payment: PaymentInfo, checkoutCode?: string) {
+/**
+ * Returns `"qr_modal"` for qr_websocket mode so the caller can open the
+ * Fonepay modal in-place instead of navigating to a separate page.
+ * Returns `undefined` for all other modes (navigation is handled here).
+ */
+export function redirectToPaymentProvider(payment: PaymentInfo, checkoutCode?: string): "qr_modal" | undefined {
   const router = useRouter();
   switch (payment.mode) {
     case "redirect_url": {
@@ -41,11 +46,8 @@ export function redirectToPaymentProvider(payment: PaymentInfo, checkoutCode?: s
       break;
     }
     case "qr_websocket": {
-      router.push({
-        path: "/checkout/fonepay",
-        query: { checkout_code: checkoutCode || "" },
-      });
-      break;
+      // Signal to the caller to open the Fonepay modal in-place
+      return "qr_modal";
     }
     default:
       throw new Error(`Unsupported payment mode: ${payment.mode}`);
