@@ -490,7 +490,7 @@ watch(
                             : 'bg-[#c9a55a]/10 text-primary-700'
                         "
                       >
-                        <UIcon name="i-lucide-door-closed" class="w-5 h-5" />
+                        <UIcon name="i-lucide-user" class="w-5 h-5" />
                       </div>
                       <div
                         class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors"
