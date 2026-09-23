@@ -403,13 +403,27 @@ onMounted(async () => {
         </div>
 
         <div class="mt-6 pt-4">
+          <UTooltip
+            v-if="!gifting && (hasMembership || hasActivePass)"
+            :delay-duration="0"
+            text="Membership / Pass is already active"
+            class="block w-full"
+          >
+            <div class="w-full">
+              <base-button
+                variant="outline"
+                class="w-full pointer-events-none"
+                disabled
+              >
+                {{ gifting ? "Gift This Membership" : "BEGIN NOW" }}
+              </base-button>
+            </div>
+          </UTooltip>
           <base-button
+            v-else
             variant="outline"
             class="w-full"
-            :disabled="
-              !tier.selectedOption
-                || (!gifting && (hasMembership || hasActivePass))
-            "
+            :disabled="!tier.selectedOption"
             @click="openMembershipModal(tier)"
           >
             {{ gifting ? "Gift This Membership" : "BEGIN NOW" }}
@@ -471,13 +485,32 @@ onMounted(async () => {
           />
         </div>
 
-        <base-button
-          variant="outline"
-          :disabled="!gifting && (hasMembership || hasActivePass)"
-          @click="openPassModal(pass)"
-        >
-          {{ gifting ? "Gift This Pass" : "BEGIN NOW" }}
-        </base-button>
+        <div class="mt-4">
+          <UTooltip
+            v-if="!gifting && (hasMembership || hasActivePass)"
+            :delay-duration="0"
+            text="Membership / Pass is already active"
+            class="block w-full"
+          >
+            <div class="w-full">
+              <base-button
+                variant="outline"
+                class="w-full pointer-events-none"
+                disabled
+              >
+                {{ gifting ? "Gift This Pass" : "BEGIN NOW" }}
+              </base-button>
+            </div>
+          </UTooltip>
+          <base-button
+            v-else
+            variant="outline"
+            class="w-full"
+            @click="openPassModal(pass)"
+          >
+            {{ gifting ? "Gift This Pass" : "BEGIN NOW" }}
+          </base-button>
+        </div>
       </div>
     </div>
     <div v-else class="relative z-20 mt-16 text-center">
