@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { PaymentProvider } from "~/types/payment";
-import { computed, onUnmounted, ref } from "vue";
+import { computed, onUnmounted, ref, watch } from "vue";
 import { useNotification } from "~/composables/use-notification";
 import { usePayment } from "~/composables/use-payment";
 import { useAuthStore } from "~/stores/auth";
@@ -76,6 +76,12 @@ const discountValue = computed(() => {
 const totalPrice = computed(() => {
   return Math.max(0, subtotal.value - discountValue.value);
 });
+
+watch(totalPrice, (newPrice) => {
+  if (newPrice === 0) {
+    paymentMethod.value = "fonepay";
+  }
+}, { immediate: true });
 
 // Count the total number of items in the cart, including visitors for each item
 const totalItems = computed(() =>
