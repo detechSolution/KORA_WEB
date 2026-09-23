@@ -41,9 +41,9 @@ const displaySubTypes = computed(() => {
 });
 
 const steps = [
+  { label: "Room Preference" },
   { label: "Select Sub-Type" },
   { label: "Date & Time" },
-  { label: "Room Preference" },
   { label: "Overview" },
 ];
 
@@ -107,7 +107,11 @@ const activeDiscount = computed(() => {
 const showDiscount = computed(() => activeDiscount.value > 0);
 
 const schema = computed(() => [
-  // Step 0: Select Sub-Type
+  // Step 0: Room Preference
+  z.object({
+    roomPreference: z.string().min(1, "Please select a room preference"),
+  }),
+  // Step 1: Select Sub-Type
   z.object({
     selectedSpa: z.object(
       { id: z.number() },
@@ -116,16 +120,12 @@ const schema = computed(() => [
       },
     ),
   }),
-  // Step 1: Date & Time
+  // Step 2: Date & Time
   z.object({
     selectedDate: z.any().refine(v => !!v, "Please select a date"),
     selectedTime: z
       .string({ message: "Please select a time" })
       .min(1, "Please select a time"),
-  }),
-  // Step 2: Room Preference
-  z.object({
-    roomPreference: z.string().min(1, "Please select a room preference"),
   }),
   // Step 3: Overview
   z.object({}),
@@ -295,175 +295,10 @@ watch(
           :state="state"
         >
           <Transition name="fade" mode="out-in">
-            <!-- Step 0: Select Spa Type -->
+            <!-- Step 0: Room Preference -->
             <div
               v-if="currentStep === 0"
               key="step0"
-              class="flex flex-col"
-            >
-              <div class="mb-8">
-                <h2 class="text-3xl font-serif text-foreground mb-3">
-                  Select a Spa Type
-                </h2>
-                <p class="text-xs text-[#A08860]">
-                  Choose your ideal massage treatment
-                </p>
-              </div>
-
-              <UFormField name="selectedSpa">
-                <UAccordion
-                  :items="displaySubTypes"
-                  :default-value="defaultOpenSubtype"
-                  class="mb-2"
-                  :ui="{
-                    item: 'px-[14px] pb-[14px] bg-card',
-                    trigger: 'items-start',
-                    trailingIcon: 'mt-1 self-start',
-                  }"
-                >
-                  <template #default="{ item, open }">
-                    <div class="flex flex-col">
-                      <span>{{ item.name }}</span>
-                      <p
-                        class="text-sm text-secondary-500 mt-4"
-                        :class="[!open && 'line-clamp-2']"
-                      >
-                        {{ item.description }}
-                      </p>
-                    </div>
-                  </template>
-
-                  <template #content="{ item }">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                      <div
-                        v-for="duration in item.prices"
-                        :key="duration.id"
-                        class="group relative border border-white/10 rounded-xs p-4 flex flex-col justify-between transition-all duration-300 cursor-pointer"
-                        :class="
-                          state.selectedSpa?.id === duration.id
-                            ? 'bg-primary-500 text-white dark:bg-primary'
-                            : 'bg-[#c9a55a]/10 dark:bg-[#2A2722]'
-                        "
-                        @click="
-                          handleBookingClick({
-                            ...duration,
-                            name: item.name,
-                            referenceId: item.id,
-                            image: spa?.bannerUrl,
-                          })
-                        "
-                      >
-                        <div
-                          class="flex items-center gap-2 text-xs uppercase"
-                          :class="
-                            state.selectedSpa?.id === duration.id
-                              ? 'text-white'
-                              : 'text-primary-700'
-                          "
-                        >
-                          <UIcon name="i-lucide-clock" class="h-3.5 w-3.5" />
-                          <span class="text-sm">
-                            {{ duration.duration }} {{ duration.timeUnit }}
-                          </span>
-                        </div>
-                        <p class="text-3xl font-medium text-foreground mt-3">
-                          <span class="text-2xl">Rs. </span>{{ duration.price }}
-                        </p>
-                      </div>
-                    </div>
-                  </template>
-                </UAccordion>
-              </UFormField>
-            </div>
-
-            <!-- Step 1: Date & Time -->
-            <div
-              v-else-if="currentStep === 1"
-              key="step1"
-              class="flex flex-col gap-8"
-            >
-              <div>
-                <h2 class="text-3xl font-serif text-foreground mb-3">
-                  Choose Your Date & Time
-                </h2>
-                <p class="text-xs text-[#A08860]">
-                  Pick a time that works best for your relaxation
-                </p>
-              </div>
-
-              <UFormField
-                name="selectedDate"
-                class="flex flex-col gap-4 border-b border-border pb-6"
-              >
-                <p class="text-primary-700 font-medium text-sm capitalize">
-                  Select Date
-                </p>
-                <UCalendar
-                  v-model="state.selectedDate"
-                  :is-date-unavailable="isDateUnavailable"
-                  :ui="{
-                    headCell: 'text-xs font-normal',
-                    gridBody: 'grid gap-2 sm:gap-4',
-                    cellTrigger:
-                      'w-full rounded-none flex flex-col h-8 w-8 p-1 sm:h-12 sm:w-12 sm:p-2 border border-border',
-                  }"
-                />
-              </UFormField>
-
-              <div>
-                <!-- Loading skeleton -->
-                <div v-if="isTimeSlotLoading" class="flex flex-col gap-4 mb-6">
-                  <p
-                    class="text-primary-700 font-medium mb-2 text-sm capitalize"
-                  >
-                    Select Time
-                  </p>
-                  <div class="grid grid-cols-3 gap-4">
-                    <div
-                      v-for="n in 6"
-                      :key="n"
-                      class="h-[56px] border border-border bg-stone-100 dark:bg-[#2A2722] animate-pulse"
-                    />
-                  </div>
-                </div>
-
-                <UFormField
-                  v-else-if="availableTimeSlots.length > 0"
-                  name="selectedTime"
-                  class="flex flex-col gap-4 mb-6"
-                >
-                  <p
-                    class="text-primary-700 font-medium mb-2 text-sm capitalize"
-                  >
-                    Select Time
-                  </p>
-                  <div class="grid grid-cols-3 gap-4">
-                    <div
-                      v-for="time in availableTimeSlots"
-                      :key="time.time"
-                      class="border py-4 text-center transition-colors cursor-pointer"
-                      :class="
-                        state.selectedTime === time.time
-                          ? 'border-primary-500 bg-primary-700 text-white'
-                          : 'border-stone-200 dark:border-border dark:text-white hover:border-primary-500'
-                      "
-                      @click="selectTime(time.time)"
-                    >
-                      {{ time?.label }}
-                    </div>
-                  </div>
-                </UFormField>
-
-                <div v-else class="py-6">
-                  <p>No available times for the selected date.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Step 2: Room Preference -->
-            <div
-              v-else-if="currentStep === 2"
-              key="step2"
               class="flex flex-col"
             >
               <div class="mb-8">
@@ -474,6 +309,7 @@ watch(
                   Choose your preferred spa environment
                 </p>
               </div>
+
               <div class="w-full h-px bg-border/40 mb-8" />
 
               <UFormField name="roomPreference">
@@ -575,6 +411,171 @@ watch(
                   </div>
                 </div>
               </UFormField>
+            </div>
+
+            <!-- Step 1: Select Spa Type -->
+            <div
+              v-else-if="currentStep === 1"
+              key="step1"
+              class="flex flex-col"
+            >
+              <div class="mb-8">
+                <h2 class="text-3xl font-serif text-foreground mb-3">
+                  Select a Spa Type
+                </h2>
+                <p class="text-xs text-[#A08860]">
+                  Choose your ideal massage treatment
+                </p>
+              </div>
+
+              <UFormField name="selectedSpa">
+                <UAccordion
+                  :items="displaySubTypes"
+                  :default-value="defaultOpenSubtype"
+                  class="mb-2"
+                  :ui="{
+                    item: 'px-[14px] pb-[14px] bg-card',
+                    trigger: 'items-start',
+                    trailingIcon: 'mt-1 self-start',
+                  }"
+                >
+                  <template #default="{ item, open }">
+                    <div class="flex flex-col">
+                      <span>{{ item.name }}</span>
+                      <p
+                        class="text-sm text-secondary-500 mt-4"
+                        :class="[!open && 'line-clamp-2']"
+                      >
+                        {{ item.description }}
+                      </p>
+                    </div>
+                  </template>
+
+                  <template #content="{ item }">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                      <div
+                        v-for="duration in item.prices"
+                        :key="duration.id"
+                        class="group relative border border-white/10 rounded-xs p-4 flex flex-col justify-between transition-all duration-300 cursor-pointer"
+                        :class="
+                          state.selectedSpa?.id === duration.id
+                            ? 'bg-primary-500 text-white dark:bg-primary'
+                            : 'bg-[#c9a55a]/10 dark:bg-[#2A2722]'
+                        "
+                        @click="
+                          handleBookingClick({
+                            ...duration,
+                            name: item.name,
+                            referenceId: item.id,
+                            image: spa?.bannerUrl,
+                          })
+                        "
+                      >
+                        <div
+                          class="flex items-center gap-2 text-xs uppercase"
+                          :class="
+                            state.selectedSpa?.id === duration.id
+                              ? 'text-white'
+                              : 'text-primary-700'
+                          "
+                        >
+                          <UIcon name="i-lucide-clock" class="h-3.5 w-3.5" />
+                          <span class="text-sm">
+                            {{ duration.duration }} {{ duration.timeUnit }}
+                          </span>
+                        </div>
+                        <p class="text-3xl font-medium text-foreground mt-3">
+                          <span class="text-2xl">Rs. </span>{{ duration.price }}
+                        </p>
+                      </div>
+                    </div>
+                  </template>
+                </UAccordion>
+              </UFormField>
+            </div>
+
+            <!-- Step 2: Date & Time -->
+            <div
+              v-else-if="currentStep === 2"
+              key="step2"
+              class="flex flex-col gap-8"
+            >
+              <div>
+                <h2 class="text-3xl font-serif text-foreground mb-3">
+                  Choose Your Date & Time
+                </h2>
+                <p class="text-xs text-[#A08860]">
+                  Pick a time that works best for your relaxation
+                </p>
+              </div>
+
+              <UFormField
+                name="selectedDate"
+                class="flex flex-col gap-4 border-b border-border pb-6"
+              >
+                <p class="text-primary-700 font-medium text-sm capitalize">
+                  Select Date
+                </p>
+                <UCalendar
+                  v-model="state.selectedDate"
+                  :is-date-unavailable="isDateUnavailable"
+                  :ui="{
+                    headCell: 'text-xs font-normal',
+                    gridBody: 'grid gap-2 sm:gap-4',
+                    cellTrigger:
+                      'w-full rounded-none flex flex-col h-8 w-8 p-1 sm:h-12 sm:w-12 sm:p-2 border border-border',
+                  }"
+                />
+              </UFormField>
+
+              <div>
+                <!-- Loading skeleton -->
+                <div v-if="isTimeSlotLoading" class="flex flex-col gap-4 mb-6">
+                  <p
+                    class="text-primary-700 font-medium mb-2 text-sm capitalize"
+                  >
+                    Select Time
+                  </p>
+                  <div class="grid grid-cols-3 gap-4">
+                    <div
+                      v-for="n in 6"
+                      :key="n"
+                      class="h-[56px] border border-border bg-stone-100 dark:bg-[#2A2722] animate-pulse"
+                    />
+                  </div>
+                </div>
+
+                <UFormField
+                  v-else-if="availableTimeSlots.length > 0"
+                  name="selectedTime"
+                  class="flex flex-col gap-4 mb-6"
+                >
+                  <p
+                    class="text-primary-700 font-medium mb-2 text-sm capitalize"
+                  >
+                    Select Time
+                  </p>
+                  <div class="grid grid-cols-3 gap-4">
+                    <div
+                      v-for="time in availableTimeSlots"
+                      :key="time.time"
+                      class="border py-4 text-center transition-colors cursor-pointer"
+                      :class="
+                        state.selectedTime === time.time
+                          ? 'border-primary-500 bg-primary-700 text-white'
+                          : 'border-stone-200 dark:border-border dark:text-white hover:border-primary-500'
+                      "
+                      @click="selectTime(time.time)"
+                    >
+                      {{ time?.label }}
+                    </div>
+                  </div>
+                </UFormField>
+
+                <div v-else class="py-6">
+                  <p>No available times for the selected date.</p>
+                </div>
+              </div>
             </div>
 
             <!-- Step 3: Overview -->

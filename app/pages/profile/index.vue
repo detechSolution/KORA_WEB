@@ -400,7 +400,7 @@ onMounted(async () => {
                 <UIcon name="i-lucide-mail" class="w-4 h-4" />
                 {{ user.email }}
               </div>
-              <div class="flex items-center gap-2">
+              <div v-if="user.phone" class="flex items-center gap-2">
                 <UIcon name="i-lucide-phone" class="w-4 h-4" />
                 {{ user.phone }}
               </div>

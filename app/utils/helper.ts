@@ -55,11 +55,11 @@ export function calculateDuration(startTime: string, endTime: string): string {
   const parts: string[] = [];
 
   if (hours > 0) {
-    parts.push(`${hours} ${hours === 1 ? "hour" : "hours"}`);
+    parts.push(`${hours} ${hours === 1 ? "hour" : "hour"}`);
   }
 
   if (minutes > 0) {
-    parts.push(`${minutes} ${minutes === 1 ? "min" : "mins"}`);
+    parts.push(`${minutes} ${minutes === 1 ? "min" : "min"}`);
   }
 
   return parts.join(" ") || "0 min";
@@ -92,11 +92,11 @@ export function getDisabledMessageForGuest(session: any) {
 export function getShortTimeUnit(unit: string): string {
   const units: Record<string, string> = {
     hour: "hr",
-    hours: "hrs",
+    hours: "hr",
     minute: "min",
-    minutes: "mins",
+    minutes: "min",
     second: "sec",
-    seconds: "secs",
+    seconds: "sec",
   };
 
   return units[unit.toLowerCase()] ?? unit;
