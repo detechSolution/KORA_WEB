@@ -582,7 +582,8 @@ onBeforeUnmount(() => {
   position: absolute;
   top: 16px;
   left: 100%;
-  margin-left: 32px;
+  padding-left: 32px;
+  width: max-content;
   opacity: 0;
   visibility: hidden;
   transform: translateX(-15px);
@@ -597,12 +598,14 @@ onBeforeUnmount(() => {
   transform: translateX(0);
 }
 .submenu-clip {
+  overflow: hidden;
 }
 .submenu-links {
   list-style: none;
   margin: 0;
   padding: 0 0 0 16px;
   border-left: 1px solid var(--sidebar-border);
+  white-space: nowrap;
 }
 .submenu-links a {
   display: block;
