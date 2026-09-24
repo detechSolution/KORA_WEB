@@ -6,7 +6,7 @@ import { useRouter } from "vue-router";
 import { useNotification } from "~/composables/use-notification";
 import { useCartStore } from "~/stores/cart";
 import { calculatePrice } from "~/utils/helper";
-import { getMembershipBenefits, getPassesBenefits } from "~/utils/membership";
+import { getEffectiveDiscount, getMembershipBenefits } from "~/utils/membership";
 
 const props = defineProps({
   isOpen: {
@@ -38,35 +38,25 @@ const state = reactive({
   },
 });
 
-const benefits = getMembershipBenefits(userDetail);
-const passesBenefits = getPassesBenefits(userDetail);
-const MEMBERSHIP_DISCOUNT = benefits.member.class || 0;
-const PASS_DISCOUNT = passesBenefits.class || 0;
+// Convert session date to YYYY-MM-DD for validity checks.
+// session.sessionDate may be a Date object or ISO string.
+const sessionDateStr = new Date(props.session.sessionDate)
+  .toLocaleDateString("en-CA");
 
-const discountType = computed(() => {
-  if (MEMBERSHIP_DISCOUNT > 0) {
-    return "Membership Discount";
-  }
-
-  if (PASS_DISCOUNT > 0) {
-    return "Pass Discount";
-  }
-
-  return null;
+// Pass the actual session date so discounts are only applied when the
+// membership/pass is valid ON THE SERVICE DATE, not just today.
+const activeDiscount = computed(() => {
+  const type = props.session.type as "class" | "event" | "workshop" | "spa" | "cafe" | "salon";
+  return getEffectiveDiscount(type, userDetail, sessionDateStr);
 });
 
-const activeDiscount = computed(() => {
-  // Membership discount has the highest priority
-  if (MEMBERSHIP_DISCOUNT > 0) {
-    return MEMBERSHIP_DISCOUNT;
-  }
-
-  // Only apply pass discount for class sessions
-  if (props.session.type === "class" && PASS_DISCOUNT > 0) {
-    return PASS_DISCOUNT;
-  }
-
-  return 0;
+const discountType = computed(() => {
+  if (activeDiscount.value <= 0)
+    return null;
+  // Determine source: membership or pass
+  const memberBenefits = getMembershipBenefits(userDetail, sessionDateStr);
+  const membershipDiscount = memberBenefits.member[props.session.type as keyof typeof memberBenefits.member] ?? 0;
+  return membershipDiscount > 0 ? "Membership Discount" : "Pass Discount";
 });
 
 const showDiscount = computed(() => activeDiscount.value > 0);

@@ -10,7 +10,7 @@ import { useSpaStore } from "~/stores/spa";
 import { getApiErrorMessage } from "~/utils/error";
 import { formatDate, formatPrice } from "~/utils/format";
 import { calculatePrice } from "~/utils/helper";
-import { getMembershipBenefits, getPassesBenefits } from "~/utils/membership";
+import { getMembershipBenefits } from "~/utils/membership";
 
 type Recipient = {
   fullName: string;
@@ -39,11 +39,6 @@ const availableTimeSlots = ref<
 const isTimeSlotLoading = ref(false);
 const spa = computed(() => spaStore.spa);
 const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
-const benefits = getMembershipBenefits(userDetail);
-const passesBenefits = getPassesBenefits(userDetail);
-const activeDiscount = computed(() =>
-  benefits.member.spa || passesBenefits.spa || 0,
-);
 
 const displaySubTypes = computed(() => {
   if (!spa.value?.subTypes)
@@ -63,6 +58,14 @@ const state = reactive({
   selectedSpa: null as any,
   selectedDate: null as any,
   selectedTime: undefined as string | undefined,
+});
+
+// Gift bookings only honour membership discounts — pass benefits are
+// personal to the pass holder and do not transfer to gift recipients.
+const activeDiscount = computed(() => {
+  const bookingDateStr = state.selectedDate?.toString?.();
+  const memberBenefits = getMembershipBenefits(userDetail, bookingDateStr);
+  return memberBenefits.member.spa ?? 0;
 });
 
 const steps = [
