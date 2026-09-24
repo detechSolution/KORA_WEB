@@ -13,7 +13,7 @@ import { useSpaStore } from "~/stores/spa";
 import { getApiErrorMessage } from "~/utils/error";
 import { formatDate, formatPrice } from "~/utils/format";
 import { calculatePrice } from "~/utils/helper";
-import { getMembershipBenefits, getPassesBenefits } from "~/utils/membership";
+import { getEffectiveDiscount, getMembershipBenefits } from "~/utils/membership";
 
 const props = defineProps<{
   isOpen: boolean;
@@ -76,10 +76,6 @@ const defaultOpenSubtype = computed(() => {
 });
 
 const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
-const benefits = getMembershipBenefits(userDetail);
-const passesBenefits = getPassesBenefits(userDetail);
-const MEMBERSHIP_DISCOUNT = benefits.member.spa || 0;
-const PASS_DISCOUNT = passesBenefits.spa || 0;
 
 const state = reactive({
   selectedSpa: null as any,
@@ -89,19 +85,20 @@ const state = reactive({
 });
 
 const discountType = computed(() => {
-  if (MEMBERSHIP_DISCOUNT > 0) {
-    return "Membership Discount";
-  }
-
-  if (PASS_DISCOUNT > 0) {
-    return "Pass Discount";
-  }
-
-  return null;
+  // Resolve discount against the selected booking date so that if the
+  // membership/pass expires before the chosen date, no discount applies.
+  const bookingDateStr = state.selectedDate?.toString?.();
+  const discount = getEffectiveDiscount("spa", userDetail, bookingDateStr);
+  if (discount <= 0)
+    return null;
+  const memberBenefits = getMembershipBenefits(userDetail, bookingDateStr);
+  return (memberBenefits.member.spa ?? 0) > 0 ? "Membership Discount" : "Pass Discount";
 });
 
 const activeDiscount = computed(() => {
-  return MEMBERSHIP_DISCOUNT || PASS_DISCOUNT;
+  // Re-evaluate each time the selected date changes.
+  const bookingDateStr = state.selectedDate?.toString?.();
+  return getEffectiveDiscount("spa", userDetail, bookingDateStr);
 });
 
 const showDiscount = computed(() => activeDiscount.value > 0);

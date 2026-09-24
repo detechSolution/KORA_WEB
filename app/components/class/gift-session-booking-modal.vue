@@ -7,7 +7,7 @@ import * as z from "zod";
 import { useNotification } from "~/composables/use-notification";
 import { useCartStore } from "~/stores/cart";
 import { calculatePrice } from "~/utils/helper";
-import { getMembershipBenefits, getPassesBenefits } from "~/utils/membership";
+import { getMembershipBenefits } from "~/utils/membership";
 
 type Recipient = {
   fullName: string;
@@ -57,11 +57,15 @@ const recipientSchema = z.object({
   }),
 });
 
-const benefits = getMembershipBenefits(userDetail);
-const passesBenefits = getPassesBenefits(userDetail);
-const activeDiscount = computed(() =>
-  benefits.member.class || passesBenefits.class || 0,
-);
+// Gift bookings only honour membership discounts — pass benefits are
+// personal to the pass holder and do not transfer to gift recipients.
+const sessionDateStr = new Date(props.session.sessionDate)
+  .toLocaleDateString("en-CA");
+const activeDiscount = computed(() => {
+  const type = props.session.type as "class" | "event" | "workshop" | "spa" | "cafe" | "salon";
+  const memberBenefits = getMembershipBenefits(userDetail, sessionDateStr);
+  return memberBenefits.member[type] ?? 0;
+});
 const pricing = computed(() =>
   calculatePrice({
     price: props.session.price,

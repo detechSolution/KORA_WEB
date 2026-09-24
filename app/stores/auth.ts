@@ -10,6 +10,102 @@ import { useCartStore } from "./cart";
 const AUTH_CHECK_INTERVAL = 5 * 60 * 1000;
 const USER_DATA_KEY = "user_data";
 
+// ─── API response types ────────────────────────────────────────────────────
+
+type PassBenefits = {
+  spa: number;
+  class: number;
+  event: number;
+  workshop: number;
+  cafe: number;
+  salon: number;
+};
+
+type UserPass = {
+  id: number;
+  passId: number;
+  name: string;
+  description: string;
+  startsOn: string;
+  endsOn: string;
+  status: string;
+  notes: string | null;
+  giftedBy: string | null;
+  passBenefits: PassBenefits;
+  validFrom: string;
+  validTo: string;
+  spaBenefit: number;
+  classBenefit: number;
+  eventBenefit: number;
+  workshopBenefit: number;
+  cafeBenefit: number;
+  salonBenefit: number;
+  currency: string;
+  allowedSessionType: string;
+};
+
+type MembershipPlan = {
+  id: number;
+  name: string;
+  currency: string;
+  description: string;
+  isPurchasable: boolean;
+  spaBenefit: number;
+  classBenefit: number;
+  eventBenefit: number;
+  workshopBenefit: number;
+  guestBenefits: {
+    spa: number;
+    class: number;
+    event: number;
+    workshop: number;
+    cafe?: number;
+    salon?: number;
+  };
+  memberBenefit: {
+    spa: number;
+    class: number;
+    event: number;
+    workshop: number;
+    cafe?: number;
+    salon?: number;
+  };
+};
+
+type MembershipOption = {
+  id: number;
+  frequency: string;
+  customDays: number | null;
+  price: number;
+  isVisible: boolean;
+  sortOrder: number;
+};
+
+type UserMembership = {
+  membershipPlanId: number;
+  membershipPlanOptionId: number;
+  plan: MembershipPlan;
+  option: MembershipOption;
+  subscriptionStartDate: string;
+  subscriptionEndDate: string;
+  validFrom: string;
+  validTo: string;
+};
+
+type UserProfile = {
+  height: number | null;
+  weight: number | null;
+  injuryHistory: string | null;
+  preferences: string | null;
+};
+
+type MembershipFreeze = {
+  endsOn: string;
+  [key: string]: unknown;
+};
+
+// ──────────────────────────────────────────────────────────────────────────
+
 export const useAuthStore = defineStore("auth", () => {
   const http = getHttp();
   const storage = useStorage();
@@ -28,10 +124,10 @@ export const useAuthStore = defineStore("auth", () => {
     is_active?: boolean;
     role_id?: number | null;
     last_login_at?: string | null;
-    membership?: Record<string, unknown> | null;
-    membershipFreeze?: Record<string, unknown> | null;
-    passes?: Record<string, unknown> | null;
-    profile?: Record<string, unknown> | null;
+    membership?: UserMembership | null;
+    membershipFreeze?: MembershipFreeze | null;
+    passes?: UserPass | null;
+    profile?: UserProfile | null;
   }>({
     id: null,
     email: "",
@@ -172,14 +268,11 @@ export const useAuthStore = defineStore("auth", () => {
         // user.value.is_active = u.is_active as boolean | undefined;
         user.value.role_id = (u?.adminRole?.id as number | null) ?? null;
         // user.value.last_login_at = (u.last_login_at as string | null) ?? null;
-        user.value.membership
-          = (u.membership as Record<string, unknown> | null) ?? null;
+        user.value.membership = (u.membership as UserMembership | null) ?? null;
         user.value.membershipFreeze
-          = (u.membershipFreeze as Record<string, unknown> | null) ?? null;
-        user.value.passes
-          = (u.passes as Record<string, unknown> | null) ?? null;
-        user.value.profile
-          = (u.profile as Record<string, unknown> | null) ?? null;
+          = (u.membershipFreeze as MembershipFreeze | null) ?? null;
+        user.value.passes = (u.passes as UserPass | null) ?? null;
+        user.value.profile = (u.profile as UserProfile | null) ?? null;
         permissions.value = Array.isArray(u?.permissions) ? u.permissions : [];
         saveUserToStorage();
         lastAuthCheck.value = now;
@@ -198,7 +291,7 @@ export const useAuthStore = defineStore("auth", () => {
   const isMembershipFrozen = (): boolean => {
     if (!user.value.membershipFreeze)
       return false;
-    const endsOn = user.value.membershipFreeze.endsOn as string;
+    const endsOn = user.value.membershipFreeze.endsOn;
     if (!endsOn)
       return false;
 

@@ -76,10 +76,21 @@ export function getDisabledMessage(session: any) {
 export function getDisabledMessageForGuest(session: any) {
   const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
 
-  const hasMembership = !!userDetail?.membership?.membershipPlanId;
+  const membership = userDetail?.membership;
+  const hasMembership = !!membership?.membershipPlanId;
 
   if (!hasMembership) {
     return "You need a membership plan to book this session for guest.";
+  }
+
+  // Verify the membership is valid today (matches the same gate used for benefits)
+  if (membership.validFrom && membership.validTo) {
+    const todayStr = new Date().toLocaleDateString("en-CA");
+    const isValid = todayStr >= membership.validFrom.slice(0, 10)
+      && todayStr <= membership.validTo.slice(0, 10);
+    if (!isValid) {
+      return "Your membership is not active for today's date.";
+    }
   }
 
   if (!session.isGuestBookable) {
