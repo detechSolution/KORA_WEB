@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { useNotification } from "~/composables/use-notification";
 import { useAuthStore } from "~/stores/auth";
 import { IMAGES } from "~/utils/images";
 
@@ -12,6 +13,7 @@ useSeoMeta({
 
 const authStore = useAuthStore();
 const router = useRouter();
+const { error: showError } = useNotification();
 const isModalOpen = ref(false);
 
 function openModal() {
@@ -19,6 +21,24 @@ function openModal() {
     router.push({ path: "/login", query: { redirect: "/guest-pass" } });
     return;
   }
+
+  // Guest pass requires an active membership. Check that the membership
+  // exists and that today falls within its validFrom–validTo window.
+  const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
+  const membership = userDetail?.membership;
+  const todayStr = new Date().toLocaleDateString("en-CA");
+  const isMembershipValidToday = membership?.membershipPlanId
+    && membership?.validFrom && membership?.validTo
+    && todayStr >= membership.validFrom.slice(0, 10)
+    && todayStr <= membership.validTo.slice(0, 10);
+
+  if (!isMembershipValidToday) {
+    showError({
+      message: "You need an active membership to create a guest pass.",
+    });
+    return;
+  }
+
   isModalOpen.value = true;
 }
 </script>

@@ -313,7 +313,7 @@ watch(
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <!-- Private Room Card -->
                   <div
-                    class="group relative border rounded-xs p-6 flex flex-col gap-4 transition-all duration-300 cursor-pointer"
+                    class="group relative border rounded-xs p-6 flex flex-col items-center gap-4 transition-all duration-300 cursor-pointer"
                     :class="
                       state.roomPreference === 'private'
                         ? 'border-primary-500 bg-primary-500/10'
@@ -332,36 +332,22 @@ watch(
                       >
                         <UIcon name="i-lucide-user" class="w-5 h-5" />
                       </div>
-                      <div
-                        class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors"
-                        :class="
-                          state.roomPreference === 'private'
-                            ? 'border-primary-500 bg-primary-500'
-                            : 'border-border'
-                        "
-                      >
-                        <div
-                          v-if="state.roomPreference === 'private'"
-                          class="w-2 h-2 rounded-full bg-white"
-                        />
-                      </div>
                     </div>
-                    <div>
+                    <div class="text-center">
                       <h3
                         class="font-serif text-lg font-medium text-foreground mb-1"
                       >
                         Private Room
                       </h3>
                       <p class="text-sm text-secondary-500">
-                        Enjoy your treatment in an exclusive private room for a
-                        fully personalized experience.
+                        Enjoy a relaxing spa session in a private room dedicated just to you.
                       </p>
                     </div>
                   </div>
 
                   <!-- Shared Spa Card -->
                   <div
-                    class="group relative border rounded-xs p-6 flex flex-col gap-4 transition-all duration-300 cursor-pointer"
+                    class="group relative border rounded-xs p-6 flex flex-col items-center gap-4 transition-all duration-300 cursor-pointer"
                     :class="
                       state.roomPreference === 'shared'
                         ? 'border-primary-500 bg-primary-500/10'
@@ -380,29 +366,15 @@ watch(
                       >
                         <UIcon name="i-lucide-users" class="w-5 h-5" />
                       </div>
-                      <div
-                        class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors"
-                        :class="
-                          state.roomPreference === 'shared'
-                            ? 'border-primary-500 bg-primary-500'
-                            : 'border-border'
-                        "
-                      >
-                        <div
-                          v-if="state.roomPreference === 'shared'"
-                          class="w-2 h-2 rounded-full bg-white"
-                        />
-                      </div>
                     </div>
-                    <div>
+                    <div class="text-center">
                       <h3
                         class="font-serif text-lg font-medium text-foreground mb-1"
                       >
                         Shared Spa
                       </h3>
                       <p class="text-sm text-secondary-500">
-                        Relax in our communal spa area, perfect for a social
-                        wellness experience.
+                        Share a room and experience the spa service together with a partner.
                       </p>
                     </div>
                   </div>
