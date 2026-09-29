@@ -56,7 +56,18 @@ const hasMembership = computed(() => {
 });
 
 const hasActivePass = computed(() => {
-  return !!userDetail?.passes?.id;
+  const passes = userDetail?.passes;
+  if (Array.isArray(passes)) {
+    const todayStr = new Date().toLocaleDateString("en-CA");
+    return passes.some((p: any) => {
+      const isActiveStatus = !p?.status || String(p.status).toLowerCase() === "active";
+      const from = (p?.validFrom ?? p?.startsOn)?.slice?.(0, 10);
+      const to = (p?.validTo ?? p?.endsOn)?.slice?.(0, 10);
+      const isValidDate = !from || !to || (todayStr >= from && todayStr <= to);
+      return isActiveStatus && isValidDate;
+    });
+  }
+  return !!passes?.id;
 });
 
 const membershipPlans = computed(() => {
