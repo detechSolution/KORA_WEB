@@ -72,37 +72,64 @@ export function getMembershipBenefits(
 }
 
 export function getPassesBenefits(user: any, bookingDate?: string): BenefitsMap {
-  const pass = user?.passes;
+  const rawPasses = user?.passes ?? user?.pass;
 
-  if (!pass) {
+  if (!rawPasses) {
     return { ...ZERO_BENEFITS };
   }
 
-  const { validFrom, validTo, passBenefits, allowedSessionType } = pass;
-
-  if (!isValidOnDate(validFrom, validTo, bookingDate)) {
-    return { ...ZERO_BENEFITS };
-  }
+  // auth/me returns `passes` as an array (see sample response), but older
+  // cached user_data may hold a single object. Normalize to an array.
+  const passes = Array.isArray(rawPasses) ? rawPasses : [rawPasses];
 
   // Session types that are gated by allowedSessionType.
   const SESSION_TYPES: ServiceType[] = ["class", "event", "workshop"];
 
-  const benefits: BenefitsMap = {
-    spa: passBenefits?.spa ?? 0,
-    class: passBenefits?.class ?? 0,
-    event: passBenefits?.event ?? 0,
-    workshop: passBenefits?.workshop ?? 0,
-    cafe: passBenefits?.cafe ?? 0,
-    salon: passBenefits?.salon ?? 0,
-  };
+  const benefits: BenefitsMap = { ...ZERO_BENEFITS };
 
-  // Zero out session types that don't match the pass's allowedSessionType.
-  // e.g. a "class" pass should not give a discount on events or workshops.
-  if (allowedSessionType) {
-    for (const type of SESSION_TYPES) {
-      if (type !== allowedSessionType) {
-        benefits[type] = 0;
+  for (const pass of passes) {
+    if (!pass || typeof pass !== "object")
+      continue;
+
+    // Only active passes grant benefits.
+    if (pass.status && String(pass.status).toLowerCase() !== "active") {
+      continue;
+    }
+
+    // Prefer validFrom/validTo, fall back to startsOn/endsOn.
+    const validFrom = pass.validFrom ?? pass.startsOn;
+    const validTo = pass.validTo ?? pass.endsOn;
+
+    if (!isValidOnDate(validFrom, validTo, bookingDate)) {
+      continue;
+    }
+
+    const passBenefits = pass.passBenefits ?? {};
+    const candidate: BenefitsMap = {
+      spa: passBenefits?.spa ?? pass?.spaBenefit ?? 0,
+      class: passBenefits?.class ?? pass?.classBenefit ?? 0,
+      event: passBenefits?.event ?? pass?.eventBenefit ?? 0,
+      workshop: passBenefits?.workshop ?? pass?.workshopBenefit ?? 0,
+      cafe: passBenefits?.cafe ?? pass?.cafeBenefit ?? 0,
+      salon: passBenefits?.salon ?? pass?.salonBenefit ?? 0,
+    };
+
+    // Zero out session types that don't match the pass's allowedSessionType.
+    // e.g. a "class" pass should not give a discount on events or workshops.
+    const allowedSessionType = pass.allowedSessionType
+      ? String(pass.allowedSessionType).toLowerCase()
+      : null;
+    if (allowedSessionType) {
+      for (const type of SESSION_TYPES) {
+        if (type !== allowedSessionType) {
+          candidate[type] = 0;
+        }
       }
+    }
+
+    // Take the best benefit per service across all valid passes.
+    for (const key of Object.keys(benefits) as ServiceType[]) {
+      benefits[key] = Math.max(benefits[key] ?? 0, candidate[key] ?? 0);
     }
   }
 

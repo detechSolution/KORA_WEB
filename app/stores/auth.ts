@@ -126,7 +126,7 @@ export const useAuthStore = defineStore("auth", () => {
     last_login_at?: string | null;
     membership?: UserMembership | null;
     membershipFreeze?: MembershipFreeze | null;
-    passes?: UserPass | null;
+    passes?: UserPass[] | null;
     profile?: UserProfile | null;
   }>({
     id: null,
@@ -136,6 +136,7 @@ export const useAuthStore = defineStore("auth", () => {
     avatar: "",
     membership: null,
     membershipFreeze: null,
+    passes: null,
     profile: null,
   });
 
@@ -147,6 +148,10 @@ export const useAuthStore = defineStore("auth", () => {
       const storedUser = localStorage.getItem(USER_DATA_KEY);
       if (storedUser) {
         const parsed = JSON.parse(storedUser);
+        // Normalize legacy single-object `passes` into an array.
+        if (parsed?.passes && !Array.isArray(parsed.passes)) {
+          parsed.passes = [parsed.passes];
+        }
         user.value = { ...user.value, ...parsed };
         // If we have stored user data and tokens, assume authenticated
         // (will be verified on next check)
@@ -271,7 +276,14 @@ export const useAuthStore = defineStore("auth", () => {
         user.value.membership = (u.membership as UserMembership | null) ?? null;
         user.value.membershipFreeze
           = (u.membershipFreeze as MembershipFreeze | null) ?? null;
-        user.value.passes = (u.passes as UserPass | null) ?? null;
+        // auth/me returns `passes` as an array; normalize legacy single-object
+        // shapes (cached user_data) into an array as well.
+        const rawPasses = u.passes as UserPass[] | UserPass | null | undefined;
+        user.value.passes = Array.isArray(rawPasses)
+          ? rawPasses
+          : rawPasses
+            ? [rawPasses]
+            : null;
         user.value.profile = (u.profile as UserProfile | null) ?? null;
         permissions.value = Array.isArray(u?.permissions) ? u.permissions : [];
         saveUserToStorage();
