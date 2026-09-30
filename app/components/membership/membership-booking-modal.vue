@@ -4,6 +4,7 @@ import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { useNotification } from "~/composables/use-notification";
 import { useCartStore } from "~/stores/cart";
+import { formatDate } from "~/utils/format";
 
 const props = defineProps({
   isOpen: {
@@ -30,6 +31,36 @@ const router = useRouter();
 const cartStore = useCartStore();
 const { success } = useNotification();
 
+// Membership validity starts on purchase (today) and runs for the option's
+// duration, so monthly/yearly/custom all resolve to a concrete date range.
+function resolveDurationDays(option: any): number | null {
+  if (typeof option?.durationDays === "number" && option.durationDays > 0) {
+    return option.durationDays;
+  }
+  const frequency = String(option?.frequency ?? "").toUpperCase();
+  if (frequency === "CUSTOM" && typeof option?.customDays === "number" && option.customDays > 0) {
+    return option.customDays;
+  }
+  if (frequency === "MONTHLY")
+    return 30;
+  if (frequency === "QUARTERLY")
+    return 90;
+  if (frequency === "YEARLY")
+    return 365;
+  return null;
+}
+
+const validityStart = computed(() => formatDate(new Date(), "YYYY-MM-DD"));
+
+const validityEnd = computed(() => {
+  const days = resolveDurationDays(props.membership.selectedOption);
+  if (!days)
+    return null;
+  const end = new Date();
+  end.setDate(end.getDate() + days);
+  return formatDate(end, "YYYY-MM-DD");
+});
+
 const membershipItem = computed(() => ({
   referenceId: props.membership.selectedOption.id,
   membershipPlanId: props.membership.selectedOption.membershipPlanId,
@@ -39,6 +70,8 @@ const membershipItem = computed(() => ({
   finalPrice: props.membership.selectedOption.price,
   itemType: "membership",
   memberBenefit: props.membership.selectedOption.memberBenefit,
+  bookingDate: validityStart.value,
+  ...(validityEnd.value ? { validTo: validityEnd.value } : {}),
 }));
 
 function close() {

@@ -20,10 +20,11 @@ const router = useRouter();
 const authStore = useAuthStore();
 const cartStore = useCartStore();
 const colorMode = useColorMode();
-const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
+
+const userDetail = computed(() => authStore.user);
 const cartCount = computed(() => cartStore.cartCount);
 const hasNotMembership = computed(() => {
-  return !userDetail?.membership?.membershipPlanId;
+  return !userDetail.value?.membership?.membershipPlanId;
 });
 
 const isDark = computed({
@@ -64,10 +65,10 @@ function handleScroll() {
   }
 }
 
-const items = ref<DropdownMenuItem[][]>([
+const items = computed<DropdownMenuItem[][]>(() => [
   [
     {
-      label: userDetail.name || "Guest",
+      label: userDetail.value.name || "Guest",
       type: "label",
     },
   ],

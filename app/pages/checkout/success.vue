@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
+import { useAuthStore } from "~/stores/auth";
 import { useCartStore } from "~/stores/cart";
 import { useCheckoutStore } from "~/stores/checkout";
 // import { formatPrice } from "~/utils/format";
 
 const route = useRoute();
+const authStore = useAuthStore();
 const cartStore = useCartStore();
 const checkoutStore = useCheckoutStore();
 
@@ -35,6 +37,13 @@ onMounted(async () => {
       }
       else if (cartStore.cartItems.length > 0) {
         cartStore.clearCart();
+      }
+
+      try {
+        await authStore.checkAuth(true);
+      }
+      catch (refreshError) {
+        console.error("Failed to refresh user after payment:", refreshError);
       }
     }
   }
