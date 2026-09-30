@@ -357,6 +357,7 @@ onUnmounted(() => {
                       >
                         <UIcon name="i-lucide-calendar" class="w-3 h-3" />
                         <span>{{ item.bookingDate }}</span>
+                        <span v-if="item.itemType === 'membership' && item.validTo">– {{ item.validTo }}</span>
                       </div>
                       <div
                         v-if="item.bookingTime"
