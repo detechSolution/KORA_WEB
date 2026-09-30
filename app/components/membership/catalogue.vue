@@ -49,14 +49,14 @@ const catalogueError = computed(() =>
     ? membershipStore.passError
     : membershipStore.membershipError,
 );
-const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
+const userDetail = computed(() => authStore.user);
 
 const hasMembership = computed(() => {
-  return !!userDetail?.membership?.membershipPlanId;
+  return !!userDetail.value?.membership?.membershipPlanId;
 });
 
 const hasActivePass = computed(() => {
-  const passes = userDetail?.passes;
+  const passes = userDetail.value?.passes;
   if (Array.isArray(passes)) {
     const todayStr = new Date().toLocaleDateString("en-CA");
     return passes.some((p: any) => {
