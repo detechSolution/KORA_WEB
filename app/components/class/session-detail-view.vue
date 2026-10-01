@@ -43,6 +43,9 @@ const isRebookableType = computed(() => {
   return type === "event" || type === "workshop";
 });
 
+// A sold-out session cannot be gifted.
+const isGiftSoldOut = computed(() => (props.session.remainingSpots ?? 0) <= 0);
+
 function handleOpenBookingModal() {
   if (props.gifting) {
     emit("gift", props.session);
@@ -317,7 +320,16 @@ async function handleAddToWaitlist() {
               </div>
 
               <base-button
-                v-if="gifting"
+                v-if="gifting && isGiftSoldOut"
+                variant="outline"
+                color="primary"
+                class="w-full text-sm uppercase"
+                disabled
+              >
+                Sold Out
+              </base-button>
+              <base-button
+                v-else-if="gifting"
                 variant="solid"
                 class="w-full text-sm uppercase"
                 @click="emit('gift', session)"
