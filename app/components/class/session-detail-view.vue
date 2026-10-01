@@ -35,6 +35,14 @@ const showWaitlistCta = computed(() => {
   );
 });
 
+// Event/workshop sessions allow repeat bookings (multi-seat via quantity)
+// while spots remain, so the "Already Booked" block must not apply to them.
+// Class keeps the existing one-booking behavior.
+const isRebookableType = computed(() => {
+  const type = String(props.session.type ?? "").toLowerCase();
+  return type === "event" || type === "workshop";
+});
+
 function handleOpenBookingModal() {
   if (props.gifting) {
     emit("gift", props.session);
@@ -317,7 +325,7 @@ async function handleAddToWaitlist() {
                 Gift This Session
               </base-button>
               <base-button
-                v-else-if="session.isBooked && !session.isGuestBookable"
+                v-else-if="session.isBooked && !session.isGuestBookable && !isRebookableType"
                 variant="outline"
                 color="primary"
                 class="w-full text-sm uppercase"
