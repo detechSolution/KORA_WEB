@@ -44,15 +44,14 @@ const state = reactive({
   } as Recipient,
 });
 
-const steps = [
-  { label: "Recipient Detail" },
-  { label: "Overview" },
-];
+const steps = [{ label: "Recipient Detail" }, { label: "Overview" }];
 
 const recipientSchema = z.object({
   recipient: z.object({
     fullName: z.string().trim().min(1, "Full name is required"),
-    phone: z.string().trim().optional(),
+    phone: z.coerce
+      .string()
+      .regex(/^(?:\d{10})?$/, "Phone number must be exactly 10 digits"),
     email: z.string().trim().email("Please enter a valid email address"),
   }),
 });
@@ -165,7 +164,8 @@ function proceedToCheckout() {
                 Who Is This Gift For?
               </h2>
               <p class="text-xs text-[#A08860]">
-                Enter the details of the person receiving this gifted membership package.
+                Enter the details of the person receiving this gifted membership
+                package.
               </p>
             </div>
 
@@ -221,7 +221,9 @@ function proceedToCheckout() {
               </p>
             </div>
 
-            <h3 class="text-[10px] font-bold tracking-widest uppercase text-[#A08860] mb-2">
+            <h3
+              class="text-[10px] font-bold tracking-widest uppercase text-[#A08860] mb-2"
+            >
               GIFT BOOKING OVERVIEW
             </h3>
             <div class="flex gap-2 text-secondary-500">
@@ -249,11 +251,15 @@ function proceedToCheckout() {
               <h4 class="font-serif text-lg font-medium text-foreground mb-5">
                 Overview
               </h4>
-              <div class="flex justify-between items-center text-sm text-foreground">
+              <div
+                class="flex justify-between items-center text-sm text-foreground"
+              >
                 <span>{{ membership.name }} - {{ frequency }}</span>
                 <span>Rs. {{ formattedPrice }}</span>
               </div>
-              <div class="flex justify-between items-center border-t border-border/40 pt-4 mt-4 text-foreground">
+              <div
+                class="flex justify-between items-center border-t border-border/40 pt-4 mt-4 text-foreground"
+              >
                 <span class="font-serif font-bold text-2xl">Total</span>
                 <span class="font-serif font-bold text-2xl">Rs. {{ formattedPrice }}</span>
               </div>
