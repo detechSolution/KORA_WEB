@@ -32,7 +32,9 @@ const schema = z
   .object({
     fullName: z.string().min(1, "Full name is required"),
     email: z.string().min(1, "Email is required").email("Invalid email"),
-    phone: z.string().optional(),
+    phone: z.coerce
+      .string()
+      .regex(/^(?:\d{10})?$/, "Phone number must be exactly 10 digits"),
     password: z
       .string()
       .min(8, "New password must be at least 8 characters")
