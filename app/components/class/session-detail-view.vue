@@ -29,8 +29,7 @@ const isAddingToWaitlist = ref(false);
 
 const showWaitlistCta = computed(() => {
   return (
-    !props.session.isBooked
-    && !props.session.isInWaitlist
+    !props.session.isInWaitlist
     && !props.session.isBookable
   );
 });
@@ -337,7 +336,7 @@ async function handleAddToWaitlist() {
                 Gift This Session
               </base-button>
               <base-button
-                v-else-if="session.isBooked && !session.isGuestBookable && !isRebookableType"
+                v-else-if="session.isBooked && !isRebookableType"
                 variant="outline"
                 color="primary"
                 class="w-full text-sm uppercase"
