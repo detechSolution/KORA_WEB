@@ -13,7 +13,10 @@ import { useSpaStore } from "~/stores/spa";
 import { getApiErrorMessage } from "~/utils/error";
 import { formatDate, formatPrice } from "~/utils/format";
 import { calculatePrice } from "~/utils/helper";
-import { getEffectiveDiscount, getMembershipBenefits } from "~/utils/membership";
+import {
+  getEffectiveDiscount,
+  getMembershipBenefits,
+} from "~/utils/membership";
 
 const props = defineProps<{
   isOpen: boolean;
@@ -92,7 +95,9 @@ const discountType = computed(() => {
   if (discount <= 0)
     return null;
   const memberBenefits = getMembershipBenefits(userDetail, bookingDateStr);
-  return (memberBenefits.member.spa ?? 0) > 0 ? "Membership Discount" : "Pass Discount";
+  return (memberBenefits.member.spa ?? 0) > 0
+    ? "Membership Discount"
+    : "Pass Discount";
 });
 
 const activeDiscount = computed(() => {
@@ -160,8 +165,12 @@ function nextStep() {
 }
 
 function previousStep() {
-  if (currentStep.value > 0)
+  if (currentStep.value > 0) {
     currentStep.value--;
+  }
+  else {
+    close();
+  }
 }
 
 function handleBookingClick(spaData: any) {
@@ -340,7 +349,8 @@ watch(
                         Private Room
                       </h3>
                       <p class="text-sm text-secondary-500">
-                        Enjoy a relaxing spa session in a private room dedicated just to you.
+                        Enjoy a relaxing spa session in a private room dedicated
+                        just to you.
                       </p>
                     </div>
                   </div>
@@ -374,7 +384,8 @@ watch(
                         Shared Spa
                       </h3>
                       <p class="text-sm text-secondary-500">
-                        Share a room and experience the spa service together with a partner.
+                        Share a room and experience the spa service together
+                        with a partner.
                       </p>
                     </div>
                   </div>

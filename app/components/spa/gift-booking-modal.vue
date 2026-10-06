@@ -44,7 +44,9 @@ const displaySubTypes = computed(() => {
   if (!spa.value?.subTypes)
     return [];
   if (props.subTypeId) {
-    return spa.value.subTypes.filter((st: any) => String(st.id) === String(props.subTypeId));
+    return spa.value.subTypes.filter(
+      (st: any) => String(st.id) === String(props.subTypeId),
+    );
   }
   return spa.value.subTypes;
 });
@@ -79,14 +81,19 @@ const schema = computed(() => [
   z.object({
     recipient: z.object({
       fullName: z.string().trim().min(1, "Full name is required"),
-      phone: z.string().trim().optional(),
+      phone: z.coerce
+        .string()
+        .regex(/^(?:\d{10})?$/, "Phone number must be exactly 10 digits"),
       email: z.string().trim().email("Please enter a valid email address"),
     }),
   }),
   z.object({
-    selectedSpa: z.object({ id: z.union([z.string(), z.number()]) }, {
-      message: "Please select a spa treatment",
-    }),
+    selectedSpa: z.object(
+      { id: z.union([z.string(), z.number()]) },
+      {
+        message: "Please select a spa treatment",
+      },
+    ),
   }),
   z.object({
     selectedDate: z.any().refine(value => !!value, "Please select a date"),
@@ -275,7 +282,8 @@ watch(
                 Who Is This Gift For?
               </h2>
               <p class="text-xs text-[#A08860]">
-                Enter the details of the person receiving this gifted spa package.
+                Enter the details of the person receiving this gifted spa
+                package.
               </p>
             </div>
             <div class="border-t border-border/40 pt-6">
@@ -327,7 +335,10 @@ watch(
                 <template #default="{ item, open }">
                   <div class="flex flex-col">
                     <span class="font-serif text-lg">{{ item.name }}</span>
-                    <p class="text-sm text-secondary-500 mt-2" :class="!open && 'line-clamp-2'">
+                    <p
+                      class="text-sm text-secondary-500 mt-2"
+                      :class="!open && 'line-clamp-2'"
+                    >
                       {{ item.description }}
                     </p>
                   </div>
@@ -339,10 +350,24 @@ watch(
                       :key="duration.id"
                       type="button"
                       class="border rounded-xs p-4 text-left transition-colors cursor-pointer"
-                      :class="state.selectedSpa?.id === duration.id ? 'border-primary bg-primary text-white' : 'border-border bg-[#c9a55a]/10 dark:bg-[#2A2722]'"
-                      @click="selectSpa({ ...duration, name: item.name, referenceId: item.id, image: spa?.bannerUrl })"
+                      :class="
+                        state.selectedSpa?.id === duration.id
+                          ? 'border-primary bg-primary text-white'
+                          : 'border-border bg-[#c9a55a]/10 dark:bg-[#2A2722]'
+                      "
+                      @click="
+                        selectSpa({
+                          ...duration,
+                          name: item.name,
+                          referenceId: item.id,
+                          image: spa?.bannerUrl,
+                        })
+                      "
                     >
-                      <span class="flex items-center gap-2 text-sm"><UIcon name="i-lucide-clock" class="h-3.5 w-3.5" />{{ duration.duration }} {{ duration.timeUnit }}</span>
+                      <span class="flex items-center gap-2 text-sm"><UIcon name="i-lucide-clock" class="h-3.5 w-3.5" />{{
+                        duration.duration
+                      }}
+                        {{ duration.timeUnit }}</span>
                       <span class="block font-serif text-2xl mt-3">Rs. {{ formatPrice(duration.price) }}</span>
                     </button>
                   </div>
@@ -371,7 +396,12 @@ watch(
               <UCalendar
                 v-model="state.selectedDate"
                 :is-date-unavailable="isDateUnavailable"
-                :ui="{ headCell: 'text-xs font-normal', gridBody: 'grid gap-2 sm:gap-4', cellTrigger: 'w-full rounded-none flex flex-col h-8 w-8 p-1 sm:h-12 sm:w-12 sm:p-2 border border-border' }"
+                :ui="{
+                  headCell: 'text-xs font-normal',
+                  gridBody: 'grid gap-2 sm:gap-4',
+                  cellTrigger:
+                    'w-full rounded-none flex flex-col h-8 w-8 p-1 sm:h-12 sm:w-12 sm:p-2 border border-border',
+                }"
               />
             </UFormField>
             <div v-if="state.selectedDate">
@@ -385,14 +415,21 @@ watch(
                   class="h-12 rounded-none"
                 />
               </div>
-              <UFormField v-else-if="availableTimeSlots.length" name="selectedTime">
+              <UFormField
+                v-else-if="availableTimeSlots.length"
+                name="selectedTime"
+              >
                 <div class="grid grid-cols-3 gap-4">
                   <button
                     v-for="time in availableTimeSlots"
                     :key="time.time"
                     type="button"
                     class="border py-3 text-center text-sm transition-colors cursor-pointer"
-                    :class="state.selectedTime === time.time ? 'border-primary bg-primary text-white' : 'border-border hover:border-primary'"
+                    :class="
+                      state.selectedTime === time.time
+                        ? 'border-primary bg-primary text-white'
+                        : 'border-border hover:border-primary'
+                    "
                     @click="selectTime(time.time)"
                   >
                     {{ time.label }}
@@ -414,7 +451,9 @@ watch(
                 Please check the gift details before confirming
               </p>
             </div>
-            <h3 class="text-[10px] font-bold tracking-widest uppercase text-[#A08860] mb-2">
+            <h3
+              class="text-[10px] font-bold tracking-widest uppercase text-[#A08860] mb-2"
+            >
               GIFT BOOKING OVERVIEW
             </h3>
             <div class="flex gap-2 text-secondary-500">
@@ -441,13 +480,22 @@ watch(
               <h4 class="font-serif text-lg font-medium text-foreground mb-5">
                 Overview
               </h4>
-              <div class="flex justify-between items-center text-sm text-foreground">
-                <span>{{ state.selectedSpa?.name }} - {{ state.selectedSpa?.duration }} {{ state.selectedSpa?.timeUnit }}</span><span>Rs. {{ formatPrice(pricing.subtotal) }}</span>
+              <div
+                class="flex justify-between items-center text-sm text-foreground"
+              >
+                <span>{{ state.selectedSpa?.name }} -
+                  {{ state.selectedSpa?.duration }}
+                  {{ state.selectedSpa?.timeUnit }}</span><span>Rs. {{ formatPrice(pricing.subtotal) }}</span>
               </div>
-              <div v-if="pricing.discountAmount > 0" class="flex justify-between items-center text-sm text-muted-foreground mt-3">
+              <div
+                v-if="pricing.discountAmount > 0"
+                class="flex justify-between items-center text-sm text-muted-foreground mt-3"
+              >
                 <span>Discount ({{ activeDiscount }}%)</span><span>- Rs. {{ formatPrice(pricing.discountAmount) }}</span>
               </div>
-              <div class="flex justify-between items-center border-t border-border/40 pt-4 mt-4 text-foreground">
+              <div
+                class="flex justify-between items-center border-t border-border/40 pt-4 mt-4 text-foreground"
+              >
                 <span class="font-serif font-bold text-2xl">Total</span><span class="font-serif font-bold text-2xl">Rs. {{ formatPrice(pricing.finalPrice) }}</span>
               </div>
             </div>
@@ -471,10 +519,16 @@ watch(
           Next
         </base-button>
         <div v-else class="ml-auto flex flex-col sm:flex-row gap-2 sm:gap-4">
-          <base-button class="uppercase text-[11px] tracking-widest font-bold px-8 h-11 rounded-none bg-[#1C1C1C] hover:bg-[#111111] dark:bg-black text-white" @click="addToCart">
+          <base-button
+            class="uppercase text-[11px] tracking-widest font-bold px-8 h-11 rounded-none bg-[#1C1C1C] hover:bg-[#111111] dark:bg-black text-white"
+            @click="addToCart"
+          >
             Add To Cart
           </base-button>
-          <base-button class="uppercase text-[11px] tracking-widest font-bold px-8 h-11 rounded-none bg-[#A08860] hover:bg-[#8c7550] text-white" @click="proceedToCheckout">
+          <base-button
+            class="uppercase text-[11px] tracking-widest font-bold px-8 h-11 rounded-none bg-[#A08860] hover:bg-[#8c7550] text-white"
+            @click="proceedToCheckout"
+          >
             Proceed To Checkout
           </base-button>
         </div>
