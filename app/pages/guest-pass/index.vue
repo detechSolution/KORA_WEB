@@ -76,7 +76,7 @@ function openModal() {
 
       <p class="max-w-xl mx-auto text-sm text-secondary-500 dark:text-secondary-400 leading-relaxed mb-12">
         A Kora guest pass is a special invitation, providing access to our curated wellness services.
-        This offers guests a personalized opportunity to experience the Kora lifestyle first-hand.
+        This offers guests a personalized opportunity to experience the Kora lifestyle first-hand. You need an active membership to create a guest pass.
       </p>
 
       <base-button
