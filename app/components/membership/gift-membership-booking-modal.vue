@@ -33,9 +33,24 @@ const emit = defineEmits<{
 
 const router = useRouter();
 const cartStore = useCartStore();
-const { success } = useNotification();
+const { error: showError, success } = useNotification();
 const formRef = ref<InstanceType<typeof UForm> | null>(null);
 const currentStep = ref(0);
+
+// Mandatory legal consent: the waiver must be accepted before a gifted
+// membership can be added to cart or purchased.
+const waiverAccepted = ref(false);
+const waiverError = ref(false);
+
+function requireWaiver(): boolean {
+  if (waiverAccepted.value) {
+    waiverError.value = false;
+    return true;
+  }
+  waiverError.value = true;
+  showError({ message: "Please read and accept the Medical & Liability Waiver to continue." });
+  return false;
+}
 const state = reactive({
   recipient: {
     fullName: "",
@@ -77,6 +92,7 @@ const membershipItem = computed(() => ({
   memberBenefit: props.option.memberBenefit,
   isGift: true,
   recipient: { ...state.recipient },
+  waiverAcceptedAt: new Date().toISOString(),
 }));
 
 async function validateRecipient(): Promise<boolean> {
@@ -94,6 +110,8 @@ function reset() {
   state.recipient.fullName = "";
   state.recipient.phone = "";
   state.recipient.email = "";
+  waiverAccepted.value = false;
+  waiverError.value = false;
 }
 
 function close() {
@@ -121,12 +139,16 @@ function nextStep() {
 }
 
 function addToCart() {
+  if (!requireWaiver())
+    return;
   cartStore.addToCart(membershipItem.value);
   success({ message: "Gift membership added to cart successfully!" });
   close();
 }
 
 function proceedToCheckout() {
+  if (!requireWaiver())
+    return;
   cartStore.addToCart(membershipItem.value);
   close();
   router.push("/checkout");
@@ -264,6 +286,12 @@ function proceedToCheckout() {
                 <span class="font-serif font-bold text-2xl">Rs. {{ formattedPrice }}</span>
               </div>
             </div>
+
+            <MembershipWaiverConsent
+              v-model="waiverAccepted"
+              :show-error="waiverError"
+              class="mt-6"
+            />
 
             <div class="flex flex-col sm:flex-row justify-between gap-4 mt-8">
               <base-button variant="outline" @click="currentStep = 0">
