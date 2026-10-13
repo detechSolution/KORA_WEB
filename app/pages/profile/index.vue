@@ -752,6 +752,7 @@ onMounted(async () => {
                   :booking="booking"
                   :active-tab="activeTab"
                   @fetch-bookings="fetchBookings"
+                  @fetch-dashboard-data="memberStore.getDashboard"
                 />
               </div>
               <div
