@@ -703,6 +703,18 @@ onUnmounted(() => {
               </p>
             </div> -->
             </div>
+            <p class="mt-2 text-xs text-secondary-400 hidden sm:block">
+              Completing this payment confirms your agreement to our
+              <NuxtLink
+                to="/policy"
+                target="_blank"
+                rel="noopener"
+                class="font-semibold text-primary-700 underline underline-offset-2 hover:text-primary"
+                @click.stop
+              >
+                Terms & Policy
+              </NuxtLink>
+            </p>
           </div>
 
           <div
@@ -720,7 +732,7 @@ onUnmounted(() => {
             </base-button>
 
             <base-button
-              trailing-icon="i-lucide-arrow-right"
+              trailing-icon="i-lucide-lock"
               class="uppercase self-end flex tracking-widest font-bold px-8 rounded-none"
               :loading="loading"
               :disabled="
@@ -729,7 +741,7 @@ onUnmounted(() => {
               "
               @click="handlePayNowClick"
             >
-              PAY NOW
+              PAY SECURELY
             </base-button>
           </div>
         </div>
