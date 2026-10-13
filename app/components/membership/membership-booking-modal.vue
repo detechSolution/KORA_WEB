@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useNotification } from "~/composables/use-notification";
 import { useCartStore } from "~/stores/cart";
@@ -29,7 +29,22 @@ const emit = defineEmits(["close"]);
 
 const router = useRouter();
 const cartStore = useCartStore();
-const { success } = useNotification();
+const { error: showError, success } = useNotification();
+
+// Mandatory legal consent: the waiver must be accepted before a membership
+// can be added to cart or purchased.
+const waiverAccepted = ref(false);
+const waiverError = ref(false);
+
+function requireWaiver(): boolean {
+  if (waiverAccepted.value) {
+    waiverError.value = false;
+    return true;
+  }
+  waiverError.value = true;
+  showError({ message: "Please read and accept the Medical & Liability Waiver to continue." });
+  return false;
+}
 
 // Membership validity starts on purchase (today) and runs for the option's
 // duration, so monthly/yearly/custom all resolve to a concrete date range.
@@ -72,19 +87,26 @@ const membershipItem = computed(() => ({
   memberBenefit: props.membership.selectedOption.memberBenefit,
   bookingDate: validityStart.value,
   ...(validityEnd.value ? { validTo: validityEnd.value } : {}),
+  waiverAcceptedAt: new Date().toISOString(),
 }));
 
 function close() {
+  waiverAccepted.value = false;
+  waiverError.value = false;
   emit("close");
 }
 
 function addToCart() {
+  if (!requireWaiver())
+    return;
   cartStore.addToCart(membershipItem.value);
   success({ message: "Item added to cart successfully!" });
   close();
 }
 
 function proceedToCheckout() {
+  if (!requireWaiver())
+    return;
   cartStore.addToCart(membershipItem.value);
   close();
   router.push("/checkout");
@@ -139,6 +161,12 @@ function proceedToCheckout() {
         </div>
         <div class="border-b border-border/40 pb-6 mb-8" />
       </div>
+
+      <MembershipWaiverConsent
+        v-model="waiverAccepted"
+        :show-error="waiverError"
+        class="mb-8"
+      />
 
       <div class="flex flex-col sm:flex-row justify-end gap-4 mt-auto">
         <base-button

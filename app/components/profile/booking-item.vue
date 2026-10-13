@@ -12,7 +12,7 @@ const props = defineProps<{
   activeTab: string;
 }>();
 
-const emit = defineEmits(["fetchBookings"]);
+const emit = defineEmits(["fetchBookings", "fetchDashboardData"]);
 
 const router = useRouter();
 const { success, error: showError } = useNotification();
@@ -61,6 +61,7 @@ async function handleCancelRequest() {
     success({ message: "Cancellation requested successfully" });
 
     emit("fetchBookings");
+    emit("fetchDashboardData");
   }
   catch (err: unknown) {
     showError({

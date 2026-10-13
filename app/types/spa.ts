@@ -6,6 +6,8 @@ export type Spa = {
   bannerUrl: string | null;
   videoUrl: string | null;
   availableDays: string[];
+  privateRoomCount?: number | null;
+  sharedRoomCount?: number | null;
 };
 
 export type SpaCategory = {
