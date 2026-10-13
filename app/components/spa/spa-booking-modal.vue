@@ -53,11 +53,19 @@ const steps = [
 const router = useRouter();
 const currentStep = ref(0);
 const formRef = ref<InstanceType<typeof UForm> | null>(null);
-const availableTimeSlots = ref<
-  { time: string; label: string; availableCapacity?: number }[]
->([]);
+const availableTimeSlots = ref<TimeSlot[]>([]);
 const isTimeSlotLoading = ref(false);
 const selectedSpaModel = defineModel<any>("selectedSpa");
+
+type TimeSlot = {
+  time: string;
+  label: string;
+  availableCapacity?: number;
+  private?: number;
+  shared?: number;
+  availablePrivateRooms?: number;
+  availableSharedRooms?: number;
+};
 
 const dayMap = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
 function isDateUnavailable(date: DateValue) {
@@ -85,6 +93,47 @@ const state = reactive({
   selectedDate: null as any,
   selectedTime: undefined as string | undefined,
   roomPreference: "" as "private" | "shared" | "",
+});
+
+type RoomOption = {
+  key: "private" | "shared";
+  title: string;
+  description: string;
+  icon: string;
+  available: boolean;
+  unavailableText: string;
+};
+
+const roomOptions = computed<RoomOption[]>(() => [
+  {
+    key: "private",
+    title: "Private Room",
+    description: "Enjoy a relaxing spa session in a private room dedicated just to you.",
+    icon: "i-lucide-user",
+    available: (spa.value?.privateRoomCount ?? 1) > 0,
+    unavailableText: "Private rooms are currently unavailable",
+  },
+  {
+    key: "shared",
+    title: "Shared Spa",
+    description: "Share a room and experience the spa service together with a partner.",
+    icon: "i-lucide-users",
+    available: (spa.value?.sharedRoomCount ?? 1) > 0,
+    unavailableText: "Shared rooms are currently unavailable",
+  },
+]);
+
+function selectRoom(option: RoomOption) {
+  if (!option.available)
+    return;
+  state.roomPreference = option.key;
+}
+
+watch(roomOptions, (options) => {
+  const selected = options.find(option => option.key === state.roomPreference);
+  if (state.roomPreference && selected && !selected.available) {
+    state.roomPreference = "";
+  }
 });
 
 const discountType = computed(() => {
@@ -178,9 +227,51 @@ function handleBookingClick(spaData: any) {
   selectedSpaModel.value = spaData;
 }
 
-function selectTime(time: string) {
-  state.selectedTime = time;
+function slotRoomCount(slot: TimeSlot, room: "private" | "shared"): number | null {
+  const value = room === "private"
+    ? (slot.availablePrivateRooms ?? slot.private)
+    : (slot.availableSharedRooms ?? slot.shared);
+  if (value === undefined || value === null) {
+    const capacity = slot.availableCapacity;
+    if (capacity === undefined || capacity === null)
+      return null;
+    return capacity;
+  }
+  return value;
 }
+
+function isSlotAvailable(slot: TimeSlot): boolean {
+  if (!state.roomPreference)
+    return true;
+  const count = slotRoomCount(slot, state.roomPreference);
+  if (count === null)
+    return true;
+  return count > 0;
+}
+
+function slotTooltip(slot: TimeSlot): string {
+  if (isSlotAvailable(slot))
+    return "";
+  return `No ${state.roomPreference} rooms available for ${slot.label}`;
+}
+
+function selectTimeSlot(slot: TimeSlot) {
+  if (!isSlotAvailable(slot)) {
+    showError({ message: slotTooltip(slot) || "This time slot is not available for the selected room." });
+    return;
+  }
+  state.selectedTime = slot.time;
+}
+
+watch(() => state.roomPreference, (preference) => {
+  if (!state.selectedTime || !preference)
+    return;
+  const slot = availableTimeSlots.value.find(s => s.time === state.selectedTime);
+  if (slot && !isSlotAvailable(slot)) {
+    state.selectedTime = undefined;
+    showError({ message: `No ${preference} rooms available for the selected time.` });
+  }
+});
 
 function close() {
   state.selectedSpa = null;
@@ -319,76 +410,63 @@ watch(
               <div class="w-full h-px bg-border/40 mb-8" />
 
               <UFormField name="roomPreference">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <!-- Private Room Card -->
-                  <div
-                    class="group relative border rounded-xs p-6 flex flex-col items-center gap-4 transition-all duration-300 cursor-pointer"
-                    :class="
-                      state.roomPreference === 'private'
-                        ? 'border-primary-500 bg-primary-500/10'
-                        : 'border-border bg-card hover:border-primary-400'
-                    "
-                    @click="state.roomPreference = 'private'"
+                <div
+                  class="grid grid-cols-1 md:grid-cols-2 gap-6"
+                  role="radiogroup"
+                  aria-label="Room preference"
+                >
+                  <UTooltip
+                    v-for="option in roomOptions"
+                    :key="option.key"
+                    :delay-duration="0"
+                    :text="option.unavailableText"
+                    :disabled="option.available"
+                    class="block"
                   >
-                    <div class="flex items-center justify-between">
-                      <div
-                        class="flex items-center justify-center w-10 h-10 rounded-full"
-                        :class="
-                          state.roomPreference === 'private'
-                            ? 'bg-primary-500 text-white'
-                            : 'bg-[#c9a55a]/10 text-primary-700'
-                        "
+                    <div
+                      role="radio"
+                      :aria-checked="state.roomPreference === option.key"
+                      :aria-disabled="!option.available"
+                      class="group relative border rounded-xs p-6 flex flex-col items-center gap-4 transition-all duration-300"
+                      :class="
+                        !option.available
+                          ? 'border-border bg-card opacity-50 cursor-not-allowed'
+                          : state.roomPreference === option.key
+                            ? 'border-primary-500 bg-primary-500/10 cursor-pointer'
+                            : 'border-border bg-card hover:border-primary-400 cursor-pointer'
+                      "
+                      @click="selectRoom(option)"
+                    >
+                      <span
+                        v-if="!option.available"
+                        class="absolute top-3 right-3 px-2 py-0.5 text-[9px] font-bold tracking-widest uppercase rounded-xs border border-border text-secondary-500"
                       >
-                        <UIcon name="i-lucide-user" class="w-5 h-5" />
+                        Unavailable
+                      </span>
+                      <div class="flex items-center justify-between">
+                        <div
+                          class="flex items-center justify-center w-10 h-10 rounded-full"
+                          :class="
+                            state.roomPreference === option.key && option.available
+                              ? 'bg-primary-500 text-white'
+                              : 'bg-[#c9a55a]/10 text-primary-700'
+                          "
+                        >
+                          <UIcon :name="option.icon" class="w-5 h-5" />
+                        </div>
+                      </div>
+                      <div class="text-center">
+                        <h3
+                          class="font-serif text-lg font-medium text-foreground mb-1"
+                        >
+                          {{ option.title }}
+                        </h3>
+                        <p class="text-sm text-secondary-500">
+                          {{ option.description }}
+                        </p>
                       </div>
                     </div>
-                    <div class="text-center">
-                      <h3
-                        class="font-serif text-lg font-medium text-foreground mb-1"
-                      >
-                        Private Room
-                      </h3>
-                      <p class="text-sm text-secondary-500">
-                        Enjoy a relaxing spa session in a private room dedicated
-                        just to you.
-                      </p>
-                    </div>
-                  </div>
-
-                  <!-- Shared Spa Card -->
-                  <div
-                    class="group relative border rounded-xs p-6 flex flex-col items-center gap-4 transition-all duration-300 cursor-pointer"
-                    :class="
-                      state.roomPreference === 'shared'
-                        ? 'border-primary-500 bg-primary-500/10'
-                        : 'border-border bg-card hover:border-primary-400'
-                    "
-                    @click="state.roomPreference = 'shared'"
-                  >
-                    <div class="flex items-center justify-between">
-                      <div
-                        class="flex items-center justify-center w-10 h-10 rounded-full"
-                        :class="
-                          state.roomPreference === 'shared'
-                            ? 'bg-primary-500 text-white'
-                            : 'bg-[#c9a55a]/10 text-primary-700'
-                        "
-                      >
-                        <UIcon name="i-lucide-users" class="w-5 h-5" />
-                      </div>
-                    </div>
-                    <div class="text-center">
-                      <h3
-                        class="font-serif text-lg font-medium text-foreground mb-1"
-                      >
-                        Shared Spa
-                      </h3>
-                      <p class="text-sm text-secondary-500">
-                        Share a room and experience the spa service together
-                        with a partner.
-                      </p>
-                    </div>
-                  </div>
+                  </UTooltip>
                 </div>
               </UFormField>
             </div>
@@ -536,19 +614,30 @@ watch(
                     Select Time
                   </p>
                   <div class="grid grid-cols-3 gap-4">
-                    <div
+                    <UTooltip
                       v-for="time in availableTimeSlots"
                       :key="time.time"
-                      class="border py-4 text-center transition-colors cursor-pointer"
-                      :class="
-                        state.selectedTime === time.time
-                          ? 'border-primary-500 bg-primary-700 text-white'
-                          : 'border-stone-200 dark:border-border dark:text-white hover:border-primary-500'
-                      "
-                      @click="selectTime(time.time)"
+                      :delay-duration="0"
+                      :text="slotTooltip(time)"
+                      :disabled="isSlotAvailable(time)"
+                      class="block"
                     >
-                      {{ time?.label }}
-                    </div>
+                      <div
+                        role="button"
+                        :aria-disabled="!isSlotAvailable(time)"
+                        class="border py-4 text-center transition-colors"
+                        :class="
+                          !isSlotAvailable(time)
+                            ? 'border-border opacity-40 cursor-not-allowed text-secondary-500'
+                            : state.selectedTime === time.time
+                              ? 'border-primary-500 bg-primary-700 text-white cursor-pointer'
+                              : 'border-stone-200 dark:border-border dark:text-white hover:border-primary-500 cursor-pointer'
+                        "
+                        @click="selectTimeSlot(time)"
+                      >
+                        {{ time?.label }}
+                      </div>
+                    </UTooltip>
                   </div>
                 </UFormField>
 
