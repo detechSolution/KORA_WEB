@@ -82,7 +82,7 @@ const isEventOrWorkshop = computed(() => {
 });
 
 const maxQuantity = computed(() => {
-  return Math.min(props.session.remainingSpots || 10, 10);
+  return props.session.remainingSpots;
 });
 
 function incrementQuantity() {
