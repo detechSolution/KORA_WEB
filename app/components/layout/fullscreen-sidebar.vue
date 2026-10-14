@@ -610,7 +610,7 @@ onBeforeUnmount(() => {
 .submenu-links a {
   display: block;
   width: fit-content;
-  padding: 7px 0;
+  padding: 7px;
   font-size: 16px;
   line-height: 24px;
   color: var(--sidebar-foreground);
