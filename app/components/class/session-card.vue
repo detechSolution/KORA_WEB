@@ -53,7 +53,7 @@ function viewDetail() {
         class="flex items-center gap-1.5 text-[10px] md:text-xs font-sans tracking-wide text-primary mt-2 select-none"
       >
         <UIcon name="i-lucide-calendar" class="w-3.5 h-3.5 text-primary" />
-        {{ formatDate(session.startsAt) }}
+        {{ formatDate(session.sessionDate) }}
       </span>
 
       <h3
