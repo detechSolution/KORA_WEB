@@ -83,7 +83,7 @@ export function getPassesBenefits(user: any, bookingDate?: string): BenefitsMap 
   const passes = Array.isArray(rawPasses) ? rawPasses : [rawPasses];
 
   // Session types that are gated by allowedSessionType.
-  const SESSION_TYPES: ServiceType[] = ["class", "event", "workshop"];
+  // const SESSION_TYPES: ServiceType[] = ["class", "event", "workshop"];
 
   const benefits: BenefitsMap = { ...ZERO_BENEFITS };
 
@@ -106,26 +106,26 @@ export function getPassesBenefits(user: any, bookingDate?: string): BenefitsMap 
 
     const passBenefits = pass.passBenefits ?? {};
     const candidate: BenefitsMap = {
-      spa: passBenefits?.spa ?? pass?.spaBenefit ?? 0,
-      class: passBenefits?.class ?? pass?.classBenefit ?? 0,
-      event: passBenefits?.event ?? pass?.eventBenefit ?? 0,
-      workshop: passBenefits?.workshop ?? pass?.workshopBenefit ?? 0,
-      cafe: passBenefits?.cafe ?? pass?.cafeBenefit ?? 0,
-      salon: passBenefits?.salon ?? pass?.salonBenefit ?? 0,
+      spa: passBenefits?.spa,
+      class: passBenefits?.class,
+      event: passBenefits?.event,
+      workshop: passBenefits?.workshop,
+      cafe: passBenefits?.cafe,
+      salon: passBenefits?.salon,
     };
 
     // Zero out session types that don't match the pass's allowedSessionType.
     // e.g. a "class" pass should not give a discount on events or workshops.
-    const allowedSessionType = pass.allowedSessionType
-      ? String(pass.allowedSessionType).toLowerCase()
-      : null;
-    if (allowedSessionType) {
-      for (const type of SESSION_TYPES) {
-        if (type !== allowedSessionType) {
-          candidate[type] = 0;
-        }
-      }
-    }
+    // const allowedSessionType = pass.allowedSessionType
+    //   ? String(pass.allowedSessionType).toLowerCase()
+    //   : null;
+    // if (allowedSessionType) {
+    //   for (const type of SESSION_TYPES) {
+    //     if (type !== allowedSessionType) {
+    //       candidate[type] = 0;
+    //     }
+    //   }
+    // }
 
     // Take the best benefit per service across all valid passes.
     for (const key of Object.keys(benefits) as ServiceType[]) {
