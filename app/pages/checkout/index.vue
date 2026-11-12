@@ -732,13 +732,13 @@ onUnmounted(() => {
             </base-button>
 
             <base-button
-              trailing-icon="i-lucide-lock"
+              leading-icon="i-lucide-lock"
               class="uppercase self-end flex tracking-widest font-bold px-8 rounded-none"
               :loading="loading"
               :disabled="step === 2 && paymentMethod === 'card'"
               @click="handlePayNowClick"
             >
-              PAY SECURELY
+              {{ totalPrice === 0 && totalPrice !== undefined ? "CONFIRM BOOKING" : "PAY SECURELY" }}
             </base-button>
           </div>
         </div>

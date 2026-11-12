@@ -32,10 +32,22 @@ const schema = z
   .object({
     fullName: z.string().min(1, "Full name is required"),
     email: z.string().min(1, "Email is required").email("Invalid email"),
-    phone: z.coerce
+    phone: z
       .string()
-      .min(1, "Phone number is required")
-      .regex(/^(?:\d{10})?$/, "Phone number must be exactly 10 digits"),
+      .trim()
+      .optional()
+      .refine(
+        (val) => {
+          if (!val)
+            return true;
+          // Accept international phone formats (optional leading '+', digits, spaces, hyphens, dots, parentheses)
+          if (!/^\+?[\d\s\-().]+$/.test(val))
+            return false;
+          const digits = val.replace(/\D/g, "");
+          return digits.length >= 7 && digits.length <= 15;
+        },
+        "Please enter a valid phone number (e.g. +1 555 123 4567 or 98XXXXXXXX)",
+      ),
     password: z
       .string()
       .min(8, "New password must be at least 8 characters")
@@ -117,10 +129,11 @@ async function handleRegister(): Promise<void> {
   try {
     loading.value = true;
     clearApiError();
+    const phoneTrimmed = registerFormState.phone?.trim();
     const payload = {
       fullName: registerFormState.fullName,
       email: registerFormState.email,
-      phoneNumber: registerFormState.phone,
+      phoneNumber: phoneTrimmed,
       password: registerFormState.password,
     };
     if (!payload.phoneNumber) {
@@ -254,8 +267,8 @@ async function handleRegister(): Promise<void> {
           <base-input
             v-model="registerFormState.phone"
             name="phone"
-            label="PHONE NUMBER"
-            placeholder="Your phone number"
+            label="PHONE NUMBER (OPTIONAL)"
+            placeholder="e.g. +1 555 123 4567 or 98XXXXXXXX"
             type="tel"
             leading-icon="i-lucide-phone"
             @input="clearApiError"
