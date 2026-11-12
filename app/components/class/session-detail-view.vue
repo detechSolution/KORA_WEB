@@ -27,11 +27,28 @@ const isPlayingVideo = ref(false);
 const isBookingModalOpen = ref(false);
 const isAddingToWaitlist = ref(false);
 
+const isEnded = computed(() => {
+  if (!props.session?.sessionDate)
+    return false;
+
+  const now = new Date();
+  const todayKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  const sessionDateKey = (props.session.sessionDate);
+
+  if (!sessionDateKey)
+    return false;
+
+  if (todayKey > sessionDateKey)
+    return true;
+
+  return false;
+});
+
 const showWaitlistCta = computed(() => {
-  return (
-    !props.session.isInWaitlist
-    && !props.session.isBookable
-  );
+  if (isEnded.value) {
+    return false;
+  }
+  return !props.session.isInWaitlist && !props.session.isBookable;
 });
 
 // Event/workshop sessions allow repeat bookings (multi-seat via quantity)
@@ -46,6 +63,8 @@ const isRebookableType = computed(() => {
 const isGiftSoldOut = computed(() => (props.session.remainingSpots ?? 0) <= 0);
 
 function handleOpenBookingModal() {
+  if (isEnded.value)
+    return;
   if (props.gifting) {
     emit("gift", props.session);
     return;
@@ -83,7 +102,10 @@ async function handleAddToWaitlist() {
     isAddingToWaitlist.value = true;
     await sessionStore.addToWaitlist(props.session.id);
     emit("fetchSessionDetail");
-    success({ message: "You've been added to the waitlist. You'll receive an email if a spot becomes available." });
+    success({
+      message:
+        "You've been added to the waitlist. You'll receive an email if a spot becomes available.",
+    });
   }
   catch (error: any) {
     showError({ message: error?.message || "Failed to add to waitlist" });
@@ -114,12 +136,38 @@ async function handleAddToWaitlist() {
         <div>
           <ClassHeader :title="session.name" />
           <div class="max-w-400 px-4 md:px-8 lg:px-12 py-10 md:py-7">
+            <!-- Ended notification -->
+            <div
+              v-if="isEnded"
+              class="mb-8 p-4 md:p-5 border border-border bg-[#c9a55a]/10 dark:bg-[#2A2722] rounded-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 select-none"
+            >
+              <div class="flex items-center gap-3">
+                <UIcon
+                  name="i-lucide-clock"
+                  class="w-5 h-5 text-amber-500 shrink-0"
+                />
+                <p class="text-sm font-medium text-foreground">
+                  This session has ended
+                </p>
+              </div>
+              <NuxtLink
+                to="/session"
+                class="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary hover:underline shrink-0"
+              >
+                <span>Upcoming Sessions</span>
+                <UIcon name="i-lucide-arrow-right" class="w-3.5 h-3.5" />
+              </NuxtLink>
+            </div>
+
             <div
               class="session-description text-foreground dark:text-stone-50"
               v-html="session.description"
             />
 
-            <div v-if="session.instructor" class="mt-10 text-foreground dark:text-stone-50">
+            <div
+              v-if="session.instructor"
+              class="mt-10 text-foreground dark:text-stone-50"
+            >
               <h2
                 class="font-sans font-bold text-sm uppercase tracking-[0.2em] mb-3"
               >
@@ -270,11 +318,22 @@ async function handleAddToWaitlist() {
                 <p
                   class="text-[10px] uppercase tracking-[0.24em] text-primary/70 mb-3"
                 >
-                  {{ gifting ? 'Gift This Session' : 'Book Your Spot' }}
+                  <template v-if="isEnded">
+                    Session Status
+                  </template>
+                  <template v-else>
+                    {{ gifting ? "Gift This Session" : "Book Your Spot" }}
+                  </template>
                 </p>
 
                 <span
-                  v-if="session.remainingSpots === 0"
+                  v-if="isEnded"
+                  class="inline-flex items-center rounded-lg bg-stone-700 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-sm"
+                >
+                  Ended
+                </span>
+                <span
+                  v-else-if="session.remainingSpots === 0"
                   class="inline-flex items-center rounded-lg bg-red-900 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-sm"
                 >
                   Sold Out
@@ -284,7 +343,7 @@ async function handleAddToWaitlist() {
                 v-if="session.price > 0"
                 class="font-serif text-3xl md:text-4xl text-foreground leading-none"
               >
-                <span class=" md:text-[31px]">Rs.</span> {{ session.price }}
+                <span class="md:text-[31px]">Rs.</span> {{ session.price }}
               </p>
               <p
                 v-else
@@ -293,7 +352,12 @@ async function handleAddToWaitlist() {
                 Free
               </p>
               <p class="mt-2 text-xs text-secondary-400 hidden sm:block">
-                {{ calculateDuration(session.startTime, session.endTime) }} {{ session.instructor ? `session with ${session.instructorName}` : 'session' }}
+                {{ calculateDuration(session.startTime, session.endTime) }}
+                {{
+                  session.instructor
+                    ? `session with ${session.instructorName}`
+                    : "session"
+                }}
               </p>
             </div>
 
@@ -318,64 +382,82 @@ async function handleAddToWaitlist() {
                 </div>
               </div>
 
-              <base-button
-                v-if="gifting && isGiftSoldOut"
-                variant="outline"
-                color="primary"
-                class="w-full text-sm uppercase"
-                disabled
-              >
-                Sold Out
-              </base-button>
-              <base-button
-                v-else-if="gifting"
-                variant="solid"
-                class="w-full text-sm uppercase"
-                @click="emit('gift', session)"
-              >
-                Gift This Session
-              </base-button>
-              <base-button
-                v-else-if="session.isBooked && !isRebookableType"
-                variant="outline"
-                color="primary"
-                class="w-full text-sm uppercase"
-                disabled
-              >
-                Already Booked
-              </base-button>
+              <!-- Ended session: details shown with 'This session has ended' and a link to upcoming sessions -->
+              <div v-if="isEnded" class="w-full flex flex-col gap-3">
+                <div
+                  class="w-full p-3 rounded-xs border border-border bg-[#c9a55a]/10 dark:bg-[#2A2722] text-center"
+                >
+                  <p class="text-xs font-semibold text-foreground">
+                    This session has ended
+                  </p>
+                  <p class="text-[11px] text-secondary-400 mt-1">
+                    Bookings are closed. Check our upcoming sessions to reserve
+                    your spot.
+                  </p>
+                </div>
+              </div>
 
-              <base-button
-                v-else-if="session.isInWaitlist && !session.isBookable"
-                variant="outline"
-                color="primary"
-                class="w-full text-sm uppercase"
-                disabled
-              >
-                Already Waitlisted
-              </base-button>
+              <!-- Active booking buttons: only shown when neither ended nor cancelled (No Book button in either case) -->
+              <template v-else>
+                <base-button
+                  v-if="gifting && isGiftSoldOut"
+                  variant="outline"
+                  color="primary"
+                  class="w-full text-sm uppercase"
+                  disabled
+                >
+                  Sold Out
+                </base-button>
+                <base-button
+                  v-else-if="gifting"
+                  variant="solid"
+                  class="w-full text-sm uppercase"
+                  @click="emit('gift', session)"
+                >
+                  Gift This Session
+                </base-button>
+                <base-button
+                  v-else-if="session.isBooked && !isRebookableType"
+                  variant="outline"
+                  color="primary"
+                  class="w-full text-sm uppercase"
+                  disabled
+                >
+                  Already Booked
+                </base-button>
 
-              <base-button
-                v-else-if="session.isBookable && session.remainingSpots > 0"
-                variant="solid"
-                color="primary"
-                class="w-full text-sm uppercase"
-                @click="handleOpenBookingModal"
-              >
-                Book This Session
-              </base-button>
+                <base-button
+                  v-else-if="session.isInWaitlist && !session.isBookable"
+                  variant="outline"
+                  color="primary"
+                  class="w-full text-sm uppercase"
+                  disabled
+                >
+                  Already Waitlisted
+                </base-button>
 
-              <base-button
-                v-else-if="showWaitlistCta"
-                variant="outline"
-                color="primary"
-                class="w-full text-sm uppercase"
-                :loading="isAddingToWaitlist"
-                :disabled="isAddingToWaitlist"
-                @click="handleAddToWaitlist"
-              >
-                Add To Waitlist
-              </base-button>
+                <base-button
+                  v-else-if="session.isBookable && session.remainingSpots > 0"
+                  variant="solid"
+                  color="primary"
+                  class="w-full text-sm uppercase"
+                  @click="handleOpenBookingModal"
+                >
+                  Book This Session
+                </base-button>
+
+                <base-button
+                  v-else-if="showWaitlistCta"
+                  variant="outline"
+                  color="primary"
+                  class="w-full text-sm uppercase"
+                  :loading="isAddingToWaitlist"
+                  :disabled="isAddingToWaitlist"
+                  @click="handleAddToWaitlist"
+                >
+                  Add To Waitlist
+                </base-button>
+              </template>
             </div>
           </div>
         </aside>
@@ -383,7 +465,7 @@ async function handleAddToWaitlist() {
     </div>
 
     <ClassSessionBookingModal
-      v-if="!gifting"
+      v-if="!gifting && !isEnded"
       :is-open="isBookingModalOpen"
       :session="session"
       @close="isBookingModalOpen = false"

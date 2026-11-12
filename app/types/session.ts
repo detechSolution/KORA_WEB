@@ -8,7 +8,7 @@ export type Session = {
   description: string;
   bannerUrl: string;
   videoUrl: string;
-  sessionDate: Date;
+  sessionDate: Date | string;
   startTime: string;
   endTime: string;
   startsAt: Date;

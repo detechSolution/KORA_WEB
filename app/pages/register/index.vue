@@ -34,6 +34,7 @@ const schema = z
     email: z.string().min(1, "Email is required").email("Invalid email"),
     phone: z.coerce
       .string()
+      .min(1, "Phone number is required")
       .regex(/^(?:\d{10})?$/, "Phone number must be exactly 10 digits"),
     password: z
       .string()
@@ -253,7 +254,7 @@ async function handleRegister(): Promise<void> {
           <base-input
             v-model="registerFormState.phone"
             name="phone"
-            label="PHONE NUMBER (Optional)"
+            label="PHONE NUMBER"
             placeholder="Your phone number"
             type="tel"
             leading-icon="i-lucide-phone"

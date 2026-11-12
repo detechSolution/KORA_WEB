@@ -15,14 +15,14 @@ const id = String(route.params.id || "");
 if (!id) {
   throw createError({
     statusCode: 404,
-    statusMessage: "Session not found",
+    statusMessage: "Page not found",
   });
 }
 
 const session = await sessionStore.getSessionDetail(id).catch(() => {
   throw createError({
     statusCode: 404,
-    statusMessage: "Session not found",
+    statusMessage: "Page not found",
   });
 });
 
