@@ -125,16 +125,16 @@ function goBack() {
 }
 
 async function handlePayNowClick() {
-  if (authStore.isAuthenticated && authStore.isMembershipFrozen()) {
+  if (selectedItemIds.value.length === 0) {
     showError({
-      message: "Your membership is currently frozen. Booking is disabled.",
+      message: "Please select item(s)",
     });
     return;
   }
 
-  if (selectedItemIds.value.length === 0) {
+  if (authStore.isAuthenticated && authStore.isMembershipFrozen()) {
     showError({
-      message: "Please select at least one service to proceed.",
+      message: "Your membership is currently frozen. Booking is disabled.",
     });
     return;
   }
@@ -735,10 +735,7 @@ onUnmounted(() => {
               trailing-icon="i-lucide-lock"
               class="uppercase self-end flex tracking-widest font-bold px-8 rounded-none"
               :loading="loading"
-              :disabled="
-                (step === 2 && paymentMethod === 'card')
-                  || selectedItemIds.length === 0
-              "
+              :disabled="step === 2 && paymentMethod === 'card'"
               @click="handlePayNowClick"
             >
               PAY SECURELY
@@ -764,10 +761,7 @@ onUnmounted(() => {
             <base-button
               trailing-icon="i-lucide-arrow-right"
               class="uppercase self-end flex tracking-widest font-bold px-8 rounded-none"
-              :disabled="
-                (step === 2 && paymentMethod === 'card') ||
-                selectedItemIds.length === 0
-              "
+              :disabled="step === 2 && paymentMethod === 'card'"
               @click="handlePayNowClick"
             >
               PAY NOW
