@@ -7,6 +7,7 @@ export const useCheckoutStore = defineStore("checkout", () => {
   const http = getHttp();
   const paymentDetails = ref<any>(null);
   const paymentStatus = ref<string>("");
+  const totalAmount = ref<number>(0);
   const loading = ref<boolean>(true);
 
   async function verifyPayment(checkoutCode: string) {
@@ -18,6 +19,7 @@ export const useCheckoutStore = defineStore("checkout", () => {
       paymentDetails.value = response;
       if (response && (response as any).verified) {
         paymentStatus.value = "paid";
+        totalAmount.value = (response as any).summary?.total;
       }
       else {
         paymentStatus.value = "failed";
@@ -43,6 +45,7 @@ export const useCheckoutStore = defineStore("checkout", () => {
   return {
     paymentDetails,
     paymentStatus,
+    totalAmount,
     loading,
     verifyPayment,
     clearCheckout,

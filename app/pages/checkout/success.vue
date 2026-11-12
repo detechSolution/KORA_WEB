@@ -97,23 +97,37 @@ onMounted(async () => {
         <h1
           class="text-3xl md:text-4xl font-serif text-foreground font-medium uppercase tracking-wide"
         >
-          Payment Successful
+          {{ checkoutStore.totalAmount > 0 ? "Payment Successful" : "Booking Confirmed" }}
         </h1>
 
         <div class="h-[1px] w-12 bg-[#B59A6D]/50 mx-auto my-1" />
 
         <p
+          v-if="checkoutStore.totalAmount > 0"
           class="text-sm md:text-base text-muted-foreground leading-relaxed max-w-lg mx-auto"
         >
           Your payment has been successfully processed and your order is now
           confirmed.
         </p>
+        <p
+          v-else
+          class="text-sm md:text-base text-muted-foreground leading-relaxed max-w-lg mx-auto"
+        >
+          Your booking has been successfully confirmed. No payment is required for this booking.
+        </p>
 
         <p
+          v-if="checkoutStore.totalAmount > 0"
           class="text-sm md:text-base text-muted-foreground leading-relaxed max-w-lg mx-auto"
         >
           You can view your booked services anytime from your profile. A payment
           confirmation receipt will also be sent to your email shortly.
+        </p>
+        <p
+          v-else
+          class="text-sm md:text-base text-muted-foreground leading-relaxed max-w-lg mx-auto"
+        >
+          You can view your booked services anytime from your profile. A booking confirmation email will also be sent to your email shortly.
         </p>
       </div>
 
