@@ -112,6 +112,7 @@ export const useAuthStore = defineStore("auth", () => {
   // State
   const isAuthenticated = ref(false);
   const unAuthorizedError = ref(false);
+  const emailVerificationRequired = ref(false);
   const isCheckingAuth = ref(false);
   const lastAuthCheck = ref<number>(0); // Track last check time
 
@@ -122,6 +123,7 @@ export const useAuthStore = defineStore("auth", () => {
     phoneNumber: string;
     avatar?: string;
     is_active?: boolean;
+    isEmailVerified?: boolean;
     role_id?: number | null;
     last_login_at?: string | null;
     membership?: UserMembership | null;
@@ -134,6 +136,7 @@ export const useAuthStore = defineStore("auth", () => {
     name: "",
     phoneNumber: "",
     avatar: "",
+    isEmailVerified: false,
     membership: null,
     membershipFreeze: null,
     passes: null,
@@ -177,6 +180,7 @@ export const useAuthStore = defineStore("auth", () => {
           phone: user.value.phoneNumber,
           avatar: user.value.avatar,
           is_active: user.value.is_active,
+          isEmailVerified: user.value.isEmailVerified,
           role_id: user.value.role_id,
           last_login_at: user.value.last_login_at,
           membership: user.value.membership,
@@ -204,6 +208,7 @@ export const useAuthStore = defineStore("auth", () => {
       name: "",
       phoneNumber: "",
       avatar: "",
+      isEmailVerified: false,
     };
     permissions.value = [];
     try {
@@ -269,6 +274,7 @@ export const useAuthStore = defineStore("auth", () => {
         user.value.email = (u.email as string) ?? "";
         user.value.name = (u.fullName as string) ?? "";
         user.value.phoneNumber = (u.phoneNumber as string) ?? "";
+        user.value.isEmailVerified = Boolean((u as any)?.isEmailVerified);
         // user.value.avatar = (u.avatar as string) ?? "";
         // user.value.is_active = u.is_active as boolean | undefined;
         user.value.role_id = (u?.adminRole?.id as number | null) ?? null;
@@ -330,19 +336,31 @@ export const useAuthStore = defineStore("auth", () => {
   const login = async (payload: {
     email: string;
     password: string;
-  }): Promise<void> => {
+  }): Promise<{
+    accessToken: string;
+    refreshToken: string;
+    isEmailVerified: boolean;
+    user: any;
+  }> => {
     try {
       unAuthorizedError.value = false;
-      const { accessToken, refreshToken } = (await http.post(
+      const response = (await http.post(
         API_ENDPOINTS.AUTH.LOGIN,
         { email: payload.email, password: payload.password },
       )) as any;
+      const { accessToken, refreshToken } = response;
       if (accessToken && refreshToken) {
         storage.setTokens(accessToken, refreshToken);
         isAuthenticated.value = true;
         // After login, immediately check auth to get user data
         await checkAuth(true);
       }
+      return {
+        accessToken,
+        refreshToken,
+        isEmailVerified: response?.user?.isEmailVerified ?? response?.isEmailVerified ?? true,
+        user: response?.user,
+      };
     }
     catch (error: unknown) {
       console.error(error, "Login Error");
@@ -355,20 +373,62 @@ export const useAuthStore = defineStore("auth", () => {
     email: string;
     phoneNumber?: string;
     password: string;
-  }): Promise<void> => {
+  }): Promise<{
+    verificationRequired: boolean;
+    verificationEmailSent: boolean;
+    isEmailVerified: boolean;
+    user: { email: string; id: number };
+  }> => {
     try {
-      const { accessToken, refreshToken } = (await http.post(
+      const response = (await http.post(
         API_ENDPOINTS.AUTH.REGISTER,
         payload,
       )) as any;
+      const { accessToken, refreshToken } = response;
       if (accessToken && refreshToken) {
         storage.setTokens(accessToken, refreshToken);
         isAuthenticated.value = true;
         await checkAuth(true);
       }
+      return {
+        verificationRequired: response.verificationRequired ?? false,
+        verificationEmailSent: response.verificationEmailSent ?? false,
+        isEmailVerified: response.isEmailVerified ?? true,
+        user: response.user ?? { email: payload.email, id: 0 },
+      };
     }
     catch (error: unknown) {
       console.error(error, "Register Error");
+      throw error;
+    }
+  };
+
+  const verifyEmail = async (payload: { code: string }): Promise<void> => {
+    try {
+      await http.post(API_ENDPOINTS.AUTH.VERIFY_EMAIL, payload);
+      user.value.isEmailVerified = true;
+      saveUserToStorage();
+      if (storage.hasTokens()) {
+        await checkAuth(true);
+      }
+    }
+    catch (error: unknown) {
+      console.error(error, "Verify Email Error");
+      throw error;
+    }
+  };
+
+  const resendVerificationEmail = async (token?: string): Promise<void> => {
+    try {
+      const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+      await http.post(
+        API_ENDPOINTS.AUTH.RESEND_VERIFICATION_EMAIL,
+        {},
+        headers,
+      );
+    }
+    catch (error: unknown) {
+      console.error(error, "Resend Verification Email Error");
       throw error;
     }
   };
@@ -398,6 +458,10 @@ export const useAuthStore = defineStore("auth", () => {
 
   const setUnAuthorizedError = (value: boolean): void => {
     unAuthorizedError.value = value;
+  };
+
+  const setEmailVerificationRequired = (value: boolean): void => {
+    emailVerificationRequired.value = value;
   };
 
   const updateProfile = async (payload: {
@@ -467,6 +531,7 @@ export const useAuthStore = defineStore("auth", () => {
     isAuthenticated,
     isCheckingAuth,
     unAuthorizedError,
+    emailVerificationRequired,
     user,
     permissions,
     isMembershipFrozen,
@@ -478,9 +543,12 @@ export const useAuthStore = defineStore("auth", () => {
     logout,
     updatePassword,
     setUnAuthorizedError,
+    setEmailVerificationRequired,
     updateProfile,
     forgotPassword,
     verifyResetOtp,
     resetPassword,
+    verifyEmail,
+    resendVerificationEmail,
   };
 });

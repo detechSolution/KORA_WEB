@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { Booking } from "~/data/profile";
-import { computed, onMounted, reactive, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import z from "zod";
 import { useNotification } from "~/composables/use-notification";
 import { usePagination } from "~/composables/use-pagination";
 import { useAuthStore } from "~/stores/auth";
 import { useMemberStore } from "~/stores/member";
+import { getApiErrorMessage } from "~/utils/error";
 import { formatDate } from "~/utils/format";
 import { IMAGES } from "~/utils/images";
 
@@ -35,6 +36,53 @@ const activePassTab = ref("ACTIVE");
 
 const { success, error: showError } = useNotification();
 const loadingPassword = ref(false);
+
+const isVerifyModalOpen = ref(false);
+const resendingVerification = ref(false);
+const resendVerificationTimer = ref(0);
+let resendVerificationInterval: ReturnType<typeof setInterval> | null = null;
+
+function startResendTimer() {
+  resendVerificationTimer.value = 60;
+  if (resendVerificationInterval)
+    clearInterval(resendVerificationInterval);
+  resendVerificationInterval = setInterval(() => {
+    if (resendVerificationTimer.value > 0) {
+      resendVerificationTimer.value--;
+    }
+    else {
+      if (resendVerificationInterval)
+        clearInterval(resendVerificationInterval);
+    }
+  }, 1000);
+}
+
+onUnmounted(() => {
+  if (resendVerificationInterval)
+    clearInterval(resendVerificationInterval);
+});
+
+async function handleResendVerification(): Promise<void> {
+  if (resendVerificationTimer.value > 0 || resendingVerification.value)
+    return;
+  try {
+    resendingVerification.value = true;
+    await authStore.resendVerificationEmail();
+    success({ message: "Verification code sent! Please check your email." });
+    startResendTimer();
+  }
+  catch (error: unknown) {
+    showError({
+      message: getApiErrorMessage(
+        error,
+        "Failed to resend verification code. Please try again.",
+      ),
+    });
+  }
+  finally {
+    resendingVerification.value = false;
+  }
+}
 
 const schema = z
   .object({
@@ -354,6 +402,10 @@ onMounted(async () => {
 
   await memberStore.getDashboard();
   await fetchBookings();
+
+  if (route.query.verify === "true" && authStore.user.isEmailVerified === false) {
+    isVerifyModalOpen.value = true;
+  }
 });
 </script>
 
@@ -398,7 +450,7 @@ onMounted(async () => {
             >
               <div class="flex items-center gap-2">
                 <UIcon name="i-lucide-mail" class="w-4 h-4" />
-                {{ user.email }}
+                <span>{{ user.email }}</span>
               </div>
               <div v-if="user.phone" class="flex items-center gap-2">
                 <UIcon name="i-lucide-phone" class="w-4 h-4" />
@@ -521,6 +573,54 @@ onMounted(async () => {
         <div class="flex-1">
           <!-- MY INFO CONTENT -->
           <div v-if="activeSidebarTab === 'info'" class="flex flex-col gap-10">
+            <!-- Email Verification Pending Notice -->
+            <div
+              v-if="authStore.user.isEmailVerified === false"
+              class="bg-white dark:bg-[#1b1815] border border-border rounded-sm p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+            >
+              <div class="flex items-start md:items-center gap-4">
+                <div
+                  class="w-10 h-10 border border-border flex items-center justify-center rounded-xs text-primary-700 bg-amber-500/10 shrink-0"
+                >
+                  <UIcon name="i-lucide-mail-warning" class="w-5 h-5" />
+                </div>
+                <div>
+                  <div class="flex items-center gap-2 mb-1">
+                    <h4 class="font-serif text-xl text-foreground font-normal">
+                      Email Verification Pending
+                    </h4>
+                    <span
+                      class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-xs bg-[#FEF3C7] dark:bg-[#322313] text-primary-800 dark:text-amber-400 border border-amber-500/30"
+                    >
+                      Action Required
+                    </span>
+                  </div>
+                  <p class="text-sm text-secondary-400 font-light leading-relaxed">
+                    Your email address <strong class="text-foreground font-medium">{{ user.email }}</strong> is not verified yet. Please verify your email to enable bookings.
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3 shrink-0 w-full md:w-auto justify-end">
+                <button
+                  type="button"
+                  class="text-sm text-[#B59A6D] hover:underline disabled:opacity-50 cursor-pointer font-medium"
+                  :disabled="resendVerificationTimer > 0 || resendingVerification"
+                  @click="handleResendVerification"
+                >
+                  <span v-if="resendingVerification">Sending...</span>
+                  <span v-else-if="resendVerificationTimer > 0">Resend ({{ resendVerificationTimer }}s)</span>
+                  <span v-else>Resend Code</span>
+                </button>
+                <base-button
+                  class="h-9 px-4 text-xs tracking-wider"
+                  @click="isVerifyModalOpen = true"
+                >
+                  VERIFY EMAIL
+                </base-button>
+              </div>
+            </div>
+
             <!-- Membership -->
             <div
               v-if="user.membership.hasPlan"
@@ -635,14 +735,35 @@ onMounted(async () => {
                       placeholder="Enter your phone number"
                     />
 
-                    <base-input
-                      v-model="profileForm.email"
-                      name="email"
-                      type="email"
-                      label="EMAIL ADDRESS"
-                      placeholder="Enter your email"
-                      disabled
-                    />
+                    <div>
+                      <div class="flex items-center justify-between mb-1.5">
+                        <label class="text-[11px] font-bold tracking-widest text-[#B59A6D] uppercase">
+                          EMAIL ADDRESS
+                        </label>
+                        <button
+                          v-if="authStore.user.isEmailVerified === false"
+                          type="button"
+                          class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-xs bg-amber-500/15 text-amber-400 border border-amber-500/30 cursor-pointer hover:bg-amber-500/25 transition-colors"
+                          @click="isVerifyModalOpen = true"
+                        >
+                          Verify Now
+                        </button>
+                        <span
+                          v-else
+                          class="text-[10px] uppercase font-medium tracking-wider text-emerald-400 flex items-center gap-1"
+                        >
+                          <UIcon name="i-lucide-check-circle" class="w-3 h-3" />
+                          Verified
+                        </span>
+                      </div>
+                      <base-input
+                        v-model="profileForm.email"
+                        name="email"
+                        type="email"
+                        placeholder="Enter your email"
+                        disabled
+                      />
+                    </div>
                   </div>
                 </UForm>
               </div>
@@ -1014,6 +1135,12 @@ onMounted(async () => {
         </div>
       </div>
     </div>
+
+    <profile-verify-email-modal
+      :open="isVerifyModalOpen"
+      :email="user.email"
+      @close="isVerifyModalOpen = false"
+    />
   </div>
 </template>
 

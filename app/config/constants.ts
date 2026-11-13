@@ -11,6 +11,8 @@ export const API_ENDPOINTS = {
     FORGOT_PASSWORD: "/api/v1/password-reset/forgot-password",
     VERIFY_OTP: "/api/v1/password-reset/verify-code",
     RESET_PASSWORD: "/api/v1/password-reset/reset-password",
+    VERIFY_EMAIL: "/api/v1/auth/member/email-verification/verify",
+    RESEND_VERIFICATION_EMAIL: "/api/v1/auth/member/email-verification/resend",
     REQUEST_CANCELLATION: (bookingId: number) =>
       `/api/v1/members/me/bookings/${bookingId}/request-cancellation`,
   },
