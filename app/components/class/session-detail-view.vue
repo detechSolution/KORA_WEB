@@ -28,20 +28,24 @@ const isBookingModalOpen = ref(false);
 const isAddingToWaitlist = ref(false);
 
 const isEnded = computed(() => {
-  if (!props.session?.sessionDate)
+  if (!props.session?.sessionDate || !props.session?.startTime)
     return false;
 
   const now = new Date();
+
   const todayKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-  const sessionDateKey = (props.session.sessionDate);
 
-  if (!sessionDateKey)
-    return false;
+  const { sessionDate, startTime } = props.session;
 
-  if (todayKey > sessionDateKey)
+  if (todayKey > sessionDate)
     return true;
 
-  return false;
+  if (todayKey < sessionDate)
+    return false;
+
+  const currentTime = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
+
+  return currentTime > startTime;
 });
 
 const showWaitlistCta = computed(() => {
