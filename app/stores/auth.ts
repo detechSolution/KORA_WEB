@@ -100,7 +100,18 @@ type UserProfile = {
 };
 
 type MembershipFreeze = {
+  id?: number;
+  memberId?: number;
+  membershipPlanId?: number;
+  startsOn?: string;
   endsOn: string;
+  reason?: string;
+  status?: string;
+  processedById?: number | null;
+  processedAt?: string | null;
+  adminNote?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
   [key: string]: unknown;
 };
 

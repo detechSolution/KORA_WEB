@@ -232,6 +232,23 @@ const profileData = computed(() => dashboardData.value?.profile);
 const summaryData = computed(() => dashboardData.value?.summary);
 const membershipData = computed(() => dashboardData.value?.membership);
 
+const membershipFreeze = computed(() => {
+  return (
+    authStore.user?.membershipFreeze
+    || (membershipData.value as any)?.membershipFreeze
+    || (dashboardData.value as any)?.membershipFreeze
+    || null
+  );
+});
+
+const hasFreezeDates = computed(() => {
+  return Boolean(
+    membershipFreeze.value
+    && membershipFreeze.value.startsOn
+    && membershipFreeze.value.endsOn,
+  );
+});
+
 async function fetchBookings() {
   try {
     loading.value = true;
@@ -266,16 +283,31 @@ const user = computed(() => {
     isMember: membershipData.value?.isActive || false,
     membership: {
       hasPlan:
-        !!membershipData.value
-        && (!!membershipData.value.planId
-          || !!(membershipData.value as any).membershipPlanId),
-      name: membershipData.value?.planName || "",
+        Boolean(
+          (membershipData.value
+            && (membershipData.value.planId
+              || (membershipData.value as any).membershipPlanId))
+            || authStore.user?.membership
+            || hasFreezeDates.value,
+        ),
+      name:
+        membershipData.value?.planName
+        || authStore.user?.membership?.plan?.name
+        || "Active Membership",
       subtitle: "",
-      period: membershipData.value?.frequencyLabel || "",
-      tier: membershipData.value?.planName || "",
+      period:
+        membershipData.value?.frequencyLabel
+        || authStore.user?.membership?.option?.frequency
+        || "",
+      tier:
+        membershipData.value?.planName
+        || authStore.user?.membership?.plan?.name
+        || "",
       billing: membershipData.value
         ? `${membershipData.value.currency} ${membershipData.value.price}`
-        : "",
+        : authStore.user?.membership
+          ? `${authStore.user.membership.plan?.currency || "NPR"} ${authStore.user.membership.option?.price || ""}`
+          : "",
       benefit: membershipData.value?.memberBenefitPercent
         ? `${membershipData.value.memberBenefitPercent}% off`
         : "",
@@ -646,13 +678,67 @@ onMounted(async () => {
                     </p>
                   </div>
                 </div>
-                <div
-                  class="border border-[#B59A6D] text-[#B59A6D] text-[10px] font-bold tracking-widest uppercase px-4 py-1.5 rounded-xs"
-                >
-                  {{ user.membership.period }}
+                <div class="flex items-center gap-2">
+                  <span
+                    v-if="hasFreezeDates"
+                    class="border border-sky-400/40 bg-sky-500/10 text-sky-500 dark:text-sky-400 text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-xs flex items-center gap-1.5"
+                  >
+                    <UIcon name="i-lucide-snowflake" class="w-3.5 h-3.5" />
+                    FROZEN
+                  </span>
+                  <div
+                    v-if="user.membership.period"
+                    class="border border-[#B59A6D] text-[#B59A6D] text-[10px] font-bold tracking-widest uppercase px-4 py-1.5 rounded-xs"
+                  >
+                    {{ user.membership.period }}
+                  </div>
                 </div>
               </div>
-              <div class="flex justify-between items-end pt-2 mt-4">
+
+              <!-- Freeze Period Notice -->
+              <div
+                v-if="hasFreezeDates"
+                class="mt-4 p-4 rounded-xs bg-sky-500/10 border border-sky-500/25 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+              >
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-9 h-9 rounded-full bg-sky-500/20 text-sky-500 dark:text-sky-400 flex items-center justify-center shrink-0"
+                  >
+                    <UIcon name="i-lucide-snowflake" class="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div class="font-medium text-foreground flex items-center gap-2">
+                      <span>Membership Freeze</span>
+                      <span
+                        v-if="membershipFreeze?.status"
+                        class="text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded-xs bg-sky-500/20 text-sky-500 dark:text-sky-400 border border-sky-500/30"
+                      >
+                        {{ membershipFreeze.status }}
+                      </span>
+                    </div>
+                    <div
+                      v-if="membershipFreeze?.reason"
+                      class="text-secondary-400 text-[11px] mt-0.5 capitalize"
+                    >
+                      Reason: {{ membershipFreeze.reason }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="text-left sm:text-right shrink-0">
+                  <div class="text-[9px] font-bold tracking-widest uppercase text-stone-400 mb-0.5">
+                    FREEZE DATES
+                  </div>
+                  <div class="text-sm font-serif text-foreground font-medium">
+                    {{ formatDate(membershipFreeze.startsOn) }} &ndash; {{ formatDate(membershipFreeze.endsOn) }}
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="grid grid-cols-1 pt-4 mt-4 border-t border-border/40 gap-4"
+                :class="hasFreezeDates ? 'sm:grid-cols-3' : 'sm:grid-cols-2'"
+              >
                 <div>
                   <div
                     class="text-[9px] font-bold tracking-widest uppercase text-stone-500 mb-1"
@@ -663,7 +749,20 @@ onMounted(async () => {
                     {{ user.memberSince }}
                   </div>
                 </div>
-                <div class="text-right">
+
+                <!-- <div v-if="hasFreezeDates">
+                  <div
+                    class="text-[9px] font-bold tracking-widest uppercase text-sky-500 dark:text-sky-400/90 mb-1 flex items-center gap-1"
+                  >
+                    <UIcon name="i-lucide-snowflake" class="w-3 h-3 text-sky-400" />
+                    FREEZE PERIOD
+                  </div>
+                  <div class="text-base text-foreground font-serif">
+                    {{ formatDate(membershipFreeze!.startsOn as string) }} &ndash; {{ formatDate(membershipFreeze!.endsOn as string) }}
+                  </div>
+                </div> -->
+
+                <div :class="hasFreezeDates ? 'sm:text-right' : 'text-right'">
                   <div
                     class="text-[9px] font-bold tracking-widest uppercase text-stone-500 mb-1"
                   >
