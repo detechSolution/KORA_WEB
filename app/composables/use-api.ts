@@ -84,8 +84,16 @@ function createHttpClient(config: HttpClientConfig) {
       if (error instanceof Error && error.name === "AbortError") {
         throw new Error("Request timeout");
       }
-      if (isApiError(error) && error.status === 401) {
-        useAuthStore().setUnAuthorizedError(true);
+      if (isApiError(error)) {
+        if (error.status === 401) {
+          useAuthStore().setUnAuthorizedError(true);
+        }
+        const errorCode = (error.data?.code || "").toLowerCase();
+        if (
+          errorCode.includes("EMAIL_NOT_VERIFIED")
+        ) {
+          useAuthStore().setEmailVerificationRequired(true);
+        }
       }
       throw error;
     }
