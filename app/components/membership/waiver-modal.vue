@@ -6,6 +6,10 @@ defineProps({
     type: Boolean,
     required: true,
   },
+  showAgreeButton: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const emit = defineEmits<{
@@ -65,7 +69,7 @@ function agree() {
         <p class="text-xs font-semibold uppercase tracking-wider text-foreground mb-6">
           {{ WAIVER.acceptance }}
         </p>
-        <div class="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4">
+        <div v-if="showAgreeButton" class="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4">
           <base-button variant="outline" @click="close">
             Close
           </base-button>

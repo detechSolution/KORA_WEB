@@ -56,6 +56,7 @@ const subtotal = computed(() => {
 
 const step = ref(1);
 // const inputPromoCode = ref("");
+const isWaiverOpen = ref(false);
 const paymentMethod = ref<PaymentProvider | null>(null);
 const isRemoveItemModalOpen = ref(false);
 const selectedItemId = ref<string | "">("");
@@ -77,11 +78,15 @@ const totalPrice = computed(() => {
   return Math.max(0, subtotal.value - discountValue.value);
 });
 
-watch(totalPrice, (newPrice) => {
-  if (newPrice === 0) {
-    paymentMethod.value = "fonepay";
-  }
-}, { immediate: true });
+watch(
+  totalPrice,
+  (newPrice) => {
+    if (newPrice === 0) {
+      paymentMethod.value = "fonepay";
+    }
+  },
+  { immediate: true },
+);
 
 // Count the total number of items in the cart, including visitors for each item
 const totalItems = computed(() =>
@@ -122,6 +127,10 @@ function handleRemoveItem() {
 
 function goBack() {
   step.value = 1;
+}
+
+function openWaiver() {
+  isWaiverOpen.value = true;
 }
 
 async function handlePayNowClick() {
@@ -357,7 +366,9 @@ onUnmounted(() => {
                       >
                         <UIcon name="i-lucide-calendar" class="w-3 h-3" />
                         <span>{{ item.bookingDate }}</span>
-                        <span v-if="item.itemType === 'membership' && item.validTo">– {{ item.validTo }}</span>
+                        <span
+                          v-if="item.itemType === 'membership' && item.validTo"
+                        >– {{ item.validTo }}</span>
                       </div>
                       <div
                         v-if="item.bookingTime"
@@ -714,6 +725,14 @@ onUnmounted(() => {
               >
                 Terms & Policy
               </NuxtLink>
+              and the
+              <button
+                type="button"
+                class="font-semibold text-primary-700 underline underline-offset-2 hover:text-primary cursor-pointer"
+                @click.stop.prevent="openWaiver"
+              >
+                Medical & Liability Waiver
+              </button>.
             </p>
           </div>
 
@@ -738,7 +757,11 @@ onUnmounted(() => {
               :disabled="step === 2 && paymentMethod === 'card'"
               @click="handlePayNowClick"
             >
-              {{ totalPrice === 0 && totalPrice !== undefined ? "CONFIRM BOOKING" : "PAY SECURELY" }}
+              {{
+                totalPrice === 0 && totalPrice !== undefined
+                  ? "CONFIRM BOOKING"
+                  : "PAY SECURELY"
+              }}
             </base-button>
           </div>
         </div>
@@ -787,6 +810,11 @@ onUnmounted(() => {
     <checkout-fonepay-modal
       :is-open="isFonepayModalOpen"
       @close="isFonepayModalOpen = false"
+    />
+    <MembershipWaiverModal
+      :is-open="isWaiverOpen"
+      :show-agree-button="false"
+      @close="isWaiverOpen = false"
     />
   </div>
 </template>
