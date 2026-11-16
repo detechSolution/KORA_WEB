@@ -137,6 +137,13 @@ const socials = [
       >
         <p class="text-white text-xs text-center sm:text-left">
           Kora &copy; 2026 All Rights Reserved
+          <span class="mx-2 text-secondary-500" aria-hidden="true">·</span>
+          <NuxtLink
+            to="/business-information"
+            class="text-secondary-200 transition-colors hover:text-primary"
+          >
+            Business Information
+          </NuxtLink>
         </p>
         <div class="flex items-center gap-3">
           <a
