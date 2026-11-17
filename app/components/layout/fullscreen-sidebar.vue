@@ -26,7 +26,7 @@ const menuItems: MenuItem[] = [
     name: "Sanctuary",
     image: "/images/wellness/spa.png",
     children: [
-      { name: "Spa", path: "/spa" },
+      // { name: "Spa", path: "/spa" },
       { name: "Recovery", path: "/recovery" },
       { name: "Wellness", path: "/wellness" },
       { name: "Nutrition", path: "/nutrition" },
