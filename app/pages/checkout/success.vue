@@ -27,7 +27,13 @@ onMounted(async () => {
       checkoutStore.loading = false;
     }
 
+    if (checkoutStore.paymentStatus !== "paid") {
+      sessionStorage.removeItem("pendingMembershipFreezeRelease");
+    }
+
     if (checkoutStore.paymentStatus === "paid") {
+      const shouldReleaseFreeze = sessionStorage.getItem("pendingMembershipFreezeRelease") === "true";
+      sessionStorage.removeItem("pendingMembershipFreezeRelease");
       const pendingIds = JSON.parse(
         sessionStorage.getItem("pendingPaymentItemIds") || "[]",
       );
@@ -41,6 +47,9 @@ onMounted(async () => {
 
       try {
         await authStore.checkAuth(true);
+        if (shouldReleaseFreeze) {
+          authStore.releaseMembershipFreeze();
+        }
       }
       catch (refreshError) {
         console.error("Failed to refresh user after payment:", refreshError);

@@ -332,6 +332,13 @@ export const useAuthStore = defineStore("auth", () => {
     return endsOnDate >= today;
   };
 
+  const releaseMembershipFreeze = (): void => {
+    if (!user.value.membershipFreeze)
+      return;
+    user.value.membershipFreeze = null;
+    saveUserToStorage();
+  };
+
   // Smart check: only checks if needed (cached)
   const checkAuthIfNeeded = async (): Promise<void> => {
     // Always check on first load (no previous check)
@@ -546,6 +553,7 @@ export const useAuthStore = defineStore("auth", () => {
     user,
     permissions,
     isMembershipFrozen,
+    releaseMembershipFreeze,
     checkAuth,
     checkAuthIfNeeded,
     login,

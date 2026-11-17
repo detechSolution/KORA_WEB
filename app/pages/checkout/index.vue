@@ -31,6 +31,22 @@ const logoSrc = computed(() =>
     : "/images/logo/fonepay_white.png",
 );
 
+const freeze = computed(() => authStore.user.membershipFreeze);
+const hasBookingDuringFreeze = computed(() => {
+  if (!authStore.isAuthenticated || !freeze.value?.startsOn || !freeze.value.endsOn)
+    return false;
+  const startsOn = freeze.value.startsOn.slice(0, 10);
+  const endsOn = freeze.value.endsOn.slice(0, 10);
+  return cartItems.value
+    .filter(item => selectedItemIds.value.includes(item.cartId))
+    .some((item) => {
+      if (item.isGift || !item.bookingDate)
+        return false;
+      const date = String(item.bookingDate).slice(0, 10);
+      return date >= startsOn && date <= endsOn;
+    });
+});
+
 const isAllSelected = computed({
   get() {
     return (
@@ -61,6 +77,8 @@ const paymentMethod = ref<PaymentProvider | null>(null);
 const isRemoveItemModalOpen = ref(false);
 const selectedItemId = ref<string | "">("");
 const isFonepayModalOpen = ref(false);
+const isUnfreezeModalOpen = ref(false);
+const acceptedFreezeRelease = ref(false);
 
 const discountValue = computed(() => {
   if (!cartStore.discountAmount) {
@@ -141,13 +159,6 @@ async function handlePayNowClick() {
     return;
   }
 
-  if (authStore.isAuthenticated && authStore.isMembershipFrozen()) {
-    showError({
-      message: "Your membership is currently frozen. Booking is disabled.",
-    });
-    return;
-  }
-
   if (step.value === 1 && totalPrice.value > 0) {
     step.value = 2;
     window.scrollTo({
@@ -156,6 +167,10 @@ async function handlePayNowClick() {
     });
   }
   else {
+    if (hasBookingDuringFreeze.value && !acceptedFreezeRelease.value) {
+      isUnfreezeModalOpen.value = true;
+      return;
+    }
     if (totalPrice.value > 0 && !paymentMethod.value) {
       showError({
         message: "Please select a payment method to proceed.",
@@ -167,6 +182,10 @@ async function handlePayNowClick() {
       sessionStorage.setItem(
         "pendingPaymentItemIds",
         JSON.stringify(selectedItemIds.value),
+      );
+      sessionStorage.setItem(
+        "pendingMembershipFreezeRelease",
+        acceptedFreezeRelease.value ? "true" : "false",
       );
       const payload = {
         provider: paymentMethod.value,
@@ -212,8 +231,11 @@ async function handlePayNowClick() {
           isFonepayModalOpen.value = true;
         }
       });
+      // A cancelled/failed payment must not carry an accepted release forward.
+      // The success page consumes this only after the provider verifies payment.
     }
     catch (error) {
+      sessionStorage.removeItem("pendingMembershipFreezeRelease");
       console.error("Payment failed:", error);
       const message = getApiErrorMessage(
         error,
@@ -222,6 +244,17 @@ async function handlePayNowClick() {
       showError({ message });
     }
   }
+}
+
+function acceptFreezeRelease() {
+  acceptedFreezeRelease.value = true;
+  isUnfreezeModalOpen.value = false;
+  void handlePayNowClick();
+}
+
+function cancelFreezeRelease() {
+  acceptedFreezeRelease.value = false;
+  isUnfreezeModalOpen.value = false;
 }
 
 onUnmounted(() => {
@@ -815,6 +848,13 @@ onUnmounted(() => {
       :is-open="isWaiverOpen"
       :show-agree-button="false"
       @close="isWaiverOpen = false"
+    />
+    <MembershipUnfreezeModal
+      :is-open="isUnfreezeModalOpen"
+      :starts-on="freeze?.startsOn"
+      :ends-on="freeze?.endsOn"
+      @accept="acceptFreezeRelease"
+      @cancel="cancelFreezeRelease"
     />
   </div>
 </template>

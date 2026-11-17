@@ -68,12 +68,6 @@ function handleOpenBookingModal(subTypeId?: number | string) {
     return;
   }
   if (authStore.isAuthenticated) {
-    if (authStore.isMembershipFrozen()) {
-      showError({
-        message: "Your membership is currently frozen. Booking is disabled.",
-      });
-      return;
-    }
     isBookingModalOpen.value = true;
   }
   else {

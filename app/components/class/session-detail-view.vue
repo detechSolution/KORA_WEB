@@ -74,12 +74,6 @@ function handleOpenBookingModal() {
     return;
   }
   if (authStore.isAuthenticated) {
-    if (authStore.isMembershipFrozen()) {
-      showError({
-        message: "Your membership is currently frozen. Booking is disabled.",
-      });
-      return;
-    }
     isBookingModalOpen.value = true;
   }
   else {
@@ -94,14 +88,6 @@ async function handleAddToWaitlist() {
     router.push({ path: "/login", query: { redirect: route.fullPath } });
     return;
   }
-  if (authStore.isMembershipFrozen()) {
-    showError({
-      message:
-        "Your membership is currently frozen. You cannot join the waitlist.",
-    });
-    return;
-  }
-
   try {
     isAddingToWaitlist.value = true;
     await sessionStore.addToWaitlist(props.session.id);
