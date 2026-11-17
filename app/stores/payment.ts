@@ -13,7 +13,14 @@ export const usePaymentStore = defineStore("payment", () => {
     try {
       loading.value = true;
 
-      const response = await http.post(API_ENDPOINTS.PAYMENT.PAY_NOW, payload);
+      // Payment creation may take longer than regular API requests while the
+      // backend prepares the checkout, so allow up to five minutes here.
+      const response = await http.post(
+        API_ENDPOINTS.PAYMENT.PAY_NOW,
+        payload,
+        undefined,
+        5 * 60 * 1000,
+      );
       checkout.value = response as CheckoutResponse;
 
       return response;

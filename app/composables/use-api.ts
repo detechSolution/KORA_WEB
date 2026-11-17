@@ -26,6 +26,10 @@ type HttpClientConfig = {
   storage: ReturnType<typeof useStorage>;
 };
 
+type ApiRequestOptions = RequestInit & {
+  timeoutMs?: number;
+};
+
 function createHttpClient(config: HttpClientConfig) {
   const { baseURL, storage } = config;
   const timeout = config.timeout ?? 100000;
@@ -36,10 +40,13 @@ function createHttpClient(config: HttpClientConfig) {
 
   async function request<T>(
     endpoint: string,
-    options: RequestInit = {},
+    options: ApiRequestOptions = {},
   ): Promise<T> {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    const timeoutId = setTimeout(
+      () => controller.abort(),
+      options.timeoutMs ?? timeout,
+    );
 
     try {
       const accessToken = getAccessToken();
@@ -107,12 +114,14 @@ function createHttpClient(config: HttpClientConfig) {
       endpoint: string,
       data: any,
       headers?: Record<string, string>,
+      timeoutMs?: number,
     ): Promise<T> {
       const body = data instanceof FormData ? data : JSON.stringify(data);
       return request<T>(endpoint, {
         method: "POST",
         body,
         headers,
+        timeoutMs,
       });
     },
     put<T>(
