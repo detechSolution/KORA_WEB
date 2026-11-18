@@ -41,9 +41,9 @@ useSeoMeta({
             <base-button to="/schedules">
               RESERVE YOUR RITUAL
             </base-button>
-            <base-button variant="outline" to="/spa">
+            <!-- <base-button variant="outline" to="/spa">
               EXPLORE THE SANCTUARY MENU
-            </base-button>
+            </base-button> -->
           </div>
         </div>
       </class-header>
