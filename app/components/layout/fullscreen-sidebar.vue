@@ -20,6 +20,7 @@ const menuItems: MenuItem[] = [
       { name: "Classes", path: "/session?tab=class" },
       { name: "Events", path: "/session?tab=event" },
       { name: "Workshops", path: "/session?tab=workshop" },
+      { name: "Passes", path: "/membership?tab=passes" },
     ],
   },
   {
