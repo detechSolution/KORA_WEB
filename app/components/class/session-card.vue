@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 import type { Session } from "~/types/session";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { getSessionPath } from "~/utils/session";
 
@@ -14,6 +15,7 @@ const props = defineProps({
 
 const emit = defineEmits<{ viewGift: [session: Session] }>();
 const router = useRouter();
+const fallbackAvatar = computed(() => `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(props.session.name || "Kora")}&backgroundColor=f5efe4&radius=50`);
 function viewDetail() {
   if (props.gifting)
     emit("viewGift", props.session);
@@ -32,10 +34,23 @@ function viewDetail() {
       @click="viewDetail"
     >
       <img
+        v-if="session.bannerUrl"
         :src="session.bannerUrl"
         :alt="session.name"
         class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
       >
+      <div
+        v-else
+        class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-[#f5efe4] via-[#e9dfce] to-[#d7c6aa] px-5 text-center"
+      >
+        <img
+          :src="fallbackAvatar"
+          alt=""
+          class="h-24 w-24 rounded-full border border-white/70 bg-white/50 shadow-md"
+        >
+        <span class="max-w-full font-serif text-lg font-medium leading-tight text-stone-800">{{ session.name }}</span>
+        <span class="text-[9px] font-sans uppercase tracking-[0.28em] text-stone-600">Kora Session</span>
+      </div>
       <div
         class="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/15 opacity-70 group-hover:opacity-40 transition-opacity duration-500"
       />

@@ -525,10 +525,18 @@ watch(
                             ...duration,
                             name: item.name,
                             referenceId: item.id,
-                            image: spa?.bannerUrl,
+                            image: spa?.bannerUrl || null,
                           })
                         "
                       >
+                        <div class="mb-4 flex h-28 items-center justify-center overflow-hidden rounded-xs bg-gradient-to-br from-[#f5efe4] via-[#e9dfce] to-[#d7c6aa]">
+                          <img
+                            :src="spa?.bannerUrl || `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(item.name || 'Kora Spa')}&backgroundColor=f5efe4&radius=50`"
+                            :alt="spa?.bannerUrl ? item.name : ''"
+                            class="h-full w-full object-cover"
+                          >
+                          <span v-if="!spa?.bannerUrl" class="sr-only">{{ item.name }}</span>
+                        </div>
                         <div
                           class="flex items-center gap-2 text-xs uppercase"
                           :class="
@@ -542,6 +550,7 @@ watch(
                             {{ duration.duration }} {{ duration.timeUnit }}
                           </span>
                         </div>
+                        <p class="mt-2 font-serif text-lg">{{ item.name }}</p>
                         <p class="text-3xl font-medium text-foreground mt-3">
                           <span class="text-2xl">Rs. </span>{{ duration.price }}
                         </p>
