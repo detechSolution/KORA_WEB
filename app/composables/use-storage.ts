@@ -1,169 +1,90 @@
 /**
- * Composable for localStorage operations
- * Provides typed methods for storing and retrieving data from localStorage
- *
- * Note: Since ssr: false is configured, client checks are not needed.
- * Error handling is still included for localStorage quota errors and other edge cases.
+ * Browser cookie storage for authentication tokens.
+ * Access and refresh tokens are intentionally not persisted in localStorage.
+ * HttpOnly cookies must be issued by the API; client code cannot create them.
  */
-
-/**
- * Storage keys used throughout the application
- */
-export const STORAGE_KEYS = {
+const COOKIE_KEYS = {
   ACCESS_TOKEN: "accessToken",
   REFRESH_TOKEN: "refreshToken",
+  REMEMBER_ME: "rememberMe",
 } as const;
 
-/**
- * Get a value from localStorage
- * @param key - The storage key
- * @returns The stored value or null if not found
- */
-export function getStorageItem(key: string): string | null {
-  try {
-    return localStorage.getItem(key);
-  }
-  catch (error) {
-    console.error(`Error getting storage item "${key}":`, error);
+const REMEMBER_ME_MAX_AGE = 60 * 60 * 24 * 30;
+
+function readCookie(name: string): string | null {
+  if (!import.meta.client)
     return null;
-  }
+  const item = document.cookie
+    .split(";")
+    .map(cookie => cookie.trim())
+    .find(cookie => cookie.startsWith(`${name}=`));
+  return item ? decodeURIComponent(item.slice(name.length + 1)) : null;
 }
 
-/**
- * Set a value in localStorage
- * @param key - The storage key
- * @param value - The value to store
- * @returns true if successful, false otherwise
- */
-export function setStorageItem(key: string, value: string): boolean {
-  try {
-    localStorage.setItem(key, value);
-    return true;
-  }
-  catch (error) {
-    console.error(`Error setting storage item "${key}":`, error);
-    return false;
-  }
+function writeCookie(name: string, value: string, persistent: boolean): void {
+  if (!import.meta.client)
+    return;
+  const secure = window.location.protocol === "https:" ? "; Secure" : "";
+  const maxAge = persistent ? `; Max-Age=${REMEMBER_ME_MAX_AGE}` : "";
+  document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; SameSite=Lax${maxAge}${secure}`;
 }
 
-/**
- * Remove a value from localStorage
- * @param key - The storage key
- * @returns true if successful, false otherwise
- */
-export function removeStorageItem(key: string): boolean {
-  try {
-    localStorage.removeItem(key);
-    return true;
-  }
-  catch (error) {
-    console.error(`Error removing storage item "${key}":`, error);
-    return false;
-  }
+function removeCookie(name: string): void {
+  if (!import.meta.client)
+    return;
+  const secure = window.location.protocol === "https:" ? "; Secure" : "";
+  document.cookie = `${name}=; Path=/; Max-Age=0; SameSite=Lax${secure}`;
 }
 
-/**
- * Clear all items from localStorage
- * @returns true if successful, false otherwise
- */
-export function clearStorage(): boolean {
-  try {
-    localStorage.clear();
-    return true;
+function getToken(name: string, legacyKey: string): string | null {
+  const cookieValue = readCookie(name);
+  if (cookieValue)
+    return cookieValue;
+
+  // One-time migration for users with an existing localStorage session.
+  if (!import.meta.client)
+    return null;
+  const legacyValue = localStorage.getItem(legacyKey);
+  if (legacyValue) {
+    writeCookie(name, legacyValue, false);
+    localStorage.removeItem(legacyKey);
   }
-  catch (error) {
-    console.error("Error clearing storage:", error);
-    return false;
-  }
+  return legacyValue;
 }
 
-/**
- * Composable for token management
- * Provides convenient methods for access and refresh tokens
- */
 export function useStorage() {
-  /**
-   * Get the access token
-   */
-  const getAccessToken = (): string | null => {
-    return getStorageItem(STORAGE_KEYS.ACCESS_TOKEN);
+  const isRemembered = () => readCookie(COOKIE_KEYS.REMEMBER_ME) === "true";
+
+  const getAccessToken = () => getToken(COOKIE_KEYS.ACCESS_TOKEN, "accessToken");
+  const getRefreshToken = () => getToken(COOKIE_KEYS.REFRESH_TOKEN, "refreshToken");
+
+  const setTokens = (accessToken: string, refreshToken: string, rememberMe = false): boolean => {
+    writeCookie(COOKIE_KEYS.ACCESS_TOKEN, accessToken, rememberMe);
+    writeCookie(COOKIE_KEYS.REFRESH_TOKEN, refreshToken, rememberMe);
+    if (rememberMe)
+      writeCookie(COOKIE_KEYS.REMEMBER_ME, "true", true);
+    else
+      removeCookie(COOKIE_KEYS.REMEMBER_ME);
+    return true;
   };
 
-  /**
-   * Get the refresh token
-   */
-  const getRefreshToken = (): string | null => {
-    return getStorageItem(STORAGE_KEYS.REFRESH_TOKEN);
-  };
-
-  /**
-   * Set the access token
-   */
-  const setAccessToken = (token: string): boolean => {
-    return setStorageItem(STORAGE_KEYS.ACCESS_TOKEN, token);
-  };
-
-  /**
-   * Set the refresh token
-   */
-  const setRefreshToken = (token: string): boolean => {
-    return setStorageItem(STORAGE_KEYS.REFRESH_TOKEN, token);
-  };
-
-  /**
-   * Set both access and refresh tokens
-   */
-  const setTokens = (accessToken: string, refreshToken: string): boolean => {
-    const accessSuccess = setAccessToken(accessToken);
-    const refreshSuccess = setRefreshToken(refreshToken);
-    return accessSuccess && refreshSuccess;
-  };
-
-  /**
-   * Remove the access token
-   */
-  const removeAccessToken = (): boolean => {
-    return removeStorageItem(STORAGE_KEYS.ACCESS_TOKEN);
-  };
-
-  /**
-   * Remove the refresh token
-   */
-  const removeRefreshToken = (): boolean => {
-    return removeStorageItem(STORAGE_KEYS.REFRESH_TOKEN);
-  };
-
-  /**
-   * Remove both access and refresh tokens
-   */
   const removeTokens = (): boolean => {
-    const accessSuccess = removeAccessToken();
-    const refreshSuccess = removeRefreshToken();
-    return accessSuccess && refreshSuccess;
-  };
-
-  /**
-   * Check if tokens exist
-   */
-  const hasTokens = (): boolean => {
-    return getAccessToken() !== null && getRefreshToken() !== null;
+    removeCookie(COOKIE_KEYS.ACCESS_TOKEN);
+    removeCookie(COOKIE_KEYS.REFRESH_TOKEN);
+    removeCookie(COOKIE_KEYS.REMEMBER_ME);
+    if (import.meta.client) {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+    }
+    return true;
   };
 
   return {
-    // Generic storage methods
-    getItem: getStorageItem,
-    setItem: setStorageItem,
-    removeItem: removeStorageItem,
-    clear: clearStorage,
-    // Token-specific methods
     getAccessToken,
     getRefreshToken,
-    setAccessToken,
-    setRefreshToken,
     setTokens,
-    removeAccessToken,
-    removeRefreshToken,
     removeTokens,
-    hasTokens,
+    hasTokens: () => Boolean(getAccessToken() && getRefreshToken()),
+    isRemembered,
   };
 }

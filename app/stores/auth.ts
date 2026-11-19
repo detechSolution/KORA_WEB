@@ -248,6 +248,10 @@ export const useAuthStore = defineStore("auth", () => {
 
   const logout = (): void => {
     try {
+      const refreshToken = storage.getRefreshToken();
+      if (refreshToken) {
+        void http.post(API_ENDPOINTS.AUTH.LOGOUT, { refreshToken }).catch(() => {});
+      }
       storage.removeTokens();
       clearData();
     }
@@ -354,6 +358,7 @@ export const useAuthStore = defineStore("auth", () => {
   const login = async (payload: {
     email: string;
     password: string;
+    rememberMe: boolean;
   }): Promise<{
     accessToken: string;
     refreshToken: string;
@@ -364,11 +369,15 @@ export const useAuthStore = defineStore("auth", () => {
       unAuthorizedError.value = false;
       const response = (await http.post(
         API_ENDPOINTS.AUTH.LOGIN,
-        { email: payload.email, password: payload.password },
+        {
+          email: payload.email,
+          password: payload.password,
+          rememberMe: payload.rememberMe,
+        },
       )) as any;
       const { accessToken, refreshToken } = response;
       if (accessToken && refreshToken) {
-        storage.setTokens(accessToken, refreshToken);
+        storage.setTokens(accessToken, refreshToken, payload.rememberMe);
         isAuthenticated.value = true;
         // After login, immediately check auth to get user data
         await checkAuth(true);

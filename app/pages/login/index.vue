@@ -49,6 +49,7 @@ onUnmounted(() => {
 });
 
 const loading = ref(false);
+const rememberMe = ref(false);
 const apiError = ref<string | null>(null);
 const formRef = ref<InstanceType<typeof UForm> | null>(null);
 
@@ -106,12 +107,11 @@ async function handleLogin(): Promise<void> {
     loading.value = true;
     clearApiError();
     const payload = {
-      email: loginFormState.email,
-      password: loginFormState.password,
+      email: loginFormState.email ?? "",
+      password: loginFormState.password ?? "",
+      rememberMe: rememberMe.value,
     };
-    const result = await authStore.login(
-      payload as { email: string; password: string },
-    );
+    const result = await authStore.login(payload);
 
     // If user's email is not verified, require verification before proceeding
     if (result.isEmailVerified === false) {
@@ -329,6 +329,7 @@ function goBackToLogin(): void {
                 class="flex items-center gap-2 cursor-pointer text-xs text-secondary-400 hover:text-white transition-colors"
               >
                 <input
+                  v-model="rememberMe"
                   type="checkbox"
                   class="w-4 h-4 rounded-xs border-white/20 bg-transparent text-[#B59A6D] focus:ring-[#B59A6D] focus:ring-offset-0 focus:ring-offset-transparent"
                 >

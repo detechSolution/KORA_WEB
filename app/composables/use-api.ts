@@ -1,6 +1,7 @@
 import type { ApiError, ApiErrorData } from "~/types/api";
 
 import { useStorage } from "~/composables/use-storage";
+import { API_ENDPOINTS } from "~/config/constants";
 import { useAuthStore } from "~/stores/auth";
 import { isApiError } from "~/utils/error";
 
@@ -33,6 +34,48 @@ type ApiRequestOptions = RequestInit & {
 function createHttpClient(config: HttpClientConfig) {
   const { baseURL, storage } = config;
   const timeout = config.timeout ?? 100000;
+  let refreshInFlight: Promise<boolean> | null = null;
+
+  async function refreshAccessToken(): Promise<boolean> {
+    const refreshToken = storage.getRefreshToken();
+    if (!refreshToken)
+      return false;
+
+    if (!refreshInFlight) {
+      refreshInFlight = (async () => {
+        try {
+          const response = await fetch(`${baseURL}${API_ENDPOINTS.AUTH.REFRESH}`, {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ refreshToken }),
+          });
+          if (!response.ok)
+            return false;
+
+          const result = await response.json();
+          const payload = result?.data ?? result;
+          if (!payload?.accessToken)
+            return false;
+
+          storage.setTokens(
+            payload.accessToken,
+            payload.refreshToken || refreshToken,
+            storage.isRemembered(),
+          );
+          return true;
+        }
+        catch {
+          return false;
+        }
+        finally {
+          refreshInFlight = null;
+        }
+      })();
+    }
+
+    return refreshInFlight;
+  }
 
   function getAccessToken(): string | null {
     return storage.getAccessToken();
@@ -41,6 +84,7 @@ function createHttpClient(config: HttpClientConfig) {
   async function request<T>(
     endpoint: string,
     options: ApiRequestOptions = {},
+    hasRetried = false,
   ): Promise<T> {
     const controller = new AbortController();
     const timeoutId = setTimeout(
@@ -62,11 +106,23 @@ function createHttpClient(config: HttpClientConfig) {
 
       const response = await fetch(`${baseURL}${endpoint}`, {
         ...options,
+        credentials: options.credentials ?? "include",
         signal: controller.signal,
         headers,
       });
 
       clearTimeout(timeoutId);
+
+      if (
+        response.status === 401
+        && !hasRetried
+        && endpoint !== API_ENDPOINTS.AUTH.LOGIN
+        && endpoint !== API_ENDPOINTS.AUTH.REFRESH
+        && endpoint !== API_ENDPOINTS.AUTH.LOGOUT
+        && await refreshAccessToken()
+      ) {
+        return request<T>(endpoint, options, true);
+      }
 
       if (!response.ok) {
         let errorData: ApiErrorData = {};
