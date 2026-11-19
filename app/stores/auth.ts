@@ -268,6 +268,7 @@ export const useAuthStore = defineStore("auth", () => {
     // If no tokens, clear auth immediately
     if (!storage.hasTokens()) {
       clearAuthData();
+      clearCartItems();
       return;
     }
 
@@ -281,8 +282,16 @@ export const useAuthStore = defineStore("auth", () => {
       const payload = response;
       if (payload) {
         const u = payload as Record<string, unknown>;
+        const nextUserId = (u.id as number) ?? null;
+        if (
+          user.value.id !== null
+          && nextUserId !== null
+          && user.value.id !== nextUserId
+        ) {
+          clearCartItems();
+        }
         isAuthenticated.value = true;
-        user.value.id = (u.id as number) ?? null;
+        user.value.id = nextUserId;
         user.value.email = (u.email as string) ?? "";
         user.value.name = (u.fullName as string) ?? "";
         user.value.phoneNumber = (u.phoneNumber as string) ?? "";
@@ -378,6 +387,7 @@ export const useAuthStore = defineStore("auth", () => {
       if (response?.requiresPasswordChange) {
         storage.removeTokens();
         clearAuthData();
+        clearCartItems();
         lastAuthCheck.value = 0;
         return {
           isEmailVerified: false,
@@ -389,6 +399,7 @@ export const useAuthStore = defineStore("auth", () => {
       }
       const { accessToken, refreshToken } = response;
       if (accessToken && refreshToken) {
+        clearCartItems();
         storage.setTokens(accessToken, refreshToken, payload.rememberMe);
         isAuthenticated.value = true;
         // After login, immediately check auth to get user data
