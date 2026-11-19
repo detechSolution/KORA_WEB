@@ -24,6 +24,8 @@ const sessionStore = useSessionStore();
 const { success, error: showError } = useNotification();
 
 const isPlayingVideo = ref(false);
+const hasFeatureVideo = computed(() => Boolean(props.session?.videoUrl));
+const fallbackAvatar = computed(() => `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(props.session?.name || "Kora")}&backgroundColor=f5efe4&radius=50`);
 const isBookingModalOpen = ref(false);
 const isAddingToWaitlist = ref(false);
 
@@ -178,13 +180,24 @@ async function handleAddToWaitlist() {
               <div
                 v-if="!isPlayingVideo"
                 class="relative overflow-hidden group cursor-pointer"
-                @click="isPlayingVideo = true"
+                :class="{ 'cursor-default': !hasFeatureVideo }"
+                @click="hasFeatureVideo && (isPlayingVideo = true)"
               >
                 <img
+                  v-if="session.bannerUrl"
                   :src="session.bannerUrl"
                   :alt="session.name"
                   class="w-full h-[300px] md:h-[460px] object-cover transition-transform duration-700 group-hover:scale-105"
                 >
+                <div v-else class="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-gradient-to-br from-[#f5efe4] via-[#e9dfce] to-[#d7c6aa] px-6 text-center">
+                  <img
+                    :src="fallbackAvatar"
+                    alt=""
+                    class="h-32 w-32 rounded-full border border-white/70 bg-white/50 shadow-lg md:h-40 md:w-40"
+                  >
+                  <span class="font-serif text-2xl text-stone-800 md:text-3xl">{{ session.name }}</span>
+                  <span class="text-[10px] uppercase tracking-[0.3em] text-stone-600">Kora Session</span>
+                </div>
 
                 <div
                   class="absolute inset-0 bg-black/40 transition-opacity duration-300 group-hover:bg-black/50"
@@ -205,6 +218,7 @@ async function handleAddToWaitlist() {
 
                 <div class="absolute inset-0 flex items-center justify-center">
                   <div
+                    v-if="hasFeatureVideo"
                     class="w-16 h-16 md:w-20 md:h-20 border border-primary/60 flex items-center justify-center bg-black/20 backdrop-blur-sm"
                   >
                     <UIcon
@@ -213,6 +227,7 @@ async function handleAddToWaitlist() {
                     />
                   </div>
                 </div>
+                <span v-if="!hasFeatureVideo" class="absolute bottom-8 left-1/2 -translate-x-1/2 text-[10px] uppercase tracking-[0.25em] text-white/90">Video coming soon</span>
               </div>
 
               <div v-else class="w-full h-[300px] md:h-[460px] bg-black">

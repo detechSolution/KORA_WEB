@@ -2,7 +2,12 @@
 import { nextTick, onBeforeUnmount, ref, watch } from "vue";
 
 type MenuLink = { name: string; path: string };
-type MenuItem = { name: string; image: string; path?: string; children?: MenuLink[] };
+type MenuItem = {
+  name: string;
+  image: string;
+  path?: string;
+  children?: MenuLink[];
+};
 
 const props = defineProps<{ isOpen: boolean }>();
 const emit = defineEmits<{ close: [] }>();
@@ -20,6 +25,7 @@ const menuItems: MenuItem[] = [
       { name: "Classes", path: "/session?tab=class" },
       { name: "Events", path: "/session?tab=event" },
       { name: "Workshops", path: "/session?tab=workshop" },
+      { name: "Passes", path: "/membership?tab=passes" },
     ],
   },
   {
@@ -32,9 +38,21 @@ const menuItems: MenuItem[] = [
       { name: "Nutrition", path: "/nutrition" },
     ],
   },
-  { name: "Schedules", path: "/schedules", image: "/images/wellness/classes.png" },
-  { name: "Guest Pass", path: "/guest-pass", image: "/images/hero/offerings_memberships.png" },
-  { name: "Gift Card", path: "/gift-card", image: "/images/hero/experience_aroma.png" },
+  {
+    name: "Schedules",
+    path: "/schedules",
+    image: "/images/wellness/classes.png",
+  },
+  {
+    name: "Guest Pass",
+    path: "/guest-pass",
+    image: "/images/hero/offerings_memberships.png",
+  },
+  {
+    name: "Gift Card",
+    path: "/gift-card",
+    image: "/images/hero/experience_aroma.png",
+  },
 ];
 
 const previewImages = [...new Set(menuItems.map(item => item.image))];
@@ -66,9 +84,15 @@ function trackPreviewPosition() {
   const columnTop = previewColumn.value.getBoundingClientRect().top;
   const viewportTop = window.visualViewport?.offsetTop ?? 0;
   const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
-  const maxTop = Math.max(viewportTop + 24, viewportTop + viewportHeight - previewPanel.value.offsetHeight - 24);
+  const maxTop = Math.max(
+    viewportTop + 24,
+    viewportTop + viewportHeight - previewPanel.value.offsetHeight - 24,
+  );
   const minTop = Math.min(maxTop, Math.max(viewportTop + 24, columnTop));
-  const progress = Math.min(1, Math.max(0, (previewPointerY - viewportTop) / viewportHeight));
+  const progress = Math.min(
+    1,
+    Math.max(0, (previewPointerY - viewportTop) / viewportHeight),
+  );
   previewOffset.value = minTop + (maxTop - minTop) * progress - columnTop;
   previewFrame = requestAnimationFrame(trackPreviewPosition);
 }
@@ -114,7 +138,11 @@ function hoverItem(event: PointerEvent, item: MenuItem) {
   previewPointerY = event.clientY;
   activeItem.value = item.name;
   expanded.value = item.name;
-  const delay = previewVisible.value && !window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 180 : 0;
+  const delay
+    = previewVisible.value
+      && !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? 180
+      : 0;
   previewSwitchTimer = setTimeout(() => {
     previewImage.value = item.image;
     previewVisible.value = true;
@@ -145,25 +173,32 @@ function afterLeave() {
   restorePage();
 }
 
-watch(() => props.isOpen, async (open) => {
-  if (!import.meta.client)
-    return;
-  hidePreview();
-  if (!open)
-    return;
-  if (previousOverflow === null) {
-    previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    previousOverflow = document.body.style.overflow;
-  }
-  document.body.style.overflow = "hidden";
-  expanded.value = null;
-  previewOffset.value = 0;
-  await nextTick();
-  if (!props.isOpen)
-    return;
-  dialog.value?.showModal();
-  closeButton.value?.focus({ preventScroll: true });
-}, { immediate: true });
+watch(
+  () => props.isOpen,
+  async (open) => {
+    if (!import.meta.client)
+      return;
+    hidePreview();
+    if (!open)
+      return;
+    if (previousOverflow === null) {
+      previousFocus
+        = document.activeElement instanceof HTMLElement
+          ? document.activeElement
+          : null;
+      previousOverflow = document.body.style.overflow;
+    }
+    document.body.style.overflow = "hidden";
+    expanded.value = null;
+    previewOffset.value = 0;
+    await nextTick();
+    if (!props.isOpen)
+      return;
+    dialog.value?.showModal();
+    closeButton.value?.focus({ preventScroll: true });
+  },
+  { immediate: true },
+);
 
 onBeforeUnmount(() => {
   hidePreview();
@@ -192,20 +227,45 @@ onBeforeUnmount(() => {
             @click="close"
           >
             <img
-              :src="colorMode.value === 'dark' ? '/logo/kora_white_logo.svg' : '/logo/kora_black_logo.svg'"
+              :src="
+                colorMode.value === 'dark'
+                  ? '/logo/kora_white_logo.svg'
+                  : '/logo/kora_black_logo.svg'
+              "
               alt="KORA"
               class="menu-logo"
             >
           </NuxtLink>
           <div class="menu-actions">
+            <base-button
+              to="/membership"
+              variant="solid"
+              color="primary"
+              class="inline-flex px-4 md:px-6 py-2 md:py-2.5 text-[10px] md:text-xs uppercase tracking-widest transition-all duration-200 focus:outline-none shadow-sm active:scale-95"
+            >
+              Membership
+            </base-button>
             <button
               type="button"
               class="menu-theme"
-              :aria-label="colorMode.value === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
-              :title="colorMode.value === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
+              :aria-label="
+                colorMode.value === 'dark'
+                  ? 'Switch to light theme'
+                  : 'Switch to dark theme'
+              "
+              :title="
+                colorMode.value === 'dark'
+                  ? 'Switch to light theme'
+                  : 'Switch to dark theme'
+              "
               @click="toggleTheme"
             >
-              <UIcon :name="colorMode.value === 'dark' ? 'i-lucide-sun' : 'i-lucide-moon'" class="size-4" />
+              <UIcon
+                :name="
+                  colorMode.value === 'dark' ? 'i-lucide-sun' : 'i-lucide-moon'
+                "
+                class="size-4"
+              />
             </button>
             <button
               ref="closeButton"
@@ -238,7 +298,9 @@ onBeforeUnmount(() => {
                 :src="src"
                 alt=""
                 class="preview-image"
-                :class="{ 'is-visible': previewVisible && previewImage === src }"
+                :class="{
+                  'is-visible': previewVisible && previewImage === src,
+                }"
                 decoding="async"
               >
             </div>
@@ -259,10 +321,10 @@ onBeforeUnmount(() => {
                 @pointerleave="leaveItem"
                 @pointercancel="hidePreview"
               >
-                <div
-                  class="menu-row"
-                >
-                  <span class="menu-number" aria-hidden="true">{{ String(index + 1).padStart(2, '0') }}</span>
+                <div class="menu-row">
+                  <span class="menu-number" aria-hidden="true">{{
+                    String(index + 1).padStart(2, "0")
+                  }}</span>
                   <button
                     v-if="item.children"
                     :id="`menu-heading-${index}`"
@@ -272,7 +334,6 @@ onBeforeUnmount(() => {
                     :class="{ 'is-active': expanded === item.name }"
                     :aria-expanded="expanded === item.name"
                     :aria-controls="`menu-section-${index}`"
-
                     @click="toggleSection(item)"
                   >
                     <span class="title-label" aria-hidden="true">
@@ -298,7 +359,6 @@ onBeforeUnmount(() => {
                     class="menu-title"
                     :aria-label="item.name"
                     :class="{ 'is-previewed': activeItem === item.name }"
-
                     @click="close"
                   >
                     <span class="title-label" aria-hidden="true">
@@ -320,11 +380,7 @@ onBeforeUnmount(() => {
                   <div class="submenu-clip">
                     <ul class="submenu-links">
                       <li v-for="child in item.children" :key="child.path">
-                        <NuxtLink
-                          :to="child.path"
-
-                          @click="close"
-                        >
+                        <NuxtLink :to="child.path" @click="close">
                           {{ child.name }}
                         </NuxtLink>
                       </li>

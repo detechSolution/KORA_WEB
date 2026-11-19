@@ -32,7 +32,20 @@ const emit = defineEmits(["close"]);
 
 const router = useRouter();
 const cartStore = useCartStore();
-const { success } = useNotification();
+const { error: showError, success } = useNotification();
+
+const waiverAccepted = ref(false);
+const waiverError = ref(false);
+
+function requireWaiver(): boolean {
+  if (waiverAccepted.value) {
+    waiverError.value = false;
+    return true;
+  }
+  waiverError.value = true;
+  showError({ message: "Please read and accept the Terms & Policy and Medical & Liability Waiver to continue." });
+  return false;
+}
 
 const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
 const state = reactive({
@@ -67,6 +80,7 @@ const passItem = computed(() => ({
   finalPrice: pricing.value.finalPrice,
   memberBenefit: props.pass.discountTag,
   bookingDate: formatDate(state.date, "YYYY-MM-DD"),
+  waiverAcceptedAt: new Date().toISOString(),
 }));
 
 const schema = [
@@ -115,6 +129,8 @@ async function validateCurrentStep(): Promise<boolean> {
 function close() {
   currentStep.value = 0;
   resetGuests();
+  waiverAccepted.value = false;
+  waiverError.value = false;
   emit("close");
 }
 
@@ -143,11 +159,16 @@ function nextStep() {
 }
 
 function addToCart() {
+  if (!requireWaiver())
+    return;
   cartStore.addToCart(passItem.value);
   success({ message: "Item added to cart successfully!" });
+  close();
 }
 
 function proceedToCheckout() {
+  if (!requireWaiver())
+    return;
   cartStore.addToCart(passItem.value);
   close();
   router.push("/checkout");
@@ -275,6 +296,12 @@ function proceedToCheckout() {
               </div>
               <div class="border-b border-border/40 pb-6 mb-8" />
             </div>
+
+            <MembershipWaiverConsent
+              v-model="waiverAccepted"
+              :show-error="waiverError"
+              class="mb-8"
+            />
 
             <div
               class="flex flex-col sm:flex-row justify-between gap-4 mt-auto"

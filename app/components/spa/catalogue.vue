@@ -44,6 +44,7 @@ const selectedSubTypeId = ref<number | string | null>(null);
 const isBookingModalOpen = ref(false);
 const isGiftBookingModalOpen = ref(false);
 const loading = ref(false);
+const spaFallbackAvatar = computed(() => `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(spa.value?.name || "Kora Spa")}&backgroundColor=f5efe4&radius=50`);
 
 async function getSpaLists() {
   try {
@@ -125,10 +126,24 @@ onMounted(() => {
             />
             <div v-if="!isPlayingVideo" class="relative overflow-hidden group">
               <img
-                :src="spa?.bannerUrl || IMAGES.WELLNESS_SPA"
+                v-if="spa?.bannerUrl"
+                :src="spa.bannerUrl"
                 :alt="spa?.name || 'Spa Sanctuary'"
                 class="w-full aspect-[1.93/1] object-cover transition-transform duration-700 group-hover:scale-105"
               >
+              <div
+                v-else
+                class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-[#f5efe4] via-[#e9dfce] to-[#d7c6aa] px-5 text-center"
+                :class="spa?.videoUrl ? 'aspect-[1.93/1]' : 'aspect-[1.93/1]'"
+              >
+                <img
+                  :src="spaFallbackAvatar"
+                  alt=""
+                  class="h-20 w-20 rounded-full border border-white/70 bg-white/50 shadow-md md:h-24 md:w-24"
+                >
+                <span class="font-serif text-xl text-stone-800 md:text-2xl">{{ spa?.name || 'Spa Sanctuary' }}</span>
+                <span class="text-[9px] uppercase tracking-[0.28em] text-stone-600">Kora Spa</span>
+              </div>
 
               <div
                 class="absolute inset-0 bg-black/40 transition-opacity duration-300 group-hover:bg-black/50"
@@ -163,9 +178,10 @@ onMounted(() => {
                   />
                 </span>
               </button>
+              <span v-else class="absolute bottom-5 left-1/2 -translate-x-1/2 text-[10px] uppercase tracking-[0.25em] text-white/90">Video coming soon</span>
             </div>
 
-            <div v-else class="w-full aspect-[1.93/1] bg-black">
+            <div v-else-if="spa?.videoUrl" class="w-full aspect-[1.93/1] bg-black">
               <video
                 class="w-full h-full object-cover"
                 :src="spa?.videoUrl"
@@ -174,6 +190,9 @@ onMounted(() => {
                 preload="metadata"
                 playsinline
               />
+            </div>
+            <div v-else class="flex aspect-[1.93/1] items-center justify-center bg-stone-950 text-xs uppercase tracking-[0.2em] text-white/70">
+              Video coming soon
             </div>
           </div>
           <div class="max-w-400 px-4 md:px-8 lg:px-12 pb-8">
