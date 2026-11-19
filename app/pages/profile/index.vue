@@ -295,8 +295,7 @@ const user = computed(() => {
         || authStore.user?.membership?.plan?.name
         || "Active Membership",
       endDate: formatDate(
-        membershipData.value?.validTo
-        || (membershipData.value as any)?.endsOn
+        membershipData.value?.subscriptionEndDate
         || authStore.user?.membership?.validTo
         || "",
       ),
