@@ -184,21 +184,10 @@ async function handleAddToWaitlist() {
                 @click="hasFeatureVideo && (isPlayingVideo = true)"
               >
                 <img
-                  v-if="session.bannerUrl"
-                  :src="session.bannerUrl"
+                  :src="session.bannerUrl || fallbackAvatar"
                   :alt="session.name"
                   class="w-full h-[300px] md:h-[460px] object-cover transition-transform duration-700 group-hover:scale-105"
                 >
-                <div v-else class="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-gradient-to-br from-[#f5efe4] via-[#e9dfce] to-[#d7c6aa] px-6 text-center">
-                  <img
-                    :src="fallbackAvatar"
-                    alt=""
-                    class="h-32 w-32 rounded-full border border-white/70 bg-white/50 shadow-lg md:h-40 md:w-40"
-                  >
-                  <span class="font-serif text-2xl text-stone-800 md:text-3xl">{{ session.name }}</span>
-                  <span class="text-[10px] uppercase tracking-[0.3em] text-stone-600">Kora Session</span>
-                </div>
-
                 <div
                   class="absolute inset-0 bg-black/40 transition-opacity duration-300 group-hover:bg-black/50"
                 />
