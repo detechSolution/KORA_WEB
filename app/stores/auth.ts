@@ -248,10 +248,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   const logout = (): void => {
     try {
-      const refreshToken = storage.getRefreshToken();
-      if (refreshToken) {
-        void http.post(API_ENDPOINTS.AUTH.LOGOUT, { refreshToken }).catch(() => {});
-      }
+      // void http.post(API_ENDPOINTS.AUTH.LOGOUT).catch(() => {});
       storage.removeTokens();
       clearData();
     }
