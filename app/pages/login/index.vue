@@ -21,9 +21,10 @@ const route = useRoute();
 const router = useRouter();
 const { error: showError, success: showSuccess } = useNotification();
 
-type Step = "login" | "verify";
+type Step = "login" | "verify" | "password-change";
 const step = ref<Step>("login");
 const submittedEmail = ref("");
+const passwordSetupToken = ref("");
 
 const resendTimer = ref(0);
 let timerInterval: ReturnType<typeof setInterval> | null = null;
@@ -52,6 +53,8 @@ const loading = ref(false);
 const rememberMe = ref(false);
 const apiError = ref<string | null>(null);
 const formRef = ref<InstanceType<typeof UForm> | null>(null);
+const passwordSetupFormRef = ref<InstanceType<typeof UForm> | null>(null);
+const passwordSetupApiError = ref<string | null>(null);
 
 const schema = z
   .object({
@@ -74,6 +77,41 @@ const loginFormState = reactive<Partial<Schema>>({
   email: "",
   password: "",
 });
+
+const passwordSetupFormState = reactive({
+  newPassword: "",
+  confirmPassword: "",
+});
+
+const passwordSetupSchema = z
+  .object({
+    newPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/\d/, "Password must contain at least one number")
+      .regex(
+        /[!@#$%^&*(),.?":{}|<>_\-\\[\]/+=~`';]/,
+        "Password must contain at least one special character",
+      ),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
+  })
+  .superRefine((data, ctx) => {
+    if (data.newPassword !== data.confirmPassword) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["confirmPassword"],
+        message: "Passwords do not match",
+      });
+    }
+    if (passwordSetupApiError.value) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["newPassword"],
+        message: passwordSetupApiError.value,
+      });
+    }
+  });
 
 function setApiError(error: string): void {
   apiError.value = error;
@@ -113,6 +151,20 @@ async function handleLogin(): Promise<void> {
     };
     const result = await authStore.login(payload);
 
+    if (result.requiresPasswordChange) {
+      if (!result.passwordSetupToken) {
+        showError({ message: "The password setup token is missing. Please contact support." });
+        return;
+      }
+      submittedEmail.value = payload.email;
+      passwordSetupToken.value = result.passwordSetupToken;
+      passwordSetupFormState.newPassword = "";
+      passwordSetupFormState.confirmPassword = "";
+      passwordSetupApiError.value = null;
+      step.value = "password-change";
+      return;
+    }
+
     // If user's email is not verified, require verification before proceeding
     if (result.isEmailVerified === false) {
       submittedEmail.value = loginFormState.email ?? "";
@@ -141,6 +193,36 @@ async function handleLogin(): Promise<void> {
       return;
     }
     showError({ message });
+  }
+  finally {
+    loading.value = false;
+  }
+}
+
+async function handleTemporaryPasswordSetup(): Promise<void> {
+  try {
+    await passwordSetupFormRef.value?.validate();
+  }
+  catch {
+    return;
+  }
+
+  try {
+    loading.value = true;
+    passwordSetupApiError.value = null;
+    await authStore.setupTemporaryPassword({
+      passwordSetupToken: passwordSetupToken.value,
+      newPassword: passwordSetupFormState.newPassword,
+    });
+    passwordSetupToken.value = "";
+    loginFormState.password = "";
+    step.value = "login";
+    showSuccess({ message: "Password updated. Sign in with your new password." });
+  }
+  catch (error: unknown) {
+    const message = getApiErrorMessage(error, "Unable to update your password. Please try again.");
+    passwordSetupApiError.value = message;
+    passwordSetupFormRef.value?.validate();
   }
   finally {
     loading.value = false;
@@ -361,6 +443,58 @@ function goBackToLogin(): void {
               Register Now
             </NuxtLink>
           </p>
+        </template>
+
+        <!-- Step: Set a new password for temporary credentials -->
+        <template v-else-if="step === 'password-change'">
+          <h1 class="font-serif text-4xl mb-3 text-white">
+            Set a New Password
+          </h1>
+          <p class="text-xs text-secondary-400 mb-2">
+            Your temporary password can only be used to set a new password.
+          </p>
+          <p class="text-xs text-secondary-400 mb-6">
+            Account: <span class="text-white">{{ submittedEmail }}</span>
+          </p>
+
+          <UForm
+            ref="passwordSetupFormRef"
+            :state="passwordSetupFormState"
+            :schema="passwordSetupSchema"
+            :validate-on="['input', 'change', 'blur']"
+            class="mt-8 w-full space-y-4"
+            @keypress.enter="handleTemporaryPasswordSetup"
+          >
+            <base-input
+              v-model="passwordSetupFormState.newPassword"
+              name="newPassword"
+              label="NEW PASSWORD"
+              placeholder="Create a new password"
+              type="password"
+              leading-icon="i-lucide-lock"
+              class="bg-transparent"
+              @input="passwordSetupApiError = null"
+            />
+            <base-input
+              v-model="passwordSetupFormState.confirmPassword"
+              name="confirmPassword"
+              label="CONFIRM NEW PASSWORD"
+              placeholder="Confirm your new password"
+              type="password"
+              leading-icon="i-lucide-lock"
+              class="bg-transparent"
+            />
+            <p class="text-[11px] text-secondary-400">
+              Use at least 8 characters, including an uppercase letter, a number, and a special character.
+            </p>
+            <base-button
+              class="w-full"
+              :loading="loading"
+              @click="handleTemporaryPasswordSetup"
+            >
+              UPDATE PASSWORD
+            </base-button>
+          </UForm>
         </template>
 
         <!-- Step: Verify Email -->
