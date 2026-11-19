@@ -357,10 +357,13 @@ export const useAuthStore = defineStore("auth", () => {
     password: string;
     rememberMe: boolean;
   }): Promise<{
-    accessToken: string;
-    refreshToken: string;
+    accessToken?: string;
+    refreshToken?: string;
     isEmailVerified: boolean;
     user: any;
+    requiresPasswordChange: boolean;
+    passwordSetupToken?: string;
+    message?: string;
   }> => {
     try {
       unAuthorizedError.value = false;
@@ -372,6 +375,18 @@ export const useAuthStore = defineStore("auth", () => {
           rememberMe: payload.rememberMe,
         },
       )) as any;
+      if (response?.requiresPasswordChange) {
+        storage.removeTokens();
+        clearAuthData();
+        lastAuthCheck.value = 0;
+        return {
+          isEmailVerified: false,
+          user: response.user,
+          requiresPasswordChange: true,
+          passwordSetupToken: response.passwordSetupToken,
+          message: response.message,
+        };
+      }
       const { accessToken, refreshToken } = response;
       if (accessToken && refreshToken) {
         storage.setTokens(accessToken, refreshToken, payload.rememberMe);
@@ -384,12 +399,26 @@ export const useAuthStore = defineStore("auth", () => {
         refreshToken,
         isEmailVerified: response?.user?.isEmailVerified ?? response?.isEmailVerified ?? true,
         user: response?.user,
+        requiresPasswordChange: false,
       };
     }
     catch (error: unknown) {
       console.error(error, "Login Error");
       throw error;
     }
+  };
+
+  const setupTemporaryPassword = async (payload: {
+    passwordSetupToken: string;
+    newPassword: string;
+  }): Promise<void> => {
+    await http.post(
+      API_ENDPOINTS.AUTH.SETUP_PASSWORD,
+      {
+        newPassword: payload.newPassword,
+        passwordSetupToken: payload.passwordSetupToken,
+      },
+    );
   };
 
   const register = async (payload: {
@@ -563,6 +592,7 @@ export const useAuthStore = defineStore("auth", () => {
     checkAuth,
     checkAuthIfNeeded,
     login,
+    setupTemporaryPassword,
     register,
     loginWithGoogle,
     logout,

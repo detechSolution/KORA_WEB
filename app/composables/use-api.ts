@@ -117,6 +117,7 @@ function createHttpClient(config: HttpClientConfig) {
         response.status === 401
         && !hasRetried
         && endpoint !== API_ENDPOINTS.AUTH.LOGIN
+        && endpoint !== API_ENDPOINTS.AUTH.SETUP_PASSWORD
         && endpoint !== API_ENDPOINTS.AUTH.REFRESH
         && endpoint !== API_ENDPOINTS.AUTH.LOGOUT
         && await refreshAccessToken()
