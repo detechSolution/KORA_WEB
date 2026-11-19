@@ -171,13 +171,13 @@ async function handleCancelRequest() {
         v-if="activeTab.toLowerCase() === 'upcoming'"
         class="w-full md:w-auto flex items-center gap-3 self-end"
       >
-        <span
+        <!-- <span
           v-if="booking.refundStatus === 'requested'"
           class="text-sm text-stone-400 font-medium px-2 py-1"
         >
           Cancel Requested
-        </span>
-        <template v-else>
+        </span> -->
+        <div>
           <base-button
             variant="outline"
             class="w-full md:w-auto bg-transparent text-red-700 dark:text-red-800 border-red-700 dark:border-red-800 ring-none h-8 text-xs dark:hover:text-red-800 font-medium"
@@ -195,7 +195,7 @@ async function handleCancelRequest() {
             VIEW
             <UIcon name="i-lucide-arrow-up-right" class="w-3.5 h-3.5" />
           </base-button>
-        </template>
+        </div>
       </div>
     </div>
   </div>
