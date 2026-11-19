@@ -294,6 +294,12 @@ const user = computed(() => {
         membershipData.value?.planName
         || authStore.user?.membership?.plan?.name
         || "Active Membership",
+      endDate: formatDate(
+        membershipData.value?.validTo
+        || (membershipData.value as any)?.endsOn
+        || authStore.user?.membership?.validTo
+        || "",
+      ),
       subtitle: "",
       period:
         membershipData.value?.frequencyLabel
@@ -737,7 +743,7 @@ onMounted(async () => {
 
               <div
                 class="grid grid-cols-1 pt-4 mt-4 border-t border-border/40 gap-4"
-                :class="hasFreezeDates ? 'sm:grid-cols-3' : 'sm:grid-cols-2'"
+                :class="hasFreezeDates ? 'sm:grid-cols-4' : 'sm:grid-cols-3'"
               >
                 <div>
                   <div
@@ -747,6 +753,17 @@ onMounted(async () => {
                   </div>
                   <div class="text-lg text-foreground font-serif">
                     {{ user.memberSince }}
+                  </div>
+                </div>
+
+                <div v-if="user.membership.endDate">
+                  <div
+                    class="text-[9px] font-bold tracking-widest uppercase text-stone-500 mb-1"
+                  >
+                    MEMBERSHIP ENDS
+                  </div>
+                  <div class="text-lg text-foreground font-serif">
+                    {{ user.membership.endDate }}
                   </div>
                 </div>
 
