@@ -550,7 +550,9 @@ watch(
                             {{ duration.duration }} {{ duration.timeUnit }}
                           </span>
                         </div>
-                        <p class="mt-2 font-serif text-lg">{{ item.name }}</p>
+                        <p class="mt-2 font-serif text-lg">
+                          {{ item.name }}
+                        </p>
                         <p class="text-3xl font-medium text-foreground mt-3">
                           <span class="text-2xl">Rs. </span>{{ duration.price }}
                         </p>
