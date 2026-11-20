@@ -177,7 +177,7 @@ async function handleCancelRequest() {
         >
           Cancel Requested
         </span> -->
-        <div>
+        <div class="w-full md:w-auto flex items-center gap-3 self-end">
           <base-button
             variant="outline"
             class="w-full md:w-auto bg-transparent text-red-700 dark:text-red-800 border-red-700 dark:border-red-800 ring-none h-8 text-xs dark:hover:text-red-800 font-medium"
