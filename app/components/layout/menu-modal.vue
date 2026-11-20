@@ -59,6 +59,12 @@ const menuItems = computed(() => {
       icon: "i-lucide-refresh-cw",
     },
     {
+      name: "Rehabilitation",
+      path: "/rehabilitation",
+      sub: "Clinical Physiotherapy & Movement Restoration",
+      icon: "i-lucide-stethoscope",
+    },
+    {
       name: "Wellness",
       path: "/wellness",
       sub: "Holistic Health Coaching & Mindfulness",

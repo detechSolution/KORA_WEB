@@ -5,6 +5,7 @@ const navColumns = [
     links: [
       { label: "NUTRITION", to: "/nutrition" },
       { label: "RECOVERY", to: "/recovery" },
+      { label: "REHABILITATION", to: "/rehabilitation" },
       { label: "WELLNESS", to: "/wellness" },
     ],
   },

@@ -53,6 +53,11 @@ const menuItems = computed(() => {
       sub: "Therapeutic Bodywork & Physical Restoration",
     },
     {
+      name: "Rehabilitation",
+      path: "/rehabilitation",
+      sub: "Clinical Physiotherapy & Movement Restoration",
+    },
+    {
       name: "Wellness",
       path: "/wellness",
       sub: "Holistic Health Coaching & Mindfulness",
