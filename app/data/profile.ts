@@ -8,6 +8,7 @@ export type Booking = {
   type: BookingType;
   date?: string;
   time?: string;
+  bookingDate?: string;
   location?: string;
   description?: string;
   price: string;

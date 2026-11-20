@@ -21,6 +21,21 @@ const memberstore = useMemberStore();
 const isCancelRequestModalOpen = ref(false);
 const loadingCancelRequest = ref(false);
 
+const canRequestCancellation = computed(() => {
+  const { itemType, bookingDate, time } = props.booking;
+  const cutoffHours = itemType === "spa" ? 24 : itemType === "session" ? 5 : null;
+
+  if (cutoffHours === null || !bookingDate || !time)
+    return false;
+
+  // Booking dates and times are stored in Nepal time (UTC+05:45).
+  const bookingDateTime = Date.parse(`${bookingDate.slice(0, 10)}T${time}+05:45`);
+  if (!Number.isFinite(bookingDateTime))
+    return false;
+
+  return bookingDateTime - Date.now() > cutoffHours * 60 * 60 * 1000;
+});
+
 const badgeClass = computed(() => {
   if (props.booking.itemType === "session") {
     return "bg-[#3D1E62] text-[#D8B4FE]"; // Purple
@@ -50,7 +65,7 @@ function handleViewDetail(booking: Booking) {
 }
 
 async function handleCancelRequest() {
-  if (!props.booking)
+  if (!props.booking || !canRequestCancellation.value)
     return;
 
   try {
@@ -179,6 +194,7 @@ async function handleCancelRequest() {
         </span> -->
         <div class="w-full md:w-auto flex items-center gap-3 self-end">
           <base-button
+            v-if="canRequestCancellation"
             variant="outline"
             class="w-full md:w-auto bg-transparent text-red-700 dark:text-red-800 border-red-700 dark:border-red-800 ring-none h-8 text-xs dark:hover:text-red-800 font-medium"
             @click="isCancelRequestModalOpen = true"

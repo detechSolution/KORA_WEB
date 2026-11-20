@@ -344,6 +344,7 @@ const filteredBookings = computed<Booking[]>(() => {
               : "Session") as "Session" | "Spa" | "Pass",
         date: formatDate(item.bookingDate),
         time: (item.bookingTime),
+        bookingDate: item.bookingDate,
         location: "",
         description: item.description ? item.description.replace(/<[^>]*>?/g, "") : "",
         price: `${item.currency} ${item.totalAmount !== undefined ? item.totalAmount : b.amount}`,
