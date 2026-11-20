@@ -10,6 +10,7 @@ const COOKIE_KEYS = {
 } as const;
 
 const REMEMBER_ME_MAX_AGE = 60 * 60 * 24 * 30;
+const PENDING_REMEMBER_ME_KEY = "pendingRememberMe";
 
 function readCookie(name: string): string | null {
   if (!import.meta.client)
@@ -55,6 +56,21 @@ function getToken(name: string, legacyKey: string): string | null {
 export function useStorage() {
   const isRemembered = () => readCookie(COOKIE_KEYS.REMEMBER_ME) === "true";
 
+  // Keeps the "Remember me" choice across the external Google OAuth redirect.
+  const setPendingRememberMe = (rememberMe: boolean): void => {
+    if (!import.meta.client)
+      return;
+    sessionStorage.setItem(PENDING_REMEMBER_ME_KEY, String(rememberMe));
+  };
+
+  const consumePendingRememberMe = (): boolean => {
+    if (!import.meta.client)
+      return false;
+    const value = sessionStorage.getItem(PENDING_REMEMBER_ME_KEY);
+    sessionStorage.removeItem(PENDING_REMEMBER_ME_KEY);
+    return value === "true";
+  };
+
   const getAccessToken = () => getToken(COOKIE_KEYS.ACCESS_TOKEN, "accessToken");
   const getRefreshToken = () => getToken(COOKIE_KEYS.REFRESH_TOKEN, "refreshToken");
 
@@ -73,6 +89,7 @@ export function useStorage() {
     removeCookie(COOKIE_KEYS.REFRESH_TOKEN);
     removeCookie(COOKIE_KEYS.REMEMBER_ME);
     if (import.meta.client) {
+      sessionStorage.removeItem(PENDING_REMEMBER_ME_KEY);
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
     }
@@ -86,5 +103,7 @@ export function useStorage() {
     removeTokens,
     hasTokens: () => Boolean(getAccessToken() && getRefreshToken()),
     isRemembered,
+    setPendingRememberMe,
+    consumePendingRememberMe,
   };
 }

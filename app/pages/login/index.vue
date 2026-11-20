@@ -124,7 +124,7 @@ function clearApiError(): void {
 async function handleGoogleLogin(): Promise<void> {
   try {
     loading.value = true;
-    await authStore.loginWithGoogle();
+    await authStore.loginWithGoogle(rememberMe.value);
   }
   catch (error) {
     console.error("Error occurred while logging in with Google:", error);

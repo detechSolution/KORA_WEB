@@ -24,7 +24,7 @@ watch(unAuthorizedError, (unAuthorizedError) => {
   if (unAuthorizedError) {
     authStore.logout();
     showError({ message: "Your session has expired. Please login again." });
-    router.push({ name: "login" });
+    router.replace({ name: "login" });
   }
 });
 

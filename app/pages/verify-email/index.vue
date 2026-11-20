@@ -142,7 +142,7 @@ async function handleResend(): Promise<void> {
 
 function handleSignOut(): void {
   authStore.logout();
-  router.push({ name: "login" });
+  router.replace({ name: "login" });
 }
 </script>
 
