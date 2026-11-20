@@ -72,7 +72,9 @@ const validityEnd = computed(() => {
   if (!days)
     return null;
   const end = new Date();
-  end.setDate(end.getDate() + days);
+  // The start date counts as the first membership day, so the final valid
+  // date is duration - 1 days after the start.
+  end.setDate(end.getDate() + days - 1);
   return formatDate(end, "YYYY-MM-DD");
 });
 

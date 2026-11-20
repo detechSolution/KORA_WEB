@@ -295,8 +295,7 @@ const user = computed(() => {
         || authStore.user?.membership?.plan?.name
         || "Active Membership",
       endDate: formatDate(
-        membershipData.value?.validTo
-        || (membershipData.value as any)?.endsOn
+        membershipData.value?.subscriptionEndDate
         || authStore.user?.membership?.validTo
         || "",
       ),
@@ -547,7 +546,7 @@ onMounted(async () => {
               name="i-lucide-x-square"
               class="w-3.5 h-3.5 text-[#B59A6D]"
             />
-            CANCEL REQUESTED
+            CANCELED
           </div>
           <div class="font-serif text-3xl text-foreground">
             {{ user.stats.canceled }}

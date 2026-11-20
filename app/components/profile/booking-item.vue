@@ -137,9 +137,9 @@ async function handleCancelRequest() {
               <UIcon name="i-lucide-calendar" class="w-3.5 h-3.5" />
               {{ booking.date }}
             </div>
-            <div v-if="booking.date" class="flex items-center gap-1.5">
+            <div v-if="booking.time" class="flex items-center gap-1.5">
               <UIcon name="i-lucide-clock" class="w-3.5 h-3.5" />
-              {{ booking.time }}
+              {{ formatTime(booking.time) }}
             </div>
             <!-- <div v-if="booking.time" class="flex items-center gap-1.5">
             <UIcon name="i-lucide-clock" class="w-3.5 h-3.5" />
@@ -177,7 +177,7 @@ async function handleCancelRequest() {
         >
           Cancel Requested
         </span> -->
-        <div>
+        <div class="w-full md:w-auto flex items-center gap-3 self-end">
           <base-button
             variant="outline"
             class="w-full md:w-auto bg-transparent text-red-700 dark:text-red-800 border-red-700 dark:border-red-800 ring-none h-8 text-xs dark:hover:text-red-800 font-medium"
