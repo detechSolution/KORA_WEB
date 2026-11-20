@@ -25,7 +25,6 @@ const { success, error: showError } = useNotification();
 
 const isPlayingVideo = ref(false);
 const hasFeatureVideo = computed(() => Boolean(props.session?.videoUrl));
-const fallbackAvatar = computed(() => `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(props.session?.name || "Kora")}&backgroundColor=f5efe4&radius=50`);
 const isBookingModalOpen = ref(false);
 const isAddingToWaitlist = ref(false);
 
@@ -171,7 +170,7 @@ async function handleAddToWaitlist() {
               />
             </div>
 
-            <div class="mt-12">
+            <div v-if="hasFeatureVideo" class="mt-12">
               <base-section-label
                 label="Feature Video"
                 align="left"
@@ -181,10 +180,10 @@ async function handleAddToWaitlist() {
                 v-if="!isPlayingVideo"
                 class="relative overflow-hidden group cursor-pointer"
                 :class="{ 'cursor-default': !hasFeatureVideo }"
-                @click="hasFeatureVideo && (isPlayingVideo = true)"
+                @click="isPlayingVideo = true"
               >
                 <img
-                  :src="session.bannerUrl || fallbackAvatar"
+                  :src="session.bannerUrl"
                   :alt="session.name"
                   class="w-full h-[300px] md:h-[460px] object-cover transition-transform duration-700 group-hover:scale-105"
                 >
@@ -207,7 +206,6 @@ async function handleAddToWaitlist() {
 
                 <div class="absolute inset-0 flex items-center justify-center">
                   <div
-                    v-if="hasFeatureVideo"
                     class="w-16 h-16 md:w-20 md:h-20 border border-primary/60 flex items-center justify-center bg-black/20 backdrop-blur-sm"
                   >
                     <UIcon
@@ -216,7 +214,6 @@ async function handleAddToWaitlist() {
                     />
                   </div>
                 </div>
-                <span v-if="!hasFeatureVideo" class="absolute bottom-8 left-1/2 -translate-x-1/2 text-[10px] uppercase tracking-[0.25em] text-white/90">Video coming soon</span>
               </div>
 
               <div v-else class="w-full h-[300px] md:h-[460px] bg-black">
