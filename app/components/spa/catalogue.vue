@@ -39,6 +39,7 @@ const categoryItems = computed(() =>
   })),
 );
 
+const hasFeatureVideo = computed(() => Boolean(spa.value?.videoUrl));
 const selectedSpa = ref(null);
 const selectedSubTypeId = ref<number | string | null>(null);
 const isBookingModalOpen = ref(false);
@@ -118,7 +119,7 @@ onMounted(() => {
             facials and body rituals, thoughtfully designed to help you relax
             and feel refreshed.
           </p>
-          <div class="max-w-400 px-4 md:px-8 lg:px-12 pt-7 pb-8">
+          <div v-if="hasFeatureVideo" class="max-w-400 px-4 md:px-8 lg:px-12 pt-7 pb-8">
             <base-section-label
               label="Feature Video"
               align="left"
