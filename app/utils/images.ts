@@ -48,6 +48,11 @@ export const IMAGES = {
   WELLNESS_SPA: "/images/wellness/spa.png",
   WELLNESS_DERMAL: "/images/wellness/dermal.png",
 
+  // REHABILITATION SECTION
+  REHAB_MOVEMENT: "/images/wellness/space.png",
+  REHAB_THERAPY: "/images/wellness/spa.png",
+  REHAB_SANCTUARY: "/images/wellness/sauna.png",
+
   // NUTRITION SECTION
   NUTRITION_FOOD: "/images/nutrition/nutrition.png",
   NUTRITION_CAFE: "/images/nutrition/cafe.png",

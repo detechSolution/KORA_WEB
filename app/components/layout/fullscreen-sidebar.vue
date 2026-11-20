@@ -34,6 +34,7 @@ const menuItems: MenuItem[] = [
     children: [
       // { name: "Spa", path: "/spa" },
       { name: "Recovery", path: "/recovery" },
+      { name: "Rehabilitation", path: "/rehabilitation" },
       { name: "Wellness", path: "/wellness" },
       { name: "Nutrition", path: "/nutrition" },
     ],
