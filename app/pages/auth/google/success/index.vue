@@ -18,10 +18,9 @@ const loading = ref(true);
 const errorMsg = ref("");
 
 onMounted(async () => {
+  const rememberMe = storage.consumePendingRememberMe();
   try {
     const { accessToken, refreshToken, error: oauthError } = route.query;
-
-    storage.setTokens(accessToken as string, refreshToken as string);
 
     if (oauthError) {
       errorMsg.value = `Authentication failed: ${oauthError}`;
@@ -35,18 +34,15 @@ onMounted(async () => {
       return;
     }
 
-    // Call the backend to exchange the code for tokens
+    storage.setTokens(
+      accessToken as string,
+      refreshToken as string,
+      rememberMe,
+    );
+    authStore.isAuthenticated = true;
+    await authStore.checkAuth(true); // Fetch user details
 
-    if (accessToken && refreshToken) {
-      storage.setTokens(accessToken as string, refreshToken as string);
-      authStore.isAuthenticated = true;
-      await authStore.checkAuth(true); // Fetch user details
-
-      router.push("/profile"); // Redirect on success
-    }
-    else {
-      throw new Error("Invalid tokens received from the server.");
-    }
+    router.push("/profile"); // Redirect on success
   }
   catch (error: any) {
     console.error("Google Callback Error:", error);

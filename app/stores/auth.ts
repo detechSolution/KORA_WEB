@@ -235,6 +235,9 @@ export const useAuthStore = defineStore("auth", () => {
       const cartStore = useCartStore();
       cartStore.clearCart();
       localStorage.removeItem("cartItems");
+      // Drop any checkout state tied to the previous user/session.
+      sessionStorage.removeItem("pendingMembershipFreezeRelease");
+      sessionStorage.removeItem("pendingPaymentItemIds");
     }
     catch {
       // Ignore storage errors
@@ -248,12 +251,19 @@ export const useAuthStore = defineStore("auth", () => {
 
   const logout = (): void => {
     try {
-      // void http.post(API_ENDPOINTS.AUTH.LOGOUT).catch(() => {});
+      // Client-side logout only: no logout API is available. Clear every
+      // credential and cached identity the browser holds so this client can
+      // no longer use or display the previous session. Already-issued backend
+      // tokens cannot be revoked from here.
       storage.removeTokens();
-      clearData();
     }
     catch (error: unknown) {
       console.error(error, "Logout Error");
+    }
+    finally {
+      clearData();
+      lastAuthCheck.value = 0;
+      isCheckingAuth.value = false;
     }
   };
 
@@ -319,7 +329,6 @@ export const useAuthStore = defineStore("auth", () => {
     }
     catch (error: unknown) {
       console.error(error, "Check Auth Error");
-      clearAuthData();
       logout();
     }
     finally {
@@ -497,11 +506,13 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
-  const loginWithGoogle = async () => {
+  const loginWithGoogle = async (rememberMe = false) => {
     const config = useRuntimeConfig();
     const baseURL = config.public.apiBase;
 
-    window.location.href = `${baseURL}${API_ENDPOINTS.AUTH.GOOGLE_LOGIN}`;
+    storage.setPendingRememberMe(rememberMe);
+    const query = rememberMe ? "?rememberMe=true" : "";
+    window.location.href = `${baseURL}${API_ENDPOINTS.AUTH.GOOGLE_LOGIN}${query}`;
   };
 
   const updatePassword = async (payload: {

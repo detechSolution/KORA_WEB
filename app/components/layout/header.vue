@@ -99,10 +99,10 @@ const getColorClass = computed(() => {
   };
 });
 
-function handleLogout() {
-  authStore.logout();
+function handleLogout(): void {
   isSignOutModalOpen.value = false;
-  router.push({ name: "login" });
+  authStore.logout();
+  router.replace({ name: "login" });
 }
 
 onMounted(() => {
