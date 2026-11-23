@@ -138,6 +138,8 @@ async function handleUpdatePassword() {
     passwordForm.currentPassword = "";
     passwordForm.newPassword = "";
     passwordForm.confirmPassword = "";
+    authStore.logout();
+    await router.replace("/login");
   }
   catch (error: any) {
     showError({
