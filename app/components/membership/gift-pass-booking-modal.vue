@@ -33,9 +33,11 @@ const emit = defineEmits<{
 
 const router = useRouter();
 const cartStore = useCartStore();
-const { success } = useNotification();
+const { error: showError, success } = useNotification();
 const formRef = ref<InstanceType<typeof UForm> | null>(null);
 const currentStep = ref(0);
+const waiverAccepted = ref(false);
+const waiverError = ref(false);
 const state = reactive({
   recipient: {
     fullName: "",
@@ -82,7 +84,18 @@ const passItem = computed(() => ({
   isGift: true,
   recipient: { ...state.recipient },
   bookingDate: formatDate(state.date, "YYYY-MM-DD"),
+  waiverAcceptedAt: new Date().toISOString(),
 }));
+
+function requireWaiver(): boolean {
+  if (waiverAccepted.value) {
+    waiverError.value = false;
+    return true;
+  }
+  waiverError.value = true;
+  showError({ message: "Please read and accept the Terms & Policy and Medical & Liability Waiver to continue." });
+  return false;
+}
 
 function isDateUnavailable(date: DateValue) {
   return date.compare(today(getLocalTimeZone())) < 0;
@@ -104,6 +117,8 @@ function reset() {
   state.recipient.phone = "";
   state.recipient.email = "";
   state.date = null;
+  waiverAccepted.value = false;
+  waiverError.value = false;
 }
 
 function close() {
@@ -136,12 +151,16 @@ function previousStep() {
 }
 
 function addToCart() {
+  if (!requireWaiver())
+    return;
   cartStore.addToCart(passItem.value);
   success({ message: "Gift pass added to cart successfully!" });
   close();
 }
 
 function proceedToCheckout() {
+  if (!requireWaiver())
+    return;
   cartStore.addToCart(passItem.value);
   close();
   router.push("/checkout");
@@ -333,6 +352,12 @@ function proceedToCheckout() {
                 <span class="font-serif font-bold">Rs. {{ formattedPrice }}</span>
               </div>
             </div>
+
+            <MembershipWaiverConsent
+              v-model="waiverAccepted"
+              :show-error="waiverError"
+              class="mt-6"
+            />
 
             <div class="flex flex-col sm:flex-row justify-between gap-4 mt-8">
               <base-button variant="outline" @click="previousStep">
