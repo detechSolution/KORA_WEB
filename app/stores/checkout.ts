@@ -14,7 +14,7 @@ export const useCheckoutStore = defineStore("checkout", () => {
     loading.value = true;
     try {
       const response = await http.get(
-        `${API_ENDPOINTS.PAYMENT.VERIFY}?checkout_code=${checkoutCode}`,
+        `${API_ENDPOINTS.PAYMENT.VERIFY}?checkout_code=${encodeURIComponent(checkoutCode)}`,
       );
       paymentDetails.value = response;
       if (response && (response as any).verified) {
