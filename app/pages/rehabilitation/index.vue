@@ -387,7 +387,7 @@ useSeoMeta({
             </li>
           </ul>
           <div class="flex items-end gap-3 mb-8">
-            <span class="font-serif text-3xl text-foreground">NPR 11,000</span>
+            <span class="font-jakarta text-3xl text-foreground">NPR 11,000</span>
             <span class="text-xs md:text-sm text-muted-foreground font-light pb-1">
               Savings of NPR 1,500
             </span>
