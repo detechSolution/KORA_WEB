@@ -7,7 +7,7 @@ import { useNotification } from "~/composables/use-notification";
 import { usePagination } from "~/composables/use-pagination";
 import { useAuthStore } from "~/stores/auth";
 import { useMemberStore } from "~/stores/member";
-import { getApiErrorMessage } from "~/utils/error";
+import { getApiErrorMessage, isApiError } from "~/utils/error";
 import { formatDate } from "~/utils/format";
 import { IMAGES } from "~/utils/images";
 
@@ -138,6 +138,8 @@ async function handleUpdatePassword() {
     passwordForm.currentPassword = "";
     passwordForm.newPassword = "";
     passwordForm.confirmPassword = "";
+    authStore.logout();
+    await router.replace("/login");
   }
   catch (error: any) {
     showError({
@@ -149,22 +151,58 @@ async function handleUpdatePassword() {
   }
 }
 
-const profileSchema = z.object({
-  fullName: z.string().min(1, "Full name is required"),
-  phone: z.string().min(1, "Phone number is required"),
-  email: z.string().email("Invalid email address"),
-  height: z.preprocess(
-    value => (value === "" ? undefined : value),
-    z.coerce.number().int().positive().optional(),
-  ),
-
-  weight: z.preprocess(
-    value => (value === "" ? undefined : value),
-    z.coerce.number().int().positive().optional(),
-  ),
-  injuryHistory: z.string().optional(),
-  preferences: z.string().optional(),
+const apiError = reactive({
+  phone: null as string | null,
 });
+const profileSchema = z
+  .object({
+    fullName: z.string().min(1, "Full name is required"),
+    phone: z
+      .string()
+      .trim()
+      .optional()
+      .refine((val) => {
+        if (!val)
+          return true;
+        // Accept international phone formats (optional leading '+', digits, spaces, hyphens, dots, parentheses)
+        if (!/^\+?[\d\s\-().]+$/.test(val))
+          return false;
+        const digits = val.replace(/\D/g, "");
+        return digits.length >= 7 && digits.length <= 15;
+      }, "Please enter a valid phone number (e.g. +1 555 123 4567 or 98XXXXXXXX)"),
+    email: z.string().email("Invalid email address"),
+    height: z.preprocess(
+      value => (value === "" ? undefined : value),
+      z.coerce.number().int().positive().optional(),
+    ),
+
+    weight: z.preprocess(
+      value => (value === "" ? undefined : value),
+      z.coerce.number().int().positive().optional(),
+    ),
+    injuryHistory: z.string().optional(),
+    preferences: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (apiError.phone) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["phone"],
+        message: apiError.phone,
+      });
+    }
+  });
+
+function setApiError(
+  field: "phone",
+  message: string,
+): void {
+  apiError[field] = message;
+}
+
+function clearApiError(): void {
+  apiError.phone = null;
+}
 
 type ProfileSchema = z.output<typeof profileSchema>;
 const profileForm = reactive<Partial<ProfileSchema>>({
@@ -176,6 +214,8 @@ const profileForm = reactive<Partial<ProfileSchema>>({
   injuryHistory: "",
   preferences: "",
 });
+
+watch(() => profileForm.phone, clearApiError);
 
 const profileFormRef = ref<InstanceType<typeof UForm> | null>(null);
 const loadingProfile = ref(false);
@@ -207,7 +247,7 @@ async function handleUpdateProfile() {
     loadingProfile.value = true;
     const payload = {
       fullName: profileForm.fullName,
-      phoneNumber: profileForm.phone,
+      phoneNumber: profileForm.phone?.trim(),
       height: profileForm.height,
       weight: profileForm.weight,
       injuryHistory: profileForm.injuryHistory,
@@ -218,9 +258,28 @@ async function handleUpdateProfile() {
     success({ message: "Profile updated successfully." });
   }
   catch (error: any) {
-    showError({
-      message: error?.data?.message || "Failed to update profile.",
-    });
+    const message = getApiErrorMessage(
+      error,
+      "Something went wrong. Please try again.",
+    );
+    if (isApiError(error)) {
+      const errors = error.data?.errors as Array<{ code?: string; message?: string }> | undefined;
+      const phoneError = errors?.find(
+        (item: { code?: string; message?: string }) => item.code === "users.phone_number.required",
+      );
+      switch (error.data.code || phoneError?.code) {
+        case "users.phone_number.required":
+          setApiError("phone", phoneError?.message || message);
+          try {
+            await profileFormRef.value?.validate();
+          }
+          catch {
+            // The validation error is expected; UForm displays it below the phone field.
+          }
+          return;
+      }
+    }
+    showError({ message });
   }
   finally {
     loadingProfile.value = false;
@@ -282,14 +341,13 @@ const user = computed(() => {
     memberSince: formatDate(profileData.value?.memberSince ?? ""),
     isMember: membershipData.value?.isActive || false,
     membership: {
-      hasPlan:
-        Boolean(
-          (membershipData.value
-            && (membershipData.value.planId
-              || (membershipData.value as any).membershipPlanId))
-            || authStore.user?.membership
-            || hasFreezeDates.value,
-        ),
+      hasPlan: Boolean(
+        (membershipData.value
+          && (membershipData.value.planId
+            || (membershipData.value as any).membershipPlanId))
+          || authStore.user?.membership
+          || hasFreezeDates.value,
+      ),
       name:
         membershipData.value?.planName
         || authStore.user?.membership?.plan?.name
@@ -343,10 +401,12 @@ const filteredBookings = computed<Booking[]>(() => {
               ? "Pass"
               : "Session") as "Session" | "Spa" | "Pass",
         date: formatDate(item.bookingDate),
-        time: (item.bookingTime),
+        time: item.bookingTime,
         bookingDate: item.bookingDate,
         location: "",
-        description: item.description ? item.description.replace(/<[^>]*>?/g, "") : "",
+        description: item.description
+          ? item.description.replace(/<[^>]*>?/g, "")
+          : "",
         price: `${item.currency} ${item.totalAmount !== undefined ? item.totalAmount : b.amount}`,
         image: b.bannerUrl,
         status: activeTab.value as "UPCOMING" | "PAST" | "CANCELED",
@@ -357,28 +417,30 @@ const filteredBookings = computed<Booking[]>(() => {
       }));
     }
 
-    return [{
-      id: b.id,
-      uniqueId: b.id.toString(),
-      title: b.itemName,
-      type: (b.itemType === "session"
-        ? "Session"
-        : b.itemType === "spa"
-          ? "Spa"
-          : b.itemType === "pass"
-            ? "Pass"
-            : "Session") as "Session" | "Spa" | "Pass",
-      date: formatDate(b.bookedFor),
-      time: b.bookedFor ? formatDate(new Date(b.bookedFor), "hh:mm a") : "",
-      location: "",
-      price: `${b.currency} ${b.amount}`,
-      image: b.bannerUrl,
-      status: activeTab.value as "UPCOMING" | "PAST" | "CANCELED",
-      productId: b.productId,
-      itemType: b.itemType,
-      refundStatus: b.refundStatus,
-      visitors: b.visitors || [],
-    }];
+    return [
+      {
+        id: b.id,
+        uniqueId: b.id.toString(),
+        title: b.itemName,
+        type: (b.itemType === "session"
+          ? "Session"
+          : b.itemType === "spa"
+            ? "Spa"
+            : b.itemType === "pass"
+              ? "Pass"
+              : "Session") as "Session" | "Spa" | "Pass",
+        date: formatDate(b.bookedFor),
+        time: b.bookedFor ? formatDate(new Date(b.bookedFor), "hh:mm a") : "",
+        location: "",
+        price: `${b.currency} ${b.amount}`,
+        image: b.bannerUrl,
+        status: activeTab.value as "UPCOMING" | "PAST" | "CANCELED",
+        productId: b.productId,
+        itemType: b.itemType,
+        refundStatus: b.refundStatus,
+        visitors: b.visitors || [],
+      },
+    ];
   });
 });
 
@@ -441,7 +503,10 @@ onMounted(async () => {
   await memberStore.getDashboard();
   await fetchBookings();
 
-  if (route.query.verify === "true" && authStore.user.isEmailVerified === false) {
+  if (
+    route.query.verify === "true"
+    && authStore.user.isEmailVerified === false
+  ) {
     isVerifyModalOpen.value = true;
   }
 });
@@ -494,7 +559,10 @@ onMounted(async () => {
                 <UIcon name="i-lucide-phone" class="w-4 h-4" />
                 {{ user.phone }}
               </div>
-              <div v-if="user.membership.hasPlan" class="flex items-center gap-2">
+              <div
+                v-if="user.membership.hasPlan"
+                class="flex items-center gap-2"
+              >
                 <UIcon name="i-lucide-calendar" class="w-4 h-4" />
                 Member Since: {{ user.memberSince }}
               </div>
@@ -633,17 +701,28 @@ onMounted(async () => {
                       Action Required
                     </span>
                   </div>
-                  <p class="text-sm text-secondary-400 font-light leading-relaxed">
-                    Your email address <strong class="text-foreground font-medium">{{ user.email }}</strong> is not verified yet. Please verify your email to enable bookings.
+                  <p
+                    class="text-sm text-secondary-400 font-light leading-relaxed"
+                  >
+                    Your email address
+                    <strong class="text-foreground font-medium">{{
+                      user.email
+                    }}</strong>
+                    is not verified yet. Please verify your email to enable
+                    bookings.
                   </p>
                 </div>
               </div>
 
-              <div class="flex items-center gap-3 shrink-0 w-full md:w-auto justify-end">
+              <div
+                class="flex items-center gap-3 shrink-0 w-full md:w-auto justify-end"
+              >
                 <button
                   type="button"
                   class="text-sm text-[#B59A6D] hover:underline disabled:opacity-50 cursor-pointer font-medium"
-                  :disabled="resendVerificationTimer > 0 || resendingVerification"
+                  :disabled="
+                    resendVerificationTimer > 0 || resendingVerification
+                  "
                   @click="handleResendVerification"
                 >
                   <span v-if="resendingVerification">Sending...</span>
@@ -713,7 +792,9 @@ onMounted(async () => {
                     <UIcon name="i-lucide-snowflake" class="w-4 h-4" />
                   </div>
                   <div>
-                    <div class="font-medium text-foreground flex items-center gap-2">
+                    <div
+                      class="font-medium text-foreground flex items-center gap-2"
+                    >
                       <span>Membership Freeze</span>
                       <span
                         v-if="membershipFreeze?.status"
@@ -732,11 +813,14 @@ onMounted(async () => {
                 </div>
 
                 <div class="text-left sm:text-right shrink-0">
-                  <div class="text-[9px] font-bold tracking-widest uppercase text-stone-400 mb-0.5">
+                  <div
+                    class="text-[9px] font-bold tracking-widest uppercase text-stone-400 mb-0.5"
+                  >
                     FREEZE DATES
                   </div>
                   <div class="text-sm font-serif text-foreground font-medium">
-                    {{ formatDate(membershipFreeze.startsOn) }} &ndash; {{ formatDate(membershipFreeze.endsOn) }}
+                    {{ formatDate(membershipFreeze.startsOn) }} &ndash;
+                    {{ formatDate(membershipFreeze.endsOn) }}
                   </div>
                 </div>
               </div>
@@ -817,23 +901,24 @@ onMounted(async () => {
               </base-button>
             </div>
 
-            <!-- Personal Details Form -->
-            <div>
-              <div class="flex flex-col mb-6">
-                <h3
-                  class="flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-[#B59A6D]"
-                >
-                  <UIcon name="i-lucide-file-text" class="w-4 h-4" />
-                  PERSONAL DETAILS
-                </h3>
-              </div>
+            <UForm
+              ref="profileFormRef"
+              :schema="profileSchema"
+              :state="profileForm"
+              @submit="handleUpdateProfile"
+            >
+              <!-- Personal Details Form -->
+              <div>
+                <div class="flex flex-col mb-6">
+                  <h3
+                    class="flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-[#B59A6D]"
+                  >
+                    <UIcon name="i-lucide-file-text" class="w-4 h-4" />
+                    PERSONAL DETAILS
+                  </h3>
+                </div>
 
-              <div class="border-b border-border">
-                <UForm
-                  ref="profileFormRef"
-                  :schema="profileSchema"
-                  :state="profileForm"
-                >
+                <div class="border-b border-border">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <base-input
                       v-model="profileForm.fullName"
@@ -853,7 +938,9 @@ onMounted(async () => {
 
                     <div>
                       <div class="flex items-center justify-between mb-1.5">
-                        <label class="text-[11px] font-bold tracking-widest text-[#B59A6D] uppercase">
+                        <label
+                          class="text-[11px] font-bold tracking-widest text-[#B59A6D] uppercase"
+                        >
                           EMAIL ADDRESS
                         </label>
                         <button
@@ -881,31 +968,24 @@ onMounted(async () => {
                       />
                     </div>
                   </div>
-                </UForm>
-              </div>
-            </div>
-
-            <!-- Health & Preferences Form -->
-            <div>
-              <div class="flex flex-col mb-6">
-                <h3
-                  class="flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-[#B59A6D]"
-                >
-                  <UIcon
-                    name="i-lucide-heart-pulse"
-                    class="w-4 h-4 text-[#B59A6D]"
-                  />
-                  HEALTH & PREFERENCES
-                </h3>
+                </div>
               </div>
 
+              <!-- Health & Preferences Form -->
               <div>
-                <UForm
-                  ref="profileFormRef"
-                  :schema="profileSchema"
-                  :state="profileForm"
-                  @submit="handleUpdateProfile"
-                >
+                <div class="flex flex-col mb-6">
+                  <h3
+                    class="flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase text-[#B59A6D]"
+                  >
+                    <UIcon
+                      name="i-lucide-heart-pulse"
+                      class="w-4 h-4 text-[#B59A6D]"
+                    />
+                    HEALTH & PREFERENCES
+                  </h3>
+                </div>
+
+                <div>
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <base-input
                       v-model="profileForm.height"
@@ -952,9 +1032,9 @@ onMounted(async () => {
                       SAVE CHANGES
                     </base-button>
                   </div>
-                </UForm>
+                </div>
               </div>
-            </div>
+            </UForm>
           </div>
 
           <!-- MY BOOKINGS CONTENT -->

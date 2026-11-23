@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "~/stores/auth";
 import { useCartStore } from "~/stores/cart";
 import { useCheckoutStore } from "~/stores/checkout";
 // import { formatPrice } from "~/utils/format";
 
 const route = useRoute();
+const router = useRouter();
 const authStore = useAuthStore();
 const cartStore = useCartStore();
 const checkoutStore = useCheckoutStore();
@@ -18,14 +19,19 @@ const checkoutCode = computed(() => {
 const sessionId = computed(() => String(route.query.session_id || ""));
 
 onMounted(async () => {
+  if (!checkoutCode.value) {
+    try {
+      await authStore.checkAuth(true);
+    }
+    catch (error) {
+      console.error("Failed to check authentication before redirect:", error);
+    }
+    await router.replace(authStore.isAuthenticated ? "/profile" : "/");
+    return;
+  }
+
   try {
-    if (checkoutCode.value) {
-      await checkoutStore.verifyPayment(checkoutCode.value);
-    }
-    else {
-      checkoutStore.paymentStatus = "paid";
-      checkoutStore.loading = false;
-    }
+    await checkoutStore.verifyPayment(checkoutCode.value);
 
     if (checkoutStore.paymentStatus !== "paid") {
       sessionStorage.removeItem("pendingMembershipFreezeRelease");
@@ -160,6 +166,37 @@ onMounted(async () => {
         </base-button>
         <base-button to="/session" class="w-full text-[11px]">
           BOOK MORE SERVICES
+        </base-button>
+      </div>
+    </div>
+
+    <div
+      v-else
+      class="max-w-2xl w-full bg-card border border-border p-10 md:p-16 flex flex-col items-center text-center gap-8 rounded-sm shadow-sm"
+    >
+      <div
+        class="w-24 h-24 bg-card rounded-full flex items-center justify-center border border-destructive/50"
+      >
+        <UIcon name="i-lucide-circle-alert" class="w-10 h-10 text-destructive" />
+      </div>
+      <div class="flex flex-col gap-4">
+        <h1 class="text-3xl md:text-4xl font-serif text-foreground font-medium uppercase tracking-wide">
+          Unable to Confirm Booking
+        </h1>
+        <p class="text-sm md:text-base text-muted-foreground leading-relaxed max-w-lg mx-auto">
+          We couldn't find this payment. Please check My Bookings or contact reception.
+        </p>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-4 w-full mt-2">
+        <base-button
+          to="/profile"
+          variant="outline"
+          class="w-full text-[11px]"
+        >
+          MY BOOKINGS
+        </base-button>
+        <base-button to="/session" class="w-full text-[11px]">
+          BOOK SERVICES
         </base-button>
       </div>
     </div>

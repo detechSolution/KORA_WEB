@@ -277,7 +277,7 @@ onMounted(async () => {
             ]"
             @click="setActivePeriod(period)"
           >
-            {{ period }}
+            {{ period === 'CUSTOM' ? "100 DAYS" : period }}
           </button>
         </div>
       </div>

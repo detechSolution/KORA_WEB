@@ -38,8 +38,8 @@ useSeoMeta({
             experiences, restored energy, and intentional longevity.
           </p>
           <div class="flex flex-col sm:flex-row gap-4 pt-8">
-            <base-button to="/schedules">
-              RESERVE YOUR RITUAL
+            <base-button to="/spa">
+              VIEW SPA RITUAL
             </base-button>
             <!-- <base-button variant="outline" to="/spa">
               EXPLORE THE SANCTUARY MENU
