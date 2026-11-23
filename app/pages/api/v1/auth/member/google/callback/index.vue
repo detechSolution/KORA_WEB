@@ -38,6 +38,14 @@ onMounted(async () => {
       accessToken as string,
       refreshToken as string,
       rememberMe,
+      {
+        accessTokenExpiresIn: typeof route.query.accessTokenExpiresIn === "string"
+          ? Number(route.query.accessTokenExpiresIn)
+          : undefined,
+        refreshTokenExpiresIn: typeof route.query.refreshTokenExpiresIn === "string"
+          ? Number(route.query.refreshTokenExpiresIn)
+          : undefined,
+      },
     );
     authStore.isAuthenticated = true;
     await authStore.checkAuth(true); // Fetch user details

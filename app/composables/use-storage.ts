@@ -9,8 +9,12 @@ const COOKIE_KEYS = {
   REMEMBER_ME: "rememberMe",
 } as const;
 
-const REMEMBER_ME_MAX_AGE = 60 * 60 * 24 * 30;
 const PENDING_REMEMBER_ME_KEY = "pendingRememberMe";
+
+export type TokenLifetimes = {
+  accessTokenExpiresIn?: number;
+  refreshTokenExpiresIn?: number;
+};
 
 function readCookie(name: string): string | null {
   if (!import.meta.client)
@@ -22,12 +26,19 @@ function readCookie(name: string): string | null {
   return item ? decodeURIComponent(item.slice(name.length + 1)) : null;
 }
 
-function writeCookie(name: string, value: string, persistent: boolean): void {
+function expiryFromSeconds(expiresIn?: number): Date | null {
+  if (typeof expiresIn !== "number" || !Number.isFinite(expiresIn) || expiresIn <= 0)
+    return null;
+  return new Date(Date.now() + expiresIn * 1000);
+}
+
+function writeCookie(name: string, value: string, expiresIn?: number): void {
   if (!import.meta.client)
     return;
   const secure = window.location.protocol === "https:" ? "; Secure" : "";
-  const maxAge = persistent ? `; Max-Age=${REMEMBER_ME_MAX_AGE}` : "";
-  document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; SameSite=Lax${maxAge}${secure}`;
+  const expiry = expiryFromSeconds(expiresIn);
+  const expires = expiry ? `; Expires=${expiry.toUTCString()}` : "";
+  document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; SameSite=Lax${expires}${secure}`;
 }
 
 function removeCookie(name: string): void {
@@ -74,14 +85,33 @@ export function useStorage() {
   const getAccessToken = () => getToken(COOKIE_KEYS.ACCESS_TOKEN, "accessToken");
   const getRefreshToken = () => getToken(COOKIE_KEYS.REFRESH_TOKEN, "refreshToken");
 
-  const setTokens = (accessToken: string, refreshToken: string, rememberMe = false): boolean => {
-    writeCookie(COOKIE_KEYS.ACCESS_TOKEN, accessToken, rememberMe);
-    writeCookie(COOKIE_KEYS.REFRESH_TOKEN, refreshToken, rememberMe);
+  const setTokens = (
+    accessToken: string,
+    refreshToken: string,
+    rememberMe = false,
+    lifetimes: TokenLifetimes = {},
+  ): boolean => {
+    writeCookie(COOKIE_KEYS.ACCESS_TOKEN, accessToken, lifetimes.accessTokenExpiresIn);
+    writeCookie(COOKIE_KEYS.REFRESH_TOKEN, refreshToken, lifetimes.refreshTokenExpiresIn);
     if (rememberMe)
-      writeCookie(COOKIE_KEYS.REMEMBER_ME, "true", true);
+      writeCookie(COOKIE_KEYS.REMEMBER_ME, "true", lifetimes.refreshTokenExpiresIn);
     else
       removeCookie(COOKIE_KEYS.REMEMBER_ME);
     return true;
+  };
+
+  const setAccessToken = (accessToken: string, expiresIn?: number): void => {
+    writeCookie(COOKIE_KEYS.ACCESS_TOKEN, accessToken, expiresIn);
+  };
+
+  const setRefreshToken = (
+    refreshToken: string,
+    expiresIn?: number,
+    rememberMe = false,
+  ): void => {
+    writeCookie(COOKIE_KEYS.REFRESH_TOKEN, refreshToken, expiresIn);
+    if (rememberMe)
+      writeCookie(COOKIE_KEYS.REMEMBER_ME, "true", expiresIn);
   };
 
   const removeTokens = (): boolean => {
@@ -100,8 +130,11 @@ export function useStorage() {
     getAccessToken,
     getRefreshToken,
     setTokens,
+    setAccessToken,
+    setRefreshToken,
     removeTokens,
     hasTokens: () => Boolean(getAccessToken() && getRefreshToken()),
+    hasRefreshToken: () => Boolean(getRefreshToken()),
     isRemembered,
     setPendingRememberMe,
     consumePendingRememberMe,

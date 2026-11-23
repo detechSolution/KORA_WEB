@@ -58,11 +58,18 @@ function createHttpClient(config: HttpClientConfig) {
           if (!payload?.accessToken)
             return false;
 
-          storage.setTokens(
+          const rememberMe = storage.isRemembered();
+          storage.setAccessToken(
             payload.accessToken,
-            payload.refreshToken || refreshToken,
-            storage.isRemembered(),
+            payload.accessTokenExpiresIn,
           );
+          if (payload.refreshToken) {
+            storage.setRefreshToken(
+              payload.refreshToken,
+              payload.refreshTokenExpiresIn,
+              rememberMe,
+            );
+          }
           return true;
         }
         catch {
