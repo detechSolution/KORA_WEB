@@ -169,7 +169,7 @@ export const useAuthStore = defineStore("auth", () => {
         user.value = { ...user.value, ...parsed };
         // If we have stored user data and tokens, assume authenticated
         // (will be verified on next check)
-        if (storage.hasTokens()) {
+        if (storage.hasRefreshToken()) {
           isAuthenticated.value = true;
         }
       }
@@ -276,7 +276,7 @@ export const useAuthStore = defineStore("auth", () => {
     }
 
     // If no tokens, clear auth immediately
-    if (!storage.hasTokens()) {
+    if (!storage.hasRefreshToken()) {
       clearAuthData();
       clearCartItems();
       return;
@@ -409,7 +409,10 @@ export const useAuthStore = defineStore("auth", () => {
       const { accessToken, refreshToken } = response;
       if (accessToken && refreshToken) {
         clearCartItems();
-        storage.setTokens(accessToken, refreshToken, payload.rememberMe);
+        storage.setTokens(accessToken, refreshToken, payload.rememberMe, {
+          accessTokenExpiresIn: response.accessTokenExpiresIn,
+          refreshTokenExpiresIn: response.refreshTokenExpiresIn,
+        });
         isAuthenticated.value = true;
         // After login, immediately check auth to get user data
         await checkAuth(true);
@@ -459,7 +462,10 @@ export const useAuthStore = defineStore("auth", () => {
       )) as any;
       const { accessToken, refreshToken } = response;
       if (accessToken && refreshToken) {
-        storage.setTokens(accessToken, refreshToken);
+        storage.setTokens(accessToken, refreshToken, false, {
+          accessTokenExpiresIn: response.accessTokenExpiresIn,
+          refreshTokenExpiresIn: response.refreshTokenExpiresIn,
+        });
         isAuthenticated.value = true;
         await checkAuth(true);
       }
@@ -481,7 +487,7 @@ export const useAuthStore = defineStore("auth", () => {
       await http.post(API_ENDPOINTS.AUTH.VERIFY_EMAIL, payload);
       user.value.isEmailVerified = true;
       saveUserToStorage();
-      if (storage.hasTokens()) {
+      if (storage.hasRefreshToken()) {
         await checkAuth(true);
       }
     }
