@@ -310,6 +310,34 @@ const hasFreezeDates = computed(() => {
   );
 });
 
+const isFreezeActive = computed(() => {
+  const startsOn = membershipFreeze.value?.startsOn;
+  const endsOn = membershipFreeze.value?.endsOn;
+  if (typeof startsOn !== "string" || typeof endsOn !== "string")
+    return false;
+
+  const toLocalDay = (value: string): number => {
+    const dateOnly = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+    const date = dateOnly
+      ? new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3]))
+      : new Date(value);
+    if (Number.isNaN(date.getTime()))
+      return Number.NaN;
+    date.setHours(0, 0, 0, 0);
+    return date.getTime();
+  };
+
+  const startDay = toLocalDay(startsOn);
+  const endDay = toLocalDay(endsOn);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return Number.isFinite(startDay)
+    && Number.isFinite(endDay)
+    && today.getTime() >= startDay
+    && today.getTime() <= endDay;
+});
+
 async function fetchBookings() {
   try {
     loading.value = true;
@@ -767,7 +795,7 @@ onMounted(async () => {
                 </div>
                 <div class="flex items-center gap-2">
                   <span
-                    v-if="hasFreezeDates"
+                    v-if="isFreezeActive"
                     class="border border-sky-400/40 bg-sky-500/10 text-sky-500 dark:text-sky-400 text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-xs flex items-center gap-1.5"
                   >
                     <UIcon name="i-lucide-snowflake" class="w-3.5 h-3.5" />
