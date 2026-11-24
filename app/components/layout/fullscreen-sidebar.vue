@@ -50,6 +50,11 @@ const menuItems: MenuItem[] = [
     image: "/images/hero/offerings_memberships.png",
   },
   {
+    name: "Corporate & Retreats",
+    path: "/inquire-kora-corporate",
+    image: "/images/corporate_and_retreats/corporate_and_retreats.webp",
+  },
+  {
     name: "Gift Card",
     path: "/gift-card",
     image: "/images/hero/experience_aroma.png",
