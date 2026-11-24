@@ -17,6 +17,24 @@ const checkoutCode = computed(() => {
 });
 
 const sessionId = computed(() => String(route.query.session_id || ""));
+const holdExpiresAt = computed(() => {
+  const value = checkoutStore.paymentDetails?.holdExpiresAt;
+  if (typeof value !== "string")
+    return null;
+  const timestamp = new Date(value);
+  return Number.isNaN(timestamp.getTime()) ? null : timestamp;
+});
+const holdExpired = computed(() => Boolean(
+  holdExpiresAt.value && Date.now() >= holdExpiresAt.value.getTime(),
+));
+const formattedHoldExpiry = computed(() => {
+  if (!holdExpiresAt.value)
+    return "";
+  return new Intl.DateTimeFormat(undefined, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(holdExpiresAt.value);
+});
 
 onMounted(async () => {
   if (!checkoutCode.value) {
@@ -88,6 +106,35 @@ onMounted(async () => {
       >
         Confirming your payment...
       </p>
+    </div>
+
+    <div
+      v-else-if="holdExpired"
+      class="max-w-2xl w-full bg-card border border-border p-10 md:p-16 flex flex-col items-center text-center gap-8 rounded-sm shadow-sm"
+    >
+      <div class="w-24 h-24 bg-card rounded-full flex items-center justify-center border border-destructive/50">
+        <UIcon name="i-lucide-clock-3" class="w-10 h-10 text-destructive" />
+      </div>
+      <div class="flex flex-col gap-4">
+        <h1 class="text-3xl md:text-4xl font-serif text-foreground font-medium uppercase tracking-wide">
+          Session Expired
+        </h1>
+        <p class="text-sm md:text-base text-muted-foreground leading-relaxed max-w-lg mx-auto">
+          This checkout session expired on {{ formattedHoldExpiry }}.
+        </p>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-4 w-full mt-2">
+        <base-button
+          to="/checkout"
+          variant="outline"
+          class="w-full text-[11px]"
+        >
+          RETURN TO CHECKOUT
+        </base-button>
+        <base-button to="/session" class="w-full text-[11px]">
+          BOOK SERVICES
+        </base-button>
+      </div>
     </div>
 
     <div
