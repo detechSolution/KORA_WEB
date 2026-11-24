@@ -1,6 +1,5 @@
 /**
- * Browser cookie storage for authentication tokens.
- * Access and refresh tokens are intentionally not persisted in localStorage.
+ * Remembered auth tokens use cookies; temporary sessions use sessionStorage.
  * HttpOnly cookies must be issued by the API; client code cannot create them.
  */
 const COOKIE_KEYS = {
@@ -49,6 +48,12 @@ function removeCookie(name: string): void {
 }
 
 function getToken(name: string, legacyKey: string): string | null {
+  if (import.meta.client) {
+    const sessionValue = sessionStorage.getItem(name);
+    if (sessionValue)
+      return sessionValue;
+  }
+
   const cookieValue = readCookie(name);
   if (cookieValue)
     return cookieValue;
@@ -58,14 +63,15 @@ function getToken(name: string, legacyKey: string): string | null {
     return null;
   const legacyValue = localStorage.getItem(legacyKey);
   if (legacyValue) {
-    writeCookie(name, legacyValue, false);
+    sessionStorage.setItem(name, legacyValue);
     localStorage.removeItem(legacyKey);
   }
   return legacyValue;
 }
 
 export function useStorage() {
-  const isRemembered = () => readCookie(COOKIE_KEYS.REMEMBER_ME) === "true";
+  const isRemembered = () => readCookie(COOKIE_KEYS.REMEMBER_ME) === "true"
+    || (import.meta.client && sessionStorage.getItem(COOKIE_KEYS.REMEMBER_ME) === "true");
 
   // Keeps the "Remember me" choice across the external Google OAuth redirect.
   const setPendingRememberMe = (rememberMe: boolean): void => {
@@ -91,17 +97,34 @@ export function useStorage() {
     rememberMe = false,
     lifetimes: TokenLifetimes = {},
   ): boolean => {
-    writeCookie(COOKIE_KEYS.ACCESS_TOKEN, accessToken, lifetimes.accessTokenExpiresIn);
-    writeCookie(COOKIE_KEYS.REFRESH_TOKEN, refreshToken, lifetimes.refreshTokenExpiresIn);
-    if (rememberMe)
+    // Clear any credentials from the other storage mode before switching.
+    removeCookie(COOKIE_KEYS.ACCESS_TOKEN);
+    removeCookie(COOKIE_KEYS.REFRESH_TOKEN);
+    if (import.meta.client) {
+      sessionStorage.removeItem(COOKIE_KEYS.ACCESS_TOKEN);
+      sessionStorage.removeItem(COOKIE_KEYS.REFRESH_TOKEN);
+    }
+    if (rememberMe) {
+      writeCookie(COOKIE_KEYS.ACCESS_TOKEN, accessToken, lifetimes.accessTokenExpiresIn);
+      writeCookie(COOKIE_KEYS.REFRESH_TOKEN, refreshToken, lifetimes.refreshTokenExpiresIn);
       writeCookie(COOKIE_KEYS.REMEMBER_ME, "true", lifetimes.refreshTokenExpiresIn);
-    else
+    }
+    else {
       removeCookie(COOKIE_KEYS.REMEMBER_ME);
+      if (import.meta.client) {
+        sessionStorage.setItem(COOKIE_KEYS.ACCESS_TOKEN, accessToken);
+        sessionStorage.setItem(COOKIE_KEYS.REFRESH_TOKEN, refreshToken);
+        sessionStorage.setItem(COOKIE_KEYS.REMEMBER_ME, "false");
+      }
+    }
     return true;
   };
 
   const setAccessToken = (accessToken: string, expiresIn?: number): void => {
-    writeCookie(COOKIE_KEYS.ACCESS_TOKEN, accessToken, expiresIn);
+    if (isRemembered())
+      writeCookie(COOKIE_KEYS.ACCESS_TOKEN, accessToken, expiresIn);
+    else if (import.meta.client)
+      sessionStorage.setItem(COOKIE_KEYS.ACCESS_TOKEN, accessToken);
   };
 
   const setRefreshToken = (
@@ -109,9 +132,13 @@ export function useStorage() {
     expiresIn?: number,
     rememberMe = false,
   ): void => {
-    writeCookie(COOKIE_KEYS.REFRESH_TOKEN, refreshToken, expiresIn);
-    if (rememberMe)
+    if (rememberMe) {
+      writeCookie(COOKIE_KEYS.REFRESH_TOKEN, refreshToken, expiresIn);
       writeCookie(COOKIE_KEYS.REMEMBER_ME, "true", expiresIn);
+    }
+    else if (import.meta.client) {
+      sessionStorage.setItem(COOKIE_KEYS.REFRESH_TOKEN, refreshToken);
+    }
   };
 
   const removeTokens = (): boolean => {
@@ -119,6 +146,9 @@ export function useStorage() {
     removeCookie(COOKIE_KEYS.REFRESH_TOKEN);
     removeCookie(COOKIE_KEYS.REMEMBER_ME);
     if (import.meta.client) {
+      sessionStorage.removeItem(COOKIE_KEYS.ACCESS_TOKEN);
+      sessionStorage.removeItem(COOKIE_KEYS.REFRESH_TOKEN);
+      sessionStorage.removeItem(COOKIE_KEYS.REMEMBER_ME);
       sessionStorage.removeItem(PENDING_REMEMBER_ME_KEY);
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
