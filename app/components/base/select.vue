@@ -55,7 +55,7 @@ const inputValue = computed({
       class="w-full"
       size="lg"
       :ui="{
-        base: `px-4 py-2 border border-border bg-transparent hover:bg-[#C9A55A1A]/50 transition-colors rounded-xs flex items-center gap-2 text-foreground font-normal focus:ring-1 dark:ring-secondary-800`,
+        base: `h-11 px-4 py-2 border border-border bg-white dark:bg-transparent transition-colors rounded-xs flex items-center gap-2 text-foreground font-normal ring-secondary-50 dark:ring-secondary-800 focus:ring-1 focus:outline-none`,
         item: 'hover:bg-background dark:hover:bg-secondary-800 hover:text-foreground rounded-xs overflow-hidden cursor-pointer',
         content: 'bg-card border border-border rounded-xs',
         trailingIcon: 'h-5 w-5 text-foreground',

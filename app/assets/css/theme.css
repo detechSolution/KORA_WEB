@@ -210,6 +210,7 @@
   --font-serif: "Cormorant Garamond", Georgia, serif;
   --font-jakarta: "Plus Jakarta Sans", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
+  --font-number: "Inter", system-ui, sans-serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

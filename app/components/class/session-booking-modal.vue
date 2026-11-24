@@ -207,7 +207,7 @@ function close() {
           <div class="flex justify-between items-center border-t border-border/40 pt-4 text-foreground text-xl md:text-2xl">
             <span class="font-serif font-bold"> Total </span>
             <span class="font-serif font-bold">
-              Rs. {{ formatPrice(pricing.finalPrice) }}
+              Rs. <span class="font-number text-md font-normal">{{ formatPrice(pricing.finalPrice) }}</span>
             </span>
           </div>
 

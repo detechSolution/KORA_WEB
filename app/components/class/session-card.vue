@@ -111,7 +111,7 @@ function viewDetail() {
         </span>
         <span
           v-if="session.price > 0"
-          class="font-serif text-2xl md:text-3xl text-black dark:text-white font-normal leading-none tracking-wide"
+          class="font-number text-2xl md:text-3xl text-black dark:text-white leading-none tracking-wide"
         >
           <span class="text-[27px]">Rs.</span> {{ session.price }}
         </span>

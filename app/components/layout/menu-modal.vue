@@ -83,6 +83,12 @@ const menuItems = computed(() => {
       icon: "i-lucide-users",
     },
     {
+      name: "Corporate & Retreats",
+      path: "/inquire-kora-corporate",
+      sub: "Executive memberships, team passes & private buyouts",
+      icon: "i-lucide-building-2",
+    },
+    {
       name: "Spa Sanctuary",
       path: "/spa",
       sub: "Thermal Hydrotherapy Suites & Treatments",

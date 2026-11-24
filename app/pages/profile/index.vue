@@ -310,6 +310,34 @@ const hasFreezeDates = computed(() => {
   );
 });
 
+const isFreezeActive = computed(() => {
+  const startsOn = membershipFreeze.value?.startsOn;
+  const endsOn = membershipFreeze.value?.endsOn;
+  if (typeof startsOn !== "string" || typeof endsOn !== "string")
+    return false;
+
+  const toLocalDay = (value: string): number => {
+    const dateOnly = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+    const date = dateOnly
+      ? new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3]))
+      : new Date(value);
+    if (Number.isNaN(date.getTime()))
+      return Number.NaN;
+    date.setHours(0, 0, 0, 0);
+    return date.getTime();
+  };
+
+  const startDay = toLocalDay(startsOn);
+  const endDay = toLocalDay(endsOn);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return Number.isFinite(startDay)
+    && Number.isFinite(endDay)
+    && today.getTime() >= startDay
+    && today.getTime() <= endDay;
+});
+
 async function fetchBookings() {
   try {
     loading.value = true;
@@ -588,7 +616,7 @@ onMounted(async () => {
             />
             TOTAL BOOKINGS
           </div>
-          <div class="font-serif text-3xl text-foreground">
+          <div class="font-number text-3xl text-foreground">
             {{ user.stats.totalBookings }}
           </div>
         </div>
@@ -602,7 +630,7 @@ onMounted(async () => {
             <UIcon name="i-lucide-clock" class="w-3.5 h-3.5 text-[#B59A6D]" />
             UPCOMING
           </div>
-          <div class="font-serif text-3xl text-foreground">
+          <div class="font-number text-3xl text-foreground">
             {{ user.stats.upcoming }}
           </div>
         </div>
@@ -619,7 +647,7 @@ onMounted(async () => {
             />
             CANCELED
           </div>
-          <div class="font-serif text-3xl text-foreground">
+          <div class="font-number text-3xl text-foreground">
             {{ user.stats.canceled }}
           </div>
         </div>
@@ -767,7 +795,7 @@ onMounted(async () => {
                 </div>
                 <div class="flex items-center gap-2">
                   <span
-                    v-if="hasFreezeDates"
+                    v-if="isFreezeActive"
                     class="border border-sky-400/40 bg-sky-500/10 text-sky-500 dark:text-sky-400 text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-xs flex items-center gap-1.5"
                   >
                     <UIcon name="i-lucide-snowflake" class="w-3.5 h-3.5" />
@@ -820,7 +848,7 @@ onMounted(async () => {
                   >
                     FREEZE DATES
                   </div>
-                  <div class="text-sm font-serif text-foreground font-medium">
+                  <div class="text-sm font-number text-foreground font-medium">
                     {{ formatDate(membershipFreeze.startsOn) }} &ndash;
                     {{ formatDate(membershipFreeze.endsOn) }}
                   </div>
@@ -837,7 +865,7 @@ onMounted(async () => {
                   >
                     MEMBER SINCE
                   </div>
-                  <div class="text-lg text-foreground font-serif">
+                  <div class="text-base text-foreground font-number">
                     {{ user.memberSince }}
                   </div>
                 </div>
@@ -848,7 +876,7 @@ onMounted(async () => {
                   >
                     MEMBERSHIP ENDS
                   </div>
-                  <div class="text-lg text-foreground font-serif">
+                  <div class="text-base text-foreground font-number">
                     {{ user.membership.endDate }}
                   </div>
                 </div>
@@ -871,7 +899,7 @@ onMounted(async () => {
                   >
                     BILLING
                   </div>
-                  <div class="text-xl text-foreground font-serif">
+                  <div class="text-xl text-foreground font-number">
                     {{ user.membership.billing }}
                   </div>
                 </div>

@@ -3,12 +3,25 @@ import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
 const STORAGE_KEY = "kora-xterra-popup-hidden-permanently";
-const EVENT_URL = "https://www.xterraplanet.com/event/xterra-nepal";
+const CAMPAIGN_START = "2026-11-24";
+// November has 30 days, so the requested 28th–31st window ends on Nov 30.
+const CAMPAIGN_END = "2026-11-30";
 
 const route = useRoute();
 const isOpen = ref(false);
 const dontShowAgain = ref(false);
 let openTimer: ReturnType<typeof setTimeout> | undefined;
+
+function getKathmanduDate(): string {
+  const parts = new Intl.DateTimeFormat("en", {
+    timeZone: "Asia/Kathmandu",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+  const values = Object.fromEntries(parts.map(part => [part.type, part.value]));
+  return `${values.year}-${values.month}-${values.day}`;
+}
 
 function schedulePopup() {
   if (openTimer)
@@ -17,6 +30,10 @@ function schedulePopup() {
   dontShowAgain.value = false;
 
   if (route.path !== "/")
+    return;
+
+  const today = getKathmanduDate();
+  if (today < CAMPAIGN_START || today > CAMPAIGN_END)
     return;
 
   try {
@@ -95,34 +112,32 @@ onBeforeUnmount(() => {
 
           <div class="flex flex-col justify-center p-6 sm:p-8 md:p-10">
             <p class="mb-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-primary sm:text-xs">
-              XTERRA NEPAL <span class="px-1 text-white/40">·</span> POKHARA <span class="px-1 text-white/40">·</span> 28 NOV 2026
+              KORA × XTERRA NEPAL <span class="px-1 text-white/40">•</span> EXCLUSIVE ATHLETE RECOVERY
             </p>
             <h2
               id="xterra-popup-title"
               class="mb-3 max-w-md font-serif text-3xl leading-tight tracking-wide text-white sm:text-4xl"
             >
-              One wild weekend. One unforgettable place.
+              The race is done. Stillness awaits.
             </h2>
             <p class="mb-6 text-sm leading-relaxed text-white/70 sm:text-base">
-              Swim Phewa Lake, ride the mountain trails, and run beneath the Himalayas. XTERRA Nepal is coming to Pokhara.
+              As an XTERRA finisher, step into a private day of restoration at KORA. Move at your own pace between cold plunge, sauna, pool, jacuzzi, spa, and our nutrition café with valet parking awaiting your arrival.
             </p>
 
-            <a
-              :href="EVENT_URL"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-flex min-h-12 w-full items-center justify-center gap-2 bg-primary px-5 py-3 text-center text-xs font-semibold uppercase tracking-[0.12em] text-black transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-fit"
+            <NuxtLink
+              :to="{ path: '/membership', query: { tab: 'passes' } }"
+              class="inline-flex min-h-12 w-full items-center justify-center gap-2 bg-primary-700 px-5 py-3 text-center text-xs font-semibold uppercase tracking-[0.12em] transition hover:bg-primary-700/75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-fit"
               @click="dismiss"
             >
-              Explore the event
+              RESERVE YOUR DAY PASS
               <UIcon name="i-lucide-arrow-up-right" class="h-4 w-4 shrink-0" />
-            </a>
+            </NuxtLink>
 
             <label class="mt-5 inline-flex w-fit cursor-pointer items-center gap-2.5 text-xs text-white/65">
               <input
                 v-model="dontShowAgain"
                 type="checkbox"
-                class="h-4 w-4 accent-primary"
+                class="h-4 w-4 accent-primary-700"
               >
               Don’t show this again
             </label>

@@ -384,7 +384,7 @@ onUnmounted(() => {
                         </span>
                       </div>
                       <div>
-                        <span class="text-2xl font-serif text-[#B59A6D]">{{
+                        <span class="text-2xl font-number text-[#B59A6D]">{{
                           item.finalPrice > 0
                             ? `Rs. ${formatPrice(item.finalPrice)}`
                             : "Free"
@@ -700,7 +700,7 @@ onUnmounted(() => {
                   <h2 class="font-bold">
                     Total
                   </h2>
-                  <p class="font-bold text-primary">
+                  <p class="font-bold text-primary font-number">
                     Rs. {{ formatPrice(totalPrice) }}
                   </p>
                 </div>

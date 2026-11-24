@@ -119,6 +119,10 @@ body {
   background-color: var(--color-background);
 }
 
+.font-number {
+  font-size-adjust: 0.49;
+}
+
 ::selection {
   color: white;
   background: var(--primary-900);
