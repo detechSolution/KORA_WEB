@@ -191,7 +191,7 @@ async function handleCancelRequest() {
     <div
       class="flex flex-col justify-between sm:items-end gap-6 sm:gap-0 mt-4 sm:mt-0"
     >
-      <div class="font-serif text-xl text-[#B59A6D] self-end">
+      <div class="font-number text-xl text-[#B59A6D] self-end">
         {{ booking.price }}
       </div>
 

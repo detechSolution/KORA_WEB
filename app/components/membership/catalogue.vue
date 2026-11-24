@@ -383,7 +383,7 @@ onMounted(async () => {
 
           <div v-if="tier.selectedOption" class="mt-4">
             <p
-              class="font-serif text-4xl md:text-5xl text-foreground dark:text-white tracking-wide"
+              class="font-number text-4xl md:text-5xl text-foreground dark:text-white tracking-wide"
             >
               <span class="text-[40px]">Rs.</span>
               {{ tier.selectedOption.price?.toLocaleString() }}
@@ -462,7 +462,7 @@ onMounted(async () => {
               {{ pass.name }}
             </h4>
 
-            <span class="font-serif text-2xl font-normal shrink-0">
+            <span class="font-number text-2xl font-normal shrink-0">
               <span class="text-[22px]">Rs.</span> {{ pass.price?.toLocaleString() }}
             </span>
           </div>

@@ -588,7 +588,7 @@ onMounted(async () => {
             />
             TOTAL BOOKINGS
           </div>
-          <div class="font-serif text-3xl text-foreground">
+          <div class="font-number text-3xl text-foreground">
             {{ user.stats.totalBookings }}
           </div>
         </div>
@@ -602,7 +602,7 @@ onMounted(async () => {
             <UIcon name="i-lucide-clock" class="w-3.5 h-3.5 text-[#B59A6D]" />
             UPCOMING
           </div>
-          <div class="font-serif text-3xl text-foreground">
+          <div class="font-number text-3xl text-foreground">
             {{ user.stats.upcoming }}
           </div>
         </div>
@@ -619,7 +619,7 @@ onMounted(async () => {
             />
             CANCELED
           </div>
-          <div class="font-serif text-3xl text-foreground">
+          <div class="font-number text-3xl text-foreground">
             {{ user.stats.canceled }}
           </div>
         </div>
@@ -820,7 +820,7 @@ onMounted(async () => {
                   >
                     FREEZE DATES
                   </div>
-                  <div class="text-sm font-serif text-foreground font-medium">
+                  <div class="text-sm font-number text-foreground font-medium">
                     {{ formatDate(membershipFreeze.startsOn) }} &ndash;
                     {{ formatDate(membershipFreeze.endsOn) }}
                   </div>
@@ -837,7 +837,7 @@ onMounted(async () => {
                   >
                     MEMBER SINCE
                   </div>
-                  <div class="text-lg text-foreground font-serif">
+                  <div class="text-base text-foreground font-number">
                     {{ user.memberSince }}
                   </div>
                 </div>
@@ -848,7 +848,7 @@ onMounted(async () => {
                   >
                     MEMBERSHIP ENDS
                   </div>
-                  <div class="text-lg text-foreground font-serif">
+                  <div class="text-base text-foreground font-number">
                     {{ user.membership.endDate }}
                   </div>
                 </div>
@@ -871,7 +871,7 @@ onMounted(async () => {
                   >
                     BILLING
                   </div>
-                  <div class="text-xl text-foreground font-serif">
+                  <div class="text-xl text-foreground font-number">
                     {{ user.membership.billing }}
                   </div>
                 </div>

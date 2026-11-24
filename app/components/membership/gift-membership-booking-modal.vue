@@ -283,7 +283,7 @@ function proceedToCheckout() {
                 class="flex justify-between items-center border-t border-border/40 pt-4 mt-4 text-foreground"
               >
                 <span class="font-serif font-bold text-2xl">Total</span>
-                <span class="font-serif font-bold text-2xl">Rs. {{ formattedPrice }}</span>
+                <span class="font-number font-bold text-2xl">Rs. {{ formattedPrice }}</span>
               </div>
             </div>
 

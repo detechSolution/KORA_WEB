@@ -377,7 +377,7 @@ watch(
                         duration.duration
                       }}
                         {{ duration.timeUnit }}</span>
-                      <span class="block font-serif text-2xl mt-3">Rs. {{ formatPrice(duration.price) }}</span>
+                      <span class="block font-number text-2xl mt-3">Rs. {{ formatPrice(duration.price) }}</span>
                     </button>
                   </div>
                 </template>
@@ -505,7 +505,7 @@ watch(
               <div
                 class="flex justify-between items-center border-t border-border/40 pt-4 mt-4 text-foreground"
               >
-                <span class="font-serif font-bold text-2xl">Total</span><span class="font-serif font-bold text-2xl">Rs. {{ formatPrice(pricing.finalPrice) }}</span>
+                <span class="font-serif font-bold text-2xl">Total</span><span class="font-number font-bold text-2xl">Rs. {{ formatPrice(pricing.finalPrice) }}</span>
               </div>
             </div>
           </div>

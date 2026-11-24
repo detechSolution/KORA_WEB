@@ -39,6 +39,8 @@ const categoryItems = computed(() =>
   })),
 );
 
+console.log("spa", spa.value);
+
 const hasFeatureVideo = computed(() => Boolean(spa.value?.videoUrl));
 const selectedSpa = ref(null);
 const selectedSubTypeId = ref<number | string | null>(null);
@@ -139,7 +141,7 @@ onMounted(() => {
                 :class="spa?.videoUrl ? 'aspect-[1.93/1]' : 'aspect-[1.93/1]'"
               >
                 <img
-                  :src="IMAGES.WELLNESS_SPA"
+                  :src="IMAGES.WHITE_LOGO"
                   alt="Spa Sanctuary"
                   class="w-full h-full object-cover absolute inset-0"
                 >
@@ -191,9 +193,6 @@ onMounted(() => {
                 preload="metadata"
                 playsinline
               />
-            </div>
-            <div v-else class="flex aspect-[1.93/1] items-center justify-center bg-stone-950 text-xs uppercase tracking-[0.2em] text-white/70">
-              Video coming soon
             </div>
           </div>
           <div class="max-w-400 px-4 md:px-8 lg:px-12 pb-8">

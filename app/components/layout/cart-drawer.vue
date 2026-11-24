@@ -166,7 +166,7 @@ function handleProceedToCheckout() {
                   GIFT
                 </span>
               </div>
-              <span v-if="item.finalPrice > 0" class="text-2xl font-serif text-primary-900 shrink-0"><span class="text-[22px]">Rs.</span> {{ formatPrice(item.finalPrice) }}</span>
+              <span v-if="item.finalPrice > 0" class="text-2xl font-number text-primary-900 shrink-0"><span class="text-[22px]">Rs.</span> {{ formatPrice(item.finalPrice) }}</span>
               <span v-else class="font-serif text-2xl text-primary-900 shrink-0">Free</span>
             </div>
 
@@ -221,7 +221,7 @@ function handleProceedToCheckout() {
             class="flex items-center justify-between border-t border-border/20 pt-6 mb-8"
           >
             <span class="text-2xl font-semibold font-serif text-foreground">Total</span>
-            <span class="text-2xl font-semibold font-serif text-primary">
+            <span class="text-2xl font-semibold font-number text-primary">
               <span class="text-[22px]">Rs. </span>{{ formatPrice(totalPrice) }}
             </span>
           </div>

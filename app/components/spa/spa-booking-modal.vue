@@ -696,7 +696,7 @@ watch(
                   class="flex justify-between items-center border-t border-border/40 pt-4 text-foreground text-2xl"
                 >
                   <span class="font-serif font-bold">Total</span>
-                  <span class="font-serif font-bold">
+                  <span class="font-number font-bold">
                     Rs. {{ formatPrice(pricing.finalPrice) }}
                   </span>
                 </div>

@@ -159,7 +159,7 @@ function proceedToCheckout() {
           class="flex justify-between items-center border-t border-border/40 pt-4 text-foreground text-2xl"
         >
           <span class="font-serif font-bold">Total</span>
-          <span class="font-serif font-bold">{{ price }}</span>
+          <span class="font-number font-bold">{{ price }}</span>
         </div>
         <div class="border-b border-border/40 pb-6 mb-8" />
       </div>
