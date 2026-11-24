@@ -91,6 +91,10 @@ const membershipPlans = computed(() => {
     .reverse();
 });
 
+const passPlansByPrice = computed(() =>
+  [...membershipStore.passPlans].sort((a, b) => a.price - b.price),
+);
+
 function getIcon(index: number) {
   const icons = ["i-lucide-sparkles", "i-lucide-star", "i-lucide-crown"];
 
@@ -450,7 +454,7 @@ onMounted(async () => {
       class="relative z-20 grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-400 mx-auto mt-16 mb-12 px-4 md:px-8"
     >
       <div
-        v-for="pass in membershipStore.passPlans"
+        v-for="pass in passPlansByPrice"
         :key="pass.id"
         class="border border-[#E9DEC8] dark:border-border bg-card rounded-xs p-6 md:p-8 flex flex-col justify-between transition-all duration-300 group"
       >

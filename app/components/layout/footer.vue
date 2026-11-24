@@ -33,8 +33,8 @@ const navColumns = [
 
 const contacts = [
   { label: "Email", value: "info@koranepal.com", href: "mailto:info@koranepal.com" },
-  { label: "Phone", value: "01-4785467, 9845787654" },
-  { label: "Address", value: "Hattisar, Kathmandu, Nepal" },
+  // { label: "Phone", value: "01-4785467, 9845787654" },
+  { label: "Address", value: "Hattigauda, Kathmandu, Nepal" },
 ];
 
 const socials = [
