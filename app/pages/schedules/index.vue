@@ -379,7 +379,7 @@ onMounted(() => {
                       }}
                     </span>
                     <span
-                      class="font-number text-3xl text-foreground font-normal leading-none"
+                      class="font-serif text-3xl text-foreground font-normal leading-none"
                     >
                       {{ day.getDate() }}
                     </span>
