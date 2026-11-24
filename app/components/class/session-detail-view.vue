@@ -24,6 +24,7 @@ const sessionStore = useSessionStore();
 const { success, error: showError } = useNotification();
 
 const isPlayingVideo = ref(false);
+const bannerImageError = ref(false);
 const hasFeatureVideo = computed(() => Boolean(props.session?.videoUrl));
 const isBookingModalOpen = ref(false);
 const isAddingToWaitlist = ref(false);
@@ -183,9 +184,17 @@ async function handleAddToWaitlist() {
                 @click="isPlayingVideo = true"
               >
                 <img
-                  :src="session.bannerUrl"
+                  v-if="!bannerImageError"
+                  :src="session.bannerUrl || IMAGES.BLACK_LOGO"
                   :alt="session.name"
                   class="w-full h-[300px] md:h-[460px] object-cover transition-transform duration-700 group-hover:scale-105"
+                  @error="bannerImageError = true"
+                >
+                <img
+                  v-else
+                  :src="IMAGES.BLACK_LOGO"
+                  :alt="session.name"
+                  class="w-full h-[300px] md:h-[460px] object-cover"
                 >
                 <div
                   class="absolute inset-0 bg-black/40 transition-opacity duration-300 group-hover:bg-black/50"

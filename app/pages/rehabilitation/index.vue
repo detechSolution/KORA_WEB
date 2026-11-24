@@ -9,25 +9,25 @@ const clinicalServices = [
     tier: "Comprehensive Clinical Assessment",
     description:
       "60-minute deep-dive diagnostic incorporating dynamic movement screening and joint goniometry.",
-    fee: "NPR 2,500",
+    fee: "NPR 3,000",
   },
   {
     tier: "Targeted Sports Rehabilitation",
     description:
       "Precision interventions tailored to athletic recovery, acute injury triage, and post-operative restoration.",
-    fee: "NPR 2,500",
+    fee: "NPR 3,000",
   },
   {
     tier: "Manual & Myofascial Therapy",
     description:
       "Specialized soft-tissue manipulation, joint mobilization, and instrument-assisted myofascial release (IASTM).",
-    fee: "NPR 2,500",
+    fee: "NPR 3,000",
   },
   {
     tier: "Postural & Structural Realignment",
     description:
       "Ergonomic and movement pattern restructuring designed to eliminate chronic spinal stress and postural strain.",
-    fee: "NPR 2,500",
+    fee: "NPR 3,000",
   },
 ];
 

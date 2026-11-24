@@ -23,18 +23,31 @@ const loadingCancelRequest = ref(false);
 
 const canRequestCancellation = computed(() => {
   const { itemType, bookingDate, time } = props.booking;
-  const cutoffHours = itemType === "spa" ? 24 : itemType === "session" ? 5 : null;
+  const normalizedType = String(itemType).toLowerCase();
+  // The API groups class, event, and workshop bookings under "session".
+  const cutoffHours
+    = normalizedType === "spa"
+      ? 24
+      : ["session", "class", "event", "workshop"].includes(normalizedType)
+          ? 5
+          : null;
 
   if (cutoffHours === null || !bookingDate || !time)
     return false;
 
   // Booking dates and times are stored in Nepal time (UTC+05:45).
-  const bookingDateTime = Date.parse(`${bookingDate.slice(0, 10)}T${time}+05:45`);
+  const bookingDateTime = Date.parse(
+    `${bookingDate.slice(0, 10)}T${time}+05:45`,
+  );
   if (!Number.isFinite(bookingDateTime))
     return false;
 
-  return bookingDateTime - Date.now() > cutoffHours * 60 * 60 * 1000;
+  return bookingDateTime - Date.now() >= cutoffHours * 60 * 60 * 1000;
 });
+
+const canShowBookingActions = computed(() =>
+  ["today", "upcoming"].includes(props.activeTab.toLowerCase()),
+);
 
 const badgeClass = computed(() => {
   if (props.booking.itemType === "session") {
@@ -183,7 +196,7 @@ async function handleCancelRequest() {
       </div>
 
       <div
-        v-if="activeTab.toLowerCase() === 'upcoming'"
+        v-if="canShowBookingActions"
         class="w-full md:w-auto flex items-center gap-3 self-end"
       >
         <!-- <span

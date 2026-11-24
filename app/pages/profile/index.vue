@@ -245,14 +245,16 @@ async function handleUpdateProfile() {
 
   try {
     loadingProfile.value = true;
-    const payload = {
-      fullName: profileForm.fullName,
-      phoneNumber: profileForm.phone?.trim(),
-      height: profileForm.height,
-      weight: profileForm.weight,
-      injuryHistory: profileForm.injuryHistory,
-      preferences: profileForm.preferences,
-    };
+    const payload = Object.fromEntries(
+      Object.entries({
+        fullName: profileForm.fullName,
+        phoneNumber: profileForm.phone?.trim(),
+        height: profileForm.height,
+        weight: profileForm.weight,
+        injuryHistory: profileForm.injuryHistory,
+        preferences: profileForm.preferences,
+      }).filter(([, value]) => value !== "" && value !== null && value !== undefined),
+    );
     await authStore.updateProfile(payload);
     await authStore.checkAuth(true);
     success({ message: "Profile updated successfully." });
@@ -1120,7 +1122,7 @@ onMounted(async () => {
                 </p>
               </div>
               <base-button
-                :to="{ path: '/membership', query: { tab: 'passes' } }"
+                :to="{ path: '/membership?tab=passes', query: { tab: 'passes' } }"
               >
                 PURCHASE NEW PASS
               </base-button>

@@ -45,7 +45,7 @@ const selectedSubTypeId = ref<number | string | null>(null);
 const isBookingModalOpen = ref(false);
 const isGiftBookingModalOpen = ref(false);
 const loading = ref(false);
-const spaFallbackAvatar = computed(() => `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(spa.value?.name || "Kora Spa")}&backgroundColor=f5efe4&radius=50`);
+const bannerImageError = ref(false);
 
 async function getSpaLists() {
   try {
@@ -127,10 +127,11 @@ onMounted(() => {
             />
             <div v-if="!isPlayingVideo" class="relative overflow-hidden group">
               <img
-                v-if="spa?.bannerUrl"
+                v-if="spa?.bannerUrl && !bannerImageError"
                 :src="spa.bannerUrl"
                 :alt="spa?.name || 'Spa Sanctuary'"
                 class="w-full aspect-[1.93/1] object-cover transition-transform duration-700 group-hover:scale-105"
+                @error="bannerImageError = true"
               >
               <div
                 v-else
@@ -138,12 +139,11 @@ onMounted(() => {
                 :class="spa?.videoUrl ? 'aspect-[1.93/1]' : 'aspect-[1.93/1]'"
               >
                 <img
-                  :src="spaFallbackAvatar"
-                  alt=""
-                  class="h-20 w-20 rounded-full border border-white/70 bg-white/50 shadow-md md:h-24 md:w-24"
+                  :src="IMAGES.WELLNESS_SPA"
+                  alt="Spa Sanctuary"
+                  class="w-full h-full object-cover absolute inset-0"
                 >
-                <span class="font-serif text-xl text-stone-800 md:text-2xl">{{ spa?.name || 'Spa Sanctuary' }}</span>
-                <span class="text-[9px] uppercase tracking-[0.28em] text-stone-600">Kora Spa</span>
+                <span class="absolute bottom-4 left-4 font-serif text-xl text-white md:text-2xl drop-shadow">{{ spa?.name || 'Spa Sanctuary' }}</span>
               </div>
 
               <div
