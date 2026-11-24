@@ -41,6 +41,7 @@ watch(emailVerificationRequired, (required) => {
   <UApp class="bg-background" :toaster="toasterOptions">
     <NuxtLoadingIndicator color="bg-primary" />
     <SplashScreen />
+    <XterraPopup />
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
