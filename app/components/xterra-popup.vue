@@ -121,7 +121,7 @@ onBeforeUnmount(() => {
               The race is done. Stillness awaits.
             </h2>
             <p class="mb-6 text-sm leading-relaxed text-white/70 sm:text-base">
-              As an XTERRA finisher, step into a private day of restoration at KORA. Move at your own pace between cold plunge, sauna, pool, jacuzzi, spa, and our nutrition café—with valet parking awaiting your arrival.
+              As an XTERRA finisher, step into a private day of restoration at KORA. Move at your own pace between cold plunge, sauna, pool, jacuzzi, spa, and our nutrition café with valet parking awaiting your arrival.
             </p>
 
             <NuxtLink
