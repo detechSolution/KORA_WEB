@@ -111,7 +111,7 @@ onBeforeUnmount(() => {
               :href="EVENT_URL"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex min-h-12 w-full items-center justify-center gap-2 bg-primary px-5 py-3 text-center text-xs font-semibold uppercase tracking-[0.12em] text-black transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-fit"
+              class="inline-flex min-h-12 w-full items-center justify-center gap-2 bg-primary-700 px-5 py-3 text-center text-xs font-semibold uppercase tracking-[0.12em] transition hover:bg-primary-700/75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-fit"
               @click="dismiss"
             >
               Explore the event
@@ -122,7 +122,7 @@ onBeforeUnmount(() => {
               <input
                 v-model="dontShowAgain"
                 type="checkbox"
-                class="h-4 w-4 accent-primary"
+                class="h-4 w-4 accent-primary-700"
               >
               Don’t show this again
             </label>
