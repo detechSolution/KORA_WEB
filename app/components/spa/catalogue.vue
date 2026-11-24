@@ -39,8 +39,6 @@ const categoryItems = computed(() =>
   })),
 );
 
-console.log("spa", spa.value);
-
 const hasFeatureVideo = computed(() => Boolean(spa.value?.videoUrl));
 const selectedSpa = ref(null);
 const selectedSubTypeId = ref<number | string | null>(null);
