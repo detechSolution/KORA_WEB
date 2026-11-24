@@ -1120,7 +1120,7 @@ onMounted(async () => {
                 </p>
               </div>
               <base-button
-                :to="{ path: '/membership', query: { tab: 'passes' } }"
+                :to="{ path: '/membership?tab=passes', query: { tab: 'passes' } }"
               >
                 PURCHASE NEW PASS
               </base-button>
