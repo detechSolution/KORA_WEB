@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 import type { Session } from "~/types/session";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
+import { IMAGES } from "~/utils/images";
 import { getSessionPath } from "~/utils/session";
 
 const props = defineProps({
@@ -15,7 +16,8 @@ const props = defineProps({
 
 const emit = defineEmits<{ viewGift: [session: Session] }>();
 const router = useRouter();
-const fallbackAvatar = computed(() => `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${encodeURIComponent(props.session.name || "Kora")}&backgroundColor=f5efe4&radius=50`);
+const imageError = ref(false);
+const fallbackAvatar = computed(() => IMAGES.BLACK_LOGO);
 function viewDetail() {
   if (props.gifting)
     emit("viewGift", props.session);
@@ -34,10 +36,11 @@ function viewDetail() {
       @click="viewDetail"
     >
       <img
-        v-if="session.bannerUrl"
+        v-if="session.bannerUrl && !imageError"
         :src="session.bannerUrl"
         :alt="session.name"
         class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+        @error="imageError = true"
       >
       <div
         v-else
