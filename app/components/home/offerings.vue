@@ -31,7 +31,7 @@ const router = useRouter();
         class="w-full h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 lg:py-0"
       >
         <span
-          class="font-number text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
+          class="font-serif text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
         >
           01
         </span>
@@ -67,7 +67,7 @@ const router = useRouter();
         class="w-full h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 py-16 lg:py-0 order-2 lg:order-1"
       >
         <span
-          class="font-number text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
+          class="font-serif text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
         >
           02
         </span>

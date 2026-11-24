@@ -210,7 +210,7 @@ async function createGuestPass() {
                 class="flex flex-col gap-4"
               >
                 <div v-if="index > 0" class="flex items-center justify-between">
-                  <h4 class="text-sm font-number text-[#A08860]">
+                  <h4 class="text-sm font-serif text-[#A08860]">
                     Guest {{ index + 1 }}
                   </h4>
                   <button

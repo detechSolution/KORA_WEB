@@ -172,7 +172,7 @@ useSeoMeta({
         </div>
         <div class="relative z-10">
           <span
-            class="font-number text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
+            class="font-serif text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
           >
             01
           </span>
@@ -259,7 +259,7 @@ useSeoMeta({
         class="w-full flex flex-col justify-center px-6 sm:px-8 md:px-12 lg:px-12 xl:px-24 py-12 md:py-16 order-2"
       >
         <span
-          class="font-number text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
+          class="font-serif text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
         >
           02
         </span>
@@ -335,7 +335,7 @@ useSeoMeta({
         class="w-full flex flex-col justify-center px-6 sm:px-8 md:px-12 lg:px-12 xl:px-24 py-12 md:py-16 order-2 lg:order-1"
       >
         <span
-          class="font-number text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
+          class="font-serif text-muted-foreground/30 text-7xl md:text-8xl select-none leading-none mb-2"
         >
           03
         </span>
