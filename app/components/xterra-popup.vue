@@ -157,7 +157,7 @@ onBeforeUnmount(() => {
 
           <div class="h-36 overflow-hidden sm:h-48 md:h-full md:min-h-[390px]">
             <img
-              src="/images/xterra/kora_XTERRA.JPG"
+              :src="IMAGES.XTERRA_HERO"
               alt="An athlete swimming through clear blue water"
               class="h-full w-full object-cover object-center"
             >

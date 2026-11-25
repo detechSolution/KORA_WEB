@@ -8,54 +8,57 @@ export const IMAGES = {
   STRIPE_LOGO: "/images/logo/stripe.png",
 
   // LOGIN
-  LOGIN: "/images/login.png",
+  LOGIN: "/images/login.webp",
   GOOGLE_LOGO: "/logo/google.png",
 
-  LEAF: "/images/hero/plant_hero.png",
-  MANIFESTO_BG: "/images/hero/manifesto_background.png",
-  GIFT: "/images/gift.png",
+  LEAF: "/images/hero/plant_hero.webp",
+  MANIFESTO_BG: "/images/hero/manifesto_background.webp",
+  GIFT: "/images/gift.webp",
 
   // HOME SECTION
-  HOME_HERO: "/images/hero/home_hero.png",
+  HOME_HERO: "/images/hero/home_hero.webp",
 
   // EXPERIENCE SECTION
-  EXPERIENCE_MAIN: "/images/hero/experience_main.png",
-  EXPERIENCE_AROMA: "/images/hero/experience_aroma.png",
-  EXPERIENCE_STEAM: "/images/hero/experience_steam.png",
-  EXPERIENCE_FOOD: "/images/hero/experience_food.png",
+  EXPERIENCE_MAIN: "/images/hero/experience_main.webp",
+  EXPERIENCE_AROMA: "/images/hero/experience_aroma.webp",
+  EXPERIENCE_STEAM: "/images/hero/experience_steam.webp",
+  EXPERIENCE_FOOD: "/images/hero/experience_food.webp",
 
   // MANIFESTO SECTION
-  MANIFESTO_MEDITATION: "/images/hero/manifesto_meditation.png",
-  MANIFESTO_CRYSTALS: "/images/hero/manifesto_crystals.png",
-  MANIFESTO_STEAM: "/images/hero/manifesto_steam.png",
-  MANIFESTO_SINGING: "/images/hero/manifesto_singing.png",
-  MANIFESTO_BACKGROUND: "/images/hero/manifesto_background.png",
+  MANIFESTO_MEDITATION: "/images/hero/manifesto_meditation.webp",
+  MANIFESTO_CRYSTALS: "/images/hero/manifesto_crystals.webp",
+  MANIFESTO_STEAM: "/images/hero/manifesto_steam.webp",
+  MANIFESTO_SINGING: "/images/hero/manifesto_singing.webp",
+  MANIFESTO_BACKGROUND: "/images/hero/manifesto_background.webp",
 
   // OFFERINGS SECTION
-  OFFERINGS_MEMBERSHIP: "/images/hero/offerings_memberships.png",
-  OFFERINGS_SESSIONS: "/images/hero/offerings_sessions.png",
+  OFFERINGS_MEMBERSHIP: "/images/hero/offerings_memberships.webp",
+  OFFERINGS_SESSIONS: "/images/hero/offerings_sessions.webp",
 
   // RECOVERY SECTION
-  RECOVERY_COLD_PLUNGE: "/images/recovery/cold_plunge.png",
-  RECOVERY_JACUZZI: "/images/recovery/jacuzzi.png",
-  RECOVERY_SAUNA: "/images/recovery/sauna.png",
-  RECOVERY_SWIMMING_POOL: "/images/recovery/swimming_pool.png",
+  RECOVERY_COLD_PLUNGE: "/images/recovery/cold_plunge.webp",
+  RECOVERY_JACUZZI: "/images/recovery/jacuzzi.webp",
+  RECOVERY_SAUNA: "/images/recovery/sauna.webp",
+  RECOVERY_SWIMMING_POOL: "/images/recovery/swimming_pool.webp",
 
   // WELLNESS SECTION
-  WELLNESS_CLASS: "/images/wellness/classes.png",
-  WELLNESS_SPACE: "/images/wellness/space.png",
-  WELLNESS_SAUNA: "/images/wellness/sauna.png",
-  WELLNESS_SPA: "/images/wellness/spa.png",
-  WELLNESS_DERMAL: "/images/wellness/dermal.png",
+  WELLNESS_CLASS: "/images/wellness/classes.webp",
+  WELLNESS_SPACE: "/images/wellness/space.webp",
+  WELLNESS_SAUNA: "/images/wellness/sauna.webp",
+  WELLNESS_SPA: "/images/wellness/spa.webp",
+  WELLNESS_DERMAL: "/images/wellness/dermal.webp",
 
   // REHABILITATION SECTION
-  REHAB_MOVEMENT: "/images/wellness/space.png",
-  REHAB_THERAPY: "/images/wellness/spa.png",
-  REHAB_SANCTUARY: "/images/wellness/sauna.png",
+  REHAB_MOVEMENT: "/images/wellness/space.webp",
+  REHAB_THERAPY: "/images/wellness/spa.webp",
+  REHAB_SANCTUARY: "/images/wellness/sauna.webp",
 
   // NUTRITION SECTION
-  NUTRITION_FOOD: "/images/nutrition/nutrition.png",
-  NUTRITION_CAFE: "/images/nutrition/cafe.png",
-  NUTRITION_PHILOSOPHY: "/images/nutrition/philosophy.png",
-  NUTRITION_FUNCTIONAL: "/images/nutrition/functional.png",
+  NUTRITION_FOOD: "/images/nutrition/nutrition.webp",
+  NUTRITION_CAFE: "/images/nutrition/cafe.webp",
+  NUTRITION_PHILOSOPHY: "/images/nutrition/philosophy.webp",
+  NUTRITION_FUNCTIONAL: "/images/nutrition/functional.webp",
+
+  // XTERRA SECTION
+  XTERRA_HERO: "/images/xterra/kora_XTERRA.webp",
 };
