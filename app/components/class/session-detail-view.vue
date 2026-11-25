@@ -18,6 +18,7 @@ const props = defineProps({
 const emit = defineEmits(["fetchSessionDetail", "gift"]);
 
 const authStore = useAuthStore();
+const { public: { bookingEnabled } } = useRuntimeConfig();
 const router = useRouter();
 const route = useRoute();
 const sessionStore = useSessionStore();
@@ -69,6 +70,8 @@ const isRebookableType = computed(() => {
 const isGiftSoldOut = computed(() => (props.session.remainingSpots ?? 0) <= 0);
 
 function handleOpenBookingModal() {
+  if (!props.gifting && !bookingEnabled)
+    return;
   if (isEnded.value)
     return;
   if (props.gifting) {
@@ -437,7 +440,7 @@ async function handleAddToWaitlist() {
                 </base-button>
 
                 <base-button
-                  v-else-if="session.isBookable && session.remainingSpots > 0"
+                  v-else-if="bookingEnabled && session.isBookable && session.remainingSpots > 0"
                   variant="solid"
                   color="primary"
                   class="w-full text-sm uppercase"

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import SpaGiftBookingModal from "~/components/spa/gift-booking-modal.vue";
 import { useNotification } from "~/composables/use-notification";
@@ -16,6 +16,7 @@ const props = withDefaults(defineProps<{ gifting?: boolean }>(), {
 const isPlayingVideo = ref(false);
 
 const route = useRoute();
+const { public: { bookingEnabled } } = useRuntimeConfig();
 const router = useRouter();
 const authStore = useAuthStore();
 const spaStore = useSpaStore();
@@ -63,6 +64,8 @@ async function getSpaLists() {
 }
 
 function handleOpenBookingModal(subTypeId?: number | string) {
+  if (!props.gifting && !bookingEnabled)
+    return;
   selectedSubTypeId.value = subTypeId || null;
 
   if (props.gifting) {
@@ -80,6 +83,10 @@ function handleOpenBookingModal(subTypeId?: number | string) {
 onMounted(() => {
   getSpaLists();
   spaStore.getCategories();
+});
+
+onUnmounted(() => {
+  spaStore.clearCategorySelection();
 });
 </script>
 
@@ -333,6 +340,7 @@ onMounted(() => {
                       :class="open && 'rotate-180'"
                     />
                     <UButton
+                      v-if="gifting || bookingEnabled"
                       as="span"
                       variant="ghost"
                       size="xs"
@@ -401,6 +409,7 @@ onMounted(() => {
             </div>
 
             <base-button
+              v-if="gifting || bookingEnabled"
               variant="solid"
               color="primary"
               class="w-full text-sm font-semibold uppercase mt-6"

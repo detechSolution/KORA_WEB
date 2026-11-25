@@ -20,7 +20,7 @@ function toggleTheme() {
 const menuItems: MenuItem[] = [
   {
     name: "Experiences",
-    image: "/images/hero/offerings_sessions.png",
+    image: "/images/hero/offerings_sessions.webp",
     children: [
       { name: "Classes", path: "/session?tab=class" },
       { name: "Events", path: "/session?tab=event" },
@@ -30,7 +30,7 @@ const menuItems: MenuItem[] = [
   },
   {
     name: "Sanctuary",
-    image: "/images/wellness/spa.png",
+    image: "/images/wellness/spa.webp",
     children: [
       // { name: "Spa", path: "/spa" },
       { name: "Recovery", path: "/recovery" },
@@ -42,12 +42,12 @@ const menuItems: MenuItem[] = [
   {
     name: "Schedules",
     path: "/schedules",
-    image: "/images/wellness/classes.png",
+    image: "/images/wellness/classes.webp",
   },
   {
     name: "Guest Pass",
     path: "/guest-pass",
-    image: "/images/hero/offerings_memberships.png",
+    image: "/images/hero/offerings_memberships.webp",
   },
   {
     name: "Corporate & Retreats",
@@ -57,7 +57,7 @@ const menuItems: MenuItem[] = [
   {
     name: "Gift Card",
     path: "/gift-card",
-    image: "/images/hero/experience_aroma.png",
+    image: "/images/hero/experience_aroma.webp",
   },
 ];
 
