@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import SpaGiftBookingModal from "~/components/spa/gift-booking-modal.vue";
 import { useNotification } from "~/composables/use-notification";
@@ -83,6 +83,10 @@ function handleOpenBookingModal(subTypeId?: number | string) {
 onMounted(() => {
   getSpaLists();
   spaStore.getCategories();
+});
+
+onUnmounted(() => {
+  spaStore.clearCategorySelection();
 });
 </script>
 

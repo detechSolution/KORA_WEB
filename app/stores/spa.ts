@@ -23,8 +23,20 @@ export const useSpaStore = defineStore("spa", () => {
   ));
   const categoryServices = computed(() => categoryDetail.value?.services ?? categoryDetail.value?.subTypes ?? []);
 
+  function clearCategorySelection() {
+    selectedCategoryId.value = null;
+    categoryDetail.value = null;
+    categoryError.value = "";
+    categoryLoading.value = false;
+  }
+
   async function selectCategory(id: number) {
     if (!categories.value.some(category => category.id === id)) {
+      return;
+    }
+
+    if (selectedCategoryId.value === id) {
+      clearCategorySelection();
       return;
     }
 
@@ -58,20 +70,13 @@ export const useSpaStore = defineStore("spa", () => {
     categoriesLoading.value = true;
     categoriesError.value = "";
     ++categoryRequestId;
-    categoryDetail.value = null;
-    categoryError.value = "";
-    categoryLoading.value = false;
+    clearCategorySelection();
     try {
       categories.value = await http.get<SpaCategory[]>(API_ENDPOINTS.SPA.CATEGORIES);
-      const category = selectedCategory.value ?? categories.value[0];
-      selectedCategoryId.value = category?.id ?? null;
-      if (category) {
-        await selectCategory(category.id);
-      }
     }
     catch (error) {
       categories.value = [];
-      selectedCategoryId.value = null;
+      clearCategorySelection();
       categoriesError.value = getApiErrorMessage(error, "Failed to load spa categories.");
     }
     finally {
@@ -113,6 +118,7 @@ export const useSpaStore = defineStore("spa", () => {
     categoryLoading,
     categoriesError,
     categoryError,
+    clearCategorySelection,
     getCategories,
     selectCategory,
     getSpas,
