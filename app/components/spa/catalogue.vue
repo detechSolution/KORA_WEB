@@ -16,6 +16,7 @@ const props = withDefaults(defineProps<{ gifting?: boolean }>(), {
 const isPlayingVideo = ref(false);
 
 const route = useRoute();
+const { public: { bookingEnabled } } = useRuntimeConfig();
 const router = useRouter();
 const authStore = useAuthStore();
 const spaStore = useSpaStore();
@@ -63,6 +64,8 @@ async function getSpaLists() {
 }
 
 function handleOpenBookingModal(subTypeId?: number | string) {
+  if (!props.gifting && !bookingEnabled)
+    return;
   selectedSubTypeId.value = subTypeId || null;
 
   if (props.gifting) {
@@ -333,6 +336,7 @@ onMounted(() => {
                       :class="open && 'rotate-180'"
                     />
                     <UButton
+                      v-if="gifting || bookingEnabled"
                       as="span"
                       variant="ghost"
                       size="xs"
@@ -401,6 +405,7 @@ onMounted(() => {
             </div>
 
             <base-button
+              v-if="gifting || bookingEnabled"
               variant="solid"
               color="primary"
               class="w-full text-sm font-semibold uppercase mt-6"

@@ -21,6 +21,7 @@ const emit = defineEmits<{
 }>();
 
 const route = useRoute();
+const { public: { bookingEnabled } } = useRuntimeConfig();
 const authStore = useAuthStore();
 const router = useRouter();
 const membershipStore = useMembershipStore();
@@ -114,6 +115,8 @@ function getDescriptionItems(description: string) {
 }
 
 function openPassModal(pass: Passes) {
+  if (!props.gifting && !bookingEnabled)
+    return;
   if (props.gifting) {
     emit("giftPass", pass);
     return;
@@ -128,6 +131,8 @@ function openPassModal(pass: Passes) {
 }
 
 function openMembershipModal(tier: any) {
+  if (!props.gifting && !bookingEnabled)
+    return;
   if (props.gifting) {
     if (tier.selectedOption)
       emit("giftMembership", tier, tier.selectedOption);
@@ -420,7 +425,7 @@ onMounted(async () => {
 
         <div class="mt-6 pt-4">
           <UTooltip
-            v-if="!gifting && (hasMembership || hasActivePass)"
+            v-if="!gifting && bookingEnabled && (hasMembership || hasActivePass)"
             :delay-duration="0"
             text="Membership / Pass is already active"
             class="block w-full"
@@ -436,7 +441,7 @@ onMounted(async () => {
             </div>
           </UTooltip>
           <base-button
-            v-else
+            v-else-if="gifting || bookingEnabled"
             variant="outline"
             class="w-full"
             :disabled="!tier.selectedOption"
@@ -503,7 +508,7 @@ onMounted(async () => {
 
         <div class="mt-4">
           <UTooltip
-            v-if="!gifting && (hasMembership || hasActivePass)"
+            v-if="!gifting && bookingEnabled && (hasMembership || hasActivePass)"
             :delay-duration="0"
             text="Membership / Pass is already active"
             class="block w-full"
@@ -519,7 +524,7 @@ onMounted(async () => {
             </div>
           </UTooltip>
           <base-button
-            v-else
+            v-else-if="gifting || bookingEnabled"
             variant="outline"
             class="w-full"
             @click="openPassModal(pass)"
