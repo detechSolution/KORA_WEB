@@ -84,7 +84,7 @@ useSeoMeta({
       >
         <img
           :src="IMAGES.RECOVERY_SAUNA"
-          alt="Sauna"
+          alt="Cold recovery"
           class="w-full h-full object-cover transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
         >
         <div

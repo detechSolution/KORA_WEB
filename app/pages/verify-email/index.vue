@@ -290,8 +290,8 @@ function handleSignOut(): void {
     <div class="hidden lg:block lg:w-1/2 relative h-screen">
       <img
         :src="IMAGES.LOGIN"
-        alt="Meditation"
-        class="w-full h-full object-cover"
+        alt="Practice in the forest"
+        class="w-full h-full object-cover object-[center_70%]"
       >
     </div>
   </div>

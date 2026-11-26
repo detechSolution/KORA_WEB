@@ -75,7 +75,7 @@
           >
             <img
               :src="IMAGES.EXPERIENCE_AROMA"
-              alt="Aroma therapy"
+              alt="Hand ritual"
               class="w-full h-full object-cover transition-transform duration-[4000ms] ease-out-quad group-hover:scale-108"
             >
             <div

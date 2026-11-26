@@ -72,7 +72,7 @@ function openInquiry(interest = "") {
       <img
         :src="IMAGES.OFFERINGS_SESSIONS"
         alt="KORA sanctuary spaces for movement and recovery"
-        class="absolute inset-0 -z-20 h-full w-full object-cover"
+        class="absolute inset-0 -z-20 h-full w-full object-cover object-[center_70%]"
       >
       <div class="absolute inset-0 -z-10 bg-gradient-to-r from-black/85 via-black/60 to-black/20" />
       <div class="mx-auto flex min-h-[540px] max-w-400 items-center px-5 py-20 sm:px-8 md:min-h-[620px] lg:px-16">
