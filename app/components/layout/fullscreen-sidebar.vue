@@ -12,10 +12,20 @@ type MenuItem = {
 const props = defineProps<{ isOpen: boolean }>();
 const emit = defineEmits<{ close: [] }>();
 const colorMode = useColorMode();
+const route = useRoute();
 
 function toggleTheme() {
   colorMode.preference = colorMode.value === "dark" ? "light" : "dark";
 }
+
+watch(
+  () => route.fullPath,
+  () => {
+    if (props.isOpen) {
+      close();
+    }
+  },
+);
 
 const menuItems: MenuItem[] = [
   {
@@ -248,6 +258,7 @@ onBeforeUnmount(() => {
               variant="solid"
               color="primary"
               class="inline-flex px-4 md:px-6 py-2 md:py-2.5 text-[10px] md:text-xs uppercase tracking-widest transition-all duration-200 focus:outline-none shadow-sm active:scale-95"
+              @click="close"
             >
               Membership
             </base-button>
