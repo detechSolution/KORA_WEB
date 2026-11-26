@@ -138,7 +138,6 @@ onBeforeUnmount(() => {
       <div
         v-if="isOpen"
         class="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm sm:p-6"
-        @click.self="dismiss"
       >
         <section
           role="dialog"
@@ -203,7 +202,6 @@ onBeforeUnmount(() => {
       <div
         v-if="isReservationOpen"
         class="fixed inset-0 z-[110] flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm sm:p-6"
-        @click.self="isReservationOpen = false"
       >
         <section
           role="dialog"
