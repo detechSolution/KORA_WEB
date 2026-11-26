@@ -21,9 +21,10 @@ export const usePaymentStore = defineStore("payment", () => {
         undefined,
         5 * 60 * 1000,
       );
-      checkout.value = response as CheckoutResponse;
+      const checkoutResponse = (response as { data?: CheckoutResponse })?.data ?? response as CheckoutResponse;
+      checkout.value = checkoutResponse;
 
-      return response;
+      return checkoutResponse;
     }
     finally {
       loading.value = false;

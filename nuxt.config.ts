@@ -17,6 +17,16 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: false },
   modules: ["@nuxt/ui", "@pinia/nuxt", "@nuxt/eslint"],
+  $development: {
+    vite: {
+      server: {
+        allowedHosts: (process.env.NUXT_VITE_ALLOWED_HOSTS || "")
+          .split(",")
+          .map(host => host.trim())
+          .filter(Boolean),
+      },
+    },
+  },
   css: ["~/assets/css/main.css"],
   colorMode: {
     preference: "light",

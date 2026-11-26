@@ -49,7 +49,8 @@ onMounted(async () => {
   }
 
   try {
-    await checkoutStore.verifyPayment(checkoutCode.value);
+    if (checkoutStore.verifiedCheckoutCode !== checkoutCode.value)
+      await checkoutStore.verifyPayment(checkoutCode.value);
 
     if (checkoutStore.paymentStatus !== "paid") {
       sessionStorage.removeItem("pendingMembershipFreezeRelease");

@@ -3,7 +3,8 @@ export type PaymentProvider
     | "esewa"
     | "khalti"
     | "fonepay"
-    | "card";
+    | "card"
+    | "cybersource";
 
 type PaymentMode
   = | "redirect_url"
@@ -11,6 +12,7 @@ type PaymentMode
     | "redirect_form"
     | "free"
     | "embedded"
+    | "embedded_card"
     | "qr_websocket";
 
 export type PaymentInfo = {
@@ -24,14 +26,30 @@ export type PaymentInfo = {
   qrCode?: string;
   merchantWebSocketUrl?: string;
   statusCheckPath?: string;
+  captureContext?: string;
+  clientLibrary?: string;
+  clientLibraryIntegrity?: string;
+  sdk?: {
+    clientLibrary?: string;
+    clientLibraryIntegrity?: string;
+  };
+  autoProcessing?: boolean;
 };
 
 export type CheckoutResponse = {
   checkoutCode: string;
-  provider: PaymentProvider;
-  status: string;
+  provider?: PaymentProvider;
+  status?: string;
   holdExpiresAt: string;
   amount: number;
   currency: string;
+  captureContext?: string;
+  clientLibrary?: string;
+  clientLibraryIntegrity?: string;
+  sdk?: {
+    clientLibrary?: string;
+    clientLibraryIntegrity?: string;
+  };
+  autoProcessing?: boolean;
   payment: PaymentInfo;
 };

@@ -53,6 +53,7 @@ export const API_ENDPOINTS = {
     PAY_NOW: "/api/v1/commerce/checkout/pay-now",
     VERIFY: "/api/v1/commerce/payments/verify",
     FONEPAY_STATUS: "/api/v1/commerce/checkout/fonepay/status",
+    CYBERSOURCE_STATUS: "/api/v1/commerce/checkout/cybersource/status",
   },
 
   MEMBER: {
