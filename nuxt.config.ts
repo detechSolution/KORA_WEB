@@ -5,7 +5,7 @@ export default defineNuxtConfig({
     head: {
       title: "Kora | Web",
       meta: [
-        { name: "description", content: "System" },
+        { name: "description", content: "Kora wellness and membership" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
       ],
       htmlAttrs: {
@@ -53,9 +53,6 @@ export default defineNuxtConfig({
         headers: { "cache-control": "public, max-age=31536000, immutable" },
       },
       "/logo/**": {
-        headers: { "cache-control": "public, max-age=31536000, immutable" },
-      },
-      "/fonts/**": {
         headers: { "cache-control": "public, max-age=31536000, immutable" },
       },
     },

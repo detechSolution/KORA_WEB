@@ -1,75 +1,89 @@
-# Nuxt Minimal Starter
+# Kora Web
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Public site for Kora. Members browse sessions, spa, memberships, and schedules, then book and pay. Guests can inquire, buy gift cards, and create an account.
+
+## Tech stack
+
+- Nuxt 4 (Vue 3), client-rendered SPA
+- Nuxt UI 4
+- Pinia
+- Zod
+- Tailwind CSS 4
+- ESLint (Antfu config)
+
+## Prerequisites
+
+- Node.js 22.x
+- npm
 
 ## Setup
 
-Make sure to install dependencies:
+1. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+2. Copy `.env.example` to `.env.local` and set the API:
+
+   ```env
+   NUXT_PUBLIC_API_BASE_URL=http://localhost:8000
+   NUXT_PUBLIC_API_TIMEOUT=10000
+   NUXT_PUBLIC_BOOKING_ENABLED=false
+   ```
+
+   | Variable                      | Description                         |
+   | ----------------------------- | ----------------------------------- |
+   | `NUXT_PUBLIC_API_BASE_URL`    | Backend API base URL                |
+   | `NUXT_PUBLIC_API_TIMEOUT`     | API request timeout in milliseconds |
+   | `NUXT_PUBLIC_BOOKING_ENABLED` | `true` turns on public booking      |
+
+## Development
 
 ```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+Uses `.env.local` and serves at `http://localhost:3000` (with `--host` for LAN access).
 
-Build the application for production:
+## Scripts
 
-```bash
-# npm
-npm run build
+| Command            | Description                                     |
+| ------------------ | ----------------------------------------------- |
+| `npm run dev`      | Dev server with `.env.local`                    |
+| `npm run generate` | Static site into `.output/public` (uses `.env`) |
+| `npm run build`    | Production build                                |
+| `npm run preview`  | Preview the production build                    |
+| `npm run lint`     | Run ESLint                                      |
+| `npm run lint:fix` | Run ESLint with auto-fix                        |
+| `npm run knip`     | Find unused files and exports                   |
 
-# pnpm
-pnpm build
+## Project structure
 
-# yarn
-yarn build
-
-# bun
-bun run build
+```
+app/
+├── components/   # Home, sessions, spa, membership, checkout, layout
+├── composables/  # useApi, payments, pagination
+├── config/       # API endpoints and icons
+├── data/         # Static page content
+├── pages/        # Public routes
+├── stores/       # Auth, cart, checkout, sessions, spa, membership
+└── utils/
 ```
 
-Locally preview production build:
+## Features
 
-```bash
-# npm
-npm run preview
+- **Home and spaces:** Wellness, recovery, rehabilitation, and nutrition
+- **Book:** Sessions, spa sanctuary, memberships, guest passes, and gift cards
+- **Schedules** and member profile
+- **Checkout:** Fonepay and related payment status pages
+- **Account:** Register, login, email verification, Google sign-in, forgot password
+- **Company pages:** Careers, inquiry, corporate and retreats, etiquette, CSR, terms
 
-# pnpm
-pnpm preview
+## Deployment
 
-# yarn
-yarn preview
+`npm run generate` writes a static SPA to `.output/public`. Set the `NUXT_PUBLIC_*` variables at build time so they are baked into the client bundle.
 
-# bun
-bun run preview
-```
+## License
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+Private
