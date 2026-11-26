@@ -42,7 +42,7 @@
         >
           <img
             :src="IMAGES.MANIFESTO_CRYSTALS"
-            alt="Holistic crystals"
+            alt="Spa ritual"
             class="w-full h-full object-cover transition-transform duration-[4000ms] group-hover:scale-105"
           >
           <div
@@ -56,7 +56,7 @@
         >
           <img
             :src="IMAGES.MANIFESTO_STEAM"
-            alt="Volcanic stone steam"
+            alt="Cold plunge"
             class="w-full h-full object-cover transition-transform duration-[4000ms] group-hover:scale-105"
           >
           <div
@@ -70,7 +70,7 @@
         >
           <img
             :src="IMAGES.MANIFESTO_SINGING"
-            alt="Tibetan singing bowls meditation"
+            alt="Sound and rhythm"
             class="w-full h-full object-cover transition-transform duration-[4000ms] group-hover:scale-105"
           >
           <div
@@ -132,7 +132,7 @@
       >
         <img
           :src="IMAGES.MANIFESTO_STEAM"
-          alt="Spa Mist"
+          alt="Cold plunge"
           class="w-full h-full object-cover"
         >
       </div>
@@ -141,7 +141,7 @@
       >
         <img
           :src="IMAGES.MANIFESTO_CRYSTALS"
-          alt="Crystals"
+          alt="Spa ritual"
           class="w-full h-full object-cover"
         >
       </div>
@@ -150,7 +150,7 @@
       >
         <img
           :src="IMAGES.MANIFESTO_SINGING"
-          alt="Singing Bowls"
+          alt="Sound and rhythm"
           class="w-full h-full object-cover"
         >
       </div>
