@@ -58,6 +58,17 @@ export const useMembershipStore = defineStore("membership", () => {
         grouped.custom.push(plan);
     });
 
+    const getOptionPrice = (plan: MembershipPlans, freq: MembershipFrequency) => {
+      const opt = plan.options?.find(
+        option => option.frequency?.toLowerCase() === freq,
+      );
+      return Number(opt?.price) || 0;
+    };
+
+    (Object.keys(grouped) as MembershipFrequency[]).forEach((freq) => {
+      grouped[freq].sort((a, b) => getOptionPrice(a, freq) - getOptionPrice(b, freq));
+    });
+
     return grouped;
   });
 
