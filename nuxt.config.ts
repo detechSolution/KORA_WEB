@@ -47,11 +47,6 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-    // SPA (`ssr: false` + `nuxt generate`) has no worker entry. On Workers CI,
-    // Nitro would still emit a deploy config whose `main` is `index.mjs`.
-    cloudflare: {
-      deployConfig: false,
-    },
     compressPublicAssets: true,
     routeRules: {
       "/images/**": {
