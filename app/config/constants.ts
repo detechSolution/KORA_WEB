@@ -65,3 +65,10 @@ export const API_ENDPOINTS = {
     CREATE: "/api/v1/mails/newsletter-signups",
   },
 };
+
+export const SOCIAL_LINKS = {
+  INSTAGRAM: "https://www.instagram.com/lifeatkora/",
+  FACEBOOK: "https://www.facebook.com/lifeatkora/",
+  TIKTOK: "https://www.tiktok.com/@lifeatkora",
+  LINKEDIN: "https://www.linkedin.com/company/lifeatkora/?viewAsMember=true",
+} as const;

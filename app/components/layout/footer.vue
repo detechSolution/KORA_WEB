@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { SOCIAL_LINKS } from "~/config/constants";
+
 const navColumns = [
   {
     title: "Spaces",
@@ -40,8 +42,23 @@ const contacts = [
 const socials = [
   {
     icon: "i-lucide-instagram",
-    href: "https://www.instagram.com/lifeatkora",
+    href: SOCIAL_LINKS.INSTAGRAM,
     title: "Instagram",
+  },
+  {
+    icon: "i-lucide-facebook",
+    href: SOCIAL_LINKS.FACEBOOK,
+    title: "Facebook",
+  },
+  {
+    icon: "i-simple-icons-tiktok",
+    href: SOCIAL_LINKS.TIKTOK,
+    title: "TikTok",
+  },
+  {
+    icon: "i-lucide-linkedin",
+    href: SOCIAL_LINKS.LINKEDIN,
+    title: "LinkedIn",
   },
 ];
 </script>

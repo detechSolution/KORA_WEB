@@ -4,6 +4,7 @@ import { reactive, ref } from "vue";
 
 import z from "zod";
 import { useNotification } from "~/composables/use-notification";
+import { SOCIAL_LINKS } from "~/config/constants";
 import { useInquireStore } from "~/stores/inquire";
 import { getApiErrorMessage } from "~/utils/error";
 import { IMAGES } from "~/utils/images";
@@ -76,7 +77,28 @@ const contactItems = [
     icon: "i-lucide-instagram",
     label: "Instagram",
     value: "@lifeatkora",
-    href: "https://www.instagram.com/lifeatkora/",
+    href: SOCIAL_LINKS.INSTAGRAM,
+    external: true,
+  },
+  {
+    icon: "i-lucide-facebook",
+    label: "Facebook",
+    value: "lifeatkora",
+    href: SOCIAL_LINKS.FACEBOOK,
+    external: true,
+  },
+  {
+    icon: "i-simple-icons-tiktok",
+    label: "TikTok",
+    value: "@lifeatkora",
+    href: SOCIAL_LINKS.TIKTOK,
+    external: true,
+  },
+  {
+    icon: "i-lucide-linkedin",
+    label: "LinkedIn",
+    value: "Kora",
+    href: SOCIAL_LINKS.LINKEDIN,
     external: true,
   },
 ];

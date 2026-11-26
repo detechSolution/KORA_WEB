@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, watch } from "vue";
+import { SOCIAL_LINKS } from "~/config/constants";
 
 const props = defineProps({
   isOpen: {
@@ -249,9 +250,32 @@ onUnmounted(() => {
             >Location</a>
             <span class="text-border/40">•</span>
             <a
-              href="#"
+              :href="SOCIAL_LINKS.INSTAGRAM"
+              target="_blank"
+              rel="noopener noreferrer"
               class="hover:text-primary transition-colors duration-200"
             >Instagram</a>
+            <span class="text-border/40">•</span>
+            <a
+              :href="SOCIAL_LINKS.FACEBOOK"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:text-primary transition-colors duration-200"
+            >Facebook</a>
+            <span class="text-border/40">•</span>
+            <a
+              :href="SOCIAL_LINKS.TIKTOK"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:text-primary transition-colors duration-200"
+            >TikTok</a>
+            <span class="text-border/40">•</span>
+            <a
+              :href="SOCIAL_LINKS.LINKEDIN"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:text-primary transition-colors duration-200"
+            >LinkedIn</a>
           </div>
 
           <!-- Brand Philosophy Note & Copyright -->
