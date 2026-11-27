@@ -61,17 +61,17 @@ const contactItems = [
     href: "mailto:info@koranepal.com",
     external: false,
   },
-  {
-    icon: "i-lucide-phone",
-    label: "Phone",
-    value: "01-4785467, 9845787654",
-    href: "tel:+97714785467",
-    external: false,
-  },
+  // {
+  //   icon: "i-lucide-phone",
+  //   label: "Phone",
+  //   value: "01-4785467, 9845787654",
+  //   href: "tel:+97714785467",
+  //   external: false,
+  // },
   {
     icon: "i-lucide-map-pin",
     label: "Address",
-    value: "Hattisar, Kathmandu, Nepal",
+    value: "Hattigauda, Kathmandu, Nepal",
   },
   {
     icon: "i-lucide-instagram",

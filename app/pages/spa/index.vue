@@ -4,7 +4,7 @@ definePageMeta({
 });
 
 useSeoMeta({
-  title: "Kora | Spa Sanctuary",
+  title: "Kora | Spa Rituals",
   description:
     "Experience true relaxation with our curated spa offerings including massages and therapies.",
 });

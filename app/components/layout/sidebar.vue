@@ -74,7 +74,7 @@ const menuItems = computed(() => {
       sub: "Private Club, Amenities & Collective Benefits",
     },
     {
-      name: "Spa Sanctuary",
+      name: "Spa Rituals",
       path: "/spa",
       sub: "Thermal Hydrotherapy Suites & Treatments",
     },

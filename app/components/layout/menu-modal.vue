@@ -90,7 +90,7 @@ const menuItems = computed(() => {
       icon: "i-lucide-building-2",
     },
     {
-      name: "Spa Sanctuary",
+      name: "Spa Rituals",
       path: "/spa",
       sub: "Thermal Hydrotherapy Suites & Treatments",
       icon: "i-lucide-droplets",

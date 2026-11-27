@@ -42,7 +42,7 @@ useSeoMeta({
               VIEW SPA RITUALS
             </base-button>
             <!-- <base-button variant="outline" to="/spa">
-              EXPLORE THE SANCTUARY MENU
+              EXPLORE THE RITUALS MENU
             </base-button> -->
           </div>
         </div>
