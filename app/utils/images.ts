@@ -33,7 +33,7 @@ export const IMAGES = {
 
   // OFFERINGS SECTION
   OFFERINGS_MEMBERSHIP: "/images/hero/membership.webp",
-  OFFERINGS_SESSIONS: "/images/hero/offerings_sessions.webp",
+  OFFERINGS_SESSIONS: "/images/hero/offerings_sessions2.webp",
 
   // RECOVERY SECTION
   RECOVERY_COLD_PLUNGE: "/images/recovery/cold_plunge.webp",
