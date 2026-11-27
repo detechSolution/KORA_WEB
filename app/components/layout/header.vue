@@ -120,7 +120,7 @@ onUnmounted(() => {
 
 <template>
   <header
-    class="fixed inset-x-0 top-0 z-1000 w-full px-4 md:px-8 lg:px-12 transition-[padding,box-shadow,border-color] duration-300 ease-out"
+    class="relative w-full px-4 md:px-8 lg:px-12 transition-[padding,box-shadow,border-color,background-color] duration-300 ease-out"
     :class="[
       isScrolled
         ? 'py-2 border-b border-border/80 shadow-lg'
