@@ -49,8 +49,10 @@ export const IMAGES = {
   WELLNESS_DERMAL: "/images/wellness/dermal.webp",
 
   // REHABILITATION SECTION
+  REHAB_GYM: "/images/rehabilitation/gym.webp",
   REHAB_MOVEMENT: "/images/rehabilitation/movement.webp",
   REHAB_THERAPY: "/images/rehabilitation/therapy.webp",
+  REHAB_MEDITATE: "/images/rehabilitation/meditate.webp",
   REHAB_SANCTUARY: "/images/rehabilitation/sanctuary.webp",
 
   // NUTRITION SECTION

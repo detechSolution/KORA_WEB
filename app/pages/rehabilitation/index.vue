@@ -96,7 +96,7 @@ useSeoMeta({
         <img
           :src="IMAGES.REHAB_MOVEMENT"
           alt="KORA performance rehabilitation floor"
-          class="w-full h-full object-cover transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
+          class="w-full h-full object-cover transition-transform duration-6000 ease-out-quad group-hover:scale-105"
         >
         <div
           class="absolute inset-0 ring-1 ring-inset ring-black/5 dark:ring-white/5 pointer-events-none"
@@ -171,7 +171,7 @@ useSeoMeta({
         class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:h-full relative overflow-hidden group order-1 lg:order-2"
       >
         <img
-          :src="IMAGES.REHAB_THERAPY"
+          :src="IMAGES.REHAB_GYM"
           alt="Clinical physical therapy at KORA"
           class="w-full h-full object-cover transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
         >
@@ -189,9 +189,9 @@ useSeoMeta({
         class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:h-full relative overflow-hidden group order-1"
       >
         <img
-          :src="IMAGES.REHAB_SANCTUARY"
+          :src="IMAGES.REHAB_MEDITATE"
           alt="The KORA sanctuary environment"
-          class="w-full h-full object-cover transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
+          class="w-full h-full object-cover object-top transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
         >
         <div
           class="absolute inset-0 ring-1 ring-inset ring-black/5 dark:ring-white/5 pointer-events-none"
