@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { IMAGES } from "~/utils/images";
 
-const physioWhatsApp
-  = "https://wa.me/+9779818000015?text=Hi%20KORA%2C%20I%27d%20love%20to%20book%20an%20appointment%20for%20physiotherapy.";
+const physioWhatsApp = "";
 
 const clinicalServices = [
   {
@@ -64,7 +63,7 @@ useSeoMeta({
             pain, and unlock your physical ceiling.
           </p>
           <div class="flex flex-col sm:flex-row gap-4 pt-2">
-            <base-button :to="physioWhatsApp" target="_blank">
+            <base-button :to="physioWhatsApp" :target="physioWhatsApp ? '_blank' : undefined">
               BOOK YOUR PHYSIO APPOINTMENT
             </base-button>
             <base-button to="#continuum" variant="outline">
@@ -161,7 +160,7 @@ useSeoMeta({
           deliberate.
         </p>
         <div class="w-fit">
-          <base-button :to="physioWhatsApp" target="_blank">
+          <base-button :to="physioWhatsApp" :target="physioWhatsApp ? '_blank' : undefined">
             BOOK YOUR PHYSIO APPOINTMENT
           </base-button>
         </div>
@@ -301,7 +300,7 @@ useSeoMeta({
       <div
         class="max-w-5xl mx-auto flex flex-col sm:flex-row justify-center gap-4 mt-12 relative z-10"
       >
-        <base-button :to="physioWhatsApp" target="_blank">
+        <base-button :to="physioWhatsApp" :target="physioWhatsApp ? '_blank' : undefined">
           BOOK YOUR INITIAL ASSESSMENT
         </base-button>
         <base-button to="/membership" variant="outline">
@@ -393,7 +392,7 @@ useSeoMeta({
             </span>
           </div>
           <div class="mt-auto w-fit">
-            <base-button :to="physioWhatsApp" target="_blank">
+            <base-button :to="physioWhatsApp" :target="physioWhatsApp ? '_blank' : undefined">
               BOOK YOUR PHYSIO APPOINTMENT
             </base-button>
           </div>
@@ -445,7 +444,7 @@ useSeoMeta({
           <div
             class="flex flex-col sm:flex-row flex-wrap gap-4 justify-center items-center"
           >
-            <base-button :to="physioWhatsApp" target="_blank">
+            <base-button :to="physioWhatsApp" :target="physioWhatsApp ? '_blank' : undefined">
               BOOK YOUR INITIAL ASSESSMENT
             </base-button>
             <base-button to="/membership" variant="outline">

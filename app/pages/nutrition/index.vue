@@ -99,7 +99,7 @@ useSeoMeta({
           <base-button to="/membership">
             VIEW MEMBERSHIP
           </base-button>
-          <base-button to="tel" variant="outline">
+          <base-button to="" variant="outline">
             RESERVE MEETING ROOM
           </base-button>
         </div>
@@ -241,7 +241,7 @@ useSeoMeta({
           <li>&bull; Sanctuary Closes: 10:00 PM</li>
         </ul>
         <div class="sm:w-fit">
-          <base-button to="tel:+9779818000015">
+          <base-button to="">
             BOOK CONSULTATION
           </base-button>
         </div>
