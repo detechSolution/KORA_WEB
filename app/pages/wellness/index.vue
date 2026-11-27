@@ -229,7 +229,7 @@ useSeoMeta({
         class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:min-h-[85vh] lg:h-auto relative overflow-hidden group order-1 lg:order-2"
       >
         <img
-          :src="IMAGES.WELLNESS_SAUNA"
+          :src="IMAGES.EXPERIENCE_STEAM"
           alt="The Advanced Thermal Circuit"
           class="w-full h-full object-cover transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
         >

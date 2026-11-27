@@ -42,7 +42,7 @@ export const IMAGES = {
   RECOVERY_SWIMMING_POOL: "/images/recovery/swimming_pool.webp",
 
   // WELLNESS SECTION
-  WELLNESS_CLASS: "/images/wellness/classes.webp",
+  WELLNESS_CLASS: "/images/wellness/classes2.jpg",
   WELLNESS_SPACE: "/images/wellness/space.webp",
   WELLNESS_SAUNA: "/images/wellness/sauna.webp",
   WELLNESS_SPA: "/images/wellness/spa.webp",
