@@ -32,7 +32,7 @@ export const IMAGES = {
   MANIFESTO_BACKGROUND: "/images/hero/manifesto_background.webp",
 
   // OFFERINGS SECTION
-  OFFERINGS_MEMBERSHIP: "/images/hero/offerings_memberships.webp",
+  OFFERINGS_MEMBERSHIP: "/images/hero/membership.webp",
   OFFERINGS_SESSIONS: "/images/hero/offerings_sessions.webp",
 
   // RECOVERY SECTION
