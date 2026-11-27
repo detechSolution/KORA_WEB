@@ -7,6 +7,7 @@ import * as z from "zod";
 
 import { useNotification } from "~/composables/use-notification";
 
+import { useAuthStore } from "~/stores/auth";
 import { useCartStore } from "~/stores/cart";
 import { useSpaStore } from "~/stores/spa";
 
@@ -27,6 +28,7 @@ const emit = defineEmits<{
   close: [];
 }>();
 
+const authStore = useAuthStore();
 const spaStore = useSpaStore();
 const { error: showError, success } = useNotification();
 const cartStore = useCartStore();
@@ -86,7 +88,7 @@ const defaultOpenSubtype = computed(() => {
   return index !== -1 ? String(index) : "0";
 });
 
-const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
+const userDetail = computed(() => authStore.user);
 
 const state = reactive({
   selectedSpa: null as any,
@@ -140,10 +142,10 @@ const discountType = computed(() => {
   // Resolve discount against the selected booking date so that if the
   // membership/pass expires before the chosen date, no discount applies.
   const bookingDateStr = state.selectedDate?.toString?.();
-  const discount = getEffectiveDiscount("spa", userDetail, bookingDateStr);
+  const discount = getEffectiveDiscount("spa", userDetail.value, bookingDateStr);
   if (discount <= 0)
     return null;
-  const memberBenefits = getMembershipBenefits(userDetail, bookingDateStr);
+  const memberBenefits = getMembershipBenefits(userDetail.value, bookingDateStr);
   return (memberBenefits.member.spa ?? 0) > 0
     ? "Membership Discount"
     : "Pass Discount";
@@ -152,7 +154,7 @@ const discountType = computed(() => {
 const activeDiscount = computed(() => {
   // Re-evaluate each time the selected date changes.
   const bookingDateStr = state.selectedDate?.toString?.();
-  return getEffectiveDiscount("spa", userDetail, bookingDateStr);
+  return getEffectiveDiscount("spa", userDetail.value, bookingDateStr);
 });
 
 const showDiscount = computed(() => activeDiscount.value > 0);

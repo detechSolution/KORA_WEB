@@ -24,8 +24,7 @@ function openModal() {
 
   // Guest pass requires an active membership. Check that the membership
   // exists and that today falls within its validFrom–validTo window.
-  const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
-  const membership = userDetail?.membership;
+  const membership = authStore.user?.membership;
   const todayStr = new Date().toLocaleDateString("en-CA");
   const isMembershipValidToday = membership?.membershipPlanId
     && membership?.validFrom && membership?.validTo

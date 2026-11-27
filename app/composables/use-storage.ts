@@ -9,6 +9,7 @@ const COOKIE_KEYS = {
 } as const;
 
 const PENDING_REMEMBER_ME_KEY = "pendingRememberMe";
+const USER_DATA_KEY = "user_data";
 
 export type TokenLifetimes = {
   accessTokenExpiresIn?: number;
@@ -108,6 +109,9 @@ export function useStorage() {
       writeCookie(COOKIE_KEYS.ACCESS_TOKEN, accessToken, lifetimes.accessTokenExpiresIn);
       writeCookie(COOKIE_KEYS.REFRESH_TOKEN, refreshToken, lifetimes.refreshTokenExpiresIn);
       writeCookie(COOKIE_KEYS.REMEMBER_ME, "true", lifetimes.refreshTokenExpiresIn);
+      if (import.meta.client) {
+        sessionStorage.removeItem(USER_DATA_KEY);
+      }
     }
     else {
       removeCookie(COOKIE_KEYS.REMEMBER_ME);
@@ -115,9 +119,46 @@ export function useStorage() {
         sessionStorage.setItem(COOKIE_KEYS.ACCESS_TOKEN, accessToken);
         sessionStorage.setItem(COOKIE_KEYS.REFRESH_TOKEN, refreshToken);
         sessionStorage.setItem(COOKIE_KEYS.REMEMBER_ME, "false");
+        localStorage.removeItem(USER_DATA_KEY);
       }
     }
     return true;
+  };
+
+  const getUserData = <T = Record<string, unknown>>(): T | null => {
+    if (!import.meta.client)
+      return null;
+    const raw = sessionStorage.getItem(USER_DATA_KEY)
+      ?? (isRemembered() ? localStorage.getItem(USER_DATA_KEY) : null);
+    if (!raw)
+      return null;
+    try {
+      return JSON.parse(raw) as T;
+    }
+    catch {
+      return null;
+    }
+  };
+
+  const setUserData = (data: unknown): void => {
+    if (!import.meta.client)
+      return;
+    const serialized = JSON.stringify(data);
+    if (isRemembered()) {
+      localStorage.setItem(USER_DATA_KEY, serialized);
+      sessionStorage.removeItem(USER_DATA_KEY);
+    }
+    else {
+      sessionStorage.setItem(USER_DATA_KEY, serialized);
+      localStorage.removeItem(USER_DATA_KEY);
+    }
+  };
+
+  const removeUserData = (): void => {
+    if (!import.meta.client)
+      return;
+    sessionStorage.removeItem(USER_DATA_KEY);
+    localStorage.removeItem(USER_DATA_KEY);
   };
 
   const setAccessToken = (accessToken: string, expiresIn?: number): void => {
@@ -163,6 +204,9 @@ export function useStorage() {
     setAccessToken,
     setRefreshToken,
     removeTokens,
+    getUserData,
+    setUserData,
+    removeUserData,
     hasTokens: () => Boolean(getAccessToken() && getRefreshToken()),
     hasRefreshToken: () => Boolean(getRefreshToken()),
     isRemembered,

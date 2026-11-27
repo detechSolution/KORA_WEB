@@ -5,6 +5,7 @@ import { computed, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import * as z from "zod";
 import { useNotification } from "~/composables/use-notification";
+import { useAuthStore } from "~/stores/auth";
 import { useCartStore } from "~/stores/cart";
 import { useSpaStore } from "~/stores/spa";
 import { getApiErrorMessage } from "~/utils/error";
@@ -28,6 +29,7 @@ const emit = defineEmits<{
 }>();
 
 const router = useRouter();
+const authStore = useAuthStore();
 const spaStore = useSpaStore();
 const cartStore = useCartStore();
 const { error: showError, success } = useNotification();
@@ -38,7 +40,7 @@ const availableTimeSlots = ref<
 >([]);
 const isTimeSlotLoading = ref(false);
 const spa = computed(() => spaStore.spa);
-const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
+const userDetail = computed(() => authStore.user);
 
 const displaySubTypes = computed(() => {
   if (!spa.value?.subTypes)
@@ -66,7 +68,7 @@ const state = reactive({
 // personal to the pass holder and do not transfer to gift recipients.
 const activeDiscount = computed(() => {
   const bookingDateStr = state.selectedDate?.toString?.();
-  const memberBenefits = getMembershipBenefits(userDetail, bookingDateStr);
+  const memberBenefits = getMembershipBenefits(userDetail.value, bookingDateStr);
   return memberBenefits.member.spa ?? 0;
 });
 

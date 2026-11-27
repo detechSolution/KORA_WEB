@@ -27,7 +27,6 @@ const authStore = useAuthStore();
 const memberStore = useMemberStore();
 const { pagination } = usePagination(10);
 
-const storedUserData = localStorage.getItem("user_data");
 const loading = ref(true);
 const formRef = ref<InstanceType<typeof UForm> | null>(null);
 const activeTab = ref("TODAY");
@@ -225,14 +224,10 @@ function handleProfileTabClick(tab: "info" | "bookings" | "pass" | "password") {
   activeSidebarTab.value = tab;
 
   if (tab === "pass") {
-    if (!storedUserData) {
-      return;
-    }
-    const parsed = JSON.parse(storedUserData);
-
-    profileForm.fullName = parsed.name || "";
-    profileForm.phone = parsed.phone || "";
-    profileForm.email = parsed.email || "";
+    const cachedUser = authStore.user;
+    profileForm.fullName = cachedUser.name || "";
+    profileForm.phone = cachedUser.phoneNumber || "";
+    profileForm.email = cachedUser.email || "";
   }
 }
 async function handleUpdateProfile() {
@@ -508,26 +503,16 @@ watch(
 );
 
 onMounted(async () => {
-  if (import.meta.client) {
-    try {
-      if (storedUserData) {
-        const parsed = JSON.parse(storedUserData);
+  const cachedUser = authStore.user;
+  profileForm.fullName = cachedUser.name || "";
+  profileForm.phone = cachedUser.phoneNumber || "";
+  profileForm.email = cachedUser.email || "";
 
-        profileForm.fullName = parsed.name || "";
-        profileForm.phone = parsed.phone || "";
-        profileForm.email = parsed.email || "";
-
-        if (parsed?.profile) {
-          profileForm.height = parsed.profile.height || "";
-          profileForm.weight = parsed.profile.weight || "";
-          profileForm.injuryHistory = parsed.profile.injuryHistory || "";
-          profileForm.preferences = parsed.profile.preferences || "";
-        }
-      }
-    }
-    catch (e) {
-      console.error("Error parsing user_data from localStorage", e);
-    }
+  if (cachedUser.profile) {
+    profileForm.height = cachedUser.profile.height ?? undefined;
+    profileForm.weight = cachedUser.profile.weight ?? undefined;
+    profileForm.injuryHistory = cachedUser.profile.injuryHistory || "";
+    profileForm.preferences = cachedUser.profile.preferences || "";
   }
 
   await memberStore.getDashboard();

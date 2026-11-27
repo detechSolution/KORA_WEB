@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 import type { Session } from "~/types/session";
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useNotification } from "~/composables/use-notification";
+import { useAuthStore } from "~/stores/auth";
 import { useCartStore } from "~/stores/cart";
 import { calculatePrice } from "~/utils/helper";
 import { getEffectiveDiscount, getMembershipBenefits } from "~/utils/membership";
@@ -24,19 +25,31 @@ const emit = defineEmits<{
 }>();
 
 const router = useRouter();
+const authStore = useAuthStore();
 const cartStore = useCartStore();
 const { success } = useNotification();
 
 const quantity = ref(1);
 
-const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
+const userDetail = computed(() => authStore.user);
 const state = reactive({
   currentUser: {
-    fullName: userDetail?.fullName || userDetail?.name || "You",
-    phone: userDetail?.phone || "",
-    email: userDetail?.email || "",
+    fullName: userDetail.value.name || "You",
+    phone: userDetail.value.phoneNumber || "",
+    email: userDetail.value.email || "",
   },
 });
+
+watch(
+  () => props.isOpen,
+  (open) => {
+    if (!open)
+      return;
+    state.currentUser.fullName = userDetail.value.name || "You";
+    state.currentUser.phone = userDetail.value.phoneNumber || "";
+    state.currentUser.email = userDetail.value.email || "";
+  },
+);
 
 // Convert session date to YYYY-MM-DD for validity checks.
 // session.sessionDate may be a Date object or ISO string.
@@ -47,14 +60,14 @@ const sessionDateStr = new Date(props.session.sessionDate)
 // membership/pass is valid ON THE SERVICE DATE, not just today.
 const activeDiscount = computed(() => {
   const type = props.session.type as "class" | "event" | "workshop" | "spa" | "cafe" | "salon";
-  return getEffectiveDiscount(type, userDetail, sessionDateStr);
+  return getEffectiveDiscount(type, userDetail.value, sessionDateStr);
 });
 
 const discountType = computed(() => {
   if (activeDiscount.value <= 0)
     return null;
   // Determine source: membership or pass
-  const memberBenefits = getMembershipBenefits(userDetail, sessionDateStr);
+  const memberBenefits = getMembershipBenefits(userDetail.value, sessionDateStr);
   const membershipDiscount = memberBenefits.member[props.session.type as keyof typeof memberBenefits.member] ?? 0;
   return membershipDiscount > 0 ? "Membership Discount" : "Pass Discount";
 });
