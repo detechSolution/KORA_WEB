@@ -5,6 +5,7 @@ import { computed, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import * as z from "zod";
 import { useNotification } from "~/composables/use-notification";
+import { useAuthStore } from "~/stores/auth";
 import { useCartStore } from "~/stores/cart";
 import { calculatePrice } from "~/utils/helper";
 import { getMembershipBenefits } from "~/utils/membership";
@@ -31,11 +32,12 @@ const emit = defineEmits<{
 }>();
 
 const router = useRouter();
+const authStore = useAuthStore();
 const cartStore = useCartStore();
 const { success } = useNotification();
 const formRef = ref<InstanceType<typeof UForm> | null>(null);
 const currentStep = ref(0);
-const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
+const userDetail = computed(() => authStore.user);
 const state = reactive({
   recipient: {
     fullName: "",
@@ -69,7 +71,7 @@ const activeDiscount = computed(() => {
     | "spa"
     | "cafe"
     | "salon";
-  const memberBenefits = getMembershipBenefits(userDetail, sessionDateStr);
+  const memberBenefits = getMembershipBenefits(userDetail.value, sessionDateStr);
   return memberBenefits.member[type] ?? 0;
 });
 const pricing = computed(() =>

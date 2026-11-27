@@ -1,3 +1,5 @@
+import { useStorage } from "~/composables/use-storage";
+
 type CalculatePriceParams = {
   price: number;
   guests?: number;
@@ -74,7 +76,7 @@ export function getDisabledMessage(session: any) {
 }
 
 export function getDisabledMessageForGuest(session: any) {
-  const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
+  const userDetail = useStorage().getUserData<Record<string, any>>() ?? {};
 
   const membership = userDetail?.membership;
   const hasMembership = !!membership?.membershipPlanId;

@@ -3,10 +3,11 @@ import type { DateValue } from "@internationalized/date";
 import type { PropType } from "vue";
 import type { Pass } from "~/data/membership";
 import { getLocalTimeZone, today } from "@internationalized/date";
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import z from "zod";
 import { useNotification } from "~/composables/use-notification";
+import { useAuthStore } from "~/stores/auth";
 import { useCartStore } from "~/stores/cart";
 import { formatDate } from "~/utils/format";
 import { calculatePrice } from "~/utils/helper";
@@ -31,6 +32,7 @@ const props = defineProps({
 const emit = defineEmits(["close"]);
 
 const router = useRouter();
+const authStore = useAuthStore();
 const cartStore = useCartStore();
 const { error: showError, success } = useNotification();
 
@@ -47,16 +49,27 @@ function requireWaiver(): boolean {
   return false;
 }
 
-const userDetail = JSON.parse(localStorage.getItem("user_data") || "{}");
+const userDetail = computed(() => authStore.user);
 const state = reactive({
   currentUser: {
-    fullName: userDetail?.fullName || userDetail?.name || "You",
-    phone: userDetail?.phone || "",
-    email: userDetail?.email || "",
+    fullName: userDetail.value.name || "You",
+    phone: userDetail.value.phoneNumber || "",
+    email: userDetail.value.email || "",
   },
   guests: [] as Guest[],
   date: null as any,
 });
+
+watch(
+  () => props.isOpen,
+  (open) => {
+    if (!open)
+      return;
+    state.currentUser.fullName = userDetail.value.name || "You";
+    state.currentUser.phone = userDetail.value.phoneNumber || "";
+    state.currentUser.email = userDetail.value.email || "";
+  },
+);
 
 const formRef = ref<InstanceType<typeof UForm> | null>(null);
 const currentStep = ref(0);

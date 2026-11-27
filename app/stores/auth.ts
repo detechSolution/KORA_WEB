@@ -8,7 +8,6 @@ import { useCartStore } from "./cart";
 
 // Cache duration: 5 minutes
 const AUTH_CHECK_INTERVAL = 5 * 60 * 1000;
-const USER_DATA_KEY = "user_data";
 
 // ─── API response types ────────────────────────────────────────────────────
 
@@ -156,15 +155,17 @@ export const useAuthStore = defineStore("auth", () => {
 
   const permissions = ref<string[]>([]);
 
-  // Load user data from localStorage on store initialization
+  // Load cached user data on store initialization (sessionStorage or localStorage depending on rememberMe)
   const loadUserFromStorage = () => {
     try {
-      const storedUser = localStorage.getItem(USER_DATA_KEY);
-      if (storedUser) {
-        const parsed = JSON.parse(storedUser);
+      const parsed = storage.getUserData<Record<string, any>>();
+      if (parsed) {
         // Normalize legacy single-object `passes` into an array.
-        if (parsed?.passes && !Array.isArray(parsed.passes)) {
+        if (parsed.passes && !Array.isArray(parsed.passes)) {
           parsed.passes = [parsed.passes];
+        }
+        if (!parsed.phoneNumber && typeof parsed.phone === "string") {
+          parsed.phoneNumber = parsed.phone;
         }
         user.value = { ...user.value, ...parsed };
         // If we have stored user data and tokens, assume authenticated
@@ -179,27 +180,25 @@ export const useAuthStore = defineStore("auth", () => {
     }
   };
 
-  // Save user data to localStorage (profile only; permissions are not persisted)
+  // Save user data to sessionStorage or localStorage based on rememberMe (permissions are not persisted)
   const saveUserToStorage = () => {
     try {
-      localStorage.setItem(
-        USER_DATA_KEY,
-        JSON.stringify({
-          id: user.value.id,
-          email: user.value.email,
-          name: user.value.name,
-          phone: user.value.phoneNumber,
-          avatar: user.value.avatar,
-          is_active: user.value.is_active,
-          isEmailVerified: user.value.isEmailVerified,
-          role_id: user.value.role_id,
-          last_login_at: user.value.last_login_at,
-          membership: user.value.membership,
-          membershipFreeze: user.value.membershipFreeze,
-          passes: user.value.passes,
-          profile: user.value.profile,
-        }),
-      );
+      storage.setUserData({
+        id: user.value.id,
+        email: user.value.email,
+        name: user.value.name,
+        phone: user.value.phoneNumber,
+        phoneNumber: user.value.phoneNumber,
+        avatar: user.value.avatar,
+        is_active: user.value.is_active,
+        isEmailVerified: user.value.isEmailVerified,
+        role_id: user.value.role_id,
+        last_login_at: user.value.last_login_at,
+        membership: user.value.membership,
+        membershipFreeze: user.value.membershipFreeze,
+        passes: user.value.passes,
+        profile: user.value.profile,
+      });
     }
     catch {
       // Ignore storage errors
@@ -223,7 +222,7 @@ export const useAuthStore = defineStore("auth", () => {
     };
     permissions.value = [];
     try {
-      localStorage.removeItem(USER_DATA_KEY);
+      storage.removeUserData();
     }
     catch {
       // Ignore storage errors
