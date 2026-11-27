@@ -63,4 +63,7 @@ export const IMAGES = {
 
   // XTERRA SECTION
   XTERRA_HERO: "/images/xterra/kora_XTERRA.webp",
+
+  // CORPORATE SECTION
+  CORPORATE_HERO: "/images/corporate/leadership.webp",
 };

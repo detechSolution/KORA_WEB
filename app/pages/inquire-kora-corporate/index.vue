@@ -70,9 +70,9 @@ function openInquiry(interest = "") {
     <!-- Hero -->
     <section class="relative isolate min-h-[540px] overflow-hidden bg-secondary-900 text-white md:min-h-[620px]">
       <img
-        :src="IMAGES.OFFERINGS_SESSIONS"
+        :src="IMAGES.CORPORATE_HERO"
         alt="KORA sanctuary spaces for movement and recovery"
-        class="absolute inset-0 -z-20 h-full w-full object-cover object-[center_70%]"
+        class="absolute inset-0 -z-20 h-full w-full object-cover object-[center_45%]"
       >
       <div class="absolute inset-0 -z-10 bg-gradient-to-r from-black/85 via-black/60 to-black/20" />
       <div class="mx-auto flex min-h-[540px] max-w-400 items-center px-5 py-20 sm:px-8 md:min-h-[620px] lg:px-16">
@@ -94,7 +94,7 @@ function openInquiry(interest = "") {
     </section>
 
     <!-- Executive Memberships -->
-    <section class="mx-auto max-w-400 px-4 py-16 sm:px-8 md:py-24 lg:px-16">
+    <section class="mx-auto max-w-400 px-4 py-16 sm:px-8 md:py-16 lg:px-16">
       <div class="mb-10 grid gap-8 md:grid-cols-[0.8fr_1.2fr] md:items-end md:gap-12">
         <div>
           <p class="mb-3 text-xs font-semibold uppercase tracking-[0.24em] text-primary">
@@ -176,7 +176,7 @@ function openInquiry(interest = "") {
 
     <!-- Day-Pass Bundles -->
     <section class="bg-card/60 dark:bg-[#202020]">
-      <div class="mx-auto max-w-400 px-4 py-16 sm:px-8 md:py-24 lg:px-16">
+      <div class="mx-auto max-w-400 px-4 py-16 sm:px-8 md:py-16 lg:px-16">
         <div class="mb-8 max-w-3xl">
           <p class="mb-3 text-xs font-semibold uppercase tracking-[0.24em] text-primary">
             PILLAR II · FLEXIBLE DAY-PASS BUNDLES
@@ -252,7 +252,7 @@ function openInquiry(interest = "") {
     </section>
 
     <!-- Full-Day Sanctuary Buyout -->
-    <section class="mx-auto max-w-400 px-4 py-16 sm:px-8 md:py-24 lg:px-16">
+    <section class="mx-auto max-w-400 px-4 py-16 sm:px-8 md:py-16 lg:px-16">
       <div class="mb-10 grid gap-8 md:grid-cols-[0.8fr_1.2fr] md:items-end md:gap-12">
         <div>
           <p class="mb-3 text-xs font-semibold uppercase tracking-[0.24em] text-primary">
