@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import type { PaymentProvider } from "~/types/payment";
 import { computed, onUnmounted, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import { useNotification } from "~/composables/use-notification";
 import { usePayment } from "~/composables/use-payment";
 import { useAuthStore } from "~/stores/auth";
 import { useCartStore } from "~/stores/cart";
+import { useCheckoutStore } from "~/stores/checkout";
+import { usePaymentStore } from "~/stores/payment";
 import { getApiErrorMessage } from "~/utils/error";
 
 definePageMeta({
@@ -17,6 +20,9 @@ useSeoMeta({
 
 const authStore = useAuthStore();
 const cartStore = useCartStore();
+const checkoutStore = useCheckoutStore();
+const paymentStore = usePaymentStore();
+const router = useRouter();
 const { loading, payNow } = usePayment();
 const { error: showError } = useNotification();
 
@@ -77,6 +83,8 @@ const paymentMethod = ref<PaymentProvider | null>(null);
 const isRemoveItemModalOpen = ref(false);
 const selectedItemId = ref<string | "">("");
 const isFonepayModalOpen = ref(false);
+const isCybersourceModalOpen = ref(false);
+const cybersourceCheckout = computed(() => paymentStore.checkout);
 const isUnfreezeModalOpen = ref(false);
 const acceptedFreezeRelease = ref(false);
 
@@ -188,7 +196,7 @@ async function handlePayNowClick() {
         acceptedFreezeRelease.value ? "true" : "false",
       );
       const payload = {
-        provider: paymentMethod.value,
+        provider: paymentMethod.value === "card" ? "cybersource" : paymentMethod.value,
         items: cartItems.value
           .filter(item => selectedItemIds.value.includes(item.cartId))
           .map(item => ({
@@ -230,6 +238,9 @@ async function handlePayNowClick() {
         if (signal === "qr_modal") {
           isFonepayModalOpen.value = true;
         }
+        else if (signal === "cybersource_modal") {
+          isCybersourceModalOpen.value = true;
+        }
       });
       // A cancelled/failed payment must not carry an accepted release forward.
       // The success page consumes this only after the provider verifies payment.
@@ -244,6 +255,23 @@ async function handlePayNowClick() {
       showError({ message });
     }
   }
+}
+
+function handleCybersourcePaid(checkoutCode: string, verification: unknown) {
+  checkoutStore.recordVerifiedPayment(checkoutCode, verification, {
+    amount: paymentStore.checkout?.amount,
+    holdExpiresAt: paymentStore.checkout?.holdExpiresAt,
+  });
+  isCybersourceModalOpen.value = false;
+  router.push({
+    path: "/checkout/success",
+    query: { checkout_code: checkoutCode },
+  });
+}
+
+function handleCybersourceDeclined() {
+  isCybersourceModalOpen.value = false;
+  showError({ message: "Your card payment was declined. Please try another payment method." });
 }
 
 function acceptFreezeRelease() {
@@ -452,206 +480,127 @@ onUnmounted(() => {
                 </span>
               </div>
 
-              <!-- Payment Options -->
+              <!-- Payment Options – selectable tiles -->
               <div
-                class="dark:bg-[#212121] border border-t-0 border-border p-8"
+                class="dark:bg-[#212121] border border-t-0 border-border p-6 lg:p-8"
               >
-                <div class="flex flex-col sm:flex-row gap-8 sm:gap-16">
-                  <!-- eSewa -->
-                  <!-- <label class="flex items-center gap-3 cursor-pointer group">
-                    <div
-                      class="w-4 h-4 rounded-sm border border-border/40 flex items-center justify-center transition-colors"
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <!-- Fonepay tile -->
+                  <button
+                    type="button"
+                    class="group relative flex flex-col items-start gap-3 border p-5 text-left transition-all duration-150 focus-visible:outline-2 focus-visible:outline-primary"
+                    :class="
+                      paymentMethod === 'fonepay'
+                        ? 'border-primary bg-primary/5'
+                        : 'border-border hover:border-primary/40 bg-card'
+                    "
+                    @click="paymentMethod = 'fonepay'"
+                  >
+                    <!-- Selection indicator -->
+                    <span
+                      class="absolute right-4 top-4 flex size-5 items-center justify-center rounded-full border-2 transition-colors"
                       :class="
-                        paymentMethod === 'esewa'
-                          ? 'bg-[#B59A6D] border-[#B59A6D]'
-                          : 'group-hover:border-border'
+                        paymentMethod === 'fonepay'
+                          ? 'border-primary bg-primary'
+                          : 'border-border/60 bg-transparent'
                       "
                     >
                       <UIcon
-                        v-if="paymentMethod === 'esewa'"
+                        v-if="paymentMethod === 'fonepay'"
                         name="i-lucide-check"
-                        class="w-3 h-3 text-white"
+                        class="size-3 text-primary-foreground"
                       />
-                    </div>
-                    <input
-                      v-model="paymentMethod"
-                      type="radio"
-                      value="esewa"
-                      class="hidden"
-                    >
-                    <div
-                      class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
-                    >
-                      <img
-                        :src="IMAGES.ESEWA_LOGO"
-                        alt="eSewa"
-                        class="w-18 object-contain"
-                      >
-                    </div>
-                  </label> -->
+                    </span>
 
-                  <!-- Fonepay -->
-                  <label class="flex items-center gap-3 cursor-pointer group">
-                    <UCheckbox
-                      :model-value="paymentMethod === 'fonepay'"
-                      @update:model-value="
-                        (checked) => {
-                          if (checked) {
-                            paymentMethod = 'fonepay';
-                          }
-                        }
-                      "
-                    />
-                    <input
-                      v-model="paymentMethod"
-                      type="radio"
-                      value="fonepay"
-                      class="hidden"
-                    >
-                    <!-- Fonepay placeholder logo -->
-                    <div
-                      class="h-8 px-2 py-1 rounded flex items-center justify-center"
-                    >
+                    <!-- Logo -->
+                    <div class="h-8 flex items-center">
                       <img
                         :src="logoSrc"
                         alt="Fonepay"
-                        class="w-20 object-contain"
+                        class="h-7 w-auto object-contain"
                       >
                     </div>
-                  </label>
 
-                  <!-- Stripe -->
-                  <!-- <label class="flex items-center gap-3 cursor-pointer group">
-                    <div
-                      class="w-4 h-4 rounded-sm border border-border/40 flex items-center justify-center transition-colors"
+                    <!-- Description -->
+                    <div>
+                      <p class="text-sm font-semibold text-foreground">
+                        QR Payment
+                      </p>
+                      <p class="mt-0.5 text-xs text-muted-foreground leading-relaxed">
+                        Scan via any Nepali mobile banking or wallet app
+                      </p>
+                    </div>
+                  </button>
+
+                  <!-- Card tile -->
+                  <button
+                    type="button"
+                    class="group relative flex flex-col items-start gap-3 border p-5 text-left transition-all duration-150 focus-visible:outline-2 focus-visible:outline-primary"
+                    :class="
+                      paymentMethod === 'card'
+                        ? 'border-primary bg-primary/5'
+                        : 'border-border hover:border-primary/40 bg-card'
+                    "
+                    @click="paymentMethod = 'card'"
+                  >
+                    <!-- Selection indicator -->
+                    <span
+                      class="absolute right-4 top-4 flex size-5 items-center justify-center rounded-full border-2 transition-colors"
                       :class="
-                        paymentMethod === 'stripe'
-                          ? 'bg-[#B59A6D] border-[#B59A6D]'
-                          : 'group-hover:border-border'
+                        paymentMethod === 'card'
+                          ? 'border-primary bg-primary'
+                          : 'border-border/60 bg-transparent'
                       "
                     >
                       <UIcon
-                        v-if="paymentMethod === 'stripe'"
+                        v-if="paymentMethod === 'card'"
                         name="i-lucide-check"
-                        class="w-3 h-3 text-white"
+                        class="size-3 text-primary-foreground"
                       />
-                    </div>
-                    <input
-                      v-model="paymentMethod"
-                      type="radio"
-                      value="stripe"
-                      class="hidden"
-                    >
-                    <div
-                      class="h-8 bg-white px-2 py-1 rounded flex items-center justify-center"
-                    >
-                      <img
-                        :src="IMAGES.STRIPE_LOGO"
-                        alt="Stripe"
-                        class="w-18 object-contain"
-                      >
-                    </div>
-                  </label> -->
+                    </span>
 
-                  <!-- Card Payment -->
-                  <label class="flex items-center gap-3 cursor-pointer group">
-                    <UCheckbox
-                      :model-value="paymentMethod === 'card'"
-                      @update:model-value="
-                        (checked) => {
-                          if (checked) {
-                            paymentMethod = 'card';
-                          }
-                        }
-                      "
-                    />
-                    <input
-                      v-model="paymentMethod"
-                      type="radio"
-                      value="card"
-                      class="hidden"
-                    >
-                    <div
-                      class="h-8 px-3 py-1 rounded flex items-center justify-center border border-border/10"
-                    >
+                    <!-- Card icon + scheme badges -->
+                    <div class="flex items-center gap-2.5">
                       <UIcon
                         name="i-lucide-credit-card"
-                        class="w-5 h-5 text-gray-800 dark:text-gray-200"
+                        class="size-7 text-foreground/80"
                       />
-                      <span
-                        class="ml-2 text-gray-800 dark:text-gray-200 text-xs font-semibold uppercase tracking-wider"
-                      >Credit/Debit Card</span>
+                      <span class="inline-flex items-center gap-1">
+                        <span class="rounded-sm bg-[#1a1f71] px-1.5 py-0.5 text-[9px] font-bold tracking-widest text-white uppercase">VISA</span>
+                        <span class="rounded-sm bg-[#eb001b] px-1.5 py-0.5 text-[9px] font-bold tracking-widest text-white uppercase">MC</span>
+                        <span class="rounded-sm bg-[#2e77bc] px-1.5 py-0.5 text-[9px] font-bold tracking-widest text-white uppercase">AMEX</span>
+                      </span>
                     </div>
-                  </label>
+
+                    <!-- Description -->
+                    <div>
+                      <p class="text-sm font-semibold text-foreground">
+                        Credit / Debit Card
+                      </p>
+                      <p class="mt-0.5 text-xs text-muted-foreground leading-relaxed">
+                        International &amp; local cards via CyberSource
+                      </p>
+                    </div>
+                  </button>
                 </div>
 
-                <!-- Card Details Form -->
-                <div
-                  v-if="paymentMethod === 'card'"
-                  class="mt-8 pt-8 border-t border-border"
-                >
-                  <div class="flex gap-4 mb-6 items-center">
-                    <span
-                      class="text-sm font-black text-blue-900 tracking-wider"
-                    >VISA</span>
-                    <div class="flex items-center">
-                      <div
-                        class="w-4 h-4 rounded-full bg-red-600 opacity-90 mix-blend-multiply"
-                      />
-                      <div
-                        class="w-4 h-4 rounded-full bg-yellow-500 opacity-90 mix-blend-multiply -ml-1.5"
-                      />
+                <!-- CyberSource security notice when card is selected -->
+                <Transition name="fade">
+                  <div
+                    v-if="paymentMethod === 'card'"
+                    class="mt-5 flex items-start gap-3 border border-primary/20 bg-primary/5 p-4"
+                  >
+                    <UIcon name="i-lucide-shield-check" class="mt-0.5 size-5 shrink-0 text-primary-700" />
+                    <div>
+                      <p class="text-sm font-medium text-foreground">
+                        PCI-DSS Compliant · 256-bit Encrypted
+                      </p>
+                      <p class="mt-0.5 text-xs leading-relaxed text-muted-foreground">
+                        Your card details are entered directly in CyberSource's secure hosted form. KORA never receives or stores your card number or CVV.
+                      </p>
                     </div>
                   </div>
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div class="col-span-1 sm:col-span-2">
-                      <base-input
-                        name="cardNumber"
-                        label="Card number"
-                        placeholder="0000 0000 0000 0000"
-                        type="text"
-                      />
-                    </div>
-                    <div class="col-span-1 sm:col-span-2">
-                      <base-input
-                        name="nameOnCard"
-                        label="Name on card"
-                        placeholder="Enter name on card"
-                        type="text"
-                      />
-                    </div>
-                    <div class="col-span-1">
-                      <base-input
-                        name="expiryDate"
-                        label="Expiry date"
-                        placeholder="MM/YY"
-                        type="text"
-                      />
-                    </div>
-                    <div class="col-span-1">
-                      <base-input
-                        name="cvv"
-                        label="CVV"
-                        placeholder="123"
-                        type="password"
-                      />
-                    </div>
-                  </div>
-                  <div class="mt-6 flex items-start gap-3">
-                    <UCheckbox id="saveCard" default-value />
-                    <label
-                      for="saveCard"
-                      class="text-sm text-foreground cursor-pointer select-none"
-                    >
-                      <span class="font-semibold block mb-1">Save Card</span>
-                      <span
-                        class="text-xs text-muted-foreground leading-relaxed block max-w-xl"
-                      >We will save this card for your convenience. If
-                        required, you can remove the card in the "Payment
-                        Options" section in the "Account" menu.</span>
-                    </label>
-                  </div>
-                </div>
+                </Transition>
               </div>
             </div>
           </Transition>
@@ -787,7 +736,6 @@ onUnmounted(() => {
               leading-icon="i-lucide-lock"
               class="uppercase self-end flex tracking-widest font-bold px-8 rounded-none"
               :loading="loading"
-              :disabled="step === 2 && paymentMethod === 'card'"
               @click="handlePayNowClick"
             >
               {{
@@ -817,7 +765,6 @@ onUnmounted(() => {
             <base-button
               trailing-icon="i-lucide-arrow-right"
               class="uppercase self-end flex tracking-widest font-bold px-8 rounded-none"
-              :disabled="step === 2 && paymentMethod === 'card'"
               @click="handlePayNowClick"
             >
               PAY NOW
@@ -843,6 +790,13 @@ onUnmounted(() => {
     <checkout-fonepay-modal
       :is-open="isFonepayModalOpen"
       @close="isFonepayModalOpen = false"
+    />
+    <checkout-cybersource-modal
+      :is-open="isCybersourceModalOpen"
+      :checkout="cybersourceCheckout"
+      @close="isCybersourceModalOpen = false"
+      @paid="handleCybersourcePaid"
+      @declined="handleCybersourceDeclined"
     />
     <MembershipWaiverModal
       :is-open="isWaiverOpen"

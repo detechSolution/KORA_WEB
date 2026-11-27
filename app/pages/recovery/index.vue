@@ -84,7 +84,7 @@ useSeoMeta({
       >
         <img
           :src="IMAGES.RECOVERY_SAUNA"
-          alt="Sauna"
+          alt="Cold recovery"
           class="w-full h-full object-cover transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
         >
         <div
@@ -148,10 +148,7 @@ useSeoMeta({
           continuous, active stream.
         </p>
         <div class="w-fit">
-          <base-button
-            to="https://wa.me/+9779818000015?text=Hi%20KORA%2C%20I%E2%80%99m%20an%20athlete%20preparing%20for%20an%20upcoming%20competition.%20I%E2%80%99d%20love%20to%20learn%20more%20about%20your%20wave-cresting%20pool%20and%20athletic%20coaching%2Fphysiotherapy%20programs."
-            target="_blank"
-          >
+          <base-button to="">
             INQUIRE ABOUT ATHLETE COACHING & PREP
           </base-button>
         </div>

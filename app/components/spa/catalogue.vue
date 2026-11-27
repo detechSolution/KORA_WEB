@@ -112,7 +112,7 @@ onUnmounted(() => {
       <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-0">
         <!-- Left Column -->
         <div>
-          <ClassHeader title="Spa Sanctuary" />
+          <ClassHeader title="Spa Rituals" />
           <div
             v-if="spa?.description"
             class="spa-description max-w-400 px-4 md:px-8 lg:px-12 py-10 md:py-7"
@@ -122,7 +122,7 @@ onUnmounted(() => {
             v-if="!spa?.description"
             class="px-4 md:px-8 lg:px-12 pt-7 text-sm text-secondary-500 leading-relaxed"
           >
-            Discover a quieter pace at Spa Sanctuary. Explore our massages,
+            Discover a quieter pace at Spa Rituals. Explore our massages,
             facials and body rituals, thoughtfully designed to help you relax
             and feel refreshed.
           </p>
@@ -136,7 +136,7 @@ onUnmounted(() => {
               <img
                 v-if="spa?.bannerUrl && !bannerImageError"
                 :src="spa.bannerUrl"
-                :alt="spa?.name || 'Spa Sanctuary'"
+                :alt="spa?.name || 'Spa Rituals'"
                 class="w-full aspect-[1.93/1] object-cover transition-transform duration-700 group-hover:scale-105"
                 @error="bannerImageError = true"
               >
@@ -147,10 +147,10 @@ onUnmounted(() => {
               >
                 <img
                   :src="IMAGES.WHITE_LOGO"
-                  alt="Spa Sanctuary"
+                  alt="Spa Rituals"
                   class="w-full h-full object-cover absolute inset-0"
                 >
-                <span class="absolute bottom-4 left-4 font-serif text-xl text-white md:text-2xl drop-shadow">{{ spa?.name || 'Spa Sanctuary' }}</span>
+                <span class="absolute bottom-4 left-4 font-serif text-xl text-white md:text-2xl drop-shadow">{{ spa?.name || 'Spa Rituals' }}</span>
               </div>
 
               <div

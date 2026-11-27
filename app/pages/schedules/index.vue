@@ -30,18 +30,7 @@ const loading = ref(false);
 const weekOffset = ref(0);
 const search = reactive({
   session: "all",
-  venue: "all",
 });
-// const venueOptions = [
-//   {
-//     label: "All Venues",
-//     value: "all",
-//   },
-//   {
-//     label: "Kora Studio",
-//     value: "kora-studio",
-//   },
-// ];
 const sessionOptions = [
   {
     label: "All Sessions",
@@ -308,13 +297,6 @@ onMounted(() => {
                 :options="sessionOptions"
                 class="w-52"
               />
-              <!-- <base-select
-              v-model="search.venue"
-              name="venue"
-              placeholder="Select venue"
-              :options="venueOptions"
-              class="w-52"
-            /> -->
             </div>
           </div>
         </div>

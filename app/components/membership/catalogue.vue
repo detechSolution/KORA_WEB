@@ -89,7 +89,11 @@ const membershipPlans = computed(() => {
         (option: any) => option.frequency?.toUpperCase() === activePeriod.value,
       ),
     }))
-    .reverse();
+    .sort((a: any, b: any) => {
+      const priceA = Number(a.selectedOption?.price) || 0;
+      const priceB = Number(b.selectedOption?.price) || 0;
+      return priceA - priceB;
+    });
 });
 
 const passPlansByPrice = computed(() =>

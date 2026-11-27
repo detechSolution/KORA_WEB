@@ -8,6 +8,7 @@ export const useCheckoutStore = defineStore("checkout", () => {
   const paymentDetails = ref<any>(null);
   const paymentStatus = ref<string>("");
   const totalAmount = ref<number>(0);
+  const verifiedCheckoutCode = ref<string>("");
   const loading = ref<boolean>(true);
 
   async function verifyPayment(checkoutCode: string) {
@@ -36,9 +37,32 @@ export const useCheckoutStore = defineStore("checkout", () => {
     }
   }
 
+  function recordVerifiedPayment(
+    checkoutCode: string,
+    details: unknown,
+    fallback: { amount?: number; holdExpiresAt?: string } = {},
+  ) {
+    const result = details && typeof details === "object" && "data" in details
+      ? (details as { data: unknown }).data
+      : details;
+    const record = result && typeof result === "object"
+      ? result as Record<string, unknown>
+      : {};
+    const summary = record.summary && typeof record.summary === "object"
+      ? record.summary as Record<string, unknown>
+      : {};
+
+    verifiedCheckoutCode.value = checkoutCode;
+    paymentDetails.value = { holdExpiresAt: record.holdExpiresAt ?? fallback.holdExpiresAt };
+    paymentStatus.value = "paid";
+    totalAmount.value = Number(summary.total ?? record.amount ?? fallback.amount ?? 0);
+    loading.value = false;
+  }
+
   function clearCheckout() {
     paymentDetails.value = null;
     paymentStatus.value = "";
+    verifiedCheckoutCode.value = "";
     loading.value = true;
   }
 
@@ -46,6 +70,8 @@ export const useCheckoutStore = defineStore("checkout", () => {
     paymentDetails,
     paymentStatus,
     totalAmount,
+    verifiedCheckoutCode,
+    recordVerifiedPayment,
     loading,
     verifyPayment,
     clearCheckout,

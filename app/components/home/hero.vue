@@ -78,8 +78,8 @@ onMounted(() => {
       <img
         v-else
         :src="IMAGES.HOME_HERO"
-        alt="Kora Spa Sanctuary"
-        class="absolute inset-0 w-full h-full object-cover transition-all duration-[8000ms] ease-out-quad"
+        alt="Kora Spa Rituals"
+        class="absolute inset-0 w-full h-full object-cover object-[center_65%] transition-all duration-[8000ms] ease-out-quad"
         :class="isLoaded ? 'scale-100' : 'scale-110'"
       >
     </div>

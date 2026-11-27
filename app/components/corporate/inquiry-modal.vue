@@ -149,7 +149,7 @@ async function submitInquiry() {
         <base-input
           v-model="formState.fullNameTitle"
           name="fullNameTitle"
-          label="FULL NAME & TITLE"
+          label="FULL NAME"
           placeholder="e.g. Alex Smith, HR Director"
           required
         />

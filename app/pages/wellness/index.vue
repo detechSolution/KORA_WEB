@@ -42,7 +42,7 @@ useSeoMeta({
               VIEW SPA RITUALS
             </base-button>
             <!-- <base-button variant="outline" to="/spa">
-              EXPLORE THE SANCTUARY MENU
+              EXPLORE THE RITUALS MENU
             </base-button> -->
           </div>
         </div>
@@ -69,7 +69,7 @@ useSeoMeta({
         <img
           :src="IMAGES.WELLNESS_CLASS"
           alt="Reclaiming The Space Between"
-          class="w-full h-full object-cover transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
+          class="w-full h-full object-cover object-[center_65%] transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
         >
         <div
           class="absolute inset-0 ring-1 ring-inset ring-black/5 dark:ring-white/5 pointer-events-none"
@@ -229,7 +229,7 @@ useSeoMeta({
         class="w-full h-[32vh] sm:h-[40vh] md:h-[46vh] lg:min-h-[85vh] lg:h-auto relative overflow-hidden group order-1 lg:order-2"
       >
         <img
-          :src="IMAGES.WELLNESS_SAUNA"
+          :src="IMAGES.EXPERIENCE_STEAM"
           alt="The Advanced Thermal Circuit"
           class="w-full h-full object-cover transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
         >

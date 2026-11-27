@@ -4,6 +4,7 @@ import { reactive, ref } from "vue";
 
 import z from "zod";
 import { useNotification } from "~/composables/use-notification";
+import { SOCIAL_LINKS } from "~/config/constants";
 import { useInquireStore } from "~/stores/inquire";
 import { getApiErrorMessage } from "~/utils/error";
 import { IMAGES } from "~/utils/images";
@@ -60,23 +61,44 @@ const contactItems = [
     href: "mailto:info@koranepal.com",
     external: false,
   },
-  {
-    icon: "i-lucide-phone",
-    label: "Phone",
-    value: "01-4785467, 9845787654",
-    href: "tel:+97714785467",
-    external: false,
-  },
+  // {
+  //   icon: "i-lucide-phone",
+  //   label: "Phone",
+  //   value: "01-4785467, 9845787654",
+  //   href: "tel:+97714785467",
+  //   external: false,
+  // },
   {
     icon: "i-lucide-map-pin",
     label: "Address",
-    value: "Hattisar, Kathmandu, Nepal",
+    value: "Hattigauda, Kathmandu, Nepal",
   },
   {
     icon: "i-lucide-instagram",
     label: "Instagram",
     value: "@lifeatkora",
-    href: "https://www.instagram.com/lifeatkora/",
+    href: SOCIAL_LINKS.INSTAGRAM,
+    external: true,
+  },
+  {
+    icon: "i-lucide-facebook",
+    label: "Facebook",
+    value: "lifeatkora",
+    href: SOCIAL_LINKS.FACEBOOK,
+    external: true,
+  },
+  {
+    icon: "i-simple-icons-tiktok",
+    label: "TikTok",
+    value: "@lifeatkora",
+    href: SOCIAL_LINKS.TIKTOK,
+    external: true,
+  },
+  {
+    icon: "i-lucide-linkedin",
+    label: "LinkedIn",
+    value: "Kora",
+    href: SOCIAL_LINKS.LINKEDIN,
     external: true,
   },
 ];

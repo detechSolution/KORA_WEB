@@ -5,7 +5,7 @@ export default defineNuxtConfig({
     head: {
       title: "Kora | Web",
       meta: [
-        { name: "description", content: "System" },
+        { name: "description", content: "Kora wellness and membership" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
       ],
       htmlAttrs: {
@@ -17,6 +17,16 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: false },
   modules: ["@nuxt/ui", "@pinia/nuxt", "@nuxt/eslint"],
+  $development: {
+    vite: {
+      server: {
+        allowedHosts: (process.env.NUXT_VITE_ALLOWED_HOSTS || "")
+          .split(",")
+          .map(host => host.trim())
+          .filter(Boolean),
+      },
+    },
+  },
   css: ["~/assets/css/main.css"],
   colorMode: {
     preference: "light",
@@ -53,9 +63,6 @@ export default defineNuxtConfig({
         headers: { "cache-control": "public, max-age=31536000, immutable" },
       },
       "/logo/**": {
-        headers: { "cache-control": "public, max-age=31536000, immutable" },
-      },
-      "/fonts/**": {
         headers: { "cache-control": "public, max-age=31536000, immutable" },
       },
     },

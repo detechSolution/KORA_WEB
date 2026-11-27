@@ -19,7 +19,7 @@ const router = useRouter();
         <img
           :src="IMAGES.OFFERINGS_MEMBERSHIP"
           alt="Metamorphosis crafted for you"
-          class="w-full h-full object-cover object-top transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
+          class="w-full h-full object-cover object-[center_68%] transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
         >
         <div
           class="absolute inset-0 ring-1 ring-inset ring-black/5 dark:ring-white/5 pointer-events-none"
@@ -100,7 +100,7 @@ const router = useRouter();
         <img
           :src="IMAGES.OFFERINGS_SESSIONS"
           alt="Sessions designed for you"
-          class="w-full h-full object-cover transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
+          class="w-full h-full object-cover object-[center_70%] transition-transform duration-[6000ms] ease-out-quad group-hover:scale-105"
         >
         <div
           class="absolute inset-0 ring-1 ring-inset ring-black/5 dark:ring-white/5 pointer-events-none"

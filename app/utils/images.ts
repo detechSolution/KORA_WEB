@@ -32,8 +32,8 @@ export const IMAGES = {
   MANIFESTO_BACKGROUND: "/images/hero/manifesto_background.webp",
 
   // OFFERINGS SECTION
-  OFFERINGS_MEMBERSHIP: "/images/hero/offerings_memberships.webp",
-  OFFERINGS_SESSIONS: "/images/hero/offerings_sessions.webp",
+  OFFERINGS_MEMBERSHIP: "/images/hero/membership.webp",
+  OFFERINGS_SESSIONS: "/images/hero/offerings_sessions2.webp",
 
   // RECOVERY SECTION
   RECOVERY_COLD_PLUNGE: "/images/recovery/cold_plunge.webp",
@@ -42,16 +42,18 @@ export const IMAGES = {
   RECOVERY_SWIMMING_POOL: "/images/recovery/swimming_pool.webp",
 
   // WELLNESS SECTION
-  WELLNESS_CLASS: "/images/wellness/classes.webp",
+  WELLNESS_CLASS: "/images/wellness/classes2.jpg",
   WELLNESS_SPACE: "/images/wellness/space.webp",
   WELLNESS_SAUNA: "/images/wellness/sauna.webp",
   WELLNESS_SPA: "/images/wellness/spa.webp",
   WELLNESS_DERMAL: "/images/wellness/dermal.webp",
 
   // REHABILITATION SECTION
-  REHAB_MOVEMENT: "/images/wellness/space.webp",
-  REHAB_THERAPY: "/images/wellness/spa.webp",
-  REHAB_SANCTUARY: "/images/wellness/sauna.webp",
+  REHAB_GYM: "/images/rehabilitation/gym.webp",
+  REHAB_MOVEMENT: "/images/rehabilitation/movement.webp",
+  REHAB_THERAPY: "/images/rehabilitation/therapy.webp",
+  REHAB_MEDITATE: "/images/rehabilitation/meditate.webp",
+  REHAB_SANCTUARY: "/images/rehabilitation/sanctuary.webp",
 
   // NUTRITION SECTION
   NUTRITION_FOOD: "/images/nutrition/nutrition.webp",
@@ -61,4 +63,7 @@ export const IMAGES = {
 
   // XTERRA SECTION
   XTERRA_HERO: "/images/xterra/kora_XTERRA.webp",
+
+  // CORPORATE SECTION
+  CORPORATE_HERO: "/images/corporate/leadership.webp",
 };

@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, ref, watch } from "vue";
 
+type ImagePosition = number | `${number}%` | `${number}% ${number}%`;
 type MenuLink = { name: string; path: string };
 type MenuItem = {
   name: string;
   image: string;
+  imagePosition?: ImagePosition;
   path?: string;
   children?: MenuLink[];
 };
@@ -12,15 +14,26 @@ type MenuItem = {
 const props = defineProps<{ isOpen: boolean }>();
 const emit = defineEmits<{ close: [] }>();
 const colorMode = useColorMode();
+const route = useRoute();
 
 function toggleTheme() {
   colorMode.preference = colorMode.value === "dark" ? "light" : "dark";
 }
 
+watch(
+  () => route.fullPath,
+  () => {
+    if (props.isOpen) {
+      close();
+    }
+  },
+);
+
 const menuItems: MenuItem[] = [
   {
     name: "Experiences",
-    image: "/images/hero/offerings_sessions.webp",
+    image: "/images/sidebar/experience.webp",
+    imagePosition: "55%",
     children: [
       { name: "Classes", path: "/session?tab=class" },
       { name: "Events", path: "/session?tab=event" },
@@ -31,6 +44,7 @@ const menuItems: MenuItem[] = [
   {
     name: "Sanctuary",
     image: "/images/wellness/spa.webp",
+    imagePosition: "50%",
     children: [
       // { name: "Spa", path: "/spa" },
       { name: "Recovery", path: "/recovery" },
@@ -43,25 +57,36 @@ const menuItems: MenuItem[] = [
     name: "Schedules",
     path: "/schedules",
     image: "/images/wellness/classes.webp",
+    imagePosition: "75%",
   },
   {
     name: "Guest Pass",
     path: "/guest-pass",
-    image: "/images/hero/offerings_memberships.webp",
+    image: "/images/sidebar/guest_pass.webp",
+    imagePosition: "55%",
   },
   {
     name: "Corporate & Retreats",
     path: "/inquire-kora-corporate",
     image: "/images/corporate_and_retreats/corporate_and_retreats.webp",
+    imagePosition: "90%",
   },
   {
     name: "Gift Card",
     path: "/gift-card",
     image: "/images/hero/experience_aroma.webp",
+    imagePosition: "50%",
   },
 ];
 
-const previewImages = [...new Set(menuItems.map(item => item.image))];
+function resolveImagePosition(position: ImagePosition = "50%"): string {
+  if (typeof position === "number")
+    return `center ${position}%`;
+
+  const trimmed = position.trim();
+  return trimmed.includes(" ") ? trimmed : `center ${trimmed}`;
+}
+
 const expanded = ref<string | null>(null);
 const activeItem = ref<string | null>(null);
 const previewVisible = ref(false);
@@ -71,7 +96,7 @@ let previewPointerY: number | null = null;
 let previewFrame: number | null = null;
 let previewSwitchTimer: ReturnType<typeof setTimeout> | null = null;
 let previewHideTimer: ReturnType<typeof setTimeout> | null = null;
-const previewImage = ref(menuItems[0]!.image);
+const previewItemName = ref<string>(menuItems[0]!.name);
 const previewOffset = ref(0);
 const dialog = ref<HTMLDialogElement | null>(null);
 const closeButton = ref<HTMLButtonElement | null>(null);
@@ -150,7 +175,7 @@ function hoverItem(event: PointerEvent, item: MenuItem) {
       ? 180
       : 0;
   previewSwitchTimer = setTimeout(() => {
-    previewImage.value = item.image;
+    previewItemName.value = item.name;
     previewVisible.value = true;
     previewSwitchTimer = null;
   }, delay);
@@ -248,6 +273,7 @@ onBeforeUnmount(() => {
               variant="solid"
               color="primary"
               class="inline-flex px-4 md:px-6 py-2 md:py-2.5 text-[10px] md:text-xs uppercase tracking-widest transition-all duration-200 focus:outline-none shadow-sm active:scale-95"
+              @click="close"
             >
               Membership
             </base-button>
@@ -299,14 +325,15 @@ onBeforeUnmount(() => {
               :style="{ '--preview-offset': `${previewOffset}px` }"
             >
               <img
-                v-for="src in previewImages"
-                :key="src"
-                :src="src"
+                v-for="item in menuItems"
+                :key="item.name"
+                :src="item.image"
                 alt=""
                 class="preview-image"
                 :class="{
-                  'is-visible': previewVisible && previewImage === src,
+                  'is-visible': previewVisible && previewItemName === item.name,
                 }"
+                :style="{ objectPosition: resolveImagePosition(item.imagePosition) }"
                 decoding="async"
               >
             </div>
@@ -515,6 +542,7 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center 50%;
   opacity: 0;
   transform: scale(1.045);
   transition:

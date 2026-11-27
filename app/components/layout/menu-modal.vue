@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, watch } from "vue";
+import { SOCIAL_LINKS } from "~/config/constants";
 import { useAuthStore } from "~/stores/auth";
 
 const props = defineProps({
@@ -89,7 +90,7 @@ const menuItems = computed(() => {
       icon: "i-lucide-building-2",
     },
     {
-      name: "Spa Sanctuary",
+      name: "Spa Rituals",
       path: "/spa",
       sub: "Thermal Hydrotherapy Suites & Treatments",
       icon: "i-lucide-droplets",
@@ -257,12 +258,45 @@ onUnmounted(() => {
               <span class="text-border">•</span>
 
               <a
-                href="https://www.instagram.com/lifeatkora/"
+                :href="SOCIAL_LINKS.INSTAGRAM"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="hover:text-foreground dark:hover:text-white transition-colors"
               >
                 Instagram
+              </a>
+
+              <span class="text-border">•</span>
+
+              <a
+                :href="SOCIAL_LINKS.FACEBOOK"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-foreground dark:hover:text-white transition-colors"
+              >
+                Facebook
+              </a>
+
+              <span class="text-border">•</span>
+
+              <a
+                :href="SOCIAL_LINKS.TIKTOK"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-foreground dark:hover:text-white transition-colors"
+              >
+                TikTok
+              </a>
+
+              <span class="text-border">•</span>
+
+              <a
+                :href="SOCIAL_LINKS.LINKEDIN"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-foreground dark:hover:text-white transition-colors"
+              >
+                LinkedIn
               </a>
             </div>
 

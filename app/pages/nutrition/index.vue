@@ -1,34 +1,6 @@
 <script setup lang="ts">
 import { IMAGES } from "~/utils/images";
 
-// const faqs = [
-//   {
-//     label: "Is the ice bath suitable for beginners?",
-//     content:
-//       "Yes, our ice bath is suitable for beginners. We provide guidance on how to safely start and gradually increase your exposure.",
-//   },
-//   {
-//     label: "How much does recovery access cost at Kora Life ?",
-//     content:
-//       "Recovery access costs vary depending on the package. Please inquire with our team for detailed pricing options.",
-//   },
-//   {
-//     label: "What is contrast therapy and how does Kora run it?",
-//     content:
-//       "Contrast therapy involves alternating between hot and cold treatments to improve circulation and reduce inflammation. Kora provides guided sessions to maximize the benefits.",
-//   },
-//   {
-//     label: "Do I need a membership to access the recovery suite?",
-//     content:
-//       "While memberships offer the best value and ongoing access, we also offer casual drop-in sessions for non-members to experience our recovery suite.",
-//   },
-//   {
-//     label: "What specialist recovery services are available?",
-//     content:
-//       "Our specialist recovery services include ice baths, traditional saunas, infrared saunas, and targeted contrast therapy protocols.",
-//   },
-// ];
-
 definePageMeta({
   layout: "default",
 });
@@ -127,7 +99,7 @@ useSeoMeta({
           <base-button to="/membership">
             VIEW MEMBERSHIP
           </base-button>
-          <base-button to="tel:+9779818000015" variant="outline">
+          <base-button to="" variant="outline">
             RESERVE MEETING ROOM
           </base-button>
         </div>
@@ -269,7 +241,7 @@ useSeoMeta({
           <li>&bull; Sanctuary Closes: 10:00 PM</li>
         </ul>
         <div class="sm:w-fit">
-          <base-button to="tel:+9779818000015">
+          <base-button to="">
             BOOK CONSULTATION
           </base-button>
         </div>
