@@ -32,7 +32,7 @@ watch(
 const menuItems: MenuItem[] = [
   {
     name: "Experiences",
-    image: "/images/hero/membership.webp",
+    image: "/images/sidebar/experience.webp",
     imagePosition: "55%",
     children: [
       { name: "Classes", path: "/session?tab=class" },
@@ -62,8 +62,8 @@ const menuItems: MenuItem[] = [
   {
     name: "Guest Pass",
     path: "/guest-pass",
-    image: "/images/hero/offerings_memberships.webp",
-    imagePosition: "80%",
+    image: "/images/sidebar/guest_pass.webp",
+    imagePosition: "55%",
   },
   {
     name: "Corporate & Retreats",
